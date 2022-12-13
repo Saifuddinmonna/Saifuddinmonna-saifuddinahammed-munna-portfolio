@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import HeaderPage from "./components/BodyDiv/HeaderPage";
+import FotterPage from "./components/BodyDiv/FotterPage";
+import NavbarPage from "./components/BodyDiv/NavbarPage";
+import StripedExample from "./components/BodyDiv/SkillProgressbar";
+import ContractMe, { ContactUs } from "./components/ContractMe/ContractMe";
+import Main from "./components/Main/Main";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import About from "./components/About/About";
+import NavbarPage2 from "./components/NavbarPage/NavbarPage2";
+import MyPortfolios from "./components/MyPortfolios/MyPortfolios";
+import Blog from "./components/Blog/Blog";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: <Main></Main>,
+			children: [
+				{
+					path: "/about",
+					element: <About> </About>,
+				},
+				{
+					path: "/contractme",
+					element: (
+						<div>
+							<ContractMe></ContractMe>
+							<StripedExample></StripedExample>
+						</div>
+					),
+				},
+				{
+					path: "/mywork",
+					element: <MyPortfolios></MyPortfolios>,
+				},
+				{
+					path: "/blog",
+					element: <Blog></Blog>,
+				},
+			],
+		},
+	]);
+	return (
+		<div className="App">
+			<RouterProvider router={router}></RouterProvider>
+		</div>
+	);
 }
 
 export default App;
