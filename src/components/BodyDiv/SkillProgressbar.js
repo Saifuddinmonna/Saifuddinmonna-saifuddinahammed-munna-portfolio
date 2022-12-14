@@ -8,7 +8,7 @@ function StripedExample() {
 					<h1>My Skills</h1>
 				</div>
 
-				<div className=" grid grid-cols-2 justify-center gap-3">
+				<div className=" grid grid-cols-1  lg:grid-cols-2 md:grid-cols-2  lg:grid-cols-1 justify-center gap-3">
 					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-2 m-2 rounded-lg">
 						<div class=" flex flex-col space-y-3">
 							<div class="relative w-full  bg-gray-200 rounded">

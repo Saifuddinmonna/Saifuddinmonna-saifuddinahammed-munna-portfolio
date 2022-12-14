@@ -5,14 +5,14 @@ const MyPortfolios = () => {
 	return (
 		<div className="border m-2 p-4 rounded-xl ">
 			<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
-			My Portfolios
+				My Portfolios
 			</h1>
 
 			<p class="mt-4 text-center text-gray-500 dark:text-gray-300">
 				Lorem ipsum dolor sit amet consectetur, adipisicing elit.
 				Nostrum quam voluptatibus
 			</p>
-			<div className="flex">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-3">
 				<div className="">
 					<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 p-2 border rounded-lg m-2 shadow-xl image-full">
 						<figure className="hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300">
