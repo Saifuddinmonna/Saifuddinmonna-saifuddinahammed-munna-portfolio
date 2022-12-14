@@ -11,6 +11,7 @@ import About from "./components/About/About";
 import NavbarPage2 from "./components/NavbarPage/NavbarPage2";
 import MyPortfolios from "./components/MyPortfolios/MyPortfolios";
 import Blog from "./components/Blog/Blog";
+import PortfolioLayout from "./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout";
 
 function App() {
 	const router = createBrowserRouter([
@@ -38,6 +39,10 @@ function App() {
 				{
 					path: "/blog",
 					element: <Blog></Blog>,
+				},
+				{
+					path: "/portfoliolayout",
+					element: <PortfolioLayout></PortfolioLayout>,
 				},
 			],
 		},

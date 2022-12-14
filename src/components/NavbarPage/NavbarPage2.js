@@ -15,7 +15,7 @@ function NavbarPage2() {
 			<h3>LOGO</h3>
 			<nav ref={navRef}>
 				<NavLink to="/#">Home</NavLink>
-				<NavLink to="/#">My work</NavLink>
+				<NavLink to="/portfoliolayout">My work</NavLink>
 				<NavLink to="/blog">Blog</NavLink>
 				<NavLink to="/about">About me</NavLink>
 				<NavLink to="/contractme">Contract me</NavLink>
