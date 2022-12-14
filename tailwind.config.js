@@ -5,5 +5,8 @@ module.exports = withMT({
 	theme: {
 		extend: {},
 	},
+	daisyui: {
+		themes: ["garden" ,"cupcake", "dark", "cmyk"],
+	},
 	plugins: [require("kutty"), require("flowbite/plugin"), require("daisyui")],
 });

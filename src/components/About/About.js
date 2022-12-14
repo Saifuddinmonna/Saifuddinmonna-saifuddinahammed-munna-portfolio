@@ -3,12 +3,15 @@ import React from 'react';
 const About = () => {
         return (
 			<div>
-				
 				<div className="hero min-h-screen bg-base-200">
-					<div className="hero-content text-center">
-						<div className="max-w-md">
+					<div className="hero-content flex-col lg:flex-row">
+						<img
+							src="profile.jpg"
+							className="max-w-sm rounded-lg shadow-2xl"
+						/>
+						<div>
 							<h1 className="text-5xl font-bold">About Myself</h1>
-							<p className="py-6 text-justify">
+							<p className="py-6  text-justify p-5">
 								About Myself I was born in Mymensinngh Sadar
 								Mymensingh district,Bangladesh. I have three
 								brothers and my parents. I have completed post
@@ -24,9 +27,9 @@ const About = () => {
 								and bud a optimize npm package for for react
 								that is my vision.
 							</p>
-							{/* <button className="btn btn-primary">
+							<button className="btn btn-primary">
 								Get Started
-							</button> */}
+							</button>
 						</div>
 					</div>
 				</div>
