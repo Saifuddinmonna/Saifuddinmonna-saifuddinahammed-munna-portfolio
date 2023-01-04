@@ -31,8 +31,16 @@ const HeaderPage = () => {
 								target="_blank"
 								href="https://drive.google.com/open?id=154ZAjEGKPwBAw_wZe0Ij102ZSx_GR4UL&authuser=0&usp=drive_link"
 								rel="noreferrer">
-								<button className="btn btn-primary">
+								<button className="btn btn-primary m-2">
 									View My CV
+								</button>
+							</a>
+							<a
+								target="_blank"
+								href="https://drive.google.com/open?id=1GbxWekJ71boptGWrsCinZWxOPRHeOvSO&authuser=0&usp=drive_link"
+								rel="noreferrer">
+								<button className="btn btn-primary m-2">
+									View My Resume
 								</button>
 							</a>
 						</div>
