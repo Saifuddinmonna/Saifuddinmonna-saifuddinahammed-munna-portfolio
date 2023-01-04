@@ -5,12 +5,12 @@ const FotterPage = () => {
 	return (
 		<div className=" text-strong ">
 			<footer class="m-4 py-4 text-center text-strong rounded-xl mt-5 bg-gradient-to-r from-cyan-500 to-blue-500">
-				<div class="social-icon-container  text-decoration-none text-center ">
+				<div class="social-icon-container text-strong text-decoration-none text-center ">
 					<a
 						target="_blank"
 						href="https://saifuddinmonna.github.io./EnglishClub/index.html"
 						targer="_blank"
-						class=" fs-6 text-decoration-none d-block"
+						className=" fs-6 text-strong text-darktext-decoration-none d-block footer-text"
 						rel="noreferrer">
 						Website: English Club
 					</a>
