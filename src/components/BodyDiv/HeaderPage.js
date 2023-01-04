@@ -87,9 +87,12 @@ const HeaderPage = () => {
 					</a>
 
 					<a
-						href={"resume-of-Saifuddin-Ahammed-Monna2.pdf"}
+						href={"_resume of Saifuddin Ahammed Monna.pdf"}
 						download="">
 						Download Resume
+					</a>
+					<a href={"cv for saifuddin ahmmed monna.pdf"} download="">
+						Download CV
 					</a>
 				</div>
 			</div>
