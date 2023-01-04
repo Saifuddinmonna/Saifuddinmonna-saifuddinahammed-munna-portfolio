@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Main.css";
 // import  {profiel} "../../../public/profile.jpg";
 const HeaderPage = () => {
@@ -26,9 +27,14 @@ const HeaderPage = () => {
 								Full stack Javascript development. Proficiency
 								in MERN Stack
 							</p>
-							<button className="btn btn-primary">
-								View My CV
-							</button>
+							<a
+								target="_blank"
+								href="https://drive.google.com/open?id=154ZAjEGKPwBAw_wZe0Ij102ZSx_GR4UL&authuser=0&usp=drive_link"
+								rel="noreferrer">
+								<button className="btn btn-primary">
+									View My CV
+								</button>
+							</a>
 						</div>
 					</div>
 				</div>

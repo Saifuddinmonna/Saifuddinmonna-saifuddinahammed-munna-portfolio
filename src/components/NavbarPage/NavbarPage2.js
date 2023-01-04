@@ -13,7 +13,7 @@ function NavbarPage2() {
 	return (
 		<header className="position-sticky sticky fixed">
 			<h3>LOGO</h3>
-			<nav ref={navRef}>
+			<nav  ref={navRef}>
 				<NavLink to="/#">Home</NavLink>
 				<NavLink to="/portfoliolayout">My work</NavLink>
 				<NavLink to="/blog">Blog</NavLink>
