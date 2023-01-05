@@ -1,6 +1,9 @@
 import React from 'react';
 import MyPortfolios from '../MyPortfolios';
 
+
+
+
 const PortfolioLayout = () => {
         return (
 			<div className="grid grid-cols-6 m-2 p-4 border rounded-xl shadow transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">

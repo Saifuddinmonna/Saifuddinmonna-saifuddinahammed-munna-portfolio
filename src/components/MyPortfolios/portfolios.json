@@ -1,0 +1,91 @@
+[
+        {
+		"id":1,
+                "category": "Used Product Selling and Buying Project ",
+                "name": " UsedPhone ",
+                "liveWebsite": "https://bdusedphone.web.app/ ",
+                "liveWebsiteRepo": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-clients-side-Saifuddinmonna ",
+                "liveServersite": "https://usedphonesserver-saifuddinmonna.vercel.app/",
+                "liveServersiteRepo": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-Saifuddinmonna",
+                "technology": [
+                        "React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS,Tailwind, DaisyUI, Dotenv"
+                ],
+                "overview": [
+                        "❖ By using UsedPhone website, users can buy or sell used products payment gateway",
+                        " ❖ After booking, buyer can buy products and can pay through Stripe.",
+                        "❖ Seller can Add Product, See all his buyers, all his products.",
+                        "❖ There have 3 different dashboard panel (Buyer/ Seller / Admin). ",
+                        "❖ Admin can see all sellers, all buyers, reported items, delete and verify buyer and seller. ",
+                        "❖ Admin Access (user: munna@gmail.com password: 123456Use#)"
+                ],
+                "image": [
+                        "1.JPG",
+                        "2.JPG",
+                        "3.JPG"
+                ]
+        },
+        {
+		"id":2,	
+		"category": " Service Selling Project",
+			"name": "RepairService ",
+			"liveWebsite": "https://repairservice-ed4d3.web.app/services ",
+			"liveWebsiteRepo": "https://github.com/programming-hero-web-course1/b610-learning-platform-client-side-Saifuddinmonna ",
+			"liveServersite": "https://server-for-assignment-10.vercel.app/",
+			"liveServersiteRepo": "https://github.com/programming-hero-web-course1/b610-lerning-platform-server-side-Saifuddinmonna",
+			"technology": [
+				"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind."
+			],
+			"overview": [
+				"❖ Individual RepairService Provider with Google Login.",
+				"❖ Including ./Register to add service or leave review for clients.",
+				"❖ Users can see their review on  page or can add more services.",
+				"❖ Users can comment on receiving their services."
+			],
+			"image": ["r1.JPG","r12.JPG","r123.JPG","r1234.JPG"]
+		},
+        {
+		"id":3,	
+		"category": " ",
+			"name": " ",
+			"liveWebsite": " ",
+			"liveWebsiteRepo": " ",
+			"liveServersite": "",
+			"liveServersiteRepo": "",
+			"technology": [],
+			"overview": [],
+			"image": []
+		},
+        {
+		"id":4,
+			"category": " ",
+			"name": " ",
+			"liveWebsite": " ",
+			"liveWebsiteRepo": " ",
+			"liveServersite": "",
+			"liveServersiteRepo": "",
+			"technology": [],
+			"overview": [],
+			"image": []
+		},
+        {
+		"id":5,	
+		"category": " ",
+			"name": " ",
+			"liveWebsite": " ",
+			"liveWebsiteRepo": " ",
+			"liveServersiteRepo": "",
+			"liveServersiteRepo": "",
+			"technology": [],
+			"overview": [],
+			"image": []
+		},
+        {
+                "category": " ",
+                "name": " ",
+                "liveWebsite": " ",
+                "liveWebsiteRepo": " ",
+                "technology": [],
+                "overview": [],
+                "image": []
+        }
+]
