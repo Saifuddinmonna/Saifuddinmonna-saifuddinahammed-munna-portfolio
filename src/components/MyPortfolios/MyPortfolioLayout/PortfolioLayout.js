@@ -1,86 +1,84 @@
-import React from 'react';
-import MyPortfolios from '../MyPortfolios';
+import { render } from "@testing-library/react";
+import React, { useEffect, useState } from "react";
+import MyPortfolios from "../MyPortfolios";
 
-
-
+import portfolios from "../portfolios.json";
 
 const PortfolioLayout = () => {
-        return (
-			<div className="grid grid-cols-6 m-2 p-4 border rounded-xl shadow transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-				<div className="col-span-1 pt-20">
-					<aside class="w-64" aria-label="Sidebar">
-						<div class="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
-							<ul class="space-y-2">
-								<li>
-									<a
-										href="#"
-										class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-										<svg
-											aria-hidden="true"
-											class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-											fill="currentColor"
-											viewBox="0 0 20 20"
-											xmlns="http://www.w3.org/2000/svg">
-											<path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-											<path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-										</svg>
-										<span class="ml-3">E-Commerce</span>
-									</a>
-								</li>
-								<li>
-									<a
-										href="#"
-										class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-										<svg
-											aria-hidden="true"
-											class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-											fill="currentColor"
-											viewBox="0 0 20 20"
-											xmlns="http://www.w3.org/2000/svg">
-											<path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-										</svg>
-										<span class="flex-1 ml-3 whitespace-nowrap">
-											E-Service
-										</span>
-										<span class="inline-flex justify-center items-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">
-											Pro
-										</span>
-									</a>
-								</li>
-								<li>
-									<a
-										href="#"
-										class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-										<svg
-											aria-hidden="true"
-											class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-											fill="currentColor"
-											viewBox="0 0 20 20"
-											xmlns="http://www.w3.org/2000/svg">
-											<path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path>
-											<path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path>
-										</svg>
-										<span class="flex-1 ml-3 whitespace-nowrap">
-											E-Lerning
-										</span>
-										<span class="inline-flex justify-center items-center p-3 ml-3 w-3 h-3 text-sm font-medium text-blue-600 bg-blue-200 rounded-full dark:bg-blue-900 dark:text-blue-200">
-											3
-										</span>
-									</a>
-								</li>
-								
-							</ul>
-						</div>
-					</aside>
-                        </div>
-                        
+	const [datas, setDatas] = useState(portfolios);
+	const [data, setData] = useState(0);
+	const [imagesState, setImagesState] = useState();
 
-                        <div className='col-span-5'>
-                                <MyPortfolios></MyPortfolios>
-                                
-                                </div>
+	const Datafuction = () => {
+		
+			datas && datas?.map((p) => {
+				p?.image.map((images) => {
+					setImagesState(images);
+					console.log(images)
+		})
+	} )
+	};
+
+	useEffect(() => {
+		Datafuction();
+	}, [data]);
+	console.log(data);
+	console.log(data?.name);
+	console.log(imagesState);
+	return (
+		<div>
+			<div className="rounded-2xl border p-2 m-2">
+				{datas && datas?.map((p) => <div>{p.name}</div>)}
 			</div>
-		);
+			<img
+				src="images/r1.JPG"
+				// { `"${imagesState}"` }
+				alt="another name "
+			/>
+			{/* <div className="rounded-2xl border p-2 m-2">
+				<section className="text-red body-font">
+					<div className="container px-5 py-24 mx-auto">
+						<div className="flex flex-col text-center w-full mb-20">
+							<h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-red">
+								Master Cleanse Reliac Heirloom
+							</h1>
+							<p className="lg:w-2/3 mx-auto leading-relaxed text-base">
+								Whatever cardigan tote bag tumblr hexagon
+								brooklyn asymmetrical gentrify, subway tile poke
+								farm-to-table. Franzen you probably haven't
+								heard of them man bun deep jianbing selfies
+								heirloom.
+							</p>
+						</div>
+						<div className="flex flex-wrap -m-4">
+							<div className="lg:w-1/3 sm:w-1/2 p-4">
+								<div className="flex relative">
+									<img
+										alt="gallery"
+										className="absolute inset-0 w-full h-full object-cover object-center"
+										src={"imagesState"}
+									/>
+									<div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
+										<h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">
+											THE SUBTITLE
+										</h2>
+										<h1 className="title-font text-lg font-medium text-gray-900 mb-3">
+											Shooting Stars
+										</h1>
+										<p className="leading-relaxed">
+											Photo booth fam kinfolk cold-pressed
+											sriracha leggings jianbing
+											microdosing tousled waistcoat.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div> */}
+		</div>
+	);
 };
 
 export default PortfolioLayout;

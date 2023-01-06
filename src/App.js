@@ -40,11 +40,11 @@ function App() {
 					path: "/blog",
 					element: <Blog></Blog>,
 				},
-				{
-					path: "/portfoliolayout",
-					element: <PortfolioLayout></PortfolioLayout>,
-				},
 			],
+		},
+		{
+			path: "/portfoliolayout",
+			element: <PortfolioLayout></PortfolioLayout>,
 		},
 	]);
 	return (

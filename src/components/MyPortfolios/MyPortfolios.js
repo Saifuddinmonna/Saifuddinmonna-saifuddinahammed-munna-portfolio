@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MyportfolioImage from "./MyportfolioImage";
 
+
 const MyPortfolios = () => {
+	
 	return (
 		<div className="border m-2 p-4 rounded-xl ">
 			<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
