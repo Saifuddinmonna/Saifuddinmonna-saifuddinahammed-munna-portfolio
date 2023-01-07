@@ -1,5 +1,8 @@
 import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
+import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
 
 // import portfolios from "../portfolios.json";
@@ -33,12 +36,13 @@ const PortfolioLayout = () => {
 	console.log(imagesState);
 	return (
 		<div>
-			<div className="rounded-2xl border p-2 m-2 text-gray-600 body-font">
+			<div className="rounded-2xl border p-2  text-gray-600 body-font">
+				<NavbarPage2></NavbarPage2>
 				{datas &&
 					datas?.map((p) => (
-						<div className="container px-5 py-24 mx-auto">
+						<div className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 							<section className="text-gray-600 body-font">
-								<div className="container px-5 py-24 mx-auto">
+								<div className="container p-3 m-3 mx-auto">
 									<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
 										{p.category}
 										<br className="hidden sm:block" />
@@ -51,38 +55,42 @@ const PortfolioLayout = () => {
 												<h2 className="text-gray-900 text-left text-2xl text-strong title-font font-medium mb-2">
 													Website Link
 												</h2>
-												<p className="text-left text-xl capitalize ">
+												<p className="text-left btn btn-warning  btn-sm d-block  text-white text-xl capitalize  ">
 													<a
+														className="text-decoration-none"
 														target="_blank"
 														href={p.liveWebsite}
 														rel="noreferrer">
-														liveWebsite
+														Live Website
 													</a>
 												</p>
-												<p className="text-left text-xl ">
+												<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
 													<a
+														className="text-decoration-none"
 														target="_blank"
 														href={p.liveWebsiteRepo}
 														rel="noreferrer">
-														liveWebsiteRepo
+														Live Website Repo
 													</a>
 												</p>
-												<p className="text-left text-xl ">
+												<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
 													<a
+														className="text-decoration-none"
 														target="_blank"
 														href={p.liveServersite}
 														rel="noreferrer">
-														iveServersite
+														Live Serversite
 													</a>
 												</p>
-												<p className="text-left text-xl ">
+												<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
 													<a
+														className="text-decoration-none"
 														target="_blank"
 														href={
 															p.liveServersiteRepo
 														}
 														rel="noreferrer">
-														liveServersiteRepo
+														LiveServer Site Repo
 													</a>
 												</p>
 											</div>
@@ -143,7 +151,7 @@ const PortfolioLayout = () => {
 												)}
 
 												<button
-													className="btn"
+													className="btn btn-danger"
 													onClick={() =>
 														setShowMore(!showMore)
 													}>
@@ -170,12 +178,16 @@ const PortfolioLayout = () => {
 							<div className="grid grid-cols-3">
 								{p?.image?.map((imgs, ind) => (
 									<div key={ind} className="">
-										<div className=" border m-2 p-2 rounded">
-											<img
-												alt="gallery"
-												className=""
-												src={`images/${imgs}`}
-											/>
+										<div className=" border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+											<PhotoProvider>
+												<PhotoView
+													src={`images/${imgs}`}>
+													<img
+														src={`images/${imgs}`}
+														alt="Pic of portfolios"
+													/>
+												</PhotoView>
+											</PhotoProvider>
 										</div>
 									</div>
 								))}
@@ -183,7 +195,6 @@ const PortfolioLayout = () => {
 						</div>
 					))}
 			</div>
-			<img src="images/1.JPG" alt="test2" />
 		</div>
 	);
 };

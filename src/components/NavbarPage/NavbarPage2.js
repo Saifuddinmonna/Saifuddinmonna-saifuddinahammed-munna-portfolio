@@ -11,9 +11,9 @@ function NavbarPage2() {
 	};
 
 	return (
-		<header className="position-sticky sticky fixed">
+		<header className="sticky w-full  ">
 			<h3>LOGO</h3>
-			<nav  ref={navRef}>
+			<nav className="" ref={navRef}>
 				<NavLink to="/#">Home</NavLink>
 				<NavLink to="/portfoliolayout">My work</NavLink>
 				<NavLink to="/blog">Blog</NavLink>
