@@ -2,81 +2,188 @@ import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
 import MyPortfolios from "../MyPortfolios";
 
-import portfolios from "../portfolios.json";
+// import portfolios from "../portfolios.json";
 
 const PortfolioLayout = () => {
-	const [datas, setDatas] = useState(portfolios);
-	const [data, setData] = useState(0);
-	const [imagesState, setImagesState] = useState();
+	const [datas, setDatas] = useState([]);
+	const [data, setData] = useState();
+	const [imagesState, setImagesState] = useState([]);
+	const [showMore, setShowMore] = useState(false);
+	// const [1, 2, 3, 4, 5]=[datas];
 
 	const Datafuction = () => {
-		
-			datas && datas?.map((p) => {
-				p?.image.map((images) => {
-					setImagesState(images);
-					console.log(images)
-		})
-	} )
+		for (const p of datas) {
+			setData(p);
+		}
 	};
 
 	useEffect(() => {
 		Datafuction();
-	}, [data]);
+	}, []);
+
+	useState(() => {
+		fetch("portfolios.json")
+			.then((res) => res.json())
+			.then((datas) => setDatas(datas));
+		console.log(datas);
+	}, []);
+	console.log(datas);
 	console.log(data);
 	console.log(data?.name);
 	console.log(imagesState);
 	return (
 		<div>
-			<div className="rounded-2xl border p-2 m-2">
-				{datas && datas?.map((p) => <div>{p.name}</div>)}
-			</div>
-			<img
-				src="images/r1.JPG"
-				// { `"${imagesState}"` }
-				alt="another name "
-			/>
-			{/* <div className="rounded-2xl border p-2 m-2">
-				<section className="text-red body-font">
-					<div className="container px-5 py-24 mx-auto">
-						<div className="flex flex-col text-center w-full mb-20">
-							<h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-red">
-								Master Cleanse Reliac Heirloom
-							</h1>
-							<p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-								Whatever cardigan tote bag tumblr hexagon
-								brooklyn asymmetrical gentrify, subway tile poke
-								farm-to-table. Franzen you probably haven't
-								heard of them man bun deep jianbing selfies
-								heirloom.
-							</p>
-						</div>
-						<div className="flex flex-wrap -m-4">
-							<div className="lg:w-1/3 sm:w-1/2 p-4">
-								<div className="flex relative">
-									<img
-										alt="gallery"
-										className="absolute inset-0 w-full h-full object-cover object-center"
-										src={"imagesState"}
-									/>
-									<div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
-										<h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">
-											THE SUBTITLE
-										</h2>
-										<h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-											Shooting Stars
-										</h1>
-										<p className="leading-relaxed">
-											Photo booth fam kinfolk cold-pressed
-											sriracha leggings jianbing
-											microdosing tousled waistcoat.
-										</p>
+			<div className="rounded-2xl border p-2 m-2 text-gray-600 body-font">
+				{datas &&
+					datas?.map((p) => (
+						<div className="container px-5 py-24 mx-auto">
+							<section className="text-gray-600 body-font">
+								<div className="container px-5 py-24 mx-auto">
+									<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
+										{p.category}
+										<br className="hidden sm:block" />
+										{p.name}
+									</h1>
+									<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
+										<div className="p-4 md:w-1/3 flex">
+											<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
+											<div className="flex-grow pl-6">
+												<h2 className="text-gray-900 text-left text-2xl text-strong title-font font-medium mb-2">
+													Website Link
+												</h2>
+												<p className="text-left text-xl capitalize ">
+													<a
+														target="_blank"
+														href={p.liveWebsite}
+														rel="noreferrer">
+														liveWebsite
+													</a>
+												</p>
+												<p className="text-left text-xl ">
+													<a
+														target="_blank"
+														href={p.liveWebsiteRepo}
+														rel="noreferrer">
+														liveWebsiteRepo
+													</a>
+												</p>
+												<p className="text-left text-xl ">
+													<a
+														target="_blank"
+														href={p.liveServersite}
+														rel="noreferrer">
+														iveServersite
+													</a>
+												</p>
+												<p className="text-left text-xl ">
+													<a
+														target="_blank"
+														href={
+															p.liveServersiteRepo
+														}
+														rel="noreferrer">
+														liveServersiteRepo
+													</a>
+												</p>
+											</div>
+										</div>
+										<div className="p-4 md:w-1/3 flex">
+											<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
+											<div className="flex-grow pl-6">
+												<h2 className="text-gray-900 text-lg title-font font-medium mb-2">
+													Used Technologies
+												</h2>
+												<p className="leading-relaxed text-base">
+													{p.technology}
+												</p>
+											</div>
+										</div>
+										<div className="p-4 md:w-1/3 flex">
+											<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0">
+												<svg
+													fill="none"
+													stroke="currentColor"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+													className="w-6 h-6"
+													viewBox="0 0 24 24">
+													<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+													<circle
+														cx={12}
+														cy={7}
+														r={4}
+													/>
+												</svg>
+											</div>
+											<div className="flex-grow pl-6">
+												<h2 className="text-gray-900 text-lg title-font font-medium mb-2">
+													Overview
+												</h2>
+												{showMore ? (
+													<>
+														{p.overview
+															.slice(0, 5)
+															.map((over) => (
+																<p className="text-left ">
+																	{over}
+																</p>
+															))}
+													</>
+												) : (
+													<>
+														{p.overview
+															.slice(0, 2)
+															.map((over) => (
+																<p className="text-left ">
+																	{over}
+																</p>
+															))}
+													</>
+												)}
+
+												<button
+													className="btn"
+													onClick={() =>
+														setShowMore(!showMore)
+													}>
+													{showMore
+														? "Show less"
+														: "Show more"}
+													<svg
+														fill="none"
+														stroke="currentColor"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth={2}
+														className="w-4 h-4 ml-2"
+														viewBox="0 0 24 24">
+														<path d="M5 12h14M12 5l7 7-7 7" />
+													</svg>
+												</button>
+											</div>
+										</div>
 									</div>
 								</div>
+							</section>
+
+							<div className="grid grid-cols-3">
+								{p?.image?.map((imgs, ind) => (
+									<div key={ind} className="">
+										<div className=" border m-2 p-2 rounded">
+											<img
+												alt="gallery"
+												className=""
+												src={`images/${imgs}`}
+											/>
+										</div>
+									</div>
+								))}
 							</div>
 						</div>
-					</div>
-				</section>
-			</div> */}
+					))}
+			</div>
+			<img src="images/1.JPG" alt="test2" />
 		</div>
 	);
 };
