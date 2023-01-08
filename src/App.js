@@ -46,6 +46,10 @@ function App() {
 			path: "/portfoliolayout",
 			element: <PortfolioLayout></PortfolioLayout>,
 		},
+		{
+			path: "/portfoliolayout/:UsedPhone",
+			element: <PortfolioLayout></PortfolioLayout>,
+		},
 	]);
 	return (
 		<div className="App max-w-[1440px] mx-auto">

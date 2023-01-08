@@ -18,11 +18,7 @@
 			"❖ Admin can see all sellers, all buyers, reported items, delete and verify buyer and seller. ",
 			"❖ Admin Access (user: munna@gmail.com password: 123456Use#)"
 		],
-		"image": [
-			"1.JPG",
-			"2.JPG",
-			"3.JPG"
-		]
+		"image": ["1.JPG", "2.JPG", "3.JPG"]
 	},
 	{
 		"id": 2,
@@ -41,12 +37,7 @@
 			"❖ Users can see their review on  page or can add more services.",
 			"❖ Users can comment on receiving their services."
 		],
-		"image": [
-			"r1.JPG",
-			"r12.JPG",
-			"r123.JPG",
-			"r1234.JPG"
-		]
+		"image": ["r1.JPG", "r12.JPG", "r123.JPG", "r1234.JPG"]
 	},
 	{
 		"id": 3,
@@ -72,15 +63,13 @@
 	},
 	{
 		"id": 4,
-		"category": " Examination Taker Project",
+		"category": "Examination Taker Project",
 		"name": "GoExam ",
 		"liveWebsite": " ",
 		"liveWebsiteRepo": " ",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": [
-			"React, Vercel, Tailwind."
-		],
+		"technology": ["React, Vercel, Tailwind."],
 		"overview": [
 			" ❖ GoExam is an online based learning platform for taking MCQ examination.",
 			" ❖ One can take MCQ test here.",
@@ -91,14 +80,12 @@
 	{
 		"id": 5,
 		"category": "Educational Project ",
-		"name": " englishclub ",
-		"liveWebsite": " https://englishclub.netlify.app/",
+		"name": "englishclub",
+		"liveWebsite": "https://englishclub.netlify.app/",
 		"liveWebsiteRepo": " ",
 		"liveServersite": "",
 		"liveServersiteRepo": " ",
-		"technology": [
-			"HTML, CSS, Bootstrap"
-		],
+		"technology": ["HTML, CSS, Bootstrap"],
 		"overview": [
 			"❖ 'englishclub’ an online based learning platform",
 			"❖ ‘englishclub’ is used for free learning purposes built with HTML, CSS and Bootstrap-5"
@@ -106,10 +93,11 @@
 		"image": []
 	},
 	{
-		"category": " ",
-		"name": " ",
-		"liveWebsite": " ",
-		"liveWebsiteRepo": " ",
+		"id": 6,
+		"category": "Comming soon",
+		"name": "Upcomming",
+		"liveWebsite": "Coming soon",
+		"liveWebsiteRepo": "Coming soon",
 		"technology": [],
 		"overview": [],
 		"image": []
