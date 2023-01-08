@@ -62,9 +62,9 @@ useEffect(() => {
 			<div>
 				<div className="rounded-2xl border p-2  text-gray-600 body-font">
 					<NavbarPage2></NavbarPage2>
-					<div className="grid grid-cols-7">
+					<div className="grid grid-cols-1 xl:grid-cols-7  lg:grid-cols-7  md:grid-cols-7">
 						<div className="col-span-1 mr-2 ">
-							<div className="fixed p-2 mr-2 ">
+							<div className="lg:fixed xl:fixed md:fixed p-2 mr-2 ">
 								{datasName?.map((nameall, ind) => (
 									<div key={ind}>
 										<button
@@ -97,7 +97,7 @@ useEffect(() => {
 													{p.name}
 												</h1>
 												<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
-													<div className="p-4 md:w-1/3 flex">
+													<div className="p-4 md:w-1/2 lg:w-1/3 flex">
 														<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
 														<div className="flex-grow pl-6">
 															<h2 className="text-gray-900 text-left text-2xl text-strong title-font font-medium mb-2">
@@ -265,7 +265,7 @@ useEffect(() => {
 											</div>
 										</section>
 
-										<div className="grid grid-cols-3">
+										<div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3">
 											{p?.image?.map((imgs, ind) => (
 												<div key={ind} className="">
 													<div className=" border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
