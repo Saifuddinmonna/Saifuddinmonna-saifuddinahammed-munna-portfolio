@@ -63,26 +63,32 @@ useEffect(() => {
 				<div className="rounded-2xl border p-2  text-gray-600 body-font">
 					<NavbarPage2></NavbarPage2>
 					<div className="grid grid-cols-7">
-						<div className="col-span-1">
-							{datasName?.map((nameall) => (
-								<div>
-									<button
-										onClick={() => dataFilter(nameall.name)}
-										className="btn btn-warning d-block  w-full m-2 p-2">
-										{nameall.name}
-									</button>
-								</div>
-							))}
-							<button
-								onClick={() => setDatas2(false)}
-								className="btn btn-warning d-block  w-full m-2 p-2">
-								All
-							</button>
+						<div className="col-span-1 mr-2 ">
+							<div className="fixed p-2 mr-2 ">
+								{datasName?.map((nameall, ind) => (
+									<div key={ind}>
+										<button
+											onClick={() =>
+												dataFilter(nameall.name)
+											}
+											className="btn btn-warning d-block  w-full m-2 p-2">
+											{nameall.name}
+										</button>
+									</div>
+								))}
+								<button
+									onClick={() => setDatas2(false)}
+									className="btn btn-warning d-block  w-full m-2 p-2">
+									All
+								</button>
+							</div>
 						</div>
 						<div className="col-span-6">
 							{datas &&
-								datas?.map((p) => (
-									<div className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
+								datas?.map((p, ind) => (
+									<div
+										key={ind}
+										className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 										<section className="text-gray-600 body-font">
 											<div className="container p-3 m-3 mx-auto">
 												<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
@@ -190,8 +196,13 @@ useEffect(() => {
 																		.map(
 																			(
 																				over,
+																				ind,
 																			) => (
-																				<p className="text-left ">
+																				<p
+																					key={
+																						ind
+																					}
+																					className="text-left ">
 																					{
 																						over
 																					}
@@ -209,8 +220,13 @@ useEffect(() => {
 																		.map(
 																			(
 																				over,
+																				ind,
 																			) => (
-																				<p className="text-left ">
+																				<p
+																					key={
+																						ind
+																					}
+																					className="text-left ">
 																					{
 																						over
 																					}
@@ -279,26 +295,32 @@ useEffect(() => {
 				<div className="rounded-2xl border p-2  text-gray-600 body-font">
 					<NavbarPage2></NavbarPage2>
 					<div className="grid grid-cols-7">
-						<div className="col-span-1">
-							{datasName?.map((nameall) => (
-								<div>
-									<button
-										onClick={() => dataFilter(nameall.name)}
-										className="btn btn-warning d-block  w-full m-2 p-2">
-										{nameall.name}
-									</button>
-								</div>
-							))}
-							<button
-								onClick={() => setDatas2(false)}
-								className="btn btn-warning d-block  w-full m-2 p-2">
-								All
-							</button>
+						<div className="col-span-1 mr-2 mt-2">
+							<div className="mr-2">
+								{datasName?.map((nameall, ind) => (
+									<div key={ind}>
+										<button
+											onClick={() =>
+												dataFilter(nameall.name)
+											}
+											className="btn btn-warning d-block  w-full m-2 p-2">
+											{nameall.name}
+										</button>
+									</div>
+								))}
+								<button
+									onClick={() => setDatas2(false)}
+									className="btn btn-warning d-block  w-full m-2 p-2">
+									All
+								</button>
+							</div>
 						</div>
 						<div className="col-span-6">
 							{datas2 &&
-								datas2?.map((p) => (
-									<div className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
+								datas2?.map((p, ind) => (
+									<div
+										key={ind}
+										className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 										<section className="text-gray-600 body-font">
 											<div className="container p-3 m-3 mx-auto">
 												<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
@@ -406,8 +428,13 @@ useEffect(() => {
 																		.map(
 																			(
 																				over,
+																				ind,
 																			) => (
-																				<p className="text-left ">
+																				<p
+																					key={
+																						ind
+																					}
+																					className="text-left ">
 																					{
 																						over
 																					}
@@ -425,8 +452,13 @@ useEffect(() => {
 																		.map(
 																			(
 																				over,
+																				ind,
 																			) => (
-																				<p className="text-left ">
+																				<p
+																					key={
+																						ind
+																					}
+																					className="text-left ">
 																					{
 																						over
 																					}
