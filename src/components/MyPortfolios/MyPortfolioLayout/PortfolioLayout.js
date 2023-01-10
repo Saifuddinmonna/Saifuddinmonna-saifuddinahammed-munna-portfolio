@@ -100,7 +100,7 @@ const PortfolioLayout = () => {
 													<div className="p-4 md:w-1/2 lg:w-1/3 flex">
 														<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-left text-2xl text-strong title-font font-medium mb-2">
+															<h2 className="text-gray-900  text-left text-2xl text-strong title-font font-medium mb-2">
 																Website Link
 															</h2>
 															<p className="text-left btn btn-warning  btn-sm d-block  text-white text-xl capitalize  ">
@@ -161,7 +161,7 @@ const PortfolioLayout = () => {
 													<div className="p-4 md:w-1/3 flex">
 														<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-2xl  font-medium mb-2">
+															<h2 className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-2xl  font-medium mb-2">
 																Used
 																Technologies
 															</h2>
@@ -189,7 +189,7 @@ const PortfolioLayout = () => {
 															</svg>
 														</div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-2xl  font-medium mb-2">
+															<h2 className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-2xl  font-medium mb-2">
 																Overview
 															</h2>
 															{showMore ? (
@@ -393,7 +393,7 @@ const PortfolioLayout = () => {
 													<div className="p-4 md:w-1/3 flex">
 														<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-lg title-font font-medium mb-2">
+															<h2 className="text-gray-900  bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-lg title-font font-medium mb-2">
 																Used
 																Technologies
 															</h2>
@@ -421,7 +421,7 @@ const PortfolioLayout = () => {
 															</svg>
 														</div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-lg title-font font-medium mb-2">
+															<h2 className="text-gray-900 text-lg  bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded title-font font-medium mb-2">
 																Overview
 															</h2>
 															{showMore ? (
