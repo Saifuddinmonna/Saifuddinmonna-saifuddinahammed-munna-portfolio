@@ -8,6 +8,7 @@ const About = () => {
 						<img
 							src="profile.jpg"
 							className="max-w-sm rounded-lg shadow-2xl"
+							alt="image of Saifuddin Ahammed Monna"
 						/>
 						<div>
 							<h1 className="text-5xl font-bold">About Myself</h1>
