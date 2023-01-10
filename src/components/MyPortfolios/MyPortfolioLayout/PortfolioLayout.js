@@ -126,30 +126,36 @@ const PortfolioLayout = () => {
 																	Repo
 																</a>
 															</p>
-															<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
-																<a
-																	className="text-decoration-none"
-																	target="_blank"
-																	href={
-																		p.liveServersite
-																	}
-																	rel="noreferrer">
-																	Live
-																	Serversite
-																</a>
-															</p>
-															<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
-																<a
-																	className="text-decoration-none"
-																	target="_blank"
-																	href={
-																		p.liveServersiteRepo
-																	}
-																	rel="noreferrer">
-																	LiveServer
-																	Site Repo
-																</a>
-															</p>
+															{p.liveServersite && (
+																<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
+																	<a
+																		className="text-decoration-none"
+																		target="_blank"
+																		href={
+																			p.liveServersite
+																		}
+																		rel="noreferrer">
+																		&& (
+																		Live
+																		Serversite)
+																	</a>
+																</p>
+															)}
+															{p.liveServersiteRepo && (
+																<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
+																	<a
+																		className="text-decoration-none"
+																		target="_blank"
+																		href={
+																			p.liveServersiteRepo
+																		}
+																		rel="noreferrer">
+																		LiveServer
+																		Site
+																		Repo
+																	</a>
+																</p>
+															)}
 														</div>
 													</div>
 													<div className="p-4 md:w-1/3 flex">
