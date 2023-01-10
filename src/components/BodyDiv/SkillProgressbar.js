@@ -97,28 +97,28 @@ function StripedExample() {
 						<div className="border p-2 m-2 rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md ">
 							<div className=" p-2 m-2 rounded-lg ">
 								{" "}
-								<h4 className="text-strong text-bold  ">
+								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded   d-block text-left ">
 									{" "}
 									Expertise:
 								</h4>
-								<p>
+								<p className="p-2 text-lg">
 									JavaScript, ES6, Rest API, ReactJs, React
 									Router, React Hook, Html5, CSS3, CSS,
 									TailwindCss(DaisyUi and familiar with
 									Headless ) Bootstrap-5, Npm Packages,
 								</p>
-								<h4 className="text-strong text-bold  ">
+								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded d-block text-left ">
 									Comfortable:
 								</h4>
-								<p>
+								<p className="p-2 text-lg">
 									Node.js, MongoDb, Firebase, Material UI,
 									ExpressJs, Redux,
 									Next.Js,Typescript,Prticle.js
 								</p>
-								<h4 className="text-strong text-bold  ">
+								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded  d-block text-left ">
 									Familiar:
 								</h4>
-								<p>
+								<p className="p-2 text-lg">
 									Node Mailer Tools: Github, VS Code ,
 									Brackets, Chrome Dev Tools, Heroku, Netlify,
 									Postman, Photoshop, Figma,Illustrator etc.
@@ -126,24 +126,26 @@ function StripedExample() {
 							</div>
 						</div>
 						<div className="border p-4 m-2 rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md">
-							<h4 className="text-strong text-bold  ">
+							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Front end:
 							</h4>
-							<p>
+							<p className="p-2 text-lg">
 								JavaScript, TypeScript, React, Redux,
 								Redux-Thunk/Saga, HTML5, CSS3, Styled
 								components, SCSS, .
 							</p>
-							<h4 className="text-strong text-bold  ">
+							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Back end:
 							</h4>
-							<p className="">
+							<p className="p-2 text-lg">
 								Node.js, Express.js, MongoDB, Mongoose,
 								Nodemailer, Node-Geocoder, Stripe, Paypal API,
 								SSL commerce,{" "}
 							</p>
-							<h4 className="text-strong text-bold  ">DevOps:</h4>
-							<p className=" ">
+							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
+								DevOps:
+							</h4>
+							<p className="p-2 text-lg ">
 								Git, Github, React Dev Tools, Redux Dev tools,
 								Tools: Github, VS Code , Brackets, Chrome Dev
 								Tools, Heroku, Netlify, Postman, Photoshop,
