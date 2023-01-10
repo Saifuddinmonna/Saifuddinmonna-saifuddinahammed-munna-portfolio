@@ -161,7 +161,7 @@ const PortfolioLayout = () => {
 													<div className="p-4 md:w-1/3 flex">
 														<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-lg title-font font-medium mb-2">
+															<h2 className="text-gray-900 text-2xl  font-medium mb-2">
 																Used
 																Technologies
 															</h2>
@@ -189,7 +189,7 @@ const PortfolioLayout = () => {
 															</svg>
 														</div>
 														<div className="flex-grow pl-6">
-															<h2 className="text-gray-900 text-lg title-font font-medium mb-2">
+															<h2 className="text-gray-900 text-2xl  font-medium mb-2">
 																Overview
 															</h2>
 															{showMore ? (
@@ -243,7 +243,7 @@ const PortfolioLayout = () => {
 															)}
 
 															<button
-																className="btn btn-danger"
+																className="btn btn-danger d flex"
 																onClick={() =>
 																	setShowMore(
 																		!showMore,
@@ -260,7 +260,7 @@ const PortfolioLayout = () => {
 																	strokeWidth={
 																		2
 																	}
-																	className="w-4 h-4 ml-2"
+																	className="w-4 h-4 ml-2 d-inline-block"
 																	viewBox="0 0 24 24">
 																	<path d="M5 12h14M12 5l7 7-7 7" />
 																</svg>
