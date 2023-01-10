@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
-import { useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
 
@@ -10,13 +10,14 @@ import portfoliosName from "../portfolios.json";
 
 const PortfolioLayout = () => {
 	const websiteName = useParams();
-	const props = "dtaman";
 	const [datasName, setDatasName] = useState(portfoliosName);
 	const [datas, setDatas] = useState([]);
 	const [datas2, setDatas2] = useState();
 	const [data, setData] = useState();
 	const [imagesState, setImagesState] = useState([]);
 	const [showMore, setShowMore] = useState(false);
+	const datas3 = useLoaderData();
+
 	// const [1, 2, 3, 4, 5]=[datas];
 
 	const Datafuction = () => {
@@ -24,7 +25,7 @@ const PortfolioLayout = () => {
 			setData(p);
 		}
 	};
-	
+
 	const dataFilter = (props) => {
 		// const { name } = name;
 		const newData = datas.filter((data) => data.name == props);
@@ -35,12 +36,10 @@ const PortfolioLayout = () => {
 	useEffect(() => {
 		dataFilter(websiteName.UsedPhone);
 		console.log(websiteName.UsedPhone);
-	}, [websiteName]);
-
+	}, []);
 	useEffect(() => {
 		Datafuction();
 	}, []);
-	
 
 	useEffect(() => {
 		fetch("portfolios.json")
@@ -52,11 +51,12 @@ const PortfolioLayout = () => {
 	console.log(data);
 	console.log(data?.name);
 	console.log(imagesState);
+	console.log(datas3);
 
-useEffect(() => {
-	setDatas2(!true);
-},[]);
-
+	useEffect(() => {
+		setDatas2(!true);
+	}, []);
+	
 	if (!datas2) {
 		return (
 			<div>

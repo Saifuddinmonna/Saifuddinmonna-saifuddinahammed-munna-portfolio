@@ -43,12 +43,15 @@ function App() {
 			],
 		},
 		{
-			path: "/portfoliolayout",
+			path: "/portfoliolayout" ,
 			element: <PortfolioLayout></PortfolioLayout>,
 		},
 		{
 			path: "/portfoliolayout/:UsedPhone",
 			element: <PortfolioLayout></PortfolioLayout>,
+			loader: () => {
+			return	fetch("portfolios.json");
+			}
 		},
 	]);
 	return (
