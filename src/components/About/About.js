@@ -27,8 +27,8 @@ const About = () => {
 								and bud a optimize npm package for for react
 								that is my vision.
 							</p>
-							<button className="btn btn-primary">
-								Get Started
+							<button className="btn btn-primary px-4 bg-gradient-to-r from-sky-400 to-blue-500">
+								Get Started with me
 							</button>
 						</div>
 					</div>

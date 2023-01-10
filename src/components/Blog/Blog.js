@@ -10,7 +10,9 @@ const Blog = () => {
 						<h1 className="text-5xl font-bold">Comming Soon...</h1>
 						<p className="py-6"></p>
 						<Link to="/#">
-							<button className="btn btn-primary">Home</button>
+							<button className="btn px-5 btn-primary bg-gradient-to-r from-sky-400 to-blue-500">
+								Home
+							</button>
 						</Link>
 					</div>
 				</div>
