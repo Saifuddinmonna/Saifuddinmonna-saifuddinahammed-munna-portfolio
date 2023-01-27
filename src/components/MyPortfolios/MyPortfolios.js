@@ -60,7 +60,7 @@ const MyPortfolios = () => {
 					<div className="m-3 p-3 border rounded-2xl">
 						<h1>My Portfolios</h1>
 					</div>
-					<div className="grid grid-cols-3">
+					<div className="grid md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 						{/* {paramData && <Outlet></Outlet>} */}
 						{
 							// !paramData &&
@@ -145,7 +145,9 @@ const MyPortfolios = () => {
 												<div key={ind} className="">
 													<div className=" relative border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
 														<Link
-															to={"/portfoliolayout"}>
+															to={
+																"/portfoliolayout"
+															}>
 															<button className="btn btn-sm absolute bottom-0 left-0 btn-warning">
 																Show All
 															</button>

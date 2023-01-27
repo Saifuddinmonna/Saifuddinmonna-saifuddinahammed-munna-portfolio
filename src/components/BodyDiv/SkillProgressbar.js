@@ -13,11 +13,13 @@ function StripedExample() {
 					<h1>My Professional Skills</h1>
 				</div>
 
-				<div className=" grid grid-cols-1  lg:grid-cols-2 md:grid-cols-2  lg:grid-cols-1 justify-center gap-3">
+				<div className=" grid grid-cols-1  lg:grid-cols-2 md:grid-cols-1  lg:grid-cols-1 justify-center gap-3">
 					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-3 m-2 rounded-lg">
 						<div class=" flex flex-col space-y-3">
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									HTML
 								</label>
 								<div
@@ -26,7 +28,9 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									CSS
 								</label>
 								<div
@@ -34,7 +38,9 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									Bootstrap
 								</label>
 								<div
@@ -42,7 +48,9 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									TailwindCSS
 								</label>
 								<div
@@ -51,7 +59,9 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									JavaScript
 								</label>
 								<div
@@ -59,7 +69,9 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									React
 								</label>
 								<div
@@ -68,7 +80,9 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									NextJs
 								</label>
 								<div
@@ -77,7 +91,9 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									NodeJs
 								</label>
 								<div
@@ -85,7 +101,9 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-xl text-bold  mb-1" for="story">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
 									MongoDb
 								</label>
 								<div
@@ -103,10 +121,9 @@ function StripedExample() {
 							<div className=" p-2 m-2 rounded-lg ">
 								{" "}
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded   d-block text-left ">
-									
 									Expertise:
 								</h4>
-								<p className="p-2 text-lg grid grid-cols-3">
+								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
 									{"JavaScript, ES6, Rest API, ReactJs, ReactRouter, React Hook, Html5, CSS3, CSS,TailwindCss(DaisyUi and familiar withHeadless ) Bootstrap-5, Npm Packages,"
 										.split(",")
 										.map((tp) => {
@@ -122,7 +139,7 @@ function StripedExample() {
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded d-block text-left ">
 									Comfortable:
 								</h4>
-								<p className="p-2 text-lg grid grid-cols-3">
+								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
 									{"Node.js, MongoDb, Firebase, Material UI,ExpressJs, Redux,Next.Js,Typescript,Prticle.js"
 										.split(",")
 										.map((tp) => {
@@ -138,7 +155,7 @@ function StripedExample() {
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded  d-block text-left ">
 									Familiar:
 								</h4>
-								<p className="grid grid-cols-3">
+								<p className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
 									{similararray.map((tp) => {
 										return (
 											<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
@@ -155,7 +172,7 @@ function StripedExample() {
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Front end:
 							</h4>
-							<p className="p-2 text-lg grid grid-cols-3">
+							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
 								{"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS,"
 									.split(",")
 									.map((tp) => {
@@ -171,8 +188,10 @@ function StripedExample() {
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Back end:
 							</h4>
-							<p className="p-2 text-lg grid grid-cols-3">
-								{"Node.js, Express.js, MongoDB, Mongoose,Nodemailer, Node-Geocoder, Stripe, Paypal API,SSL commerce,".split(",").map((tp) => {
+							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+								{"Node.js, Express.js, MongoDB, Mongoose,Nodemailer, Node-Geocoder, Stripe, Paypal API,SSL commerce,"
+									.split(",")
+									.map((tp) => {
 										return (
 											<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
 												{" "}
@@ -185,7 +204,7 @@ function StripedExample() {
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								DevOps:
 							</h4>
-							<p className="p-2 text-lg grid grid-cols-3 ">
+							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 ">
 								{"Git, Github, React Dev Tools, Redux Dev tools,Tools: Github, VS Code , Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Figma,Illustrator etc."
 									.split(",")
 									.map((tp) => {
