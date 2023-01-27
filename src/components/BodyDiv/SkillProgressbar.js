@@ -112,13 +112,13 @@ function StripedExample() {
 							</div>
 						</div>
 					</div>
-					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid  text-justify pt-8 p-2 m-2 rounded-lg">
+					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid  text-justify pt-8  rounded-lg">
 						<h1 className="m-3 p-3 border rounded-full text-center text-strong">
 							{" "}
 							Skills' Overview{" "}
 						</h1>
-						<div className="border p-2 m-2 rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md ">
-							<div className=" p-2 m-2 rounded-lg ">
+						<div className="border  rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md ">
+							<div className="  rounded-lg ">
 								{" "}
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded   d-block text-left ">
 									Expertise:
@@ -168,7 +168,7 @@ function StripedExample() {
 								</p>
 							</div>
 						</div>
-						<div className="border p-4 m-2 rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md">
+						<div className="border  rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md">
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Front end:
 							</h4>
