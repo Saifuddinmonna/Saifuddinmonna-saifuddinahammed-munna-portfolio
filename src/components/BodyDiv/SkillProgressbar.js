@@ -17,7 +17,7 @@ function StripedExample() {
 					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-3 m-2 rounded-lg">
 						<div class=" flex flex-col space-y-3">
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									HTML
 								</label>
 								<div
@@ -26,7 +26,7 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									CSS
 								</label>
 								<div
@@ -34,7 +34,7 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									Bootstrap
 								</label>
 								<div
@@ -42,7 +42,7 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									TailwindCSS
 								</label>
 								<div
@@ -51,7 +51,7 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									JavaScript
 								</label>
 								<div
@@ -59,7 +59,7 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									React
 								</label>
 								<div
@@ -68,7 +68,7 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									NextJs
 								</label>
 								<div
@@ -77,7 +77,7 @@ function StripedExample() {
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									NodeJs
 								</label>
 								<div
@@ -85,7 +85,7 @@ function StripedExample() {
 									class="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
-								<label class="block text-sm  mb-1" for="story">
+								<label class="block text-xl text-bold  mb-1" for="story">
 									MongoDb
 								</label>
 								<div
@@ -129,7 +129,7 @@ function StripedExample() {
 											return (
 												<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
 													{" "}
-													<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+													<GrUserExpert className="d-inline-block text-blue-600 text-lg m-1 text-deep-orange-700 "></GrUserExpert>{" "}
 													{tp}
 												</div>
 											);

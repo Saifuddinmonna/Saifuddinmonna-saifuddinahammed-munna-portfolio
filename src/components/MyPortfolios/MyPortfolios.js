@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
-import { Outlet, useLoaderData, useParams } from "react-router-dom";
+import { Link, Outlet, useLoaderData, useParams } from "react-router-dom";
 import NavbarPage2 from "../NavbarPage/NavbarPage2";
 import portfoliosName from "./portfolios.json";
 
@@ -57,7 +57,10 @@ const MyPortfolios = () => {
 		<div>
 			<div className="rounded-2xl border p-2  text-gray-600 body-font">
 				<div className="">
-					<div className="grid grid-cols-2">
+					<div className="m-3 p-3 border rounded-2xl">
+						<h1>My Portfolios</h1>
+					</div>
+					<div className="grid grid-cols-3">
 						{/* {paramData && <Outlet></Outlet>} */}
 						{
 							// !paramData &&
@@ -65,17 +68,17 @@ const MyPortfolios = () => {
 								<div
 									key={ind}
 									className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
-									<section className="text-gray-600 body-font col-span-2">
-										<div className="container p-3 m-3 mx-auto">
-											<h1 className="sm:text-2xl flex gap-2 text-1xl font-medium title-font text-center text-gray-900 mb-20">
+									<section className="text-gray-600 body-font">
+										<div className=" p-3 m-3 mx-auto text-center">
+											<h1 className="sm:text-2xl flex gap-2 border justify-center rounded-full p-3 m-3   text-1xl   text-center text-gray-900 ">
 												{p.category} : {p.name}
 											</h1>
 											<div className="">
-												<div className="">
-													<h2 className="text-gray-900  text-left text-2xl text-strong title-font font-medium mb-2">
+												<div className="text-center">
+													<h2 className="text-gray-900  text-center text-2xl text-strong title-font font-medium mb-2">
 														Website Link
 													</h2>
-													<div className="flex gap-2">
+													<div className="flex gap-2 justify-center text-center">
 														<p className="text-left btn btn-warning  btn-sm d-block  text-white text-xl capitalize  ">
 															<a
 																className="text-decoration-none"
@@ -100,7 +103,7 @@ const MyPortfolios = () => {
 															</a>
 														</p>
 													</div>
-													<div className="flex gap-2">
+													<div className="flex gap-2 justify-center">
 														{p.liveServersite && (
 															<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
 																<a
@@ -140,7 +143,14 @@ const MyPortfolios = () => {
 											?.slice(0, 1)
 											.map((imgs, ind) => (
 												<div key={ind} className="">
-													<div className=" border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+													<div className=" relative border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+														<Link
+															to={"/portfoliolayout"}>
+															<button className="btn btn-sm absolute bottom-0 left-0 btn-warning">
+																Show All
+															</button>
+														</Link>
+
 														<PhotoProvider>
 															<PhotoView
 																src={`images/${imgs}`}>
