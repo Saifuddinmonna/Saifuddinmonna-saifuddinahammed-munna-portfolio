@@ -1,6 +1,11 @@
 import ProgressBar from "react-bootstrap/ProgressBar";
+import { IconName, GrUserExpert } from "react-icons/gr";
 
 function StripedExample() {
+	const similar =
+		"Node Mailer Tools: Github, VS-Code,Brackets, Chrome Dev Tools, Heroku, Netlify,Postman, Photoshop, Figma,Illustrator etc.";
+	const similararray = similar.split(",");
+	console.log(similararray);
 	return (
 		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-50 duration-300">
 			<div className=" m-3 mt-10 p-3 border rounded-xl  shadow-xl">
@@ -98,30 +103,51 @@ function StripedExample() {
 							<div className=" p-2 m-2 rounded-lg ">
 								{" "}
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded   d-block text-left ">
-									{" "}
+									
 									Expertise:
 								</h4>
-								<p className="p-2 text-lg">
-									JavaScript, ES6, Rest API, ReactJs, React
-									Router, React Hook, Html5, CSS3, CSS,
-									TailwindCss(DaisyUi and familiar with
-									Headless ) Bootstrap-5, Npm Packages,
+								<p className="p-2 text-lg grid grid-cols-3">
+									{"JavaScript, ES6, Rest API, ReactJs, ReactRouter, React Hook, Html5, CSS3, CSS,TailwindCss(DaisyUi and familiar withHeadless ) Bootstrap-5, Npm Packages,"
+										.split(",")
+										.map((tp) => {
+											return (
+												<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
+													{" "}
+													<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+													{tp}
+												</div>
+											);
+										})}
 								</p>
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded d-block text-left ">
 									Comfortable:
 								</h4>
-								<p className="p-2 text-lg">
-									Node.js, MongoDb, Firebase, Material UI,
-									ExpressJs, Redux,
-									Next.Js,Typescript,Prticle.js
+								<p className="p-2 text-lg grid grid-cols-3">
+									{"Node.js, MongoDb, Firebase, Material UI,ExpressJs, Redux,Next.Js,Typescript,Prticle.js"
+										.split(",")
+										.map((tp) => {
+											return (
+												<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
+													{" "}
+													<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+													{tp}
+												</div>
+											);
+										})}
 								</p>
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded  d-block text-left ">
 									Familiar:
 								</h4>
-								<p className="p-2 text-lg">
-									Node Mailer Tools: Github, VS Code ,
-									Brackets, Chrome Dev Tools, Heroku, Netlify,
-									Postman, Photoshop, Figma,Illustrator etc.
+								<p className="grid grid-cols-3">
+									{similararray.map((tp) => {
+										return (
+											<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
+												{" "}
+												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+												{tp}
+											</div>
+										);
+									})}
 								</p>
 							</div>
 						</div>
@@ -129,27 +155,48 @@ function StripedExample() {
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Front end:
 							</h4>
-							<p className="p-2 text-lg">
-								JavaScript, TypeScript, React, Redux,
-								Redux-Thunk/Saga, HTML5, CSS3, Styled
-								components, SCSS, .
+							<p className="p-2 text-lg grid grid-cols-3">
+								{"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS,"
+									.split(",")
+									.map((tp) => {
+										return (
+											<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
+												{" "}
+												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+												{tp}
+											</div>
+										);
+									})}
 							</p>
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								Back end:
 							</h4>
-							<p className="p-2 text-lg">
-								Node.js, Express.js, MongoDB, Mongoose,
-								Nodemailer, Node-Geocoder, Stripe, Paypal API,
-								SSL commerce,{" "}
+							<p className="p-2 text-lg grid grid-cols-3">
+								{"Node.js, Express.js, MongoDB, Mongoose,Nodemailer, Node-Geocoder, Stripe, Paypal API,SSL commerce,".split(",").map((tp) => {
+										return (
+											<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
+												{" "}
+												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+												{tp}
+											</div>
+										);
+									})}
 							</p>
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
 								DevOps:
 							</h4>
-							<p className="p-2 text-lg ">
-								Git, Github, React Dev Tools, Redux Dev tools,
-								Tools: Github, VS Code , Brackets, Chrome Dev
-								Tools, Heroku, Netlify, Postman, Photoshop,
-								Figma,Illustrator etc. .{" "}
+							<p className="p-2 text-lg grid grid-cols-3 ">
+								{"Git, Github, React Dev Tools, Redux Dev tools,Tools: Github, VS Code , Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Figma,Illustrator etc."
+									.split(",")
+									.map((tp) => {
+										return (
+											<div className="text-primary-dark border rounded-full p-2 m-2 shadow  text-1xl">
+												{" "}
+												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
+												{tp}
+											</div>
+										);
+									})}
 							</p>
 						</div>
 					</div>
