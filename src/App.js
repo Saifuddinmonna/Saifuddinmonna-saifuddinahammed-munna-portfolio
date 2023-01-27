@@ -12,6 +12,15 @@ import NavbarPage2 from "./components/NavbarPage/NavbarPage2";
 import MyPortfolios from "./components/MyPortfolios/MyPortfolios";
 import Blog from "./components/Blog/Blog";
 import PortfolioLayout from "./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout";
+import {
+	useQuery,
+	useMutation,
+	useQueryClient,
+	QueryClient,
+	QueryClientProvider,
+} from "@tanstack/react-query";
+import MyportfolioImage from "./components/MyPortfolios/MyportfolioImage";
+const queryClient = new QueryClient();
 
 function App() {
 	const router = createBrowserRouter([
@@ -43,21 +52,29 @@ function App() {
 			],
 		},
 		{
-			path:  "/portfoliolayout" ,
+			path: "/portfoliolayout",
 			element: <PortfolioLayout></PortfolioLayout>,
-		},
-		{
-			path: "/portfoliolayout/:UsedPhone",
-			element: <PortfolioLayout></PortfolioLayout>,
-			loader: () => {
-				return fetch("portfolios.json");
-			},
+			children: [
+				{
+					path: "/portfoliolayout/:UsedPhone",
+					element: (
+						
+							<MyportfolioImage></MyportfolioImage>
+						
+					),
+					loader: () => {
+						return fetch("portfolios.json");
+					},
+				},
+			],
 		},
 	]);
 	return (
-		<div className="App max-w-[1440px] mx-auto">
-			<RouterProvider router={router}></RouterProvider>
-		</div>
+		<QueryClientProvider client={queryClient}>
+			<div className="App max-w-[1440px] mx-auto">
+				<RouterProvider router={router}></RouterProvider>
+			</div>
+		</QueryClientProvider>
 	);
 }
 

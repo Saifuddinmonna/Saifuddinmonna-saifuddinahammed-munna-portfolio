@@ -1,8 +1,8 @@
 [
 	{
 		"id": 1,
-		"category": "Used Product Selling and Buying Project ",
-		"name": " UsedPhone ",
+		"category": "Used Product Selling and Buying Project",
+		"name": "UsedPhone",
 		"liveWebsite": "https://bdusedphone.web.app/ ",
 		"liveWebsiteRepo": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-clients-side-Saifuddinmonna ",
 		"liveServersite": "https://usedphonesserver-saifuddinmonna.vercel.app/",
@@ -22,8 +22,8 @@
 	},
 	{
 		"id": 2,
-		"category": " Service Selling Project",
-		"name": "RepairService ",
+		"category": "Service Selling Project",
+		"name": "RepairService",
 		"liveWebsite": "https://repairservice-ed4d3.web.app/services ",
 		"liveWebsiteRepo": "https://github.com/programming-hero-web-course1/b610-learning-platform-client-side-Saifuddinmonna ",
 		"liveServersite": "https://server-for-assignment-10.vercel.app/",
@@ -41,8 +41,8 @@
 	},
 	{
 		"id": 3,
-		"category": "  Educational Project",
-		"name": "EnglishLearning  ",
+		"category": "Educational Project",
+		"name": "EnglishLearning",
 		"liveWebsite": "https://english-learning-bdbb2.firebaseapp.com/ ",
 		"liveWebsiteRepo": " https://github.com/programming-hero-web-course1/b610-learning-platform-client-side-Saifuddinmonna",
 		"liveServersite": "https://server-for-assignment-10.vercel.app/",
@@ -64,7 +64,7 @@
 	{
 		"id": 4,
 		"category": "Examination Taker Project",
-		"name": "GoExam ",
+		"name": "GoExam",
 		"liveWebsite": " ",
 		"liveWebsiteRepo": " ",
 		"liveServersite": "",
@@ -79,7 +79,7 @@
 	},
 	{
 		"id": 5,
-		"category": "Educational Project ",
+		"category": "Educational Project",
 		"name": "englishclub",
 		"liveWebsite": "https://englishclub.netlify.app/",
 		"liveWebsiteRepo": " ",
