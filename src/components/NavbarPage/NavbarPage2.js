@@ -12,13 +12,35 @@ function NavbarPage2() {
 
 	return (
 		<header className="sticky w-full  ">
-			<h3>LOGO</h3>
+			<h3 className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white">
+				LOGO
+			</h3>
 			<nav className="" ref={navRef}>
-				<NavLink to="/#">Home</NavLink>
-				<NavLink to="/portfoliolayout">My work</NavLink>
-				<NavLink to="/blog">Blog</NavLink>
-				<NavLink to="/about">About me</NavLink>
-				<NavLink to="/contractme">Contract me</NavLink>
+				<NavLink
+					className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white"
+					to="/#">
+					Home
+				</NavLink>
+				<NavLink
+					className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white"
+					to="/portfoliolayout">
+					My work
+				</NavLink>
+				<NavLink
+					className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white"
+					to="/blog">
+					Blog
+				</NavLink>
+				<NavLink
+					className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white"
+					to="/about">
+					About me
+				</NavLink>
+				<NavLink
+					className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white"
+					to="/contractme">
+					Contract me
+				</NavLink>
 				{/* <NavLink to="/#/ContractMe">Contract me</NavLink> */}
 				<button className="nav-btn nav-close-btn" onClick={showNavbar}>
 					<FaTimes />
