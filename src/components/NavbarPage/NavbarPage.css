@@ -69,8 +69,8 @@ nav {
 		position: fixed;
 		top: 10px;
 		left: 0;
-		height: 50%;
-		width: 30%;
+		height: 30%;
+		width: 25%;
 		min-width: 200px;
 		min-height: 300px;
 		display: flex;

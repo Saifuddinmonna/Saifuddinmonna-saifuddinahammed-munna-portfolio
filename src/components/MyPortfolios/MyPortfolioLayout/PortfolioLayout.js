@@ -96,7 +96,6 @@ const PortfolioLayout = () => {
 											</h1>
 											<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
 												<div className="p-4 md:w-1/2 lg:w-1/3 flex">
-													<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
 													<div className="flex-grow pl-6">
 														<h2 className="text-gray-900  text-left text-2xl text-strong title-font font-medium mb-2">
 															Website Link
@@ -213,27 +212,32 @@ const PortfolioLayout = () => {
 															</>
 														)}
 
-														<button
-															className="btn btn-danger d flex"
-															onClick={() =>
-																setShowMore(
-																	!showMore,
-																)
-															}>
-															{showMore
-																? "Show less"
-																: "Show more"}
-															<svg
-																fill="none"
-																stroke="currentColor"
-																strokeLinecap="round"
-																strokeLinejoin="round"
-																strokeWidth={2}
-																className="w-4 h-4 ml-2 d-inline-block"
-																viewBox="0 0 24 24">
-																<path d="M5 12h14M12 5l7 7-7 7" />
-															</svg>
-														</button>
+														{p.overview.length >
+															2 && (
+															<button
+																className="btn btn-danger d flex"
+																onClick={() =>
+																	setShowMore(
+																		!showMore,
+																	)
+																}>
+																{showMore
+																	? "Show less"
+																	: "Show more"}
+																<svg
+																	fill="none"
+																	stroke="currentColor"
+																	strokeLinecap="round"
+																	strokeLinejoin="round"
+																	strokeWidth={
+																		2
+																	}
+																	className="w-4 h-4 ml-2 d-inline-block"
+																	viewBox="0 0 24 24">
+																	<path d="M5 12h14M12 5l7 7-7 7" />
+																</svg>
+															</button>
+														)}
 													</div>
 												</div>
 											</div>

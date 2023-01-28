@@ -32,7 +32,7 @@ const ContractMe = () => {
 					
 					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
 						Contract
-						<span class="text-blue-500">Me...</span>
+						<span class="text-blue-500">{" "}Me...</span>
 					</h1>
 				</div>
 
@@ -45,19 +45,20 @@ const ContractMe = () => {
 							Your Name
 						</label>
 						<input
+							className="rounded-xl p-2"
 							class="form-input"
 							placeholder="Type  Your Name"
 							id="name"
+							name="user_name"
 						/>
-
-						{/* <label>Name</label>
-					<input type="text" name="user_name" /> */}
 					</div>
+
 					<div className="flex m-2 flex-col">
 						<label class="block text-sm mb-1" for="name">
 							Phone Number
 						</label>
 						<input
+							className="rounded-xl"
 							type="number"
 							class="form-input"
 							placeholder="Type Your Phone  Number"
@@ -70,6 +71,7 @@ const ContractMe = () => {
 							Your Email
 						</label>
 						<input
+							className="rounded-xl"
 							type="email"
 							name="user_email"
 							class="form-input"
@@ -82,6 +84,7 @@ const ContractMe = () => {
 							Your Message
 						</label>
 						<textarea
+							className="rounded-2xl"
 							name="message"
 							class="form-input"
 							id="story"

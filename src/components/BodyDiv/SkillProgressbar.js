@@ -11,7 +11,7 @@ function StripedExample() {
 			<div className=" m-3 mt-10 p-3 border rounded-xl  shadow-xl">
 				<div className="m-3 p-3 border rounded-xl">
 					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
-						My Professional
+						My Professional{" "}
 						<span class="text-blue-500"> Skills...</span>
 					</h1>
 				</div>

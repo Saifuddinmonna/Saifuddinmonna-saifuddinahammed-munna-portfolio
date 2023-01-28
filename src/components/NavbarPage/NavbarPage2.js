@@ -11,7 +11,7 @@ function NavbarPage2() {
 	};
 
 	return (
-		<header className="sticky w-full  ">
+		<header className="sticky w-full  top-0 left-0 right-0 ">
 			<h3 className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl dark:text-white">
 				LOGO
 			</h3>
