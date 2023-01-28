@@ -58,7 +58,9 @@ const MyPortfolios = () => {
 			<div className="rounded-2xl border p-2  text-gray-600 body-font">
 				<div className="">
 					<div className="m-3 p-3 border rounded-2xl">
-						<h1>My Portfolios</h1>
+						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+							My <span class="text-blue-500"> Portfolios...</span>
+						</h1>
 					</div>
 					<div className="grid md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 						{/* {paramData && <Outlet></Outlet>} */}
@@ -70,8 +72,11 @@ const MyPortfolios = () => {
 									className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 									<section className="text-gray-600 body-font">
 										<div className=" p-3 m-3 mx-auto text-center">
-											<h1 className="sm:text-2xl flex gap-2 border justify-center rounded-full p-3 m-3   text-1xl   text-center text-gray-900 ">
-												{p.category} : {p.name}
+											<h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white">
+												{p.category} :{" "}
+												<span class="text-blue-500">
+													{p.name}
+												</span>
 											</h1>
 											<div className="">
 												<div className="text-center">

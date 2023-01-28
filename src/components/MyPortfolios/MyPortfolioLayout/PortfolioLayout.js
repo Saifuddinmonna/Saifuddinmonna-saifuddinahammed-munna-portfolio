@@ -88,10 +88,12 @@ const PortfolioLayout = () => {
 									className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 									<section className="text-gray-600 body-font">
 										<div className="container p-3 m-3 mx-auto">
-											<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
-												{p.category}
-												<br className="hidden sm:block" />
-												{p.name}
+											
+											<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+												{p.category}{" "}: {" "}
+												<span class="text-blue-500">
+													{p.name}
+												</span>
 											</h1>
 											<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
 												<div className="p-4 md:w-1/2 lg:w-1/3 flex">

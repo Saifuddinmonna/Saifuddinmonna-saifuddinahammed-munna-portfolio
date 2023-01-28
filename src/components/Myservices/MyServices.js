@@ -8,13 +8,16 @@ const MyServices = () => {
 		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
 			<div className="m-2 p-3 border rounded ">
 				{" "}
-				<h2>Services I Provides</h2>
+				
+				<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+					Services I <span class="text-blue-500"> Provides...</span>
+				</h1>
 				<section class="bg-white dark:bg-gray-900">
 					<div class="container px-6 py-12 mx-auto">
 						<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
 							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
 								<CgWebsite className="text-4xl"></CgWebsite>
-								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+								<h1 class=" mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-800 dark:text-white">
 									Full website creation
 								</h1>
 								<p class="mt-2 text-gray-500 dark:text-gray-400">
@@ -26,7 +29,7 @@ const MyServices = () => {
 							</div>
 							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
 								<GiAutoRepair className="text-4xl"></GiAutoRepair>
-								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-800 dark:text-white">
 									Fixing problems
 								</h1>
 								<p class="mt-2 text-gray-500 dark:text-gray-400">
@@ -38,7 +41,7 @@ const MyServices = () => {
 							</div>
 							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
 								<RiSecurePaymentFill className="text-4xl"></RiSecurePaymentFill>
-								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-800 dark:text-white">
 									Online store & shopping
 								</h1>
 								<p class="mt-2 text-gray-500 dark:text-gray-400">
@@ -67,7 +70,7 @@ const MyServices = () => {
 									/>
 								</svg>
 
-								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-800 dark:text-white">
 									Default Taiwindcss Config
 								</h1>
 
@@ -98,7 +101,7 @@ const MyServices = () => {
 									/>
 								</svg>
 
-								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-800 dark:text-white">
 									Fully Responsive Components
 								</h1>
 
@@ -149,7 +152,7 @@ const MyServices = () => {
 									</defs>
 								</svg>
 
-								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-800 dark:text-white">
 									Maintenance & Optimized
 								</h1>
 
@@ -167,8 +170,8 @@ const MyServices = () => {
 				</section>
 				<section class="bg-white dark:bg-gray-900">
 					<div class="container px-6 py-10 mx-auto">
-						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
-							My Service {" "}
+						<h1 class="text-3xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+							My Service{" "}
 							<span class="text-blue-500"> Qualilties...</span>
 						</h1>
 
@@ -193,7 +196,7 @@ const MyServices = () => {
 									</svg>
 								</span>
 
-								<h1 class="text-2xl font-semibold text-gray-700 capitalize dark:text-white">
+								<h1 class="text-2xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-700 capitalize dark:text-white">
 									Copy & paste components
 								</h1>
 
@@ -241,7 +244,7 @@ const MyServices = () => {
 									</svg>
 								</span>
 
-								<h1 class="text-2xl font-semibold text-gray-700 capitalize dark:text-white">
+								<h1 class="text-2xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-700 capitalize dark:text-white">
 									Zero Configrations
 								</h1>
 
@@ -290,7 +293,7 @@ const MyServices = () => {
 									</svg>
 								</span>
 
-								<h1 class="text-2xl font-semibold text-gray-700 capitalize dark:text-white">
+								<h1 class="text-2xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white text-gray-700 capitalize dark:text-white">
 									Simple & clean designs
 								</h1>
 

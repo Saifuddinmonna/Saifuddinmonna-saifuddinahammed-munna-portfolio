@@ -29,7 +29,11 @@ const ContractMe = () => {
 		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-100 duration-300">
 			<div className=" p-5 shadow border rounded-lg  m-8">
 				<div className="border rounded-2xl m-2 ">
-					<h1>Contract Me</h1>
+					
+					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+						Contract
+						<span class="text-blue-500">Me...</span>
+					</h1>
 				</div>
 
 				<form
