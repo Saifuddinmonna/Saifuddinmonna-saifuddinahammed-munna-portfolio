@@ -215,7 +215,7 @@ const PortfolioLayout = () => {
 														{p.overview.length >
 															2 && (
 															<button
-																className="btn btn-danger d flex"
+																className="btn btn-danger btn-xs d flex"
 																onClick={() =>
 																	setShowMore(
 																		!showMore,
