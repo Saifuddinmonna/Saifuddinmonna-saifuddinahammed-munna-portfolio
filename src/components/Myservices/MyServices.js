@@ -1,4 +1,7 @@
 import React from "react";
+import { IconName, CgWebsite } from "react-icons/cg";
+import { GiAutoRepair } from "react-icons/gi";
+import { RiSecurePaymentFill } from "react-icons/ri";
 
 const MyServices = () => {
 	return (
@@ -9,6 +12,42 @@ const MyServices = () => {
 				<section class="bg-white dark:bg-gray-900">
 					<div class="container px-6 py-12 mx-auto">
 						<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
+								<CgWebsite className="text-4xl"></CgWebsite>
+								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+									Full website creation
+								</h1>
+								<p class="mt-2 text-gray-500 dark:text-gray-400">
+									I can create any type of website for your
+									business, portfolio, company, e-commerce
+									store, blog etc. I provide unique, clean &
+									awesome graphical design interface.
+								</p>
+							</div>
+							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
+								<GiAutoRepair className="text-4xl"></GiAutoRepair>
+								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+									Fixing problems
+								</h1>
+								<p class="mt-2 text-gray-500 dark:text-gray-400">
+									Website problem & bugs it’s a common problem
+									for every website. Don’t worry about bugs
+									and problems. I can fix any type of problems
+									& bugs for any website.
+								</p>
+							</div>
+							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
+								<RiSecurePaymentFill className="text-4xl"></RiSecurePaymentFill>
+								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+									Online store & shopping
+								</h1>
+								<p class="mt-2 text-gray-500 dark:text-gray-400">
+									I can create a fully functional online store
+									with any type of payment gateway support and
+									add shopping cart functionality into you’re
+									existing website.
+								</p>
+							</div>
 							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-300 duration-300">
 								<svg
 									class="w-8 h-8"
@@ -64,10 +103,12 @@ const MyServices = () => {
 								</h1>
 
 								<p class="mt-2 text-gray-500 dark:text-gray-400">
-									Lorem ipsum dolor sit amet, consectetur
-									adipiscing elit. Dignissim fusce tortor, ac
-									sed malesuada blandit. Et mi gravida sem
-									feugiat.
+									If you want to grow your business, you need
+									a responsive website design. I’ll provide
+									you with an responsive web design services,
+									I provide your company with a responsive and
+									attractive site that generates traffic,
+									leads, and sales.
 								</p>
 							</div>
 
@@ -109,14 +150,15 @@ const MyServices = () => {
 								</svg>
 
 								<h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
-									RTL Languages Support
+									Maintenance & Optimized
 								</h1>
 
 								<p class="mt-2 text-gray-500 dark:text-gray-400">
-									Lorem ipsum dolor sit amet, consectetur
-									adipiscing elit. Dignissim fusce tortor, ac
-									sed malesuada blandit. Et mi gravida sem
-									feugiat.
+									Slow loading website it’s the biggest
+									problem for every website. I can boost your
+									website’s speed by optimization your
+									website. And if you don’t have time to
+									maintain your website don’t worry I’m here.
 								</p>
 							</div>
 						</div>
@@ -126,8 +168,8 @@ const MyServices = () => {
 				<section class="bg-white dark:bg-gray-900">
 					<div class="container px-6 py-10 mx-auto">
 						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
-							Explore My <br /> Awesome{" "}
-							<span class="text-blue-500">Components</span>
+							My Service {" "}
+							<span class="text-blue-500"> Qualilties...</span>
 						</h1>
 
 						<div class="grid grid-cols-1 gap-8 mt-8 xl:mt-12 xl:gap-16 md:grid-cols-2 xl:grid-cols-3">
@@ -156,10 +198,11 @@ const MyServices = () => {
 								</h1>
 
 								<p class="text-gray-500 dark:text-gray-300">
-									Lorem ipsum dolor sit amet consectetur
-									adipisicing elit. Provident ab nulla quod
-									dignissimos vel non corrupti doloribus
-									voluptatum eveniet
+									I cma make clean copy and paste component
+									website to boost your website’s speedy and
+									optimization with ease and efficiency,
+									saving time and resources for more important
+									tasks.
 								</p>
 
 								<a
@@ -203,10 +246,9 @@ const MyServices = () => {
 								</h1>
 
 								<p class="text-gray-500 dark:text-gray-300">
-									Lorem ipsum dolor sit amet consectetur
-									adipisicing elit. Provident ab nulla quod
-									dignissimos vel non corrupti doloribus
-									voluptatum eveniet
+									I can make any configuration in your website
+									according to your need to build your website
+									more effective and more efficient.
 								</p>
 
 								<a
@@ -253,10 +295,16 @@ const MyServices = () => {
 								</h1>
 
 								<p class="text-gray-500 dark:text-gray-300">
-									Lorem ipsum dolor sit amet consectetur
-									adipisicing elit. Provident ab nulla quod
-									dignissimos vel non corrupti doloribus
-									voluptatum eveniet
+									LI have experience in Simple & clean designs
+									websites that are optimized for all devices
+									and browsers. My design approach is
+									user-centered, ensuring that the website is
+									easy to navigate and provides a seamless
+									user experience.
+									{/* I also have expertise in
+									creating visually appealing designs that are
+									aligned with your brand and business
+									objectives.  */}
 								</p>
 
 								<a
