@@ -10,7 +10,7 @@ function StripedExample() {
 		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-50 duration-300">
 			<div className=" m-3 mt-10 p-3 border rounded-xl  shadow-xl">
 				<div className="m-3 p-3 border rounded-xl">
-					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 						My Professional{" "}
 						<span class="text-blue-500"> Skills...</span>
 					</h1>
@@ -116,8 +116,7 @@ function StripedExample() {
 						</div>
 					</div>
 					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid  text-justify pt-8  rounded-lg">
-						
-						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 							Skills'
 							<span class="text-blue-500">Overview...</span>
 						</h1>

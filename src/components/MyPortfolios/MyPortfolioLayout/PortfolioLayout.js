@@ -88,7 +88,7 @@ const PortfolioLayout = () => {
 									className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 									<section className="text-gray-600 body-font">
 										<div className="container p-3 m-3 mx-auto">
-											<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+											<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 												{p.category} :{" "}
 												<span class="text-blue-500">
 													{p.name}

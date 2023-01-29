@@ -58,7 +58,7 @@ const MyPortfolios = () => {
 			<div className="rounded-2xl border p-2  text-gray-600 body-font">
 				<div className="">
 					<div className="m-3 p-3 border rounded-2xl">
-						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
+						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 							My <span class="text-blue-500"> Portfolios...</span>
 						</h1>
 					</div>
@@ -72,7 +72,7 @@ const MyPortfolios = () => {
 									className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
 									<section className="text-gray-600 body-font">
 										<div className=" p-3 m-3 mx-auto text-center">
-											<h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white">
+											<h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark">
 												{p.category} :{" "}
 												<span class="text-blue-500">
 													{p.name}
@@ -153,7 +153,7 @@ const MyPortfolios = () => {
 															to={
 																"/portfoliolayout"
 															}>
-															<button className="btn btn-sm absolute bottom-0 left-0 btn-warning">
+															<button className="btn btn-xs absolute bottom-2 left-3 btn-warning">
 																Show All
 															</button>
 														</Link>
