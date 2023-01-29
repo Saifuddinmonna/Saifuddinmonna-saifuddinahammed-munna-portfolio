@@ -59,15 +59,15 @@ const PortfolioLayout = () => {
 		<div>
 			<div className="rounded-2xl border p-2  text-gray-600 body-font">
 				<NavbarPage2></NavbarPage2>
-				<div className="grid grid-cols-1 xl:grid-cols-7  lg:grid-cols-7  md:grid-cols-7">
-					<div className="col-span-1 mr-2 ">
-						<div className="lg:fixed xl:fixed md:fixed p-2 mr-2 ">
+				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
+					<div className="col-span-2  ">
+						<div className="lg:fixed xl:fixed md:fixed ">
 							{datasName?.map((nameall, ind) => (
 								<div key={ind}>
 									<button
 										onClick={() => dataFilter(nameall.name)}
 										className="btn btn-warning d-block  w-full m-2 p-2">
-										{nameall.name}
+										{nameall.category}
 									</button>
 								</div>
 							))}
@@ -78,7 +78,7 @@ const PortfolioLayout = () => {
 							</button>
 						</div>
 					</div>
-					<div className="col-span-6">
+					<div className="col-span-8 ">
 						{/* {paramData && <Outlet></Outlet>} */}
 						{
 							// !paramData &&
