@@ -299,7 +299,7 @@ const MyServices = () => {
 								</h1>
 
 								<p class="text-gray-500 dark:text-gray-300">
-									LI have experience in Simple & clean designs
+									I have experience in Simple & clean designs
 									websites that are optimized for all devices
 									and browsers. My design approach is
 									user-centered, ensuring that the website is
