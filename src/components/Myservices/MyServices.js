@@ -8,7 +8,6 @@ const MyServices = () => {
 		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
 			<div className="m-2 p-3 border rounded ">
 				{" "}
-				
 				<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">
 					Services I <span class="text-blue-500"> Provides...</span>
 				</h1>
@@ -75,10 +74,12 @@ const MyServices = () => {
 								</h1>
 
 								<p class="mt-2 text-gray-500 dark:text-gray-400">
-									Lorem ipsum dolor sit amet, consectetur
-									adipiscing elit. Dignissim fusce tortor, ac
-									sed malesuada blandit. Et mi gravida sem
-									feugiat.
+									With my strong understanding of Tailwind
+									CSS, I am able to quickly and efficiently
+									create custom designs that are consistent
+									with the default configuration, making them
+									both visually appealing and easy to
+									maintain.
 								</p>
 							</div>
 
