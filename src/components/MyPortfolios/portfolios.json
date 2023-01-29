@@ -79,26 +79,32 @@
 	},
 	{
 		"id": 5,
-		"category": "Educational Project",
-		"name": "englishclub",
-		"liveWebsite": "https://englishclub.netlify.app/",
-		"liveWebsiteRepo": " ",
+		"category": "Portfolio Website Project",
+		"name": "saifuddinahammed-monna",
+		"liveWebsite": "https://saifuddinahammed-monna.web.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/Saifuddinmonna-saifuddinahammed-munna-portfolio",
 		"liveServersite": "",
-		"liveServersiteRepo": " ",
-		"technology": ["HTML, CSS, Bootstrap"],
+		"liveServersiteRepo": "",
+		"technology": [
+			"HTML, CSS, Bootstrap,React, Firebase,  Vercel, NodeJS, ExpressJS, Tailwind"
+		],
 		"overview": [
-			"❖ 'englishclub’ an online based learning platform",
-			"❖ ‘englishclub’ is used for free learning purposes built with HTML, CSS and Bootstrap-5"
+			"❖ Homepage: A welcoming introduction to the portfolio and its owner, showcasing their skills and expertise.",
+			"❖ About: A section that provides a brief biography of the portfolio owner, including their work history, education, and any relevant accomplishments.",
+			"❖ Skills: A list of the owner's technical and non-technical skills, highlighting their areas of expertise.",
+			"❖ Projects: A showcase of the owner's past and current projects, with descriptions and images/media.",
+			"❖ Contact: A form or information for how to reach the owner, such as an email address or phone number.",
+			"❖ Blog (optional): A section for the owner to write about their thoughts and experiences, and to provide insights into their work and industry.",
+			"❖ Footer: A section that includes links to social media profiles, as well as any relevant disclaimer or copyright information."
 		],
 		"image": [
-			"englishclub.JPG",
-			"englishclub1.JPG",
-			"englishclub2.JPG",
-			"englishclub3.JPG",
-			"englishclub4.JPG",
-			"englishclub5.JPG"
+			"saifuddinahammed-monna.JPG",
+			"saifuddinahammed-monna1.JPG",
+			"saifuddinahammed-monna2.JPG",
+			"saifuddinahammed-monna3.JPG"
 		]
 	},
+
 	{
 		"id": 6,
 		"category": "To-do App",
@@ -126,5 +132,27 @@
 			"‘munnatype’ is used for free learning purposes built with HTML, CSS and Bootstrap-5 and pure Javascrip"
 		],
 		"image": ["munnatype.JPG", "munnatype1.JPG"]
+	},
+	{
+		"id": 8,
+		"category": "Educational Project",
+		"name": "englishclub",
+		"liveWebsite": "https://englishclub.netlify.app/",
+		"liveWebsiteRepo": "",
+		"liveServersite": "",
+		"liveServersiteRepo": " ",
+		"technology": ["HTML, CSS, Bootstrap"],
+		"overview": [
+			"❖ 'englishclub’ an online based learning platform",
+			"❖ ‘englishclub’ is used for free learning purposes built with HTML, CSS and Bootstrap-5"
+		],
+		"image": [
+			"englishclub.JPG",
+			"englishclub1.JPG",
+			"englishclub2.JPG",
+			"englishclub3.JPG",
+			"englishclub4.JPG",
+			"englishclub5.JPG"
+		]
 	}
 ]
