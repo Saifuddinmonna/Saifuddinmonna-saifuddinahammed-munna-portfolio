@@ -9,8 +9,9 @@ const HeaderPage = () => {
 				<div className="  ">
 					<div className="flex items-center justify-around flex-col lg:flex-row-reverse">
 						<img
-							src={"profile.jpg"}
+							src="images/profile1.png"
 							className="mask mask-hexagon max-h-96  rounded-lg shadow-2xl"
+							alt="pic of saifuddin ahammed munna"
 						/>
 						<div className="p-3 m-3">
 							<h1 className="text-5xl font-bold">

@@ -55,6 +55,8 @@ const PortfolioLayout = () => {
 		console.log("data filter from home is clicked");
 	}, [nameFilter]);
 
+	
+
 	return (
 		<div>
 			<div className="rounded-2xl border p-2  text-gray-600 body-font">
