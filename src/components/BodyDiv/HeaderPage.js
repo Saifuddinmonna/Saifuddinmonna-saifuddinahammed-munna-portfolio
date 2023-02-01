@@ -42,12 +42,12 @@ const HeaderPage = () => {
 								/>
 							</h3>
 							<div className="mb-8">
-								<p className=" font-bold">
-									I can develop both client and server
-									software.
+								<p className=" font-bold ">
+									I can develop both client-side and server-side
+									
 								</p>
 								<p className=" font-bold">
-									Full stack Javascript development.
+									
 								</p>
 							</div>
 							<div>
