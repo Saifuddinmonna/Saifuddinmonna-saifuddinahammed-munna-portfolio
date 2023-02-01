@@ -7,12 +7,14 @@ const FotterPage = () => {
 			<footer class="m-4 py-4 text-center  rounded-xl mt-5 bg-gradient-to-r from-cyan-500 to-blue-500">
 				<div class="social-icon-container text-decoration-none text-center ">
 					<a
-						target="_blank"
-						href="https://saifuddinmonna.github.io./EnglishClub/index.html"
+						
+						onClick={ () => window.scrollTo(0, 0) }
+						// target="_blank"
+						// href="https://saifuddinmonna.github.io./EnglishClub/index.html"
 						targer="_blank"
-						className=" fs-6 text-strong text-gray-300 text-bold text-decoration-none d-block footer-text"
+						className=" cursor-pointer fs-6 text-strong text-gray-300 text-bold text-decoration-none d-block footer-text"
 						rel="noreferrer">
-						Website: English Club
+						Go Home
 					</a>
 					<div className="text-gray-300">
 						<a

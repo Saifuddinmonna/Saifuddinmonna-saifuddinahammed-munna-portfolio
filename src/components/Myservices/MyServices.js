@@ -166,7 +166,6 @@ const MyServices = () => {
 								</p>
 							</div>
 						</div>
-						
 					</div>
 				</section>
 				<section class="bg-white dark:bg-gray-900">
@@ -202,7 +201,7 @@ const MyServices = () => {
 								</h1>
 
 								<p class="text-gray-500 dark:text-gray-300">
-									I cma make clean copy and paste component
+									I can make clean copy and paste component
 									website to boost your website’s speedy and
 									optimization with ease and efficiency,
 									saving time and resources for more important

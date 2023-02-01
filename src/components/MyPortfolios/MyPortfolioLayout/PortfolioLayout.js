@@ -104,7 +104,7 @@ const PortfolioLayout = () => {
 														</h2>
 														<p className="text-left mt-1 btn btn-warning  btn-sm d-block  text-white text-xl capitalize  ">
 															<a
-																className="text-decoration-none"
+																className="text-decoration-none d-block"
 																target="_blank"
 																href={
 																	p.liveWebsite
@@ -115,7 +115,7 @@ const PortfolioLayout = () => {
 														</p>
 														<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
 															<a
-																className="text-decoration-none"
+																className="text-decoration-none  d-block"
 																target="_blank"
 																href={
 																	p.liveWebsiteRepo
@@ -128,21 +128,19 @@ const PortfolioLayout = () => {
 														{p.liveServersite && (
 															<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
 																<a
-																	className="text-decoration-none"
+																	className="text-decoration-none d-block"
 																	target="_blank"
-																	href={
-																		p.liveServersite
-																	}
+																	href={p.liveServersite}
 																	rel="noreferrer">
-																	&& ( Live
-																	Serversite)
+																	  Live
+																	Serversite
 																</a>
 															</p>
 														)}
 														{p.liveServersiteRepo && (
 															<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
 																<a
-																	className="text-decoration-none"
+																	className="text-decoration-none d-block"
 																	target="_blank"
 																	href={
 																		p.liveServersiteRepo
