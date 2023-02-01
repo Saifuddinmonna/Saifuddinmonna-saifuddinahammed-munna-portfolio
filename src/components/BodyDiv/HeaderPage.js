@@ -7,8 +7,8 @@ import Typewriter from "typewriter-effect";
 
 const HeaderPage = () => {
 	return (
-		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:opacity-95 duration-300">
-			<div className="bg-gradient-to-r  from-cyan-500 to-blue-500 border rounded-2xl m-4 p-4">
+		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:opacity-95 duration-300">
+			<div className="bg-gradient-to-r  from-cyan-500 to-blue-500 border rounded-2xl m-3 p-3">
 				<div className="  ">
 					<div className="flex items-center justify-around flex-col lg:flex-row-reverse">
 						<img
@@ -43,12 +43,10 @@ const HeaderPage = () => {
 							</h3>
 							<div className="mb-8">
 								<p className=" font-bold ">
-									I can develop both client-side and server-side
-									
+									I can develop both client-side and
+									server-side
 								</p>
-								<p className=" font-bold">
-									
-								</p>
+								<p className=" font-bold"></p>
 							</div>
 							<div>
 								<a
@@ -72,7 +70,7 @@ const HeaderPage = () => {
 					</div>
 				</div>
 			</div>
-			<div className="container-fluid nav-section">
+			<div className="container-fluid nav-section m-1">
 				<div className="nav-container m-auto">
 					<a
 						href="https://saifuddinmonna.github.io./EnglishClub/"

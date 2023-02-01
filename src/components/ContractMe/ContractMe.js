@@ -29,8 +29,8 @@ const ContractMe = () => {
 		window.scrollTo(0, 0);
 	}, []);
 	return (
-		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-100 duration-300">
-			<div className=" p-5 shadow border rounded-lg  m-8">
+		<div className="">
+			<div className=" p-5 shadow-lg border rounded-lgtransition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-100 duration-300  m-6 border rounded-xl">
 				<div className="border rounded-2xl m-2 ">
 					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 						Contract

@@ -59,7 +59,7 @@ const PortfolioLayout = () => {
 
 	return (
 		<div>
-			<div className="rounded-2xl border p-2  text-gray-600 body-font">
+			<div className="rounded-2xl border p-2 m-4 text-gray-600 body-font">
 				<NavbarPage2></NavbarPage2>
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
 					<div className="col-span-2  ">
@@ -130,9 +130,11 @@ const PortfolioLayout = () => {
 																<a
 																	className="text-decoration-none d-block"
 																	target="_blank"
-																	href={p.liveServersite}
+																	href={
+																		p.liveServersite
+																	}
 																	rel="noreferrer">
-																	  Live
+																	Live
 																	Serversite
 																</a>
 															</p>

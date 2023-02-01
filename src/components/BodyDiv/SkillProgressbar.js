@@ -7,17 +7,17 @@ function StripedExample() {
 	const similararray = similar.split(",");
 	console.log(similararray);
 	return (
-		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-50 duration-300">
-			<div className=" m-3 mt-10 p-3 border rounded-xl  shadow-xl">
-				<div className="m-3 p-3 border rounded-xl">
+		<div className="">
+			<div className=" p-4">
+				<div className="m-3  border  rounded-xl">
 					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 						My Professional{" "}
 						<span class="text-blue-500"> Skills...</span>
 					</h1>
 				</div>
 
-				<div className=" grid grid-cols-1  lg:grid-cols-2 md:grid-cols-1  lg:grid-cols-1 justify-center gap-3">
-					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-3 m-2 rounded-lg">
+				<div className=" grid grid-cols-1  lg:grid-cols-2 md:grid-cols-1  lg:grid-cols-1 justify-center gap-3 ">
+					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-3 m-1 rounded-lg">
 						<div class=" flex flex-col space-y-3">
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
@@ -115,7 +115,7 @@ function StripedExample() {
 							</div>
 						</div>
 					</div>
-					<div className="border transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-200 duration-300 grid  text-justify pt-8  rounded-lg">
+					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-200 duration-300 grid  text-justify pt-8  rounded-lg">
 						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 							Skills'
 							<span class="text-blue-500">Overview...</span>
@@ -123,7 +123,7 @@ function StripedExample() {
 						<div className="border  rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md ">
 							<div className="  rounded-lg ">
 								{" "}
-								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded   d-block text-left ">
+								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded   d-block text-left ">
 									Expertise:
 								</h4>
 								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
@@ -139,7 +139,7 @@ function StripedExample() {
 											);
 										})}
 								</p>
-								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded d-block text-left ">
+								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded d-block text-left ">
 									Comfortable:
 								</h4>
 								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
@@ -155,10 +155,10 @@ function StripedExample() {
 											);
 										})}
 								</p>
-								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded  d-block text-left ">
+								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded  d-block text-left ">
 									Familiar:
 								</h4>
-								<p className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+								<p className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 m-2">
 									{similararray.map((tp) => {
 										return (
 											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
@@ -172,7 +172,7 @@ function StripedExample() {
 							</div>
 						</div>
 						<div className="border  rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md">
-							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
+							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
 								Front end:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
@@ -188,7 +188,7 @@ function StripedExample() {
 										);
 									})}
 							</p>
-							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
+							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
 								Back end:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
@@ -204,7 +204,7 @@ function StripedExample() {
 										);
 									})}
 							</p>
-							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 rounded ">
+							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
 								DevOps:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 ">
