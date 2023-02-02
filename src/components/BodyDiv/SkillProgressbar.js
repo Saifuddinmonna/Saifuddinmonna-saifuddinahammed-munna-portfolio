@@ -131,7 +131,7 @@ function StripedExample() {
 										.split(",")
 										.map((tp) => {
 											return (
-												<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
+												<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
 													{" "}
 													<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
 													{tp}
@@ -147,7 +147,7 @@ function StripedExample() {
 										.split(",")
 										.map((tp) => {
 											return (
-												<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
+												<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
 													{" "}
 													<GrUserExpert className="d-inline-block text-blue-600 text-lg m-1 text-deep-orange-700 "></GrUserExpert>{" "}
 													{tp}
@@ -161,7 +161,7 @@ function StripedExample() {
 								<p className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 m-2">
 									{similararray.map((tp) => {
 										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
+											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-2 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
 												{" "}
 												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
 												{tp}
@@ -180,7 +180,7 @@ function StripedExample() {
 									.split(",")
 									.map((tp) => {
 										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
+											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
 												{" "}
 												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
 												{tp}
@@ -196,7 +196,7 @@ function StripedExample() {
 									.split(",")
 									.map((tp) => {
 										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
+											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
 												{" "}
 												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
 												{tp}
@@ -208,11 +208,11 @@ function StripedExample() {
 								DevOps:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 ">
-								{"Git, Github, React Dev Tools, Redux Dev tools,Tools: Github, VS Code , Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Figma,Illustrator etc."
+								{"VS Code ,Git, Github, React Dev Tools, Redux Dev tools ,Figma, Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Illustrator etc."
 									.split(",")
 									.map((tp) => {
 										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-2 lg:p-1 xl:p-2 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
+											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
 												{" "}
 												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
 												{tp}
