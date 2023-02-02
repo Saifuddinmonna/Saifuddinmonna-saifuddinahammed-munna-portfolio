@@ -74,7 +74,7 @@ const MyPortfolios = () => {
 		<div>
 			<div className="rounded-2xl border p-2 m-3 shadow-lg  text-gray-600 body-font">
 				<div className="">
-					<div className="m-3 p-3 border rounded-2xl">
+					<div className="mt-3 p-3 border rounded-2xl">
 						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 							My <span class="text-blue-500"> Portfolio...</span>
 						</h1>
