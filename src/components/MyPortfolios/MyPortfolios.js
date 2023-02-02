@@ -118,8 +118,8 @@ const MyPortfolios = () => {
 																		p.liveServersite
 																	}
 																	rel="noreferrer">
-																	&& ( Live
-																	Serversite)
+																	Live
+																	Serversite
 																</a>
 															</p>
 														)}
