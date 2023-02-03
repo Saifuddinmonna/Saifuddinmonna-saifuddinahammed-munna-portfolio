@@ -168,11 +168,12 @@ const MyPortfolios = () => {
 													<div
 														key={ind}
 														className="mb-2">
-														<div className=" relative border mb-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+														<div className=" relative  mb-2 p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
 															<PhotoProvider>
 																<PhotoView
 																	src={`images/${imgs}`}>
 																	<img
+																		className="rounded-xl"
 																		src={`images/${imgs}`}
 																		alt="Pic of portfolios"
 																	/>
@@ -264,7 +265,6 @@ const MyPortfolios = () => {
 												</div>
 											</div>
 											<div className="p-4 md:w-1/3 flex">
-												
 												<div className="flex-grow pl-6">
 													<h2 className="text-gray-900  bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-lg title-font font-medium mb-2">
 														Used Technologies
@@ -355,11 +355,12 @@ const MyPortfolios = () => {
 								<div className="grid grid-cols-3 mb-2">
 									{p?.image?.map((imgs, ind) => (
 										<div key={ind} className="">
-											<div className=" border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+											<div className="  m-2 p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
 												<PhotoProvider>
 													<PhotoView
 														src={`images/${imgs}`}>
 														<img
+															className="rounded-xl"
 															src={`images/${imgs}`}
 															alt="Pic of portfolios"
 														/>

@@ -253,11 +253,12 @@ const PortfolioLayout = () => {
 									<div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3">
 										{p?.image?.map((imgs, ind) => (
 											<div key={ind} className="">
-												<div className=" border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+												<div className="  m-2 p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
 													<PhotoProvider>
 														<PhotoView
 															src={`images/${imgs}`}>
 															<img
+																className="rounded-xl"
 																src={`images/${imgs}`}
 																alt="Pic of portfolios"
 															/>
