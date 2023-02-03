@@ -59,8 +59,12 @@ const PortfolioLayout = () => {
 
 	return (
 		<div>
-			<div className="rounded-2xl border p-2 m-4 text-gray-600 body-font">
+			{/* sticky w-full top-0 left-0 right-0 mx-auto */}
+			<div className="sticky w-full top-0 left-0 right-0 mx-auto">
 				<NavbarPage2></NavbarPage2>
+			</div>
+
+			<div className="rounded-2xl border p-2 m-4 text-gray-600 body-font">
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
 					<div className="col-span-2  ">
 						<div className="lg:fixed xl:fixed md:fixed ">
@@ -68,7 +72,7 @@ const PortfolioLayout = () => {
 								<div key={ind}>
 									<button
 										onClick={() => dataFilter(nameall.name)}
-										className="btn btn-warning d-block  w-full m-2 p-2">
+										className="btn btn-warning d-block btn-sm w-full m-2 p-2">
 										{nameall.category}
 									</button>
 								</div>
@@ -97,7 +101,7 @@ const PortfolioLayout = () => {
 												</span>
 											</h1>
 											<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
-												<div className="p-4 md:w-1/2 lg:w-1/3 flex">
+												<div className="p-4 sm:1 md:w-1/2 lg:w-1/3 md:flex">
 													<div className="flex-grow pl-6">
 														<h2 className="text-gray-900  text-left text-2xl text-strong title-font font-medium mb-2">
 															Website Link

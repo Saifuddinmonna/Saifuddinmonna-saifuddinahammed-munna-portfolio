@@ -127,7 +127,7 @@ function StripedExample() {
 									Expertise:
 								</h4>
 								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-									{"JavaScript, ES6, Rest API, ReactJs, ReactRouter, React Hook, Html5, CSS3, CSS,TailwindCss(DaisyUi and familiar withHeadless ) Bootstrap-5, Npm Packages,"
+									{"JavaScript, ES6, Rest API, ReactJs, ReactRouter, React Hook, Html5, CSS3, CSS,TailwindCss(DaisyUi and familiar withHeadless ) Bootstrap-5, Npm Packages"
 										.split(",")
 										.map((tp) => {
 											return (
