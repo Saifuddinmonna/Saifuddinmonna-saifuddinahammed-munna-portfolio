@@ -176,7 +176,7 @@ function StripedExample() {
 								Front end:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-								{"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS,"
+								{"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS"
 									.split(",")
 									.map((tp) => {
 										return (
@@ -192,7 +192,7 @@ function StripedExample() {
 								Back end:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-								{"Node.js, Express.js, MongoDB, Mongoose,Nodemailer, Node-Geocoder, Stripe, Paypal API,SSL commerce,"
+								{"Node.js, Express.js, MongoDB, Mongoose,Nodemailer, Node-Geocoder, Stripe, Paypal API,SSL commerce"
 									.split(",")
 									.map((tp) => {
 										return (

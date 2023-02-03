@@ -114,7 +114,7 @@ const HeaderPage = () => {
 						download="">
 						Download Resume
 					</a>
-					<a href={"cv for saifuddin ahmmed monna.pdf"} download="">
+					<a href={"cv for Saifuddin Ahammed Monna.pdf"} download="">
 						Download CV
 					</a>
 				</div>
