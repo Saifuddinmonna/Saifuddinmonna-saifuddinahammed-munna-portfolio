@@ -106,7 +106,7 @@ const PortfolioLayout = () => {
 														<h2 className="text-gray-900  text-left text-2xl text-strong title-font font-medium mb-2">
 															Website Link
 														</h2>
-														<p className="text-left mt-1 btn btn-warning  btn-sm d-block  text-white text-xl capitalize  ">
+														<p className="text-left mt-1 btn btn-warning  btn-sm d-block  text-auto text-xl capitalize  ">
 															<a
 																className="text-decoration-none d-block"
 																target="_blank"
@@ -117,7 +117,7 @@ const PortfolioLayout = () => {
 																Live Website
 															</a>
 														</p>
-														<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
+														<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-auto text-xl ">
 															<a
 																className="text-decoration-none  d-block"
 																target="_blank"
@@ -130,7 +130,7 @@ const PortfolioLayout = () => {
 															</a>
 														</p>
 														{p.liveServersite && (
-															<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
+															<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-auto text-xl ">
 																<a
 																	className="text-decoration-none d-block"
 																	target="_blank"
@@ -144,7 +144,7 @@ const PortfolioLayout = () => {
 															</p>
 														)}
 														{p.liveServersiteRepo && (
-															<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
+															<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-auto text-xl ">
 																<a
 																	className="text-decoration-none d-block"
 																	target="_blank"
