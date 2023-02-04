@@ -8,8 +8,8 @@ const Blog = () => {
 		window.scrollTo(0, 0);
 	}, []);
 	return (
-		<div>
-			<div className="hero min-h-screen bg-base-200">
+		<div className="m-3 rounded-xl">
+			<div className="hero min-h-screen bg-base-200 rounded-xl">
 				<div className="hero-content text-center">
 					<div className="max-w-md">
 						<h1 className="text-5xl font-bold">Comming Soon...</h1>

@@ -14,17 +14,17 @@ const componentDidMount = () => {
 
 
 	return (
-		<div>
-			<div className="hero min-h-screen bg-base-200">
+		<div className="m-7  mx-auto">
+			<div className="bg-base-200 m-3  rounded-xl">
 				<div className="hero-content flex-col lg:flex-row">
 					<img
 						src="images/profile1.png"
-						className="max-w-sm rounded-lg shadow-2xl"
+						className="max-w-sm rounded-lg shadow-2xl m-3"
 						alt="image of Saifuddin Ahammed Monna"
 					/>
 					<div>
 						<h1 className="text-5xl font-bold">About Myself</h1>
-						<p className="py-6 text-2xl italic text-justify p-5">
+						<p className="py-6 text-2xl italic text-justify pl-5">
 							I was born in Mymensinngh Sadar Mymensingh
 							district,Bangladesh. I have three brothers and my
 							parents. I have completed post graduation in Public
