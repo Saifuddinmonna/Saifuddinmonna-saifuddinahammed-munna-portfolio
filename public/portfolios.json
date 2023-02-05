@@ -104,7 +104,6 @@
 			"saifuddinahammed-monna3.JPG"
 		]
 	},
-
 	{
 		"id": 6,
 		"category": "To-do App",
@@ -113,9 +112,9 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/myactivityservice",
 		"technology": ["HTML", "CSS", "Bootstrap", "Javacipt ", "Reat"],
 		"overview": [
-			"‘munnatype’ an online based learning platform for type speedy and correctly.",
+			" ❖‘munnatype’ an online based learning platform for type speedy and correctly.",
 			"I work with ‘munnatype’ projects for error fixing  and debugging on various issues.",
-			"‘munnatype’ is used for free  purposes built with HTML, CSS and Bootstrap-5 and pure Javascript."
+			" ❖‘munnatype’ is used for free  purposes built with HTML, CSS and Bootstrap-5 and pure Javascript."
 		],
 		"image": ["activityservice.JPG", "activityservice.JPG"]
 	},
@@ -127,14 +126,52 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/typespeedtester",
 		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
 		"overview": [
-			" ‘munnatype’ an online based learning platform for type speedy and correctly",
+			" ❖ ‘munnatype’ an online based learning platform for type speedy and correctly",
 			"I work with ‘munnatype’ projects for error fixing  and debugging on various issues",
-			"‘munnatype’ is used for free learning purposes built with HTML, CSS and Bootstrap-5 and pure Javascrip"
+			" ❖‘munnatype’ is used for free learning purposes built with HTML, CSS and Bootstrap-5 and pure Javascrip"
 		],
 		"image": ["munnatype.JPG", "munnatype1.JPG"]
 	},
 	{
 		"id": 8,
+		"category": "Cost Calculation  websites",
+		"name": "my-team-selection",
+		"liveWebsite": "https://my-team-selection.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/my-team-selection",
+		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"overview": [
+			" ❖ ‘my-team-selection’ an online based team management app",
+			"  ❖my-team-selection’ can be  used for calculating cost of players, coaches and manegers"
+		],
+		"image": [
+			"my-team-selection.JPG",
+			"my-team-selection1.JPG",
+			"my-team-selection2.JPG"
+		
+		]
+	},
+	{
+		"id": 9,
+		"category": "News Portal Project",
+		"name": "thenewsportal",
+		"liveWebsite": "https://thenewsportal.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/munnanews",
+		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"overview": [
+			"❖‘thenewsportal’ an online based news  platform",
+			"❖ ‘ thenewsportal  ’ is used for reading news  purposes built with HTML, CSS and Bootstrap-5  and pure JavaScript",
+			" ❖News content is divided into various categories"
+		],
+		"image": [
+			"thenewsportal.JPG",
+			"thenewsportal1.JPG",
+			"thenewsportal2.JPG",
+			"thenewsportal3.JPG",
+			"thenewsportal4.JPG"
+		]
+	},
+	{
+		"id": 10,
 		"category": "Educational Project",
 		"name": "englishclub",
 		"liveWebsite": "https://englishclub.netlify.app/",
