@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
+import ReactConfetti from "react-confetti";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { Outlet, useLoaderData, useParams } from "react-router-dom";
@@ -9,6 +10,7 @@ import MyPortfolios from "../MyPortfolios";
 import portfoliosName from "../portfolios.json";
 
 const PortfolioLayout = () => {
+	const [confettiStart, setConfettiStart] = useState(true);
 	const websiteName = useParams();
 	const nameFilter = websiteName?.UsedPhone;
 	const [datasName, setDatasName] = useState(portfoliosName);
@@ -55,10 +57,19 @@ const PortfolioLayout = () => {
 		console.log("data filter from home is clicked");
 	}, [nameFilter]);
 
-	
-
+	useEffect(() => {
+		
+			setConfettiStart(true);
+		
+	}, [datas]);
+useEffect(() => {
+	setTimeout(() => {
+		setConfettiStart(false);
+	}, 8000);
+}, [datas]);
 	return (
 		<div className="">
+			{confettiStart && <ReactConfetti />}
 			{/* sticky w-full top-0 left-0 right-0 mx-auto */}
 			<div className="sticky w-full top-0 left-0 right-0 mx-auto">
 				<NavbarPage2></NavbarPage2>
@@ -257,9 +268,7 @@ const PortfolioLayout = () => {
 
 									<div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3">
 										{p?.image?.map((imgs, ind) => (
-											<div
-												key={ind}
-												className=" ">
+											<div key={ind} className=" ">
 												<div className="  m-2 p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
 													<PhotoProvider>
 														<PhotoView

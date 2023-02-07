@@ -20,9 +20,14 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import MyportfolioImage from "./components/MyPortfolios/MyportfolioImage";
+import { useEffect } from "react";
+import { useState } from "react";
+import ReactConfetti from "react-confetti";
 const queryClient = new QueryClient();
 
 function App() {
+
+	const [confettiStart, setConfettiStart] = useState(true);
 	const router = createBrowserRouter([
 		{
 			path: "/",
@@ -69,9 +74,17 @@ function App() {
 			],
 		},
 	]);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setConfettiStart(false);
+		}, 8000);
+	}, []);
 	return (
 		<QueryClientProvider client={queryClient}>
 			<div className="App max-w-[1440px] mx-auto">
+				{confettiStart && <ReactConfetti />}
+
 				<RouterProvider router={router}></RouterProvider>
 			</div>
 		</QueryClientProvider>

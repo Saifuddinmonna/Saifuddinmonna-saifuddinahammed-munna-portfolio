@@ -65,8 +65,8 @@
 		"id": 4,
 		"category": "Quiz App Project",
 		"name": "GoExam",
-		"liveWebsite": " ",
-		"liveWebsiteRepo": " ",
+		"liveWebsite": "https://goexam.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/programming-hero-web-course2/b6-quiz-crackerz-Saifuddinmonna",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
 		"technology": ["React, Vercel, Tailwind."],
@@ -146,8 +146,7 @@
 		"image": [
 			"my-team-selection.JPG",
 			"my-team-selection1.JPG",
-			"my-team-selection2.JPG",
-			"my-team-selection3.JPG"
+			"my-team-selection2.JPG"
 		]
 	},
 	{
@@ -175,7 +174,7 @@
 		"category": "Educational Project",
 		"name": "englishclub",
 		"liveWebsite": "https://englishclub.netlify.app/",
-		"liveWebsiteRepo": " ",
+		"liveWebsiteRepo": "",
 		"liveServersite": "",
 		"liveServersiteRepo": " ",
 		"technology": ["HTML, CSS, Bootstrap"],

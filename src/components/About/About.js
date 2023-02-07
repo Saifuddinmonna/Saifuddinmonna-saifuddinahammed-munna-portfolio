@@ -1,7 +1,11 @@
 import React from 'react';
+import { useState } from 'react';
 import { useEffect } from "react";
+import ReactConfetti from 'react-confetti';
+
 
 const About = () => {
+	const [confettiStart, setConfettiStart]=useState(true)
 const componentDidMount = () => {
 	window.scrollTo(0, 0);
 };
@@ -11,10 +15,16 @@ const componentDidMount = () => {
 		componentDidMount();
 	},[]);
 
-
+	useEffect(() => {
+	
+		setTimeout(() => {
+			setConfettiStart(false)
+		}, 8000);
+},[])
 
 	return (
 		<div className="m-7  mx-auto">
+			{confettiStart && <ReactConfetti />}
 			<div className="bg-base-200 m-3  rounded-xl">
 				<div className="hero-content flex-col lg:flex-row">
 					<img

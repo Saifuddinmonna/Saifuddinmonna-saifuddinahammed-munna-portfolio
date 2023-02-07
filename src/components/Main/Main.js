@@ -1,5 +1,7 @@
 import React from "react";
+import { useState } from "react";
 import { useEffect } from "react";
+import ReactConfetti from "react-confetti";
 import { Outlet } from "react-router-dom";
 import About from "../About/About";
 import FotterPage from "../BodyDiv/FotterPage";
@@ -13,8 +15,15 @@ import MyServices from "../Myservices/MyServices";
 import NavbarPage2 from "../NavbarPage/NavbarPage2";
 
 const Main = () => {
+	const [confettiStart, setConfettiStart] = useState(true);
 	useEffect(() => {
 		window.scrollTo(0, 0);
+	}, []);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setConfettiStart(false);
+		}, 8000);
 	}, []);
 
 	return (
@@ -22,6 +31,7 @@ const Main = () => {
 			{/* <h1>this is main page</h1> */}
 			<NavbarPage2></NavbarPage2>
 			{/* <NavbarPage></NavbarPage> */}
+			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>
 			<HeaderPage></HeaderPage>
 			<MyPortfolios></MyPortfolios>
