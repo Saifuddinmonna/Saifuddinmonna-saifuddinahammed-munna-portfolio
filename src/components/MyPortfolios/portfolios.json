@@ -176,7 +176,7 @@
 		"liveWebsite": "https://englishclub.netlify.app/",
 		"liveWebsiteRepo": "",
 		"liveServersite": "",
-		"liveServersiteRepo": " ",
+		"liveServersiteRepo": "",
 		"technology": ["HTML, CSS, Bootstrap"],
 		"overview": [
 			"❖ 'englishclub’ an online based learning platform",
@@ -190,5 +190,60 @@
 			"englishclub4.JPG",
 			"englishclub5.JPG"
 		]
+	},
+	{
+		"id": 11,
+		"category": "Figma Copy  Project",
+		"name": "donate-today",
+		"liveWebsite": "https://saifuddinmonna.github.io/donate-today/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/donate-today",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS"],
+		"overview": [
+			"❖ ‘donate-today ’ is simple website built from figma Jpg.",
+			"❖ ‘donate-today ’ is built for free learning purposes built with HTML, CSS."
+		],
+		"image": [
+			"donate-today.JPG",
+			"donate-today1.JPG",
+			"donate-today2.JPG",
+			"donate-today3.JPG"
+		]
+	},
+	{
+		"id": 12,
+		"category": "Basic Website  Project",
+		"name": "world-cup",
+		"liveWebsite": "https://saifuddinmonna.github.io/world-cup/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/world-cup",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS"],
+		"overview": [
+			"❖‘world-cup’ is simple website built with html CSS ",
+			"❖  ‘world-cup’  is fully responsive website with pure CSS"
+		],
+		"image": [
+			"world-cup.JPG",
+			"world-cup1.JPG",
+			"world-cup2.JPG",
+			"world-cup3.JPG"
+		]
+	},
+	{
+		"id": 13,
+		"category": " Weather App Project",
+		"name": "munnatemperature",
+		"liveWebsite": "https://munnatemperature.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/Temperaturecounter",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS, Bootstrap , JavaScript"],
+		"overview": [
+			"❖ ‘munnatemperature”  is an online based weather app.",
+			"❖‘munnatemperature” is used for knowing update temperature humidity  and rain with HTML, CSS and Bootstrap-5 and pure JavaScript."
+		],
+		"image": ["munnatemperature.JPG", "munnatemperature1.JPG"]
 	}
 ]
