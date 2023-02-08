@@ -233,7 +233,7 @@
 	},
 	{
 		"id": 13,
-		"category": " Weather App Project",
+		"category": "Weather App Project",
 		"name": "munnatemperature",
 		"liveWebsite": "https://munnatemperature.netlify.app/",
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/Temperaturecounter",
@@ -245,5 +245,21 @@
 			"❖‘munnatemperature” is used for knowing update temperature humidity  and rain with HTML, CSS and Bootstrap-5 and pure JavaScript."
 		],
 		"image": ["munnatemperature.JPG", "munnatemperature1.JPG"]
+	},
+	{
+		"id": 14,
+		"category": "Mini E-commerce",
+		"name": "rim-shoping",
+		"liveWebsite": "https://rim-shoping.vercel.app/Shop",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/rim-shoping",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS, Bootstrap , JavaScript, React"],
+		"overview": [
+			"❖  ‘rim-shoping’ is simple e-commerce projects built with html CSS ,HTML, Bootstrap,JavaScript, React",
+			"❖ ‘rim-shoping’  is fully responsive website",
+			"❖It very simple design and less code"
+		],
+		"image": ["rim-shoping.JPG", "rim-shoping1.JPG", "rim-shoping2.JPG"]
 	}
 ]
