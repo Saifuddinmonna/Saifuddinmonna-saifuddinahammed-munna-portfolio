@@ -173,7 +173,7 @@ const MyPortfolios = () => {
 																<PhotoView
 																	src={`images/${imgs}`}>
 																	<img
-																		className="rounded-xl"
+																		className="rounded-xl max-h-72"
 																		src={`images/${imgs}`}
 																		alt="Pic of portfolios"
 																	/>
@@ -365,7 +365,7 @@ const MyPortfolios = () => {
 													<PhotoView
 														src={`images/${imgs}`}>
 														<img
-															className="rounded-xl"
+															className="rounded-xl max-h-72"
 															src={`images/${imgs}`}
 															alt="Pic of portfolios"
 														/>

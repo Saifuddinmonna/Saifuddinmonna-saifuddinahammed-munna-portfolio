@@ -8,6 +8,7 @@ import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
 
 import portfoliosName from "../portfolios.json";
+import  "./Portfolio.css";
 
 const PortfolioLayout = () => {
 	const [confettiStart, setConfettiStart] = useState(true);
@@ -274,7 +275,7 @@ useEffect(() => {
 														<PhotoView
 															src={`images/${imgs}`}>
 															<img
-																className="rounded-xl object-scale-down"
+																className="rounded-xl maxHight"
 																src={`images/${imgs}`}
 																alt="Pic of portfolios"
 															/>
