@@ -71,34 +71,36 @@ useEffect(() => {
 	return (
 		<div className="">
 			{confettiStart && <ReactConfetti />}
-			{/* sticky w-full top-0 left-0 right-0 mx-auto */}
-			<div className="sticky w-full top-0 left-0 right-0 mx-auto">
+			{/* fixed w-full top-0 left-0 right-0 mx-auto */}
+			<div className="fixed w-full top-0 left-0 right-0 mx-auto">
 				<NavbarPage2></NavbarPage2>
 			</div>
 
-			<div className="rounded-2xl mt-4 shadow-2xl  border p-2 m-3 text-gray-600 body-font">
+			<div className="min-h-screen rounded-2xl mt-4 shadow-2xl  border p-2 m-1 text-gray-600 body-font">
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
-					<div className=" md:col-span-3 lg:col-span-2 xl:col-span-2  ">
-						<div className="lg:sticky xl:sticky md:sticky  top-0 left-0 ">
-							{datasName?.map((nameall, ind) => (
-								<div key={ind}>
-									<div className="flex justify-between">
-										{/* <span>{ind + 1}. </span> */}
-										<button
-											onClick={() =>
-												dataFilter(nameall.name)
-											}
-											className="btn flex flex-wrap text-auto size-auto btn-warning d-block btn-sm w-full m-2 p-2">
-											{nameall.category}
-										</button>
+					<div className=" relative  md:col-span-3 lg:col-span-2 xl:col-span-2  ">
+						<div className=" md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
+							<div className="pb-20 overflow-x-auto max-h-screen">
+								{datasName?.map((nameall, ind) => (
+									<div className=" " key={ind}>
+										<div className="flex rounded-xl  justify-between">
+											{/* <span>{ind + 1}. </span> */}
+											<button
+												onClick={() =>
+													dataFilter(nameall.name)
+												}
+												className="btn flex flex-wrap text-auto size-auto btn-warning rounded-xl d-block btn-sm w-full m-2 p-2">
+												{nameall.category}
+											</button>
+										</div>
 									</div>
-								</div>
-							))}
-							<button
-								onClick={dataFilter2}
-								className="btn btn-warning d-block  w-full m-2 p-2">
-								All
-							</button>
+								))}
+								<button
+									onClick={dataFilter2}
+									className="btn btn-warning text-auto size-auto d-block btn-sm w-full m-2 p-2">
+									All
+								</button>
+							</div>
 						</div>
 					</div>
 					<div className="md:col-span-7 lg:col-span-8 xl:col-span-8 me-3 ">
@@ -108,7 +110,22 @@ useEffect(() => {
 							datas?.map((p, ind) => (
 								<div
 									key={ind}
-									className=" pl-3 m-5 shadow-xl border rounded-xl mx-auto">
+									className=" pl-3 m-5 shadow border rounded-xl mx-auto">
+									<h1 class="mt-3 text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
+										<span className="p-2 px-3 border shadow-lg text-warning rounded-full">
+											{datas.length}
+										</span>{" "}
+										{datas.length > 1
+											? " Websites"
+											: "Website"}
+										<span class="text-blue-500">
+											{" "}
+											Founded{" "}
+											{datas.length === 14
+												? "Here "
+												: "in This Category"}
+										</span>
+									</h1>
 									<section className="text-gray-600 body-font">
 										<div className="container p-3 m-3 mx-auto">
 											<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
