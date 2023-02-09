@@ -116,8 +116,8 @@ useEffect(() => {
 											{datas.length}
 										</span>{" "}
 										{datas.length > 1
-											? " Websites"
-											: "Website"}
+											? " Websites Are"
+											: "Website Is"}
 										<span class="text-blue-500">
 											{" "}
 											Founded{" "}
