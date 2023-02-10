@@ -3,9 +3,9 @@ import "./App.css";
 import HeaderPage from "./components/BodyDiv/HeaderPage";
 import FotterPage from "./components/BodyDiv/FotterPage";
 import NavbarPage from "./components/BodyDiv/NavbarPage";
-import StripedExample from "./components/BodyDiv/SkillProgressbar";
+import SkillProgressbar from "./components/BodyDiv/SkillProgressbar";
 import ContractMe, { ContactUs } from "./components/ContractMe/ContractMe";
-import Main from "./components/Main/Main";
+import Main from "./components/MainLayouts/Main";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./components/About/About";
 import NavbarPage2 from "./components/NavbarPage/NavbarPage2";
@@ -23,16 +23,22 @@ import MyportfolioImage from "./components/MyPortfolios/MyportfolioImage";
 import { useEffect } from "react";
 import { useState } from "react";
 import ReactConfetti from "react-confetti";
+import SingleLayout from "./components/MainLayouts/SongleLayout";
+import HomeLayout from "./components/MainLayouts/HomeLayout";
+import NavbarFooter from "./components/NavbarPage/NabvarFooter";
 const queryClient = new QueryClient();
 
 function App() {
-
 	const [confettiStart, setConfettiStart] = useState(true);
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Main></Main>,
+			element: <SingleLayout></SingleLayout>,
 			children: [
+				{
+					path: "/",
+					element: <HomeLayout></HomeLayout>,
+				},
 				{
 					path: "/about",
 					element: <About> </About>,
@@ -42,7 +48,6 @@ function App() {
 					element: (
 						<div>
 							<ContractMe></ContractMe>
-							<StripedExample></StripedExample>
 						</div>
 					),
 				},
@@ -63,9 +68,10 @@ function App() {
 				{
 					path: "/portfoliolayout/:UsedPhone",
 					element: (
-						
+						<>
 							<MyportfolioImage></MyportfolioImage>
-						
+							<NavbarFooter></NavbarFooter>
+						</>
 					),
 					loader: () => {
 						return fetch("portfolios.json");

@@ -1,7 +1,7 @@
 import ProgressBar from "react-bootstrap/ProgressBar";
 import { IconName, GrUserExpert } from "react-icons/gr";
 
-function StripedExample() {
+function SkillProgressbar() {
 	const similar =
 		"Node Mailer Tools: Github, VS-Code,Brackets, Chrome Dev Tools, Heroku, Netlify,Postman, Photoshop, Figma,Illustrator etc.";
 	const similararray = similar.split(",");
@@ -228,4 +228,4 @@ function StripedExample() {
 	);
 }
 
-export default StripedExample;
+export default SkillProgressbar;

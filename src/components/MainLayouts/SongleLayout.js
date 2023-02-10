@@ -3,18 +3,12 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ReactConfetti from "react-confetti";
 import { Outlet } from "react-router-dom";
-import About from "../About/About";
-import FotterPage from "../BodyDiv/FotterPage";
-import HeaderPage from "../BodyDiv/HeaderPage";
 import NavbarPage from "../BodyDiv/NavbarPage";
-
-import StripedExample from "../BodyDiv/SkillProgressbar";
-import ContractMe from "../ContractMe/ContractMe";
-import MyPortfolios from "../MyPortfolios/MyPortfolios";
-import MyServices from "../Myservices/MyServices";
+import SkillProgressbar from "../BodyDiv/SkillProgressbar";
+import NavbarFooter from "../NavbarPage/NabvarFooter";
 import NavbarPage2 from "../NavbarPage/NavbarPage2";
 
-const Main = () => {
+const SingleLayout = () => {
 	const [confettiStart, setConfettiStart] = useState(true);
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -27,20 +21,15 @@ const Main = () => {
 	}, []);
 
 	return (
-		<div>
+		<div className="min-h-screen">
 			{/* <h1>this is main page</h1> */}
 			<NavbarPage2></NavbarPage2>
 			{/* <NavbarPage></NavbarPage> */}
 			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>
-			<HeaderPage></HeaderPage>
-			<MyPortfolios></MyPortfolios>
-			<MyServices></MyServices>
-			<StripedExample></StripedExample>
-			<ContractMe></ContractMe>
-			<FotterPage></FotterPage>
+			<NavbarFooter></NavbarFooter>
 		</div>
 	);
 };
 
-export default Main;
+export default SingleLayout;

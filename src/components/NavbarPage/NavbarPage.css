@@ -25,7 +25,7 @@ header {
 	
 	padding:2rem;
 	border-radius: 10px;
-	z-index: 10;
+	z-index: 20;
 	
 }
 
@@ -82,7 +82,7 @@ nav {
 		transition: 1s;
 		transform: translatey(-100vh);
 		border-radius: 20px;
-		z-index: 10;
+		z-index: 20;
 		
 	}
 

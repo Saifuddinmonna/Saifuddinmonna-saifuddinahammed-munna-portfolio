@@ -4,6 +4,7 @@ import ReactConfetti from "react-confetti";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { Outlet, useLoaderData, useParams } from "react-router-dom";
+import NavbarFooter from "../../NavbarPage/NabvarFooter";
 import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
 
@@ -308,6 +309,7 @@ useEffect(() => {
 					</div>
 				</div>
 			</div>
+			<NavbarFooter></NavbarFooter>
 		</div>
 	);
 }; 
