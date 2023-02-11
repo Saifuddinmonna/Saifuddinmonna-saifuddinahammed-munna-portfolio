@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 const Footer = () => {
 	return (
 		<div className="mb-20 text ">
-			<footer class="m-4 mb-36 py-4 text-center  rounded-xl mt-5 bg-gradient-to-r from-cyan-500 to-blue-500">
+			<footer class="m-4 mb-12 py-4 text-center  rounded-xl mt-5 bg-gradient-to-r from-cyan-500 to-blue-500">
 				<div class="social-icon-container text-decoration-none text-center ">
 					<a
 						onClick={() => window.scrollTo(0, 0)}
