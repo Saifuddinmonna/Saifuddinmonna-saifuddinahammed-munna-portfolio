@@ -4,9 +4,9 @@
 		"category": "E-commerce website",
 		"name": "UsedPhone",
 		"liveWebsite": "https://bdusedphone.web.app/ ",
-		"liveWebsiteRepo": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-clients-side-Saifuddinmonna ",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/usedPhones-client-site",
 		"liveServersite": "https://usedphonesserver-saifuddinmonna.vercel.app/",
-		"liveServersiteRepo": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-Saifuddinmonna",
+		"liveServersiteRepo": "https://github.com/Saifuddinmonna/usedPhones-server-site",
 		"technology": [
 			"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS,Tailwind, DaisyUI, Dotenv"
 		],
@@ -25,9 +25,9 @@
 		"category": "Service Selling Project",
 		"name": "RepairService",
 		"liveWebsite": "https://repairservice-ed4d3.web.app/services ",
-		"liveWebsiteRepo": "https://github.com/programming-hero-web-course1/b610-learning-platform-client-side-Saifuddinmonna ",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/repair-service-client-side",
 		"liveServersite": "https://server-for-assignment-10.vercel.app/",
-		"liveServersiteRepo": "https://github.com/programming-hero-web-course1/b610-lerning-platform-server-side-Saifuddinmonna",
+		"liveServersiteRepo": "https://github.com/Saifuddinmonna/repair-service-client-side",
 		"technology": [
 			"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind."
 		],
@@ -44,9 +44,9 @@
 		"category": "Educational Project",
 		"name": "EnglishLearning",
 		"liveWebsite": "https://english-learning-bdbb2.firebaseapp.com/ ",
-		"liveWebsiteRepo": " https://github.com/programming-hero-web-course1/b610-learning-platform-client-side-Saifuddinmonna",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/english-learning-client-side",
 		"liveServersite": "https://server-for-assignment-10.vercel.app/",
-		"liveServersiteRepo": "https://github.com/programming-hero-web-course1/b610-lerning-platform-server-side-Saifuddinmonna",
+		"liveServersiteRepo": "https://github.com/Saifuddinmonna/EnglishLearning-server-side",
 		"technology": [
 			"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind."
 		],
@@ -66,7 +66,7 @@
 		"category": "Quiz App Project",
 		"name": "GoExam",
 		"liveWebsite": "https://goexam.netlify.app/",
-		"liveWebsiteRepo": "https://github.com/programming-hero-web-course2/b6-quiz-crackerz-Saifuddinmonna",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/GoExam",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
 		"technology": ["React, Vercel, Tailwind."],
