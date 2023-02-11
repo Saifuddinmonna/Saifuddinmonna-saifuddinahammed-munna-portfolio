@@ -4,14 +4,16 @@ import { useEffect } from "react";
 import ReactConfetti from "react-confetti";
 import { Outlet } from "react-router-dom";
 import About from "../About/About";
-import FotterPage from "../BodyDiv/FotterPage";
+import Footer from "../BodyDiv/Footer";
+
 import HeaderPage from "../BodyDiv/HeaderPage";
-import NavbarPage from "../BodyDiv/NavbarPage";
+
 
 import SkillProgressbar from "../BodyDiv/SkillProgressbar";
 import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfolios";
 import MyServices from "../Myservices/MyServices";
+import NavbarFooter from "../NavbarPage/NabvarFooter";
 import NavbarPage2 from "../NavbarPage/NavbarPage2";
 
 const Main = () => {
@@ -27,18 +29,14 @@ const Main = () => {
 	}, []);
 
 	return (
-		<div>
+		<div className="min-h-window">
 			{/* <h1>this is main page</h1> */}
-			<NavbarPage2 className="z-20"></NavbarPage2>
+			<NavbarPage2 className=""></NavbarPage2>
 			{/* <NavbarPage></NavbarPage> */}
 			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>
-			<HeaderPage></HeaderPage>
-			<MyPortfolios className="z-1"></MyPortfolios>
-			<MyServices></MyServices>
-			<SkillProgressbar></SkillProgressbar>
-			<ContractMe></ContractMe>
-			<FotterPage></FotterPage>
+			<NavbarFooter className="relative fixed start-0 end-0 "></NavbarFooter>
+			<Footer></Footer>
 		</div>
 	);
 };

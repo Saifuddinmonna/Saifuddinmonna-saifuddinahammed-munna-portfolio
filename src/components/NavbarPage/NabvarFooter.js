@@ -5,8 +5,8 @@ import "./NavbarPage.css";
 
 function NavbarFooter() {
 	return (
-		<div className=" my-5 rounded-2x border">
-			<div className=" mx-28 bg-gradient-to-r  from-cyan-500 to-blue-500 border fixed w-full bottom-0   mx-auto flex justify-evenly pb-2 text-decoration-none ">
+		<div className="fixed  bottom-0  mx-auto   w-full  rounded-xl border">
+			<div className="  rounded-xl  bg-gradient-to-r  w-full from-cyan-500 to-blue-500 border flex justify-evenly pb-2 text-decoration-none ">
 				<NavLink
 					className=" text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl black:text-white white:text-dark text-decoration-none  "
 					to="/#">

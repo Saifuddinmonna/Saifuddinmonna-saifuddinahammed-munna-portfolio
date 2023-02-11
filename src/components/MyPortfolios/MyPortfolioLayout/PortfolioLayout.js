@@ -4,12 +4,13 @@ import ReactConfetti from "react-confetti";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { Outlet, useLoaderData, useParams } from "react-router-dom";
+import Footer from "../../BodyDiv/Footer";
 import NavbarFooter from "../../NavbarPage/NabvarFooter";
 import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
 
 import portfoliosName from "../portfolios.json";
-import  "./Portfolio.css";
+import "./Portfolio.css";
 
 const PortfolioLayout = () => {
 	const [confettiStart, setConfettiStart] = useState(true);
@@ -60,20 +61,18 @@ const PortfolioLayout = () => {
 	}, [nameFilter]);
 
 	useEffect(() => {
-		
-			setConfettiStart(true);
-		
+		setConfettiStart(true);
 	}, [datas]);
-useEffect(() => {
-	setTimeout(() => {
-		setConfettiStart(false);
-	}, 8000);
-}, [datas]);
+	useEffect(() => {
+		setTimeout(() => {
+			setConfettiStart(false);
+		}, 8000);
+	}, [datas]);
 	return (
-		<div className="">
+		<div className="relative">
 			{confettiStart && <ReactConfetti />}
 			{/* fixed w-full top-0 left-0 right-0 mx-auto */}
-			<div className="fixed w-full top-0 left-0 right-0 mx-auto">
+			<div className="fixed z-30 w-full top-0 left-0 right-0 mx-auto">
 				<NavbarPage2></NavbarPage2>
 			</div>
 
@@ -309,7 +308,8 @@ useEffect(() => {
 					</div>
 				</div>
 			</div>
-			<NavbarFooter></NavbarFooter>
+			<NavbarFooter className="fixed z-30 w-full bottom-0 left-0 right-0 mx-auto"></NavbarFooter>
+			<Footer></Footer>
 		</div>
 	);
 }; 

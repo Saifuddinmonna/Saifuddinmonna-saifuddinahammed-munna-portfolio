@@ -21,13 +21,12 @@ const SingleLayout = () => {
 	}, []);
 
 	return (
-		<div className="min-h-screen">
+		<div className="min-h-window">
 			{/* <h1>this is main page</h1> */}
-			<NavbarPage2></NavbarPage2>
+
 			{/* <NavbarPage></NavbarPage> */}
 			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>
-			<NavbarFooter></NavbarFooter>
 		</div>
 	);
 };

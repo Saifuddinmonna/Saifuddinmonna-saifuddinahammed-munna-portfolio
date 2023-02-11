@@ -1,14 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-const FotterPage = () => {
+const Footer = () => {
 	return (
-		<div className=" text ">
-			<footer class="m-4 py-4 text-center  rounded-xl mt-5 bg-gradient-to-r from-cyan-500 to-blue-500">
+		<div className="mb-20 text ">
+			<footer class="m-4 mb-36 py-4 text-center  rounded-xl mt-5 bg-gradient-to-r from-cyan-500 to-blue-500">
 				<div class="social-icon-container text-decoration-none text-center ">
 					<a
-						
-						onClick={ () => window.scrollTo(0, 0) }
+						onClick={() => window.scrollTo(0, 0)}
 						// target="_blank"
 						// href="https://saifuddinmonna.github.io./EnglishClub/index.html"
 						targer="_blank"
@@ -42,7 +41,7 @@ const FotterPage = () => {
 						</a>
 					</div>
 				</div>
-				<div>
+				<div className="pb-5">
 					<p class="footer-text text-gray-300">
 						Edited with &hearts; by Sifuddin Ahammed Monna
 					</p>
@@ -55,4 +54,4 @@ const FotterPage = () => {
 	);
 };
 
-export default FotterPage;
+export default Footer;

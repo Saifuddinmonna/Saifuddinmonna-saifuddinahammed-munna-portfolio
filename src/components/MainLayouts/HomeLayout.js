@@ -4,9 +4,9 @@ import { useEffect } from "react";
 import ReactConfetti from "react-confetti";
 import { Outlet } from "react-router-dom";
 import About from "../About/About";
-import FotterPage from "../BodyDiv/FotterPage";
+
 import HeaderPage from "../BodyDiv/HeaderPage";
-import NavbarPage from "../BodyDiv/NavbarPage";
+
 
 import SkillProgressbar from "../BodyDiv/SkillProgressbar";
 import ContractMe from "../ContractMe/ContractMe";
@@ -27,7 +27,7 @@ const HomeLayout = () => {
 	}, []);
 
 	return (
-		<div>
+		<div >
 			{/* <h1>this is main page</h1> */}
 			
 			{/* <NavbarPage></NavbarPage> */}
@@ -37,7 +37,7 @@ const HomeLayout = () => {
 			<MyServices></MyServices>
 			<SkillProgressbar></SkillProgressbar>
 			<ContractMe></ContractMe>
-			<FotterPage></FotterPage>
+			
 		</div>
 	);
 };

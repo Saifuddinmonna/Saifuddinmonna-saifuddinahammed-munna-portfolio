@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import HeaderPage from "./components/BodyDiv/HeaderPage";
-import FotterPage from "./components/BodyDiv/FotterPage";
+
 import NavbarPage from "./components/BodyDiv/NavbarPage";
 import SkillProgressbar from "./components/BodyDiv/SkillProgressbar";
 import ContractMe, { ContactUs } from "./components/ContractMe/ContractMe";
@@ -25,7 +25,8 @@ import { useState } from "react";
 import ReactConfetti from "react-confetti";
 import SingleLayout from "./components/MainLayouts/SongleLayout";
 import HomeLayout from "./components/MainLayouts/HomeLayout";
-import NavbarFooter from "./components/NavbarPage/NabvarFooter";
+import Footer from "./components/BodyDiv/Footer";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <SingleLayout></SingleLayout>,
+			element: <Main></Main>,
 			children: [
 				{
 					path: "/",
@@ -70,7 +71,7 @@ function App() {
 					element: (
 						<>
 							<MyportfolioImage></MyportfolioImage>
-							<NavbarFooter></NavbarFooter>
+							<Footer></Footer>
 						</>
 					),
 					loader: () => {

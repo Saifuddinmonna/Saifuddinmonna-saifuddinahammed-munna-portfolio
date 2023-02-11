@@ -44,14 +44,7 @@ const MyportfolioImage = () => {
 	console.log(data4);
 
 	return (
-		// <div className="text-white text-4xl">
-		// 	h2 amar naem munna tumar name ki
-		// 	{nameFilter}
-		// 	<button className="btn " onClick={() => dataFilter(nameFilter)}>
-		// 		button click
-		// 	</button>
-		// </div>
-		<div>
+		<div className="">
 			<div className="col-span-6">
 				{datas2?.map((p, ind) => (
 					<div

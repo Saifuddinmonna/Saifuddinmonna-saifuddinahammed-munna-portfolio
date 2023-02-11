@@ -71,7 +71,7 @@ const MyPortfolios = () => {
 	}, [nameFilter]);
 
 	return (
-		<div>
+		<div className="">
 			<div className="rounded-2xl border p-2 m-3 px-3 shadow-lg  text-gray-600 body-font">
 				<div className="">
 					<div className="mt-3  p-3 border rounded-2xl">
@@ -86,10 +86,10 @@ const MyPortfolios = () => {
 								datas?.slice(0, 9).map((p, ind) => (
 									<div
 										key={ind}
-										className="container relative p-3 mb-2 shadow-xl border rounded-xl mx-auto">
+										className="container relative  p-3 mb-2 shadow-xl border rounded-xl mx-auto">
 										<section className="text-gray-600 body-font">
 											<div className=" p-3 m-3 mx-auto text-center">
-												<h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark">
+												<h1 class="text-2xl font-semibold text-center  text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark">
 													{p.category} :{" "}
 													<span class="text-blue-500">
 														{p.name}
