@@ -79,7 +79,7 @@ const PortfolioLayout = () => {
 			<div className="min-h-screen rounded-2xl mt-4 shadow-2xl  border p-2 m-1 text-gray-600 body-font">
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
 					<div className=" relative  md:col-span-3 lg:col-span-2 xl:col-span-2  ">
-						<div className=" md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
+						<div className="sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
 							<div className="pb-20 overflow-x-auto max-h-screen">
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>
