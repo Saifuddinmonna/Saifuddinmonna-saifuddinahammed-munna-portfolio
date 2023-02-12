@@ -8,11 +8,14 @@ import Footer from "../../BodyDiv/Footer";
 import NavbarFooter from "../../NavbarPage/NabvarFooter";
 import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
+import { motion, useScroll, useSpring } from "framer-motion";
 
 import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";
 
 const PortfolioLayout = () => {
+	const { scrollYProgress } = useScroll();
+	const scaleX = useSpring(scrollYProgress);
 	const [confettiStart, setConfettiStart] = useState(true);
 	const websiteName = useParams();
 	const nameFilter = websiteName?.UsedPhone;
@@ -56,10 +59,9 @@ const PortfolioLayout = () => {
 		console.log(props);
 		console.log(newData);
 		// setPatamData(false);
-		if (window.screen.availWidth < 640) {
+		if (window.screen.availWidth < 720) {
 			window.scrollTo(0, 800);
-		}
-		else {
+		} else {
 			window.scrollTo(0, 0);
 		}
 	};
@@ -93,6 +95,10 @@ const PortfolioLayout = () => {
 						mt-12
 						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
 							<div className="pb-20 overflow-x-auto max-h-screen">
+								<motion.div
+									className="progress-bar z-33 opacity-50 relative"
+									style={{ scaleX: scrollYProgress }}
+								/>
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>
 										<div className="flex rounded-xl  justify-between">
@@ -320,6 +326,7 @@ const PortfolioLayout = () => {
 					</div>
 				</div>
 			</div>
+
 			<NavbarFooter className="fixed z-30 w-full bottom-0 left-0 right-0 mx-auto"></NavbarFooter>
 			<Footer></Footer>
 		</div>
