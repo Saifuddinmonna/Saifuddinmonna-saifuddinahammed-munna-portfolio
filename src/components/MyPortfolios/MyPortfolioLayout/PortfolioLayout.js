@@ -22,7 +22,10 @@ const PortfolioLayout = () => {
 	const [data, setData] = useState();
 	const [paramData, setPatamData] = useState();
 	const [showMore, setShowMore] = useState(false);
-
+	const width = window.screen.width;
+	const width2 = window.screen.availWidth;
+	console.log(width);
+	console.log(width2);
 	const dataFilter2 = async (props) => {
 		await setDatas(portfoliosName);
 		setPatamData(false);
@@ -53,7 +56,12 @@ const PortfolioLayout = () => {
 		console.log(props);
 		console.log(newData);
 		// setPatamData(false);
-		window.scrollTo(0, 800);
+		if (window.screen.availWidth < 640) {
+			window.scrollTo(0, 800);
+		}
+		else {
+			window.scrollTo(0, 0);
+		}
 	};
 
 	useEffect(() => {
