@@ -96,8 +96,8 @@ const PortfolioLayout = () => {
 						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
 							<div className="pb-20 overflow-x-auto max-h-screen">
 								<motion.div
-									className="progress-bar z-33 opacity-50 relative"
-									style={{ scaleX: scrollYProgress }}
+									className="progress-bar z-33  relative"
+									style={{  scaleX  }}
 								/>
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>

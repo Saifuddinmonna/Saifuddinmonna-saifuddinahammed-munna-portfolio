@@ -7,7 +7,7 @@ body {
   --green: #22cc88;
   --blue: #0055ff;
   --purple: #8855ff;
-  --red: #ff0055;
+  --warning: #FFC106;
   --orange: #ee4444;
   --yellow: #ffcc00;
   --mustard: #ffaa00;
@@ -115,6 +115,6 @@ article {
   left: 0;
   right: 0;
   height: 10px;
-  background: var(--red);
+  background: var(--warning);
   transform-origin: 0%;
 }
