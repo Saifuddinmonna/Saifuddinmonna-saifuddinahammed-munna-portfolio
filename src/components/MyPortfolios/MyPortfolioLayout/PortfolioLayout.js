@@ -94,14 +94,15 @@ const PortfolioLayout = () => {
 						mb-12
 					
 						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
-							<div className="pb-28 overflow-x-auto max-h-screen">
+							<div className="pb-28  overflow-x-auto max-h-screen">
 								<div className="fixed z-30 w-full top-0 left-0 right-0 mx-auto">
 									<NavbarPage2></NavbarPage2>
+									<motion.div
+										className="progress-bar mx-3 rounded-xl"
+										style={{ scaleX: scrollYProgress }}
+									/>
 								</div>
-								<motion.div
-									className="progress-bar mx-3 rounded-xl"
-									style={{ scaleX: scrollYProgress }}
-								/>
+
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>
 										<div className="flex rounded-xl  justify-between">

@@ -1,14 +1,23 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { Link } from "react-router-dom";
+import ReactConfetti from "react-confetti";
+import { useState } from 'react';
 
 const Blog = () => {
+	const [confettiStart, setConfettiStart] = useState(true);
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, []);
+	useEffect(() => {
+		setTimeout(() => {
+			setConfettiStart(false);
+		}, 8000);
+	}, []);
 	return (
-		<div className="m-3 rounded-xl">
+		<div className="m-3 rounded-x min-h-screen">
+			{confettiStart && <ReactConfetti />}
 			<div className="hero min-h-screen bg-base-200 rounded-xl">
 				<div className="hero-content text-center">
 					<div className="max-w-md">

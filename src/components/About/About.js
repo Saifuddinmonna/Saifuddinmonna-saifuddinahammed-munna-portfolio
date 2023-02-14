@@ -23,7 +23,7 @@ const componentDidMount = () => {
 },[])
 
 	return (
-		<div className="m-7  mx-auto">
+		<div className="m-7 min-h-screen  mx-auto">
 			{confettiStart && <ReactConfetti />}
 			<div className="bg-base-200 m-3  rounded-xl">
 				<div className="hero-content flex-col lg:flex-row">

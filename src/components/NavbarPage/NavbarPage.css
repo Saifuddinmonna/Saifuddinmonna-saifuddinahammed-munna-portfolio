@@ -18,12 +18,12 @@ header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	height: 80px;
-	padding: 0 2rem;
+	height: 30px;
+	padding: 0 1rem;
 	background: var(--mainColor);
 	color: var(--textColor);
 	
-	padding:2rem;
+	padding:1.5rem;
 	border-radius: 10px;
 	z-index: 20;
 	
@@ -70,7 +70,7 @@ nav {
 		top: 10px;
 		left: 0;
 		height: 30%;
-		width: 25%;
+		width: 20%;
 		min-width: 200px;
 		min-height: 300px;
 		display: flex;
