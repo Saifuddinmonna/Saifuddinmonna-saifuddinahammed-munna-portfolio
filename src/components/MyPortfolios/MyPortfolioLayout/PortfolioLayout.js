@@ -83,9 +83,6 @@ const PortfolioLayout = () => {
 		<div className="relative">
 			{confettiStart && <ReactConfetti />}
 			{/* fixed w-full top-0 left-0 right-0 mx-auto */}
-			<div className="fixed z-30 w-full top-0 left-0 right-0 mx-auto">
-				<NavbarPage2></NavbarPage2>
-			</div>
 
 			<div className="min-h-screen rounded-2xl mt-4 shadow-2xl  border p-2 m-1 text-gray-600 body-font">
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
@@ -93,12 +90,14 @@ const PortfolioLayout = () => {
 						<div
 							className="
 						mt-12
+						mb-12
+					
 						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
-							<div className="pb-20 overflow-x-auto max-h-screen">
-								<motion.div
-									className="progress-bar z-33  relative"
-									style={{  scaleX  }}
-								/>
+							<div className="pb-28 overflow-x-auto max-h-screen">
+								<div className="fixed z-30 w-full top-0 left-0 right-0 mx-auto">
+									<NavbarPage2></NavbarPage2>
+								</div>
+
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>
 										<div className="flex rounded-xl  justify-between">

@@ -7,6 +7,7 @@ body {
   --green: #22cc88;
   --blue: #0055ff;
   --purple: #8855ff;
+    --red: #ff0055;
   --warning: #FFC106;
   --orange: #ee4444;
   --yellow: #ffcc00;
@@ -109,12 +110,12 @@ article {
 }
 
 .progress-bar {
-        background-color: blue;
   position: fixed;
-  top:60;
+  top: 700;
   left: 0;
   right: 0;
-  height: 10px;
-  background: var(--warning);
+  height: 109px;
+  background: var(--red);
   transform-origin: 0%;
 }
+
