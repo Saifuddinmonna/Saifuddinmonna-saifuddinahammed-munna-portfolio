@@ -114,8 +114,8 @@ article {
   top: 700;
   left: 0;
   right: 0;
-  height: 109px;
-  background: var(--red);
+  height: 10px;
+  background: linear-gradient(to right,#FFC106,#f2fbac);
   transform-origin: 0%;
 }
 

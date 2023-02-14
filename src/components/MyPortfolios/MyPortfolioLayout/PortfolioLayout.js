@@ -14,6 +14,7 @@ import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";
 
 const PortfolioLayout = () => {
+	
 	const { scrollYProgress } = useScroll();
 	const scaleX = useSpring(scrollYProgress);
 	const [confettiStart, setConfettiStart] = useState(true);
@@ -97,7 +98,10 @@ const PortfolioLayout = () => {
 								<div className="fixed z-30 w-full top-0 left-0 right-0 mx-auto">
 									<NavbarPage2></NavbarPage2>
 								</div>
-
+								<motion.div
+									className="progress-bar mx-3 rounded-xl"
+									style={{ scaleX: scrollYProgress }}
+								/>
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>
 										<div className="flex rounded-xl  justify-between">
@@ -326,7 +330,7 @@ const PortfolioLayout = () => {
 				</div>
 			</div>
 
-			<NavbarFooter className="fixed z-30 w-full bottom-0 left-0 right-0 mx-auto"></NavbarFooter>
+			<NavbarFooter className="sticky z-30 w-full bottom-0 left-0 right-0 mx-auto"></NavbarFooter>
 			<Footer></Footer>
 		</div>
 	);
