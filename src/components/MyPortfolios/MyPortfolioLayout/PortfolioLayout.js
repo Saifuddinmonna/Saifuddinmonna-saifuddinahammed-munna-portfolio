@@ -95,14 +95,15 @@ const PortfolioLayout = () => {
 					
 						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
 							<div className="pb-28  overflow-x-auto max-h-screen">
-								<div className="fixed z-30 w-full top-0 left-0 right-0 mx-auto">
-									<NavbarPage2></NavbarPage2>
-									<motion.div
-										className="progress-bar mx-3 rounded-xl"
-										style={{ scaleX: scrollYProgress }}
-									/>
+								<div className="fixed  z-30 w-full top-0 left-0 right-0 mx-auto">
+									<div classMame="relative">
+										<NavbarPage2 className="z-30 top-0 absolute"></NavbarPage2>
+									</div>
 								</div>
-
+								<motion.div
+									className="progress-bar z-34 absolute mx-3 rounded-xl bottom-0"
+									style={{ scaleX: scrollYProgress }}
+								/>
 								{datasName?.map((nameall, ind) => (
 									<div className=" " key={ind}>
 										<div className="flex rounded-xl  justify-between">
@@ -232,9 +233,7 @@ const PortfolioLayout = () => {
 														</h2>
 														{showMore ? (
 															<>
-																{p.overview
-																	.slice(0, 5)
-																	.map(
+																{p.overview.map(
 																		(
 																			over,
 																			ind,

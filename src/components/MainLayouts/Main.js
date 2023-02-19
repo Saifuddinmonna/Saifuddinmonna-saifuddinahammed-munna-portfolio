@@ -33,12 +33,12 @@ const Main = () => {
 
 	return (
 		<div className="min-h-window">
-			<motion.div
-				className="progress-bar mx-3 rounded-xl absolute"
-				style={{ scaleX: scrollYProgress }}
-			/>
 			{/* <h1>this is main page</h1> */}
 			<NavbarPage2 className="fixed z-30 w-full top-0 left-0 right-0 mx-auto"></NavbarPage2>
+			<motion.div
+				className="progress-bar mx-3 rounded-xl "
+				style={{ scaleX: scrollYProgress }}
+			/>
 			{/* <NavbarPage></NavbarPage> */}
 			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>

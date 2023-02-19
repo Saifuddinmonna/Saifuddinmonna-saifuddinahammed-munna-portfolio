@@ -286,9 +286,7 @@ const MyPortfolios = () => {
 													</h2>
 													{showMore ? (
 														<>
-															{p.overview
-																.slice(0, 5)
-																.map(
+															{p.overview.map(
 																	(
 																		over,
 																		ind,
