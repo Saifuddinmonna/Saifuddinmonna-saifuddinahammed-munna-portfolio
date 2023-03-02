@@ -45,9 +45,8 @@ const componentDidMount = () => {
 							and development. I work a minimum of 13-14 hours
 							every day, I love to do this, it’s my life-
 							everything. I learn new things every day. Actually I
-							want to be a good web developer and and bud a
-							optimize npm package for for react that is my
-							vision. <br />
+							want to be a good web developer and build a optimize
+							npm package for for react that is my vision. <br />
 							<div className="text-center text-4xl text-deep-orange-600 mt-4">
 								--***--
 							</div>

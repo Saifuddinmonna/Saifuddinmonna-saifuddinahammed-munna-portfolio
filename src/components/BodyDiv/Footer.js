@@ -13,7 +13,7 @@ const Footer = () => {
 						targer="_blank"
 						className=" cursor-pointer fs-6 text-strong text-gray-300 text-bold text-decoration-none d-block footer-text"
 						rel="noreferrer">
-						Go Home
+						Go Up
 					</a>
 					<div className="text-gray-300">
 						<a
