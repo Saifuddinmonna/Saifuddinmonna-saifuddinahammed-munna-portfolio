@@ -16,7 +16,9 @@
 			"❖ Seller can Add Product, See all his buyers, all his products.",
 			"❖ There have 3 different dashboard panel (Buyer/ Seller / Admin). ",
 			"❖ Admin can see all sellers, all buyers, reported items, delete and verify buyer and seller. ",
-			"❖ Admin Access (user: munna@gmail.com password: 123456Use#)"
+			"❖ Admin Access (user: munna@gmail.com password: 123456Use#)",
+			"❖ Seller Access (seller: seller4@gmail.com password: 123456Use#)",
+			"❖ Buyer Access (Buyer : buyer4@gmail.com password: 123456Use#)"
 		],
 		"image": ["1.JPG", "2.JPG", "3.JPG"]
 	},

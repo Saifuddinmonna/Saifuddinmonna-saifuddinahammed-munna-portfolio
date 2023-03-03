@@ -16,7 +16,7 @@ function SkillProgressbar() {
 					</h1>
 				</div>
 
-				<div className=" grid grid-cols-1  lg:grid-cols-2 md:grid-cols-1  lg:grid-cols-1 justify-center gap-3 ">
+				<div className=" grid grid-cols-1 md:grid-cols-1   lg:grid-cols-1 xl:grid-cols-1 justify-center gap-3 ">
 					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-3 m-1 rounded-lg">
 						<div class=" flex flex-col space-y-3">
 							<div class="relative w-full  bg-gray-200 rounded">
