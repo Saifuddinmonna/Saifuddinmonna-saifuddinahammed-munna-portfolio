@@ -86,7 +86,7 @@ const PortfolioLayout = () => {
 			{/* fixed w-full top-0 left-0 right-0 mx-auto */}
 			<NavbarPage2 className=" sticky top-0 z-50 w-full "></NavbarPage2>
 
-			<div className="min-h-screen rounded-2xl mt-4 shadow-2xl  border p-2 m-1 text-gray-600 body-font">
+			<div className="min-h-screen rounded-2xl mt-4 shadow-2xl  border p-2 pb-2 m-1 text-gray-600 body-font">
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
 					<div className=" relative  md:col-span-3 lg:col-span-2 xl:col-span-2  ">
 						<div

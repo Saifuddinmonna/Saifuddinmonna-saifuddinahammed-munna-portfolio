@@ -13,9 +13,12 @@ function NavbarPage2({ className }) {
 	return (
 		<div className={`border-b-2 border-gray-300 pb-1 bg-white ${className}`}>
 			<header className="mx-1 max-w-[1440px] mx-auto">
-				<h3 className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl black:text-white white:text-dark">
-					LOGO
+				<h3 className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl black:text-white white:text-dark flex items-center justify-center gap-2">
+					<img src="/logo512.png" alt="logo" className="w-10 h-10 rounded-full" />
+				
 				</h3>
+				
+				
 				<nav className="" ref={navRef}>
 					<NavLink
 						className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl black:text-white white:text-dark"
