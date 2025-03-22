@@ -3,7 +3,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import "./NavbarPage.css";
 
-function NavbarPage2() {
+function NavbarPage2({ className }) {
 	const navRef = useRef();
 
 	const showNavbar = () => {
@@ -11,8 +11,8 @@ function NavbarPage2() {
 	};
 
 	return (
-		<div className=" mx-3">
-			<header className="sticky  w-full z-40 top-0 left-0 right-0 mx-auto ">
+		<div className={`${className} border-b-2 border-gray-300 pb-1 bg-white`}>
+			<header className="mx-1 max-w-[1440px] mx-auto">
 				<h3 className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl black:text-white white:text-dark">
 					LOGO
 				</h3>

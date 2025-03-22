@@ -84,6 +84,7 @@ const PortfolioLayout = () => {
 		<div className="relative">
 			{confettiStart && <ReactConfetti />}
 			{/* fixed w-full top-0 left-0 right-0 mx-auto */}
+			<NavbarPage2 className=" sticky top-0 z-50 w-full "></NavbarPage2>
 
 			<div className="min-h-screen rounded-2xl mt-4 shadow-2xl  border p-2 m-1 text-gray-600 body-font">
 				<div className="grid grid-cols-1 md:grid-cols-10  lg:grid-cols-10  xl:grid-cols-10 ">
@@ -92,16 +93,10 @@ const PortfolioLayout = () => {
 							className="
 						mt-12
 						mb-12
-					
-						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed    ">
+						sm:mt-12 md:mt-12   lg:mt-12 xl:mt-12   md:fixed">
 							<div className="pb-28  overflow-x-auto max-h-screen">
-								<div className="fixed  z-30 w-full top-0 left-0 right-0 mx-auto">
-									<div classMame="relative">
-										<NavbarPage2 className="z-30 top-0 absolute"></NavbarPage2>
-									</div>
-								</div>
 								<motion.div
-									className="progress-bar z-34 absolute mx-3 rounded-xl bottom-0"
+									className="progress-bar z-[99998] absolute mx-3 rounded-xl bottom-0"
 									style={{ scaleX: scrollYProgress }}
 								/>
 								{datasName?.map((nameall, ind) => (
@@ -330,23 +325,9 @@ const PortfolioLayout = () => {
 				</div>
 			</div>
 
-			<NavbarFooter className="sticky z-30 w-full bottom-0 left-0 right-0 mx-auto"></NavbarFooter>
 			<Footer></Footer>
 		</div>
 	);
-}; 
-		
-			
-						
-
-							
-							
-						
-					
-				
-			
-		
-	
-
+};
 
 export default PortfolioLayout;

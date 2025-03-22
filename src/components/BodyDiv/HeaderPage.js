@@ -7,7 +7,7 @@ import Typewriter from "typewriter-effect";
 
 const HeaderPage = () => {
 	return (
-		<div className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:opacity-95 duration-300">
+		<div className="transition ease-in-out delay-150 mt-4 hover:-translate-y-1 hover:scale-104 hover:opacity-95 duration-300">
 			<div className="bg-gradient-to-r  from-cyan-500 to-blue-500 border rounded-2xl m-3 p-3">
 				<div className="  ">
 					<div className="flex items-center justify-around flex-col lg:flex-row-reverse">
