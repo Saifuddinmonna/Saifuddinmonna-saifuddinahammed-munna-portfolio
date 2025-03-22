@@ -40,15 +40,15 @@ function SkillProgressbar() {
 									style={{ width: "98%" }}
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 mt-3 rounded">
+							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									Bootstrap
 								</label>
 								<div
-									style={{ width: "100%" }}
-									class="absolute top-0 h-4 rounded mt-3 shim-green"></div>
+									style={{ width: "95%" }}
+									class="absolute top-0 h-4 rounded shim-blue"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
