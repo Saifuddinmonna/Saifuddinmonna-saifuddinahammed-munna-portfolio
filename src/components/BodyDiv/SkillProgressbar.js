@@ -21,7 +21,7 @@ function SkillProgressbar() {
 						<div class=" flex flex-col space-y-3">
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									HTML
 								</label>
@@ -32,7 +32,7 @@ function SkillProgressbar() {
 
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									CSS
 								</label>
@@ -40,7 +40,7 @@ function SkillProgressbar() {
 									style={{ width: "98%" }}
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
+							<div class="relative w-full  bg-gray-200 mt-3 rounded">
 								<label
 									class="block text-xl text-bold  mb-1"
 									for="story">
@@ -48,11 +48,11 @@ function SkillProgressbar() {
 								</label>
 								<div
 									style={{ width: "100%" }}
-									class="absolute top-0 h-4 rounded shim-green"></div>
+									class="absolute top-0 h-4 rounded mt-3 shim-green"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									TailwindCSS
 								</label>
@@ -63,7 +63,7 @@ function SkillProgressbar() {
 
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold  mt-3 mb-1"
 									for="story">
 									JavaScript
 								</label>
@@ -73,7 +73,17 @@ function SkillProgressbar() {
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold  mt-3 mb-1"
+									for="story">
+									TypeScript
+								</label>
+								<div
+									style={{ width: "75%" }}
+									class="absolute top-0 h-4 rounded shim-red"></div>
+							</div>
+							<div class="relative w-full  bg-gray-200 rounded">
+								<label
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									React
 								</label>
@@ -84,7 +94,7 @@ function SkillProgressbar() {
 
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									NextJs
 								</label>
@@ -95,7 +105,7 @@ function SkillProgressbar() {
 
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									NodeJs
 								</label>
@@ -105,7 +115,7 @@ function SkillProgressbar() {
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									MongoDb
 								</label>
@@ -115,7 +125,7 @@ function SkillProgressbar() {
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									SQL (Postgresql)
 								</label>
@@ -125,7 +135,7 @@ function SkillProgressbar() {
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
-									class="block text-xl text-bold  mb-1"
+									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									Pisma
 								</label>
