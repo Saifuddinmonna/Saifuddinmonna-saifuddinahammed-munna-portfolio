@@ -45,6 +45,7 @@ function SkillProgressbar() {
 									class="block text-xl text-bold mt-3 mb-1"
 									for="story">
 									Bootstrap
+
 								</label>
 								<div
 									style={{ width: "95%" }}
@@ -58,7 +59,7 @@ function SkillProgressbar() {
 								</label>
 								<div
 									style={{ width: "98%" }}
-									class="absolute top-0 h-4 rounded shim-blue"></div>
+									class="absolute top-0 h-4 rounded shim-green "></div>
 							</div>
 
 							<div class="relative w-full  bg-gray-200 rounded">
@@ -69,7 +70,7 @@ function SkillProgressbar() {
 								</label>
 								<div
 									style={{ width: "95%" }}
-									class="absolute top-0 h-4 rounded shim-red"></div>
+									class="absolute top-0 h-4 rounded shim-blue"></div>
 							</div>
 							<div class="relative w-full  bg-gray-200 rounded">
 								<label
