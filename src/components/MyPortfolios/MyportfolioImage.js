@@ -126,15 +126,15 @@ const MyportfolioImage = () => {
 											</h2>
 											{showMore ? (
 												<>
-													{p.overview
-														.slice(0, 5)
-														.map((over, ind) => (
+													{p.overview.map(
+														(over, ind) => (
 															<p
 																key={ind}
 																className="text-left ">
 																{over}
 															</p>
-														))}
+														),
+													)}
 												</>
 											) : (
 												<>

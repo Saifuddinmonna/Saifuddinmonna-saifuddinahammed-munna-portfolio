@@ -113,14 +113,34 @@ function SkillProgressbar() {
 									style={{ width: "80%" }}
 									class="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
+							<div class="relative w-full  bg-gray-200 rounded">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
+									SQL (Postgresql)
+								</label>
+								<div
+									style={{ width: "60%" }}
+									class="absolute top-0 h-4 rounded shim-green"></div>
+							</div>
+							<div class="relative w-full  bg-gray-200 rounded">
+								<label
+									class="block text-xl text-bold  mb-1"
+									for="story">
+									Pisma
+								</label>
+								<div
+									style={{ width: "55%" }}
+									class="absolute top-0 h-4 rounded shim-red"></div>
+							</div>
 						</div>
 					</div>
-					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-200 duration-300 grid  text-justify pt-8  rounded-lg">
-						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
+					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 mt-4  text-justify pt-8  rounded-lg">
+						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark mb-2 mt-4">
 							Skills'
 							<span class="text-blue-500">Overview...</span>
 						</h1>
-						<div className="border  rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md ">
+						<div className="border  rounded-lg hover:shadow-[0_0_10px_gray] duration-300  grid shadow-md ">
 							<div className="  rounded-lg ">
 								{" "}
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded   d-block text-left ">
@@ -171,7 +191,7 @@ function SkillProgressbar() {
 								</p>
 							</div>
 						</div>
-						<div className="border  rounded-lg  hover:bg-indigo-400 duration-300 grid shadow-md">
+						<div className="border  rounded-lg  hover:shadow-[0_0_10px_gray] duration-300 grid shadow-md">
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
 								Front end:
 							</h4>

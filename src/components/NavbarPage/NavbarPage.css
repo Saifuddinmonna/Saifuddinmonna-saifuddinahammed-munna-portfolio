@@ -33,9 +33,14 @@ nav a {
 	margin: 0 1rem;
 	color: var(--textColor);
 	text-decoration: none;
+	transition: ease;
+	transition-duration: 1s;
 }
 
-nav a:hover {
+ nav a:hover {
+	color: rgba(204, 2, 46, 0.534);
+}
+  NavLink:hover {
 	color: var(--secondaryColor);
 }
 
