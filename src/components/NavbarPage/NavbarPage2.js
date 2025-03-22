@@ -11,7 +11,7 @@ function NavbarPage2({ className }) {
 	};
 
 	return (
-		<div className={`${className} border-b-2 border-gray-300 pb-1 bg-white`}>
+		<div className={`border-b-2 border-gray-300 pb-1 bg-white ${className}`}>
 			<header className="mx-1 max-w-[1440px] mx-auto">
 				<h3 className="text-xl font-semibold text-center text-gray-800 capitalize lg:text-2xl black:text-white white:text-dark">
 					LOGO

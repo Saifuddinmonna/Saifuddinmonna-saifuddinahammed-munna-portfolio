@@ -5,7 +5,7 @@ import ReactConfetti from "react-confetti";
 import { Outlet } from "react-router-dom";
 import NavbarPage from "../BodyDiv/NavbarPage";
 import SkillProgressbar from "../BodyDiv/SkillProgressbar";
-import NavbarFooter from "../NavbarPage/NabvarFooter";
+
 import NavbarPage2 from "../NavbarPage/NavbarPage2";
 
 const SingleLayout = () => {
@@ -24,7 +24,7 @@ const SingleLayout = () => {
 		<div className="min-h-window">
 			{/* <h1>this is main page</h1> */}
 
-			<NavbarPage2 className=" sticky top-0 z-50 w-full "></NavbarPage2>
+			
 			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>
 		</div>

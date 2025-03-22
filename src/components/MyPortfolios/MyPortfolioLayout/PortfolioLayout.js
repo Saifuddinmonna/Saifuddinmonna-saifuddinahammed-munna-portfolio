@@ -5,7 +5,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { Outlet, useLoaderData, useParams } from "react-router-dom";
 import Footer from "../../BodyDiv/Footer";
-import NavbarFooter from "../../NavbarPage/NabvarFooter";
+
 import NavbarPage2 from "../../NavbarPage/NavbarPage2";
 import MyPortfolios from "../MyPortfolios";
 import { motion, useScroll, useSpring } from "framer-motion";
