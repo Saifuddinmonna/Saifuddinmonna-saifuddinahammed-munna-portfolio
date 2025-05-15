@@ -162,26 +162,21 @@ const MyPortfolios = () => {
 										</section>
 
 										<div className="">
-											{p?.image
-												?.slice(0, 1)
-												.map((imgs, ind) => (
-													<div
-														key={ind}
-														className="mb-2">
-														<div className=" relative  mb-2 p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
-															<PhotoProvider>
-																<PhotoView
-																	src={`images/${imgs}`}>
-																	<img
-																		className="rounded-xl max-h-72"
-																		src={`images/${imgs}`}
-																		alt="Pic of portfolios"
-																	/>
-																</PhotoView>
-															</PhotoProvider>
-														</div>
+											{p?.image?.slice(0, 1).map((imgs, ind) => (
+												<div key={ind} className="mb-2">
+													<div className="relative mb-2 p-2 rounded-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-lg">
+														<PhotoProvider>
+															<PhotoView src={`images/${imgs}`}>
+																<img
+																	className="rounded-xl max-h-72 w-full object-cover"
+																	src={`images/${imgs}`}
+																	alt="Pic of portfolios"
+																/>
+															</PhotoView>
+														</PhotoProvider>
 													</div>
-												))}
+												</div>
+											))}
 										</div>
 										<div className="bg-warning rounded-b-lg bottom-0 right-0 left-0 flex justify-around absolute">
 											<Link to={"/portfoliolayout"}>
@@ -357,13 +352,12 @@ const MyPortfolios = () => {
 
 								<div className="grid grid-cols-3 mb-2">
 									{p?.image?.map((imgs, ind) => (
-										<div key={ind} className="">
-											<div className="  m-2 p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+										<div key={ind} className="m-2">
+											<div className="p-2 rounded-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-lg">
 												<PhotoProvider>
-													<PhotoView
-														src={`images/${imgs}`}>
+													<PhotoView src={`images/${imgs}`}>
 														<img
-															className="rounded-xl max-h-72"
+															className="rounded-xl max-h-72 w-full object-cover"
 															src={`images/${imgs}`}
 															alt="Pic of portfolios"
 														/>

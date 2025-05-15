@@ -8,149 +8,121 @@ function SkillProgressbar() {
 	const similararray = similar.split(",");
 	console.log(similararray);
 	return (
-		<div className="">
-			<div className=" p-4">
-				<div className="m-3  border  rounded-xl">
-					<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
+		<section id="skills" className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-900">
+			<div className="container mx-auto px-4">
+				<div className="mb-12 lg:mb-16 text-center">
+					<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white capitalize">
 						My Professional{" "}
-						<span class="text-blue-500"> Skills...</span>
+						<span className="text-indigo-600 dark:text-indigo-400">Skills...</span>
 					</h1>
 				</div>
 
-				<div className=" grid grid-cols-1 md:grid-cols-1   lg:grid-cols-1 xl:grid-cols-1 justify-center gap-3 ">
-					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-200 duration-300 grid items-center text-justify pt-8 p-3 m-1 rounded-lg">
-						<div class=" flex flex-col space-y-3">
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+				<div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6 lg:gap-8">
+					<div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-xl dark:hover:shadow-indigo-500/20 rounded-xl p-6">
+						<div className="flex flex-col space-y-3">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									HTML
 								</label>
-								<div
-									style={{ width: "100%" }}
-									class="absolute top-0 h-4 rounded shim-blue"></div>
+								<div style={{ width: "100%" }} className="absolute top-0 h-4 rounded shim-blue"></div>
 							</div>
 
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									CSS
 								</label>
-								<div
-									style={{ width: "98%" }}
-									class="absolute top-0 h-4 rounded shim-red"></div>
+								<div style={{ width: "98%" }} className="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									Bootstrap
 
 								</label>
 								<div
 									style={{ width: "95%" }}
-									class="absolute top-0 h-4 rounded shim-blue"></div>
+									className="absolute top-0 h-4 rounded shim-blue"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									TailwindCSS
 								</label>
 								<div
 									style={{ width: "98%" }}
-									class="absolute top-0 h-4 rounded shim-green "></div>
+									className="absolute top-0 h-4 rounded shim-green "></div>
 							</div>
 
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold  mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									JavaScript
 								</label>
 								<div
 									style={{ width: "95%" }}
-									class="absolute top-0 h-4 rounded shim-blue"></div>
+									className="absolute top-0 h-4 rounded shim-blue"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold  mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									TypeScript
 								</label>
 								<div
 									style={{ width: "75%" }}
-									class="absolute top-0 h-4 rounded shim-red"></div>
+									className="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									React
 								</label>
 								<div
 									style={{ width: "90%" }}
-									class="absolute top-0 h-4 rounded shim-green"></div>
+									className="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
 
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									NextJs
 								</label>
 								<div
 									style={{ width: "60%" }}
-									class="absolute top-0 h-4 rounded shim-blue"></div>
+									className="absolute top-0 h-4 rounded shim-blue"></div>
 							</div>
 
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									NodeJs
 								</label>
 								<div
 									style={{ width: "70%" }}
-									class="absolute top-0 h-4 rounded shim-green"></div>
+									className="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									MongoDb
 								</label>
 								<div
 									style={{ width: "80%" }}
-									class="absolute top-0 h-4 rounded shim-red"></div>
+									className="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									SQL (Postgresql)
 								</label>
 								<div
 									style={{ width: "60%" }}
-									class="absolute top-0 h-4 rounded shim-green"></div>
+									className="absolute top-0 h-4 rounded shim-green"></div>
 							</div>
-							<div class="relative w-full  bg-gray-200 rounded">
-								<label
-									class="block text-xl text-bold mt-3 mb-1"
-									for="story">
+							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
+								<label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
 									Pisma
 								</label>
 								<div
 									style={{ width: "55%" }}
-									class="absolute top-0 h-4 rounded shim-red"></div>
+									className="absolute top-0 h-4 rounded shim-red"></div>
 							</div>
 						</div>
 					</div>
-					<div className="border shadow-lg transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 mt-4  text-justify pt-8  rounded-lg">
-						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark mb-2 mt-4">
-							Skills'
-							<span class="text-blue-500">Overview...</span>
+
+					<div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-xl dark:hover:shadow-indigo-500/20 rounded-xl p-6 mt-6">
+						<h1 className="text-3xl font-bold text-gray-800 dark:text-white capitalize mb-6">
+							Skills <span className="text-indigo-600 dark:text-indigo-400">Overview</span>
 						</h1>
 						<div className="border  rounded-lg hover:shadow-[0_0_10px_gray] duration-300  grid shadow-md ">
 							<div className="  rounded-lg ">
@@ -214,7 +186,7 @@ function SkillProgressbar() {
 					</div>
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 }
 

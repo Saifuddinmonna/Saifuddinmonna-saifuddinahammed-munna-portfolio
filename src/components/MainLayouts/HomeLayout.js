@@ -13,6 +13,7 @@ import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfolios";
 import MyServices from "../Myservices/MyServices";
 import NavbarPage2 from "../NavbarPage/NavbarPage2";
+import MyServicesv2 from "../Myservices/MyServicesv2";
 
 const HomeLayout = () => {
 	const [confettiStart, setConfettiStart] = useState(true);
@@ -36,6 +37,7 @@ const HomeLayout = () => {
 			<MyPortfolios></MyPortfolios>
 			<MyServices></MyServices>
 			<SkillProgressbar></SkillProgressbar>
+			<MyServicesv2></MyServicesv2>
 			<ContractMe></ContractMe>
 			
 		</div>
