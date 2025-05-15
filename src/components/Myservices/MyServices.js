@@ -11,16 +11,16 @@ import { RiSecurePaymentFill } from "react-icons/ri";
 const MyServices = () => {
 	return (
 		<div className="">
-			<div className="m-3 p-3 border shadow-lg rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-500 duration-300 ">
+			<div className="m-3 p-3 border shadow-lg rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-xl duration-300">
 				{" "}
 				<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
-					Services I <span class="text-blue-500"> Provides...</span>
+					Services I <span class="text-indigo-500"> Provides...</span>
 				</h1>
 				<section class="bg-white rounded-xl dark:bg-gray-900">
 					<div class="container px-6 py-12 mx-auto">
 						<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-300 duration-300">
-								<CgWebsite className="text-4xl"></CgWebsite>
+							<div className="p-2 rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-300 border border-gray-200">
+								<CgWebsite className="text-4xl text-indigo-500"></CgWebsite>
 								<h1 class=" mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark text-gray-800">
 									Full website creation
 								</h1>
@@ -31,8 +31,8 @@ const MyServices = () => {
 									awesome graphical design interface.
 								</p>
 							</div>
-							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-300 duration-300">
-								<GiAutoRepair className="text-4xl"></GiAutoRepair>
+							<div className="p-2 rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-300 border border-gray-200">
+								<GiAutoRepair className="text-4xl text-indigo-500"></GiAutoRepair>
 								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark text-gray-800 black:text-white white:text-dark">
 									Fixing problems
 								</h1>
@@ -43,8 +43,8 @@ const MyServices = () => {
 									& bugs for any website.
 								</p>
 							</div>
-							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-300 duration-300">
-								<RiSecurePaymentFill className="text-4xl"></RiSecurePaymentFill>
+							<div className="p-2 rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-300 border border-gray-200">
+								<RiSecurePaymentFill className="text-4xl text-indigo-500"></RiSecurePaymentFill>
 								<h1 class="mt-4 text-xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark text-gray-800 black:text-white white:text-dark">
 									Online store & shopping
 								</h1>
@@ -55,7 +55,7 @@ const MyServices = () => {
 									existing website.
 								</p>
 							</div>
-							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-300 duration-300">
+							<div className="p-2 rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-300 border border-gray-200">
 								<svg
 									class="w-8 h-8"
 									viewBox="0 0 30 30"
@@ -88,7 +88,7 @@ const MyServices = () => {
 								</p>
 							</div>
 
-							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-300 duration-300">
+							<div className="p-2 rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-300 border border-gray-200">
 								<svg
 									class="w-8 h-8"
 									viewBox="0 0 30 30"
@@ -121,7 +121,7 @@ const MyServices = () => {
 								</p>
 							</div>
 
-							<div className=" p-2 rounded-xl transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-300 duration-300">
+							<div className="p-2 rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-300 border border-gray-200">
 								<svg
 									class="w-8 h-8"
 									viewBox="0 0 30 30"
@@ -177,15 +177,14 @@ const MyServices = () => {
 					<div class="container px-6 py-10 mx-auto">
 						<h1 class="text-3xl font-semibold text-lg font-semibold text-center text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
 							My Service{" "}
-							<span class="text-blue-500"> Qualilties...</span>
+							<span class="text-indigo-500"> Qualilties...</span>
 						</h1>
 
 						<div class="grid grid-cols-1 gap-8 mt-8 xl:mt-12 xl:gap-16 md:grid-cols-2 xl:grid-cols-3">
 							<div
 								class="rounded-xl transition ease-in-out
-							delay-150 hover:-translate-y-1 hover:scale-104
-							hover:bg-indigo-300 duration-200 flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800">
-								<span class="inline-block p-3 text-blue-500 bg-blue-100 rounded-full black:text-white white:text-dark dark:bg-blue-500">
+							delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-200 flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800 border border-gray-200">
+								<span class="inline-block p-3 text-indigo-500 bg-indigo-100 rounded-full black:text-white white:text-dark dark:bg-indigo-500">
 									<BiCopyAlt></BiCopyAlt>
 								</span>
 
@@ -203,9 +202,8 @@ const MyServices = () => {
 							</div>
 							<div
 								class="rounded-xl transition ease-in-out
-							delay-150 hover:-translate-y-1 hover:scale-104
-							hover:bg-indigo-300 duration-200 flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800">
-								<span class="inline-block p-3 text-blue-500 bg-blue-100 rounded-full black:text-white white:text-dark dark:bg-blue-500">
+							delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-200 flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800 border border-gray-200">
+								<span class="inline-block p-3 text-indigo-500 bg-indigo-100 rounded-full black:text-white white:text-dark dark:bg-indigo-500">
 									<AiOutlineSetting></AiOutlineSetting>
 								</span>
 
@@ -220,13 +218,11 @@ const MyServices = () => {
 								</p>
 							</div>
 							{/* className=" p-2 rounded-xl transition ease-in-out
-							delay-150 hover:-translate-y-1 hover:scale-104
-							hover:bg-indigo-300 duration-200" */}
+							delay-150 hover:-translate-y-1 hover:scale-102 hover:border-blue-300 hover:shadow-lg duration-200" */}
 							<div
 								class="rounded-xl transition ease-in-out
-							delay-150 hover:-translate-y-1 hover:scale-104
-							hover:bg-indigo-300 duration-200 flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800">
-								<span class="inline-block p-3 text-blue-500 bg-blue-100 rounded-full black:text-white white:text-dark dark:bg-blue-500">
+							delay-150 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-lg duration-200 flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800 border border-gray-200">
+								<span class="inline-block p-3 text-indigo-500 bg-indigo-100 rounded-full black:text-white white:text-dark dark:bg-indigo-500">
 									{/* <MdOutlineCleaningServices></MdOutlineCleaningServices> */}
 									<TbAsteriskSimple></TbAsteriskSimple>
 								</span>
