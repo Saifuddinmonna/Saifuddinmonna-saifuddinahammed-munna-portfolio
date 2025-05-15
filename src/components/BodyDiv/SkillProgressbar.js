@@ -1,5 +1,6 @@
 import ProgressBar from "react-bootstrap/ProgressBar";
 import { IconName, GrUserExpert } from "react-icons/gr";
+import SkillTag from "../SkillTag"; // path adjust koro jodi onno folder e thake
 
 function SkillProgressbar() {
 	const similar =
@@ -157,49 +158,30 @@ function SkillProgressbar() {
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded   d-block text-left ">
 									Expertise:
 								</h4>
+								
 								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-									{"JavaScript, ES6, Rest API, ReactJs, ReactRouter, React Hook, Html5, CSS3, CSS,TailwindCss(DaisyUi and familiar withHeadless ) Bootstrap-5,EmailJS, Npm Packages"
-										.split(",")
-										.map((tp) => {
-											return (
-												<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
-													{" "}
-													<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
-													{tp}
-												</div>
-											);
-										})}
-								</p>
+  {"JavaScript, ReactJS, Node.js, MongoDB, Mongoose, Express.js, Redux,SQL, PostgreSQL, Rest API, Html5, CSS3, Bootstrap-5, tailwind CSS ,ES6, Rest API, ReactRouter, React Hook, DaisyUi , familiar withHeadless ,EmailJS, Npm Packages".split(",").map((tp, idx) => (
+    <SkillTag key={idx} name={tp} />
+  ))}
+</p>
+
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded d-block text-left ">
 									Comfortable:
 								</h4>
+								
 								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-									{"Node.js, MongoDb, Firebase, Material UI,ExpressJs, Redux,Next.Js,Typescript,Prticle.js"
-										.split(",")
-										.map((tp) => {
-											return (
-												<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
-													{" "}
-													<GrUserExpert className="d-inline-block text-blue-600 text-lg m-1 text-deep-orange-700 "></GrUserExpert>{" "}
-													{tp}
-												</div>
-											);
-										})}
-								</p>
+  {"Firebase, Prisma, Material UI, Next.Js,Figma, SSL-COMMERCE and Stripe, GitHub, claude.ai, Typescript,Prticle.js".split(",").map((tp, idx) => (
+    <SkillTag key={idx} name={tp} />
+  ))}
+</p>
 								<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded  d-block text-left ">
 									Familiar:
 								</h4>
-								<p className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 m-2">
-									{similararray.map((tp) => {
-										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-2 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
-												{" "}
-												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
-												{tp}
-											</div>
-										);
-									})}
-								</p>
+								<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+  {"Node Mailer Tools, Github, VS-Code, Brackets, Chrome Dev Tools, Heroku, Netlify, Postman, Photoshop, Figma, Illustrator".split(",").map((tp, idx) => (
+    <SkillTag key={idx} name={tp} />
+  ))}
+</p>
 							</div>
 						</div>
 						<div className="border  rounded-lg  hover:shadow-[0_0_10px_gray] duration-300 grid shadow-md">
@@ -207,50 +189,27 @@ function SkillProgressbar() {
 								Front end:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-								{"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS"
-									.split(",")
-									.map((tp) => {
-										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
-												{" "}
-												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
-												{tp}
-											</div>
-										);
-									})}
-							</p>
+  {"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS".split(",").map((tp, idx) => (
+    <SkillTag key={idx} name={tp} />
+  ))}
+</p>
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
 								Back end:
 							</h4>
 							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-								{"Node.js, Express.js, MongoDB, Mongoose,Nodemailer, Node-Geocoder, Stripe, Paypal API,SSL commerce"
-									.split(",")
-									.map((tp) => {
-										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
-												{" "}
-												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
-												{tp}
-											</div>
-										);
-									})}
-							</p>
+  {"Node.js, Express.js, MongoDB, PostgreSQL, Firebase, REST APIs".split(",").map((tp, idx) => (
+    <SkillTag key={idx} name={tp} />
+  ))}
+</p>
 							<h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
 								DevOps:
 							</h4>
-							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 ">
-								{"VS Code ,Git, Github, React Dev Tools, Redux Dev tools ,Figma, Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Illustrator etc."
-									.split(",")
-									.map((tp) => {
-										return (
-											<div className="text-primary-dark border rounded-xl md:rounded-full lg:rounded-full xl:rounded-full p-1 md:p-3 lg:p-3 xl:p-3 md:m-2 lg:m-2 xl:m-2 shadow  text-1xl">
-												{" "}
-												<GrUserExpert className="d-inline-block text-warning"></GrUserExpert>{" "}
-												{tp}
-											</div>
-										);
-									})}
-							</p>
+							
+							<p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+  {"Git, GitHub, VS Code, Netlify, Vercel, Heroku ,VS Code , React Dev Tools, Redux Dev tools ,Figma, Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Illustrator etc.".split(",").map((tp, idx) => (
+    <SkillTag key={idx} name={tp} />
+  ))}
+</p>
 						</div>
 					</div>
 				</div>
