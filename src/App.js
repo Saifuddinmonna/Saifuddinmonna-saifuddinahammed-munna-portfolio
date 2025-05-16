@@ -87,15 +87,17 @@ function App() {
 			setConfettiStart(false);
 		}, 8000);
 	}, []);
-	return (
-		<QueryClientProvider client={queryClient}>
-			<div className="App max-w-[1440px] mx-auto">
-				{confettiStart && <ReactConfetti />}
-
-				<RouterProvider router={router}></RouterProvider>
-			</div>
-		</QueryClientProvider>
-	);
+	// App.js
+// ...
+return (
+    <QueryClientProvider client={queryClient}>
+        {/* This div applies the max-width to the ENTIRE application */}
+        <div className="App max-w-[1440px] mx-auto">
+            {/* ... confetti ... */}
+            <RouterProvider router={router}></RouterProvider>
+        </div>
+    </QueryClientProvider>
+);
 }
 
 export default App;

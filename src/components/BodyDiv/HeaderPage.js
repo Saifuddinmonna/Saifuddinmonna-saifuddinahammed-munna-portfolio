@@ -8,7 +8,7 @@ import Typewriter from "typewriter-effect";
 const HeaderPage = () => {
 	return (
 		<div className="transition ease-in-out delay-150 mt-8 hover:-translate-y-1 hover:scale-104 hover:opacity-95 duration-300">
-			<div className="bg-gradient-to-r from-cyan-500 to-blue-500 border rounded-2xl mx-4 md:mx-8 lg:mx-12 p-6 shadow-xl">
+			<div className="bg-gradient-to-r from-cyan-500 to-blue-500 border rounded-2xl mx-2 md:mx-4 p-6 shadow-xl">
 				<div className="">
 					<div className="flex items-center justify-around flex-col lg:flex-row-reverse gap-8 lg:gap-12">
 						<img
@@ -70,15 +70,15 @@ const HeaderPage = () => {
 					</div>
 				</div>
 			</div>
-			<div className="container-fluid nav-section mt-12 mb-8">
-				<div className="flex flex-wrap gap-4 justify-center">
+			<div className="container-fluid nav-section mt-6">
+				<div className="flex flex-wrap gap-3 justify-center px-2">
 					<a
 						href="https://github.com/Saifuddinmonna"
 						target="_blank"
 						rel="noreferrer"
-						className="social-link flex items-center gap-2 px-6 py-3 bg-gray-800 text-white rounded-lg transform hover:scale-105 hover:bg-gray-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg transform hover:scale-105 hover:bg-gray-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-bounce" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-							<path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+							<path fillRule="evenodd" d="M16 8a6 6 0 01-6 6v-2a4 4 0 00-4-4H2v-4a6 6 0 016-6h2a4 4 0 014 4v2a6 6 0 016 6h2z" clipRule="evenodd" />
 						</svg>
 						<span className="font-medium group-hover:text-blue-200">GitHub</span>
 					</a>
@@ -86,7 +86,7 @@ const HeaderPage = () => {
 						href="https://www.linkedin.com/in/saifuddin-ahammed-monna-67ba1849/"
 						target="_blank"
 						rel="noreferrer"
-						className="social-link flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg transform hover:scale-105 hover:bg-blue-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg transform hover:scale-105 hover:bg-blue-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 							<path fillRule="evenodd" d="M16 8a6 6 0 01-6 6v-2a4 4 0 00-4-4H2v-4a6 6 0 016-6h2a4 4 0 014 4v2a6 6 0 016 6h2z" clipRule="evenodd" />
 						</svg>
@@ -96,7 +96,7 @@ const HeaderPage = () => {
 						href="https://www.facebook.com/ahammed.rafayel"
 						target="_blank"
 						rel="noreferrer"
-						className="social-link flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg transform hover:scale-105 hover:bg-blue-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg transform hover:scale-105 hover:bg-blue-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 							<path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
 						</svg>
@@ -106,7 +106,7 @@ const HeaderPage = () => {
 						href="https://saifuddinmonna.github.io./EnglishClub/"
 						target="_blank"
 						rel="noreferrer"
-						className="social-link flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg transform hover:scale-105 hover:bg-green-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg transform hover:scale-105 hover:bg-green-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
 						</svg>
@@ -116,7 +116,7 @@ const HeaderPage = () => {
 						href="tel:+8801623361191"
 						target="_blank"
 						rel="noreferrer"
-						className="social-link flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg transform hover:scale-105 hover:bg-green-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg transform hover:scale-105 hover:bg-green-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
 						</svg>
@@ -126,7 +126,7 @@ const HeaderPage = () => {
 						href="mailto:saifuddinmonna@gmail.com"
 						target="_blank"
 						rel="noreferrer"
-						className="social-link flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg transform hover:scale-105 hover:bg-red-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg transform hover:scale-105 hover:bg-red-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-ping" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
 						</svg>
@@ -135,7 +135,7 @@ const HeaderPage = () => {
 					<a
 						href={"_resume of Saifuddin Ahammed Monna.pdf"}
 						download=""
-						className="social-link flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg transform hover:scale-105 hover:bg-purple-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg transform hover:scale-105 hover:bg-purple-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 						</svg>
@@ -144,7 +144,7 @@ const HeaderPage = () => {
 					<a
 						href={"cv for Saifuddin Ahammed Monna.pdf"}
 						download=""
-						className="social-link flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg transform hover:scale-105 hover:bg-purple-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+						className="social-link flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg transform hover:scale-105 hover:bg-purple-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
 						<svg className="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 						</svg>
