@@ -45,14 +45,15 @@ const NavbarPage2 = () => {
 
     return (
         // 1. Outermost <nav>: Fixed, full viewport width, background, shadow on scroll.
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${
+        <div className="relative ">
+            <nav className={`fixed w-full absolute z-50 transition-all duration-300 ${
             scrolled ? "bg-white/95 backdrop-blur-sm shadow-lg" : "bg-white"
         }`}>
             {/* 2. Inner <div>: This div controls the max-width and horizontal padding
                        for the navbar's content. It should match your page's main content container.
                        Using max-w-7xl (1280px) and standard responsive padding.
             */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden"> {/* Added overflow-x-hidden */}
                 {/* 3. Flex container for logo, desktop menu, mobile button. Height set here. */}
                 <div className="flex justify-between items-center h-14">
                     {/* Logo/Brand */}
@@ -138,6 +139,7 @@ const NavbarPage2 = () => {
                 )}
             </AnimatePresence>
         </nav>
+        </div>
     );
 };
 
