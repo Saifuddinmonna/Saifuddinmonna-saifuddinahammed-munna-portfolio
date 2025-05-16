@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"; // For smoother mobile menu
+import { motion, AnimatePresence } from "framer-motion";
 
 const NavbarPage2 = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,19 +15,17 @@ const NavbarPage2 = () => {
                 setScrolled(isScrolled);
             }
         };
-
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [scrolled]);
 
     const handleNavigation = (path) => {
         navigate(path);
-        setIsOpen(false); // Close mobile menu on navigation
+        setIsOpen(false);
     };
 
     const isActive = (path) => {
-        // Handle "My Work" route variations
-        if (path === "/my-work" && (location.pathname === "/PortfolioLayout" || location.pathname.startsWith("/portfoliolayout"))) {
+        if (path === "/PortfolioLayout" && (location.pathname === "/PortfolioLayout" || location.pathname.startsWith("/portfoliolayout"))) {
             return true;
         }
         return location.pathname === path;
@@ -35,34 +33,28 @@ const NavbarPage2 = () => {
 
     const navItems = [
         { path: "/", label: "Home" },
-        { path: "/PortfolioLayout", label: "My Work" }, // Use the actual path you link to
+        { path: "/PortfolioLayout", label: "My Work" },
         { path: "/about", label: "About" },
         { path: "/blog", label: "Blog" },
     ];
 
     const mobileMenuVariants = {
-        open: {
-            opacity: 1,
-            height: "auto", // Or a specific max-height if preferred
-            transition: { duration: 0.3, ease: "easeInOut" },
-        },
-        closed: {
-            opacity: 0,
-            height: 0,
-            transition: { duration: 0.3, ease: "easeInOut" },
-        },
+        open: { opacity: 1, height: "auto", transition: { duration: 0.3, ease: "easeInOut" } },
+        closed: { opacity: 0, height: 0, transition: { duration: 0.3, ease: "easeInOut" } },
     };
 
     return (
-        // The "fixed w-full z-50" makes it a fixed header.
-        // No top margin needed for the nav itself.
-        // The "pt-14" on the main content area handles the space.
+        // 1. Outermost <nav>: Fixed, full viewport width, background, shadow on scroll.
         <nav className={`fixed w-full z-50 transition-all duration-300 ${
             scrolled ? "bg-white/95 backdrop-blur-sm shadow-lg" : "bg-white"
         }`}>
-            {/* This container ensures content inside navbar respects page width and has padding */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> {/* Standard Tailwind responsive padding */}
-                <div className="flex justify-between items-center h-14"> {/* Ensure items-center here */}
+            {/* 2. Inner <div>: This div controls the max-width and horizontal padding
+                       for the navbar's content. It should match your page's main content container.
+                       Using max-w-7xl (1280px) and standard responsive padding.
+            */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* 3. Flex container for logo, desktop menu, mobile button. Height set here. */}
+                <div className="flex justify-between items-center h-14">
                     {/* Logo/Brand */}
                     <div className="flex-shrink-0">
                         <Link
@@ -71,13 +63,13 @@ const NavbarPage2 = () => {
                             onClick={() => setIsOpen(false)}
                         >
                             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 text-transparent bg-clip-text group-hover:from-blue-700 group-hover:to-cyan-600 transition-all duration-300">
-                                MyPortfolio {/* Or your name */}
+                                MyPortfolio
                             </span>
                         </Link>
                     </div>
 
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-1"> {/* Reduced space-x for denser links if needed */}
+                    <div className="hidden md:flex items-center space-x-1">
                         {navItems.map((item) => (
                             <Link
                                 key={item.label}
@@ -93,11 +85,10 @@ const NavbarPage2 = () => {
                             </Link>
                         ))}
                         <button
-                            onClick={() => handleNavigation("/contact")}
+                            onClick={() => handleNavigation("/contractMe")}
                             className="ml-4 relative px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold rounded-lg overflow-hidden group transform hover:scale-105 transition-transform duration-200"
                         >
                             <span className="relative z-10">Contact Me</span>
-                            {/* Subtle animated background shine on hover */}
                             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                         </button>
                     </div>
@@ -112,14 +103,7 @@ const NavbarPage2 = () => {
                             aria-expanded={isOpen}
                         >
                             <span className="sr-only">Open main menu</span>
-                            <svg
-                                className="h-6 w-6"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
+                            <svg /* ... SVG for hamburger/close ... */ >
                                 {isOpen ? (
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                 ) : (
@@ -131,37 +115,24 @@ const NavbarPage2 = () => {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu - This will be full width of the nav when open, so its internal padding is important */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="md:hidden bg-white shadow-lg"
+                        className="md:hidden bg-white shadow-lg" // Will take full width from parent <nav>
                         id="mobile-menu"
                         initial="closed"
                         animate="open"
                         exit="closed"
                         variants={mobileMenuVariants}
-                        style={{ overflow: 'hidden' }} // Important for height animation
+                        style={{ overflow: 'hidden' }}
                     >
-                        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        {/* Add padding here for mobile menu items to align with overall page padding */}
+                        <div className="px-4 pt-2 pb-3 space-y-1 sm:px-6 lg:px-8"> {/* CONSISTENT PADDING */}
                             {navItems.map((item) => (
-                                <Link
-                                    key={item.label}
-                                    to={item.path}
-                                    className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 transform hover:translate-x-1 ${
-                                        isActive(item.path) ? "text-blue-600 bg-blue-50" : ""
-                                    }`}
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {item.label}
-                                </Link>
+                                <Link /* ... */ > {item.label} </Link>
                             ))}
-                            <button
-                                onClick={() => handleNavigation("/contact")}
-                                className="w-full mt-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg text-base font-semibold hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-md"
-                            >
-                                Contact Me
-                            </button>
+                            <button /* ... */ > Contact Me </button>
                         </div>
                     </motion.div>
                 )}

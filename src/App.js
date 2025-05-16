@@ -11,6 +11,7 @@ import About from "./components/About/About";
 import NavbarPage2 from "./components/NavbarPage/NavbarPage2";
 import MyPortfolios from "./components/MyPortfolios/MyPortfolios";
 import Blog from "./components/Blog/Blog";
+import ContactPage from "./pages/ContactPage";
 import PortfolioLayout from "./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout";
 import {
 	useQuery,
@@ -26,6 +27,8 @@ import ReactConfetti from "react-confetti";
 import SingleLayout from "./components/MainLayouts/SongleLayout";
 import HomeLayout from "./components/MainLayouts/HomeLayout";
 import Footer from "./components/BodyDiv/Footer";
+
+
 
 const queryClient = new QueryClient();
 
@@ -45,10 +48,10 @@ function App() {
 					element: <About> </About>,
 				},
 				{
-					path: "/contractme",
+					path: "/contractMe",
 					element: (
 						<div>
-							<ContractMe></ContractMe>
+							<ContactPage></ContactPage>
 						</div>
 					),
 				},
