@@ -62,10 +62,10 @@ const ContactPage = () => {
         setLoading(true);
         try {
             await emailjs.sendForm(
-                "service_your_service_id", 
-                "template_your_template_id", 
+                "YOUR_EMAILJS_SERVICE_ID",      // Replace with your actual EmailJS Service ID
+                "YOUR_EMAILJS_TEMPLATE_ID",     // Replace with your actual EmailJS Template ID
                 form.current,
-                "your_public_key" 
+                "YOUR_EMAILJS_PUBLIC_KEY"       // Replace with your actual EmailJS Public Key
             );
             
             toast.success("Message sent successfully! I'll get back to you soon.");
@@ -109,34 +109,34 @@ const ContactPage = () => {
                             <InfoItem
                                 icon={<MapPinIcon />}
                                 label="Address"
-                                value="Your Address Here"
+                                value="Dhaka, Bangladesh" // Example, update if needed
                             />
                             <InfoItem
                                 icon={<PhoneIcon />}
                                 label="Phone"
-                                value="+1234567890"
-                                href="tel:+1234567890"
+                                value="+8801623361191" // Example, update if needed
+                                href="tel:+8801623361191"
                             />
                             <InfoItem
                                 icon={<EnvelopeIcon />}
                                 label="Email"
-                                value="your.email@example.com"
-                                href="mailto:your.email@example.com"
+                                value="Saifuddinmonna@gmail.com" // From Footer.js
+                                href="mailto:Saifuddinmonna@gmail.com"
                             />
                             <InfoItem
                                 icon={<ClockIcon />}
                                 label="Working Hours"
-                                value="Mon - Fri, 9:00 AM - 5:00 PM"
+                                value="Sat - Thu, 10:00 AM - 7:00 PM (Flexible for projects)" // Example, update if needed
                             />
                         </div>
 
                         <div className="mt-8">
                             <h3 className="text-lg font-semibold mb-4">Follow Me</h3>
                             <div className="flex space-x-4">
-                                <SocialIcon href="https://facebook.com" icon={<FaFacebookF />} />
-                                <SocialIcon href="https://linkedin.com" icon={<FaLinkedinIn />} />
-                                <SocialIcon href="https://twitter.com" icon={<FaTwitter />} />
-                                <SocialIcon href="https://github.com" icon={<FaGithub />} />
+                                <SocialIcon href="https://www.facebook.com/ahammed.rafayel/" icon={<FaFacebookF />} />
+                                <SocialIcon href="https://www.linkedin.com/in/saifuddin-ahammed-monna/" icon={<FaLinkedinIn />} />
+                                <SocialIcon href="https://twitter.com/yourprofile" icon={<FaTwitter />} /> {/* Update Twitter if different from footer */}
+                                <SocialIcon href="https://github.com/saifuddinmonna" icon={<FaGithub />} />
                             </div>
                         </div>
                     </div>

@@ -94,15 +94,8 @@ const HomeLayout = () => {
 					whileInView="visible"
 					viewport={{ once: true, amount: 0.2 }}>
 					<SkillProgressbar />
-				</motion.div>				
-				{/* 6. Contact Section */}
-				<motion.div
-					variants={sectionVariants}
-					initial="hidden"
-					whileInView="visible"
-					viewport={{ once: true, amount: 0.2 }}>
-					<MyPortfolios />
 				</motion.div>
+				{/* 6. Contact Section */}
 				<motion.div
 					variants={sectionVariants}
 					initial="hidden"

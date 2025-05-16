@@ -50,37 +50,34 @@ const Footer = () => {
         visible: {
             opacity: 1,
             y: 0,
-            transition: {
-                duration: 0.8,
-                ease: "easeOut",
-                staggerChildren: 0.2,
-            },
+            transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.2 },
         },
     };
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
     };
 
     return (
         <motion.footer
-            className="bg-gray-900 text-gray-300 pt-16 pb-8 px-4 sm:px-6 lg:px-8 relative"
+            className="bg-indigo-800 text-gray-300 pt-16 pb-8 px-4 sm:px-6 lg:px-8 relative"
             variants={footerVariants}
             initial="hidden"
-            animate="visible" // Or use whileInView for scroll-triggered animation
-            // whileInView="visible"
-            // viewport={{ once: true, amount: 0.3 }}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
         >
             {/* Back to Top Button */}
             <motion.button
                 onClick={scrollToTop}
-                className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-sky-500 hover:bg-sky-600 text-white rounded-full p-3 shadow-lg transition-transform duration-300 ease-in-out hover:scale-110 focus:outline-none"
+                className="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-sky-500 hover:bg-sky-600 text-white rounded-full p-4 shadow-xl focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-opacity-50"
                 aria-label="Scroll to top"
-                variants={itemVariants}
-                whileHover={{ scale: 1.15, rotate: 360 }}
-                transition={{ type: "spring", stiffness: 300, duration: 0.5 }}
-
+                initial={{ scale: 0, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0, y: 20 }}
+                whileHover={{ scale: 1.1, rotate: 5, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
             >
                 <FaArrowUp size={20} />
             </motion.button>
@@ -88,33 +85,33 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 {/* Column 1: Brand/Name & Brief */}
                 <motion.div variants={itemVariants} className="space-y-4">
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-3xl font-extrabold text-white hover:text-sky-400 transition-colors duration-300">
                         <NavLink to="/" onClick={scrollToTop}>Saifuddin A. Monna</NavLink>
                     </h3>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-300"> {/* Increased contrast from gray-400 */}
                         Passionate web developer creating modern and responsive web applications.
                     </p>
                     <a
                         href="mailto:youremail@example.com" // UPDATE YOUR EMAIL
-                        className="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors"
+                        className="inline-flex items-center text-sky-300 hover:text-sky-200 transition-colors group" // Adjusted sky colors for better contrast
                     >
-                        <MdEmail className="mr-2" /> Saifuddinmonna@gmail.com
+                        <MdEmail className="mr-2 group-hover:animate-pulse" /> Saifuddinmonna@gmail.com
                     </a>
                 </motion.div>
 
                 {/* Column 2: Quick Links */}
                 <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-lg font-semibold text-white">Quick Links</h4>
+                    <h4 className="text-lg font-bold text-sky-100 tracking-wider uppercase">Quick Links</h4>
                     <ul className="space-y-2">
                         {quickLinks.map((link) => (
                             <li key={link.name}>
                                 <NavLink
                                     to={link.path}
                                     onClick={scrollToTop}
-                                    className="hover:text-sky-400 transition-colors duration-200"
-                                    activeClassName="text-sky-400 font-medium" // For react-router-dom v5
-                                    // For v6, you'd use a function in className:
-                                    // className={({ isActive }) => isActive ? "text-sky-400 font-medium" : "hover:text-sky-400 transition-colors duration-200"}
+                                    className={({ isActive }) =>
+                                        `inline-block relative text-sky-300 hover:text-sky-200 transition-colors duration-200 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-[1.5px] after:bottom-0 after:left-0 after:bg-sky-300 after:origin-bottom-right after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 hover:after:origin-bottom-left ${
+                                            isActive ? "text-sky-200 font-semibold" : "text-sky-300" // Adjusted sky colors
+                                        }`}
                                 >
                                     {link.name}
                                 </NavLink>
@@ -125,7 +122,7 @@ const Footer = () => {
 
                 {/* Column 3: Social Links */}
                 <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-lg font-semibold text-white">Connect With Me</h4>
+                    <h4 className="text-lg font-bold text-sky-100 tracking-wider uppercase">Connect With Me</h4>
                     <div className="flex space-x-4">
                         {socialLinks.map((social) => (
                             <motion.a
@@ -134,8 +131,8 @@ const Footer = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={social.name}
-                                className="text-gray-400 hover:text-sky-400 transition-colors duration-200"
-                                whileHover={{ scale: 1.2, y: -2 }}
+                                className="text-gray-300 hover:text-sky-300 p-2 rounded-full hover:bg-gray-700 transition-all duration-200" // Increased contrast for icons
+                                whileHover={{ scale: 1.25, y: -3, rotate: social.name === "Twitter" ? 5 : -5 }}
                             >
                                 {React.cloneElement(social.icon, { size: 22 })}
                             </motion.a>
@@ -145,8 +142,8 @@ const Footer = () => {
 
                 {/* Column 4: Newsletter or Small Info (Optional) */}
                 <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-lg font-semibold text-white">Stay Updated</h4>
-                    <p className="text-sm text-gray-400">
+                    <h4 className="text-lg font-bold text-sky-100 tracking-wider uppercase">Stay Updated</h4>
+                    <p className="text-sm text-gray-300"> {/* Increased contrast from gray-400 */}
                         Follow my work and journey on my blog and social media.
                     </p>
                     {/* You could add a mini newsletter signup here if desired */}
@@ -158,10 +155,10 @@ const Footer = () => {
                 className="border-t border-gray-700 pt-8 text-center"
                 variants={itemVariants}
             >
-                <p className="text-sm text-gray-400">
-                    Crafted with <span className="text-red-500">♥</span> by Saifuddin Ahammed Monna.
+                <p className="text-sm text-gray-300 hover:text-sky-300 transition-colors"> {/* Increased contrast from gray-500 */}
+                    Crafted with <motion.span className="text-red-500 inline-block" whileHover={{ scale: [1, 1.3, 1], transition: { duration: 0.5, repeat: Infinity, repeatType: "loop"} }}>♥</motion.span> by Saifuddin Ahammed Monna.
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-300"> {/* Increased contrast from gray-500 */}
                     © {currentYear} All rights reserved.
                 </p>
             </motion.div>

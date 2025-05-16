@@ -1,386 +1,111 @@
-import { render } from "@testing-library/react";
-import React, { useEffect, useState } from "react";
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import "react-photo-view/dist/react-photo-view.css";
-import { Link, Outlet, useLoaderData, useParams } from "react-router-dom";
-import NavbarPage2 from "../NavbarPage/NavbarPage2";
-import portfoliosName from "./portfolios.json";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FaExternalLinkAlt } from 'react-icons/fa';
+
+// Assuming portfolios.json is in the public folder or accessible via fetch
+import allProjectsData from "./portfolios.json"; // Direct import if in src
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
+};
 
 const MyPortfolios = () => {
-	const websiteName = useParams();
-	const nameFilter = websiteName?.UsedPhone;
-	const [datasName, setDatasName] = useState(portfoliosName);
-	const [datas, setDatas] = useState(portfoliosName);
-	const [datas2, setDatas2] = useState();
-	const [data, setData] = useState();
-	const [paramData, setPatamData] = useState();
-	const [showMore, setShowMore] = useState(false);
-	const [showDetails, setShowDetails] = useState(false);
+    const [recentProjects, setRecentProjects] = useState([]);
 
-	const dataFilter2 = async (props) => {
-		await setDatas(portfoliosName);
-		setPatamData(false);
-		console.log("data filter 2 clicked");
-		console.log(portfoliosName);
-	};
+    useEffect(() => {
+        // If using direct import:
+        setRecentProjects(allProjectsData.slice(0, 3)); // Show first 3 projects as a teaser
 
-	useEffect(() => {
-		fetch("portfolios.json")
-			.then((res) => res.json())
-			.then((datas) => setDatas(datas));
-		console.log(datas);
-		console.log("useEffect is work");
-	}, []);
+        // If fetching from public folder:
+        // fetch('/portfolios.json') // Make sure this path is correct
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         setRecentProjects(data.slice(0, 3)); // Show first 3 projects
+        //     })
+        //     .catch(error => console.error("Failed to load projects for teaser:", error));
+    }, []);
 
-	console.log(datas);
-	console.log(data);
-	console.log(data?.name);
+    return (
+        <section className="py-16 md:py-20 bg-white rounded-xl shadow-lg"> {/* Section background */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <motion.h2 
+                    className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800"
+                    initial={{ opacity: 0, y: -20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    Explore My <span className="text-indigo-600">Recent Work</span>
+                </motion.h2>
 
-	console.log(datas2);
+                {recentProjects.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                        {recentProjects.map((project, index) => (
+                            <motion.div
+                                key={project.name} // Assuming 'name' is unique, or use an 'id' if available
+                                className="bg-slate-50 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group"
+                                variants={cardVariants}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true, amount: 0.2 }}
+                                custom={index} // for potential stagger
+                                whileHover={{ y: -5 }}
+                            >
+                                <Link to={`/projects/${encodeURIComponent(project.name)}`} className="block">
+                                    <div className="aspect-video overflow-hidden">
+                                        {/* Assuming first image is representative */}
+                                        <img 
+                                            src={`/images/${project.image[0]}`} // Adjust path if images are not in public/images
+                                            alt={project.name} 
+                                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    </div>
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
+                                            {project.name}
+                                        </h3>
+                                        <p className="text-sm text-indigo-500 mb-3">{project.category}</p>
+                                        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                                            {project.overview[0]} {/* Show first line of overview */}
+                                        </p>
+                                        <span className="inline-flex items-center text-sm font-medium text-indigo-600 group-hover:text-indigo-700">
+                                            View Project
+                                            <FaExternalLinkAlt className="ml-2 h-3 w-3" />
+                                        </span>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-center text-gray-600 mb-12">Loading projects...</p>
+                )}
 
-	const dataFilter = async (props) => {
-		// const { name } = name;
-		const newData = await datasName.filter(
-			(data) => data.name == (props || nameFilter),
-		);
-		setDatas(newData);
-		console.log(props);
-		console.log(newData);
-		// setPatamData(false);
-	};
-	const details = async (props) => {
-		// const { name } = name;
-		const newData = await datasName.filter((data) => data.name == props);
-		setShowDetails(true);
-		setDatas2(newData);
-		console.log(props);
-		console.log(newData);
-		// setPatamData(false);
-	};
-	const details2 = async (props) => {
-		// const { name } = name;
-		// const newData = await datasName.filter((data) => data.name == props);
-		setShowDetails(false);
-
-		// setPatamData(false);
-	};
-
-	useEffect(() => {
-		dataFilter();
-		console.log("data filter from home is clicked");
-	}, [nameFilter]);
-
-	return (
-		<div className="">
-			<div className="rounded-2xl border p-2 m-3 px-3 shadow-lg  text-gray-600 body-font">
-				<div className="">
-					<div className="mt-3  p-3 border rounded-2xl">
-						<h1 class="text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl black:text-white white:text-dark">
-							My <span class="text-blue-500"> Portfolio...</span>
-						</h1>
-					</div>
-					{!showDetails && (
-						<div className="grid md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-							{
-								// !paramData &&
-								datas?.slice(0, 9).map((p, ind) => (
-									<div
-										key={ind}
-										className="container relative  p-3 mb-2 shadow-xl border rounded-xl mx-auto">
-										<section className="text-gray-600 body-font">
-											<div className=" p-3 m-3 mx-auto text-center">
-												<h1 class="text-2xl font-semibold text-center  text-gray-800 capitalize lg:text-3xl black:text-white white:text-dark">
-													{p.category} :{" "}
-													<span class="text-blue-500">
-														{p.name}
-													</span>
-												</h1>
-												<div className="">
-													<div className="text-center">
-														<h2 className="text-gray-900  text-center text-2xl text-strong title-font font-medium mb-2">
-															Website Link
-														</h2>
-														<div className="flex gap-2 justify-center text-center">
-															<p className="text-left btn btn-warning  btn-sm d-block  text-auto text-xl capitalize  ">
-																<a
-																	className="text-decoration-none"
-																	target="_blank"
-																	href={
-																		p.liveWebsite
-																	}
-																	rel="noreferrer">
-																	Live Website
-																</a>
-															</p>
-															<p className="text-left btn btn-warning  btn-sm d-block text-auto text-xl ">
-																<a
-																	className="text-decoration-none"
-																	target="_blank"
-																	href={
-																		p.liveWebsiteRepo
-																	}
-																	rel="noreferrer">
-																	Live Website
-																	Repo
-																</a>
-															</p>
-														</div>
-														{/* <div className="flex gap-2 mt-2 justify-center">
-															{p.liveServersite && (
-																<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
-																	<a
-																		className="text-decoration-none"
-																		target="_blank"
-																		href={
-																			p.liveServersite
-																		}
-																		rel="noreferrer">
-																		Live
-																		Serversite
-																	</a>
-																</p>
-															)}
-															{p.liveServersiteRepo && (
-																<p className="text-left btn btn-warning  btn-sm d-block text-white text-xl ">
-																	<a
-																		className="text-decoration-none"
-																		target="_blank"
-																		href={
-																			p.liveServersiteRepo
-																		}
-																		rel="noreferrer">
-																		LiveServer
-																		Site
-																		Repo
-																	</a>
-																</p>
-															)}
-														</div> */}
-													</div>
-												</div>
-											</div>
-										</section>
-
-										<div className="">
-											{p?.image?.slice(0, 1).map((imgs, ind) => (
-												<div key={ind} className="mb-2">
-													<div className="relative mb-2 p-2 rounded-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-lg">
-														<PhotoProvider>
-															<PhotoView src={`images/${imgs}`}>
-																<img
-																	className="rounded-xl max-h-72 w-full object-cover"
-																	src={`images/${imgs}`}
-																	alt="Pic of portfolios"
-																/>
-															</PhotoView>
-														</PhotoProvider>
-													</div>
-												</div>
-											))}
-										</div>
-										<div className="bg-warning rounded-b-lg bottom-0 right-0 left-0 flex justify-around absolute">
-											<Link to={"/portfoliolayout"}>
-												<button className="btn btn-sm bolder bottom-2 left-3 btn-warning">
-													Show All
-												</button>
-											</Link>
-											<button
-												href="#my-modal-2"
-												onClick={() => details(p.name)}
-												className="btn btn-sm  bottom-2 right-3 btn-warning">
-												Details
-											</button>
-										</div>
-									</div>
-								))
-							}
-						</div>
-					)}
-					{showDetails &&
-						datas2?.map((p, ind) => (
-							<div
-								key={ind}
-								className=" relative container p-3 m-5 shadow-xl border rounded-xl mx-auto">
-								<section className="text-gray-600 body-font">
-									<div className="container  p-3 m-3 mx-auto">
-										<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
-											{p.category}
-											<br className="hidden sm:block" />
-											{p.name}
-										</h1>
-										<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
-											<div className="p-4 md:w-1/3 flex">
-												<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
-												<div className="flex-grow pl-6">
-													<h2 className="text-gray-900 text-left text-2xl text-strong title-font font-medium mb-2">
-														Website Link
-													</h2>
-													<p className="text-left btn btn-warning  btn-sm d-block mb-1  text-auto text-xl capitalize  ">
-														<a
-															className="text-decoration-none"
-															target="_blank"
-															href={p.liveWebsite}
-															rel="noreferrer">
-															Live Website
-														</a>
-													</p>
-													<p className="text-left btn btn-warning  btn-sm d-block mb-1 text-auto text-xl ">
-														<a
-															className="text-decoration-none"
-															target="_blank"
-															href={
-																p.liveWebsiteRepo
-															}
-															rel="noreferrer">
-															Live Website Repo
-														</a>
-													</p>
-													{p.liveServersite && (
-														<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-auto text-xl ">
-															<a
-																className="text-decoration-none d-block"
-																target="_blank"
-																href={
-																	p.liveServersite
-																}
-																rel="noreferrer">
-																Live Serversite
-															</a>
-														</p>
-													)}
-													{p.liveServersiteRepo && (
-														<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-auto text-xl ">
-															<a
-																className="text-decoration-none d-block"
-																target="_blank"
-																href={
-																	p.liveServersiteRepo
-																}
-																rel="noreferrer">
-																LiveServer Site
-																Repo
-															</a>
-														</p>
-													)}
-												</div>
-											</div>
-											<div className="p-4 md:w-1/3 flex">
-												<div className="flex-grow pl-6">
-													<h2 className="text-gray-900  bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-lg title-font font-medium mb-2">
-														Used Technologies
-													</h2>
-													<p className="leading-relaxed text-base">
-														{p.technology}
-													</p>
-												</div>
-											</div>
-											<div className="p-4 md:w-1/3 flex">
-												<div className="flex-grow pl-6">
-													<h2 className="text-gray-900 text-lg  bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded title-font font-medium mb-2">
-														Overview
-													</h2>
-													{showMore ? (
-														<>
-															{p.overview.map(
-																	(
-																		over,
-																		ind,
-																	) => (
-																		<p
-																			key={
-																				ind
-																			}
-																			className="text-left ">
-																			{
-																				over
-																			}
-																		</p>
-																	),
-																)}
-														</>
-													) : (
-														<>
-															{p.overview
-																.slice(0, 2)
-																.map(
-																	(
-																		over,
-																		ind,
-																	) => (
-																		<p
-																			key={
-																				ind
-																			}
-																			className="text-left ">
-																			{
-																				over
-																			}
-																		</p>
-																	),
-																)}
-														</>
-													)}
-
-													<button
-														className="btn btn-xs flex btn-danger"
-														onClick={() =>
-															setShowMore(
-																!showMore,
-															)
-														}>
-														<span>
-															{showMore
-																? "Show less"
-																: "Show more"}
-														</span>
-														<svg
-															fill="none"
-															stroke="currentColor"
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth={2}
-															className="w-4 h-4 ml-2 d-inline-block"
-															viewBox="0 0 24 24">
-															<path d="M5 12h14M12 5l7 7-7 7" />
-														</svg>
-													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</section>
-
-								<div className="grid grid-cols-3 mb-2">
-									{p?.image?.map((imgs, ind) => (
-										<div key={ind} className="m-2">
-											<div className="p-2 rounded-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-lg">
-												<PhotoProvider>
-													<PhotoView src={`images/${imgs}`}>
-														<img
-															className="rounded-xl max-h-72 w-full object-cover"
-															src={`images/${imgs}`}
-															alt="Pic of portfolios"
-														/>
-													</PhotoView>
-												</PhotoProvider>
-											</div>
-										</div>
-									))}
-								</div>
-								<div className="bg-warning d-block rounded-b-lg bottom-0 right-0 left-0 flex justify-around absolute">
-									<button
-										href="#my-modal-2"
-										onClick={() => details2(p.name)}
-										className="btn btn-sm d-block m-auto bolder btn-warning">
-										Close Details
-									</button>
-								</div>
-							</div>
-						))}
-				</div>
-			</div>
-		</div>
-	);
+                <motion.div 
+                    className="text-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                    <Link to="/projects"> {/* This should link to your main portfolio page */}
+                        <motion.button 
+                            className="text-indigo-600 font-bold py-3 px-8 rounded-lg border-2 border-indigo-300 hover:border-indigo-500 transform hover:-translate-y-0.5 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75"
+                            whileHover={{ 
+                                borderColor: "#4f46e5", // indigo-600
+                                boxShadow: "0 0 12px rgba(99, 102, 241, 0.4)", // Subtle glow with indigo
+                            }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            View All Projects
+                        </motion.button>
+                    </Link>
+                </motion.div>
+            </div>
+        </section>
+    );
 };
 
 export default MyPortfolios;
