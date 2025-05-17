@@ -50,32 +50,40 @@ const MyPortfolios = () => {
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true, amount: 0.2 }}
-                                custom={index} // for potential stagger
-                                whileHover={{ y: -5 }}
+                                custom={index} 
+                                whileHover={{ y: -5, boxShadow: "0px 8px 16px rgba(0,0,0,0.1)" }} // Card hover effect
                             >
+                                {/* Link for the image */}
                                 <Link to={`/projects/${encodeURIComponent(project.name)}`} className="block">
                                     <div className="aspect-video overflow-hidden">
-                                        {/* Assuming first image is representative */}
                                         <img 
                                             src={`/images/${project.image[0]}`} // Adjust path if images are not in public/images
                                             alt={project.name} 
                                             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                                         />
                                     </div>
-                                    <div className="p-6">
-                                        <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
+                                </Link>
+                                
+                                <div className="p-6">
+                                    {/* Link for the title */}
+                                    <Link to={`/projects/${encodeURIComponent(project.name)}`} className="block mb-2">
+                                        <h3 className="text-xl font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors">
                                             {project.name}
                                         </h3>
-                                        <p className="text-sm text-indigo-500 mb-3">{project.category}</p>
-                                        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-                                            {project.overview[0]} {/* Show first line of overview */}
-                                        </p>
-                                        <span className="inline-flex items-center text-sm font-medium text-indigo-600 group-hover:text-indigo-700">
-                                            View Project
-                                            <FaExternalLinkAlt className="ml-2 h-3 w-3" />
-                                        </span>
-                                    </div>
-                                </Link>
+                                    </Link>
+                                    <p className="text-sm text-indigo-500 mb-3">{project.category}</p>
+                                    <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                                        {project.overview[0]} {/* Show first line of overview */}
+                                    </p>
+                                    {/* Link for the "View Project" text/button */}
+                                  <Link 
+    to={`/projects/${encodeURIComponent(project.name)}`} 
+    className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors group-hover:underline"
+>
+    View Project
+    <FaExternalLinkAlt className="ml-2 h-3 w-3" />
+</Link>
+                                </div> {/* This is the correct closing tag for the div with className="p-6" */}
                             </motion.div>
                         ))}
                     </div>
@@ -90,7 +98,7 @@ const MyPortfolios = () => {
                     viewport={{ once: true, amount: 0.5 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                    <Link to="/projects"> {/* This should link to your main portfolio page */}
+                    <Link to="/PortfolioLayout"> {/* Updated to link to PortfolioLayout */}
                         <motion.button 
                             className="text-indigo-600 font-bold py-3 px-8 rounded-lg border-2 border-indigo-300 hover:border-indigo-500 transform hover:-translate-y-0.5 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75"
                             whileHover={{ 

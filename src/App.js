@@ -1,6 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import HeaderPage from "./components/BodyDiv/HeaderPage";
+import ProjectPage from "./pages/ProjectPage"; // Assuming ProjectPage.js is in src/pages/
 
 import NavbarPage from "./components/BodyDiv/NavbarPage";
 import SkillProgressbar from "./components/BodyDiv/SkillProgressbar";
@@ -24,7 +25,7 @@ import MyportfolioImage from "./components/MyPortfolios/MyportfolioImage";
 import { useEffect } from "react";
 import { useState } from "react";
 import ReactConfetti from "react-confetti";
-import SingleLayout from "./components/MainLayouts/SongleLayout";
+
 import HomeLayout from "./components/MainLayouts/HomeLayout";
 import Footer from "./components/BodyDiv/Footer";
 
@@ -35,7 +36,11 @@ const queryClient = new QueryClient();
 function App() {
 	const [confettiStart, setConfettiStart] = useState(true);
 	const router = createBrowserRouter([
-		{
+		{ // Route for /projects/:projectName
+			path: "/projects/:projectName",
+			element: <ProjectPage />,
+		},
+		{ // Route for /
 			path: "/",
 			element: <Main></Main>,
 			children: [
@@ -63,6 +68,7 @@ function App() {
 					path: "/blog",
 					element: <Blog></Blog>,
 				},
+			
 			],
 		},
 		{

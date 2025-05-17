@@ -32,6 +32,7 @@ const Main = () => {
                     <Outlet />
                   
                 </div>
+                    
             </main>
 
             {/* Footer can also have its content constrained similarly if desired */}

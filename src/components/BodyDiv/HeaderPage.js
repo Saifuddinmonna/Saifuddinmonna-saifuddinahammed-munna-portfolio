@@ -59,7 +59,7 @@ const HeaderPage = () => {
 								</a>
 								<a
 									target="_blank"
-									href="https://drive.google.com/open?id=1GbxWekJ71boptGWrsCinZWxOPRHeOvSO&authuser=0&usp=drive_link"
+									href="https://docs.google.com/document/d/1swwhu1h5hZ7TdFsgEkk1HpNNr5g_Dzq7/edit?usp=drive_link&ouid=106856683926414141088&rtpof=true&sd=true"
 									rel="noreferrer">
 									<button className="btn btn-primary m-2">
 										View My Resume

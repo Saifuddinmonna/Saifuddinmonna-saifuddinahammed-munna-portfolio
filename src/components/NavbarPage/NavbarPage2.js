@@ -104,7 +104,13 @@ const NavbarPage2 = () => {
                             aria-expanded={isOpen}
                         >
                             <span className="sr-only">Open main menu</span>
-                            <svg /* ... SVG for hamburger/close ... */ >
+                            <svg
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
                                 {isOpen ? (
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                 ) : (
@@ -130,10 +136,26 @@ const NavbarPage2 = () => {
                     >
                         {/* Add padding here for mobile menu items to align with overall page padding */}
                         <div className="px-4 pt-2 pb-3 space-y-1 sm:px-6 lg:px-8"> {/* CONSISTENT PADDING */}
-                            {navItems.map((item) => (
-                                <Link /* ... */ > {item.label} </Link>
+                            {navItems.map((item) => (                               
+                                <Link
+                                    key={item.label}
+                                    to={item.path}
+                                    onClick={() => handleNavigation(item.path)}
+                                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 ${
+                                        isActive(item.path)
+                                            ? "bg-blue-50 text-blue-700"
+                                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    }`}
+                                > 
+                                    {item.label} 
+                                </Link>
                             ))}
-                            <button /* ... */ > Contact Me </button>
+                            <button
+                                onClick={() => handleNavigation("/contractMe")}
+                                className="w-full mt-2 block text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-300"
+                            > 
+                                Contact Me 
+                            </button>
                         </div>
                     </motion.div>
                 )}
