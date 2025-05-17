@@ -32,7 +32,7 @@ const Main = () => {
                     <Outlet />
                   
                 </div>
-                    
+                <aboutPageForHome />
             </main>
 
             {/* Footer can also have its content constrained similarly if desired */}

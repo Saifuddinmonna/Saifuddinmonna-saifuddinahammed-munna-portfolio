@@ -3,13 +3,12 @@ import "./App.css";
 import HeaderPage from "./components/BodyDiv/HeaderPage";
 import ProjectPage from "./pages/ProjectPage"; // Assuming ProjectPage.js is in src/pages/
 
-import NavbarPage from "./components/BodyDiv/NavbarPage";
+
 import SkillProgressbar from "./components/BodyDiv/SkillProgressbar";
 import ContractMe, { ContactUs } from "./components/ContractMe/ContractMe";
 import Main from "./components/MainLayouts/Main";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./components/About/About";
-import NavbarPage2 from "./components/NavbarPage/NavbarPage2";
 import MyPortfolios from "./components/MyPortfolios/MyPortfolios";
 import Blog from "./components/Blog/Blog";
 import ContactPage from "./pages/ContactPage";

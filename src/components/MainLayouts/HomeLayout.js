@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ReactConfetti from "react-confetti";
 import { motion } from "framer-motion"; // Import motion
-import HeaderPage from "../BodyDiv/HeaderPage";
+import HomePageHero from "../BodyDiv/HomePageHero"; // HeaderPage er bodole HomePageHero import
 import About from "../About/About";
 import SkillProgressbar from "../BodyDiv/SkillProgressbar";
 import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfolios";
 import MyServicesv2 from "../Myservices/MyServicesv2";
+import aboutPageForHome from "../About/aboutPageForHome";	
+// HomeLayout.js (Example)
+import AboutPageForHome from '../About/aboutPageForHome'; // Import naam-e 'A' boro haater hob
 
 // Animation variants for sections
 const sectionVariants = {
@@ -61,15 +64,15 @@ const HomeLayout = () => {
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: true, amount: 0.2 }}>
-					<HeaderPage />
+					<HomePageHero /> {/* HeaderPage er bodole HomePageHero use kora hocche */}
 				</motion.div>				
-				{/* 2. About Section */}
+		<AboutPageForHome />
 				<motion.div
 					variants={sectionVariants}
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: true, amount: 0.2 }}>
-					<About />
+				
 				</motion.div>				
 				{/* 3. Portfolio/Work Teaser Section */}
 				<motion.div

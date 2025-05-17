@@ -2,8 +2,9 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import portfoliosData from '../components/MyPortfolios/portfolios.json'; // Adjust path if ProjectPage.js is elsewhere
 import { FaExternalLinkAlt, FaGithub, FaHome, FaListUl, FaCogs, FaImages, FaLink, FaExclamationCircle } from 'react-icons/fa';
-
-const ProjectPage = () => {
+import { motion } from 'framer-motion';
+import NavbarPage2 from '../components/NavbarPage/NavbarPage2'; // Adjust path if NavbarPage.js is elsewhere    
+            const ProjectPage = () => {
     const { projectName } = useParams(); // This matches :projectName in your App.js route
     console.log("[ProjectPage] projectName from URL params:", projectName);
 
@@ -34,6 +35,7 @@ const ProjectPage = () => {
 
     return (
         <div className="bg-gray-100 min-h-screen py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+            <NavbarPage2 />
             <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
                 {/* Project Hero Image */}
                 {project.image && project.image.length > 0 && (

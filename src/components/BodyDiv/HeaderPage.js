@@ -43,8 +43,7 @@ const HeaderPage = () => {
 							</h3>
 							<div className="mb-8">
 								<p className=" font-bold ">
-									I can develop both client-side and
-									server-side
+									Passionate Web Developer & Educator
 								</p>
 								<p className=" font-bold"></p>
 							</div>
