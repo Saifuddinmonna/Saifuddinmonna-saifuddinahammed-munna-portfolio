@@ -1,86 +1,116 @@
-import logo from "./logo.svg";
-import "./App.css";
-import HeaderPage from "./components/BodyDiv/HeaderPage";
-import ProjectPage from "./pages/ProjectPage"; // Assuming ProjectPage.js is in src/pages/
-
-
-import SkillProgressbar from "./components/BodyDiv/SkillProgressbar";
-import ContractMe, { ContactUs } from "./components/ContractMe/ContractMe";
-import Main from "./components/MainLayouts/Main";
+import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import About from "./components/About/About";
-import MyPortfolios from "./components/MyPortfolios/MyPortfolios";
-import Blog from "./components/Blog/Blog";
-import ContactPage from "./pages/ContactPage";
-import PortfolioLayout from "./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout";
-import {
-	useQuery,
-	useMutation,
-	useQueryClient,
-	QueryClient,
-	QueryClientProvider,
-} from "@tanstack/react-query";
-import MyportfolioImage from "./components/MyPortfolios/MyportfolioImage";
-import { useEffect } from "react";
-import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
-
-import HomeLayout from "./components/MainLayouts/HomeLayout";
 import Footer from "./components/BodyDiv/Footer";
 
+// Lazy load components
+const MainLayout = lazy(() => import("./components/MainLayouts/Main"));
+const HomeLayout = lazy(() => import("./components/MainLayouts/HomeLayout"));
+const About = lazy(() => import("./components/About/About"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const MyPortfolios = lazy(() => import("./components/MyPortfolios/MyPortfolios"));
+const Blog = lazy(() => import("./components/Blog/Blog"));
+const ProjectPage = lazy(() => import("./pages/ProjectPage"));
+const PortfolioLayout = lazy(() => import("./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
+const MyportfolioImage = lazy(() => import("./components/MyPortfolios/MyportfolioImage"));
 
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 5 * 60 * 1000, // 5 minutes
+			cacheTime: 10 * 60 * 1000, // 10 minutes
+		},
+	},
+});
 
-const queryClient = new QueryClient();
+// Loading component
+const LoadingSpinner = () => (
+	<div className="flex items-center justify-center min-h-screen">
+		<div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+	</div>
+);
 
 function App() {
 	const [confettiStart, setConfettiStart] = useState(true);
+
 	const router = createBrowserRouter([
-		{ // Route for /projects/:projectName
+		{
 			path: "/projects/:projectName",
-			element: <ProjectPage />,
+			element: (
+				<Suspense fallback={<LoadingSpinner />}>
+					<ProjectPage />
+				</Suspense>
+			),
 		},
-		{ // Route for /
+		{
 			path: "/",
-			element: <Main></Main>,
+			element: (
+				<Suspense fallback={<LoadingSpinner />}>
+					<MainLayout />
+				</Suspense>
+			),
 			children: [
 				{
 					path: "/",
-					element: <HomeLayout></HomeLayout>,
+					element: (
+						<Suspense fallback={<LoadingSpinner />}>
+							<HomeLayout />
+						</Suspense>
+					),
 				},
 				{
 					path: "/about",
-					element: <About> </About>,
+					element: (
+						<Suspense fallback={<LoadingSpinner />}>
+							<About />
+						</Suspense>
+					),
 				},
 				{
 					path: "/contractMe",
 					element: (
-						<div>
-							<ContactPage></ContactPage>
-						</div>
+						<Suspense fallback={<LoadingSpinner />}>
+							<ContactPage />
+						</Suspense>
 					),
 				},
 				{
 					path: "/mywork",
-					element: <MyPortfolios></MyPortfolios>,
+					element: (
+						<Suspense fallback={<LoadingSpinner />}>
+							<MyPortfolios />
+						</Suspense>
+					),
 				},
 				{
 					path: "/blog",
-					element: <Blog></Blog>,
+					element: (
+						<Suspense fallback={<LoadingSpinner />}>
+							<Blog />
+						</Suspense>
+					),
 				},
-			
 			],
 		},
 		{
 			path: "/portfoliolayout",
-			element: <PortfolioLayout></PortfolioLayout>,
+			element: (
+				<Suspense fallback={<LoadingSpinner />}>
+					<PortfolioLayout />
+				</Suspense>
+			),
 			children: [
 				{
 					path: "/portfoliolayout/:UsedPhone",
 					element: (
-						<>
-							<MyportfolioImage></MyportfolioImage>
-							<Footer></Footer>
-						</>
+						<Suspense fallback={<LoadingSpinner />}>
+							<>
+								<MyportfolioImage />
+								<Footer />
+							</>
+						</Suspense>
 					),
 					loader: () => {
 						return fetch("portfolios.json");
@@ -91,21 +121,20 @@ function App() {
 	]);
 
 	useEffect(() => {
-		setTimeout(() => {
+		const timer = setTimeout(() => {
 			setConfettiStart(false);
 		}, 8000);
+		return () => clearTimeout(timer);
 	}, []);
-	// App.js
-// ...
-return (
-    <QueryClientProvider client={queryClient}>
-        {/* This div applies the max-width to the ENTIRE application */}
-        <div className="App max-w-[1440px] mx-auto">
-            {/* ... confetti ... */}
-            <RouterProvider router={router}></RouterProvider>
-        </div>
-    </QueryClientProvider>
-);
+
+	return (
+		<QueryClientProvider client={queryClient}>
+			<div className="App max-w-[1440px] mx-auto">
+				{confettiStart && <ReactConfetti />}
+				<RouterProvider router={router} />
+			</div>
+		</QueryClientProvider>
+	);
 }
 
 export default App;

@@ -1,35 +1,40 @@
- *{
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
 
-	/* background-color: rgba(183, 183, 183, 0.216); */
- }
- .mother-container {
+.mother-container {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 } 
 
-
 :root {
-	--mainColor:linear-gradient(to right,rgb(6,184,214),rgb(63,131,247));
+	--mainColor: linear-gradient(to right,rgb(6,184,214),rgb(63,131,247));
 	--mainColorLight: #5767aa;
 	--secondaryColor: #db2b39;
 	--textColor: #eee;
 }
+
 .header-title {
-	padding: 0px 10px;
+	padding: 0 10px;
 }
+
 .header-title h1 {
 	color: azure;
 	text-transform: capitalize;
 	font-style: italic;
-	font-size: 50px;
+	font-size: clamp(32px, 5vw, 50px);
 }
+
 .header-title h2 {
 	color: azure;
 	text-transform: capitalize;
-	font-size: 30px;
+	font-size: clamp(22px, 3vw, 30px);
 }
+
 /* image css here ----------------------
 ------------------------ */
 
@@ -37,79 +42,58 @@
 /* skilled animation start here*/
 
 
-.shim-green {
-  position: relative;
-  overflow: hidden;
-  background-color: rgba(0, 255, 0, 0.7);
+.shim-green, .shim-blue, .shim-red {
+	position: relative;
+	overflow: hidden;
 }
-.shim-green::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    rgba(233, 233, 233, 1) 0,
-    rgba(233, 233, 233, 0.9) 50%,
-    rgba(233, 233, 233, 0.8) 100%
-  );
-  animation: shimmer 2s ease-out infinite;
-  content: "";
+
+.shim-green {
+	background-color: rgba(0, 255, 0, 0.7);
 }
 
 .shim-blue {
-  position: relative;
-  overflow: hidden;
-  background-color: rgba(0, 155, 255, 0.7);
-}
-.shim-blue::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    rgba(233, 233, 233, 1) 0,
-    rgba(233, 233, 233, 0.9) 50%,
-    rgba(233, 233, 233, 0.8) 100%
-  );
-  animation: shimmer 2.5s ease-out infinite;
-  content: "";
+	background-color: rgba(0, 155, 255, 0.7);
 }
 
 .shim-red {
-  position: relative;
-  overflow: hidden;
-  background-color: rgba(255, 0, 0, 0.7);
+	background-color: rgba(255, 0, 0, 0.7);
 }
+
+.shim-green::after, .shim-blue::after, .shim-red::after {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	transform: translateX(-100%);
+	background-image: linear-gradient(
+		90deg,
+		rgba(233, 233, 233, 1) 0,
+		rgba(233, 233, 233, 0.9) 50%,
+		rgba(233, 233, 233, 0.8) 100%
+	);
+	content: "";
+	will-change: transform;
+}
+
+.shim-green::after {
+	animation: shimmer 2s ease-out infinite;
+}
+
+.shim-blue::after {
+	animation: shimmer 2.5s ease-out infinite;
+}
+
 .shim-red::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    rgba(233, 233, 233, 1) 0,
-    rgba(233, 233, 233, 0.9) 50%,
-    rgba(233, 233, 233, 0.8) 100%
-  );
-  animation: shimmer 3s ease-out infinite;
-  content: "";
+	animation: shimmer 3s ease-out infinite;
 }
 
 @keyframes shimmer {
-  100% {
-    transform: translateX(0%);
-    opacity: 0;
-  }
+	100% {
+		transform: translateX(0%);
+		opacity: 0;
+	}
 }
-
 
 .img-div img {
 	max-width: 100%;
@@ -117,6 +101,7 @@
 	border: 10px solid #f1c40f;
 	border-radius: 50%;
 	box-shadow: 10px 10px 15px 2px rgba(0, 0, 0, 0.355);
+	will-change: transform;
 }
 
 .nav-container {
@@ -129,6 +114,7 @@
 	justify-content: center;
 	flex-wrap: wrap;
 }
+
 .nav-container a {
 	color: azure;
 	font-size: 22px;
@@ -138,14 +124,12 @@
 	background-color: rgba(255, 0, 0, 0.623);
 	border: 1px solid #8b3f4deb;
 	border-radius: 10px;
-
-	transition: ease;
-	transition-duration: 2s;
+	transition: all 0.3s ease;
 }
 
 
 /*footer designing starts here */
- .footer-menu {
+.footer-menu {
 	margin-top: 12px;
 }
 
@@ -157,36 +141,32 @@
 /* footer designing ends here*/
 
 @media only screen and (max-width: 688px) {
-
 	.nav-container {
-		flex-wrap: nowrap;
 		flex-direction: column;
 	}
+	
 	.nav-container > a {
 		display: block;
 	}
-	.header-title h1 {
-		font-size: 32px;
-	}
-	.header-title h2 {
-		font-size: 22px;
-	}
+	
 	.personal-information-container {
 		grid-template-columns: minmax(400px, 1fr);
 		grid-template-rows: auto;
 	}
-
+	
 	.social-icon-container a {
 		display: inline-block;
 	}
+	
 	.table-container {
 		padding: 2px;
 	}
+	
 	thead {
 		padding-y: 10px;
 	}
-	th,
-	td {
+	
+	th, td {
 		padding-y: 10px;
 		font-size: 10px;
 	}

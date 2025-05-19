@@ -5,6 +5,7 @@ import Footer from "../BodyDiv/Footer";
 import { Outlet } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
 import ContactPage from "../../pages/ContactPage";
+import aboutPageForHome from "../About/aboutPageForHome"; // Assuming this is a component you want to include
 
 const Main = () => {
     const { scrollYProgress } = useScroll();
