@@ -117,7 +117,7 @@ const AboutPageForHome  = () => { // Renamed component to start with an uppercas
                 </motion.section> */}
 
                 {/* --- My Story Section --- */}
-                <motion.section className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl" variants={itemVariants}>
+                <motion.section className="mb-12 p-6  sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl" variants={itemVariants}>
                     <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
                         <FaUserGraduate className="mr-3 text-sky-500" /> My Journey
                     </h2>
