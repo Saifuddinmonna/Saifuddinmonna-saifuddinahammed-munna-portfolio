@@ -61,7 +61,7 @@ const Footer = () => {
 
     return (
         <motion.footer
-            className="bg-indigo-800 text-gray-300 pt-16 pb-8 px-4 sm:px-6 lg:px-8 relative"
+            className="bg-indigo-800 text-gray-300 pt-16 pb-8 px-4 sm:px-6 lg:px-8 relative rounded-t-[10px]"
             variants={footerVariants}
             initial="hidden"
             whileInView="visible"
