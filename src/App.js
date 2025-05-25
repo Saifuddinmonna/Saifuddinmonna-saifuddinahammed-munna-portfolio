@@ -1,9 +1,40 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, createContext, useContext } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
 import Footer from "./components/BodyDiv/Footer";
+
+// Create Theme Context
+export const ThemeContext = createContext();
+
+// Theme Provider Component
+const ThemeProvider = ({ children }) => {
+	const [isDarkMode, setIsDarkMode] = useState(() => {
+		const savedTheme = localStorage.getItem('theme');
+		return savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+	});
+
+	useEffect(() => {
+		if (isDarkMode) {
+			document.documentElement.classList.add('dark');
+			localStorage.setItem('theme', 'dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+			localStorage.setItem('theme', 'light');
+		}
+	}, [isDarkMode]);
+
+	const toggleTheme = () => {
+		setIsDarkMode(!isDarkMode);
+	};
+
+	return (
+		<ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+			{children}
+		</ThemeContext.Provider>
+	);
+};
 
 // Lazy load components
 const MainLayout = lazy(() => import("./components/MainLayouts/Main"));
@@ -27,8 +58,8 @@ const queryClient = new QueryClient({
 
 // Loading component
 const LoadingSpinner = () => (
-	<div className="flex items-center justify-center min-h-screen">
-		<div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+	<div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
+		<div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
 	</div>
 );
 
@@ -128,12 +159,14 @@ function App() {
 	}, []);
 
 	return (
-		<QueryClientProvider client={queryClient}>
-			<div className="App max-w-[1440px] mx-auto">
-				{confettiStart && <ReactConfetti />}
-				<RouterProvider router={router} />
-			</div>
-		</QueryClientProvider>
+		<ThemeProvider>
+			<QueryClientProvider client={queryClient}>
+				<div className="App max-w-[1440px] mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+					{confettiStart && <ReactConfetti />}
+					<RouterProvider router={router} />
+				</div>
+			</QueryClientProvider>
+		</ThemeProvider>
 	);
 }
 

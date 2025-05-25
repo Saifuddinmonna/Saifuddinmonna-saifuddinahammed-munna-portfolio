@@ -1,6 +1,138 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode variables */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode variables */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  }
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Dark mode transitions */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Dark mode specific styles */
+.dark {
+  color-scheme: dark;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Custom utility classes */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500;
+}
+
+.bg-gradient {
+  @apply bg-gradient-to-r from-blue-500 to-purple-500;
+}
+
+.hover-gradient {
+  @apply hover:from-blue-600 hover:to-purple-600;
+}
+
+/* Dark mode specific gradients */
+.dark .text-gradient {
+  @apply from-blue-400 to-purple-400;
+}
+
+.dark .bg-gradient {
+  @apply from-blue-600 to-purple-600;
+}
+
+.dark .hover-gradient {
+  @apply hover:from-blue-500 hover:to-purple-500;
+}
+
+/* Base styles */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -13,4 +145,107 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Form elements dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: rgb(31, 41, 55);
+  color: white;
+  border-color: rgb(55, 65, 81);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: rgb(59, 130, 246);
+  --tw-ring-color: rgb(59, 130, 246);
+}
+
+/* Button dark mode */
+.dark .btn-primary {
+  background-color: rgb(37, 99, 235);
+}
+
+.dark .btn-primary:hover {
+  background-color: rgb(29, 78, 216);
+}
+
+.dark .btn-secondary {
+  background-color: rgb(55, 65, 81);
+}
+
+.dark .btn-secondary:hover {
+  background-color: rgb(75, 85, 101);
+}
+
+/* Card dark mode */
+.dark .card {
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+}
+
+/* Table dark mode */
+.dark table {
+  background-color: rgb(31, 41, 55);
+}
+
+.dark th {
+  background-color: rgb(55, 65, 81);
+  color: white;
+}
+
+.dark td {
+  border-color: rgb(55, 65, 81);
+  color: rgb(209, 213, 219);
+}
+
+/* Modal dark mode */
+.dark .modal {
+  background-color: rgb(31, 41, 55);
+}
+
+.dark .modal-header {
+  border-color: rgb(55, 65, 81);
+}
+
+.dark .modal-footer {
+  border-color: rgb(55, 65, 81);
+}
+
+/* Alert dark mode */
+.dark .alert-success {
+  background-color: rgb(20, 83, 45);
+  color: rgb(167, 243, 208);
+}
+
+.dark .alert-error {
+  background-color: rgb(127, 29, 29);
+  color: rgb(254, 202, 202);
+}
+
+.dark .alert-warning {
+  background-color: rgb(120, 53, 15);
+  color: rgb(253, 230, 138);
+}
+
+.dark .alert-info {
+  background-color: rgb(30, 58, 138);
+  color: rgb(191, 219, 254);
+}
+
+.my-component {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

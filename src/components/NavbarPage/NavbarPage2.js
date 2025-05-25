@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { ThemeContext } from "../../App";
 
 const NavbarPage2 = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -47,7 +50,7 @@ const NavbarPage2 = () => {
         // 1. Outermost <nav>: Fixed, full viewport width, background, shadow on scroll.
         <div className="relative ">
             <nav className={`fixed w-full absolute z-50 transition-all duration-300 ${
-            scrolled ? "bg-white/95 backdrop-blur-sm shadow-lg" : "bg-white"
+            scrolled ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg" : "bg-white dark:bg-gray-900"
         }`}>
             {/* 2. Inner <div>: This div controls the max-width and horizontal padding
                        for the navbar's content. It should match your page's main content container.
@@ -75,8 +78,8 @@ const NavbarPage2 = () => {
                             <Link
                                 key={item.label}
                                 to={item.path}
-                                className={`relative px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 group ${
-                                    isActive(item.path) ? "text-blue-600" : ""
+                                className={`relative px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 group ${
+                                    isActive(item.path) ? "text-blue-600 dark:text-blue-400" : ""
                                 }`}
                             >
                                 {item.label}
@@ -92,14 +95,38 @@ const NavbarPage2 = () => {
                             <span className="relative z-10">Contact Me</span>
                             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                         </button>
+                        {/* Theme Toggle Button */}
+                        <button
+                            onClick={toggleTheme}
+                            className="ml-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                            aria-label="Toggle theme"
+                        >
+                            {isDarkMode ? (
+                                <FaSun className="w-5 h-5 text-yellow-500" />
+                            ) : (
+                                <FaMoon className="w-5 h-5 text-gray-700" />
+                            )}
+                        </button>
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden flex items-center">
+                    <div className="md:hidden flex items-center space-x-2">
+                        {/* Theme Toggle Button for Mobile */}
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                            aria-label="Toggle theme"
+                        >
+                            {isDarkMode ? (
+                                <FaSun className="w-5 h-5 text-yellow-500" />
+                            ) : (
+                                <FaMoon className="w-5 h-5 text-gray-700" />
+                            )}
+                        </button>
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             type="button"
-                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 focus:outline-none transition-colors duration-300"
+                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none transition-colors duration-300"
                             aria-controls="mobile-menu"
                             aria-expanded={isOpen}
                         >
@@ -126,7 +153,7 @@ const NavbarPage2 = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="md:hidden bg-white shadow-lg" // Will take full width from parent <nav>
+                        className="md:hidden bg-white dark:bg-gray-900 shadow-lg" // Will take full width from parent <nav>
                         id="mobile-menu"
                         initial="closed"
                         animate="open"
@@ -143,8 +170,8 @@ const NavbarPage2 = () => {
                                     onClick={() => handleNavigation(item.path)}
                                     className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 ${
                                         isActive(item.path)
-                                            ? "bg-blue-50 text-blue-700"
-                                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                            ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                                     }`}
                                 > 
                                     {item.label} 
@@ -152,7 +179,7 @@ const NavbarPage2 = () => {
                             ))}
                             <button
                                 onClick={() => handleNavigation("/contractMe")}
-                                className="w-full mt-2 block text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-300"
+                                className="w-full mt-2 block text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-300"
                             > 
                                 Contact Me 
                             </button>

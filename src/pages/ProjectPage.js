@@ -35,7 +35,9 @@ import NavbarPage2 from '../components/NavbarPage/NavbarPage2'; // Adjust path i
 
     return (
         <div className="bg-gray-100 min-h-screen py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
-            <NavbarPage2 />
+           <div className="fixed top-0 left-0 right-0 z-50">
+                <NavbarPage2 />
+            </div>
             <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
                 {/* Project Hero Image */}
                 {project.image && project.image.length > 0 && (
