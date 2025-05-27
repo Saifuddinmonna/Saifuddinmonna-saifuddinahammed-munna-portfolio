@@ -193,7 +193,7 @@ function App() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <div className="App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
+        <div className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
           {confettiStart && <ReactConfetti />}
           <RouterProvider router={router} />
         </div>

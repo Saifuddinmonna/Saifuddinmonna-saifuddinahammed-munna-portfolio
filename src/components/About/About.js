@@ -114,24 +114,24 @@ const About = () => {
       )}
 
       <motion.div
-        className="max-w-5xl mx-auto"
+        className="max-w-5xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* --- Hero Section --- */}
         <motion.section
-          className="flex flex-col lg:flex-row items-center bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 sm:p-10 mb-12"
+          className="flex flex-col lg:flex-row items-center bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-xl rounded-xl p-6 sm:p-10 mb-12"
           variants={itemVariants}
         >
           <motion.img
             src="images/profile1.png" // Make sure this path is correct
             alt="Saifuddin Ahammed Monna"
-            className="w-48 h-48 sm:w-60 sm:h-60 rounded-full object-cover shadow-lg mb-6 lg:mb-0 lg:mr-10 border-4 border-sky-500"
+            className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  w-48 h-48 sm:w-60 sm:h-60 rounded-full object-cover shadow-lg mb-6 lg:mb-0 lg:mr-10 border-4 border-sky-500"
             whileHover={{ scale: 1.05, rotate: 2 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <div className="text-center lg:text-left">
+          <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-center lg:text-left">
             <motion.h1
               className="text-4xl sm:text-5xl font-bold text-sky-600 dark:text-sky-400 mb-3"
               variants={itemVariants}
@@ -156,19 +156,19 @@ const About = () => {
 
         {/* --- My Story Section --- */}
         <motion.section
-          className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl"
+          className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
           variants={itemVariants}
         >
           <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
             <FaUserGraduate className="mr-3 text-sky-500" /> My Journey
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed text-justify indent-8">
+          <p className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  text-lg text-gray-600 dark:text-gray-400 leading-relaxed text-justify indent-8">
             Born in Mymensingh Sadar, Bangladesh, I grew up with a supportive family of three
             brothers and my parents. My academic path led me to complete a post-graduation in Public
             Administration in 2017. While I have a background in teaching, my true passion ignited
             when I delved into the world of coding.
           </p>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 leading-relaxed text-justify indent-8">
+          <p className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  mt-4 text-lg leading-relaxed text-justify indent-8">
             For the past few years, I've dedicated myself to web design and development, driven by
             the desire to help individuals and businesses establish their online presence and
             enhance functionality. I find immense joy in crafting digital experiences and solving
@@ -180,7 +180,7 @@ const About = () => {
 
         {/* --- Skills Section --- */}
         <motion.section
-          className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl"
+          className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
           variants={itemVariants}
         >
           <h2 className="text-3xl font-semibold mb-8 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
@@ -190,7 +190,7 @@ const About = () => {
             {skills.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition-shadow"
+                className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition-shadow text-gray-800 dark:text-gray-200"
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
               >
@@ -206,7 +206,7 @@ const About = () => {
 
         {/* --- Vision Section --- */}
         <motion.section
-          className="p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl"
+          className="p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
           variants={itemVariants}
         >
           <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">

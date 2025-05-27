@@ -214,6 +214,42 @@ select:focus {
   }
 }
 
+/* ===== COMPONENT BACKGROUND OVERRIDES ===== */
+.bg-white {
+  background-color: rgb(255, 255, 255) !important;
+}
+
+.dark .dark\:bg-gray-800 {
+  background-color: rgb(31, 41, 55) !important;
+}
+
+.dark .dark\:bg-gray-700 {
+  background-color: rgb(55, 65, 81) !important;
+}
+
+.dark .dark\:bg-gray-900 {
+  background-color: rgb(17, 24, 39) !important;
+}
+
+/* Text color overrides */
+.text-gray-800 {
+  color: rgb(31, 41, 55) !important;
+}
+
+.dark .dark\:text-gray-200 {
+  color: rgb(229, 231, 235) !important;
+}
+
+/* Shadow overrides */
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Border radius override */
+.rounded-xl {
+  border-radius: 0.75rem !important;
+}
+
 /* ===== BASE STYLES ===== */
 @layer base {
   * {
