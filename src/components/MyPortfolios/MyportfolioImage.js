@@ -44,27 +44,27 @@ const MyportfolioImage = () => {
 	console.log(data4);
 
 	return (
-		<div className="">
+		<div className="min-h-screen bg-white dark:bg-gray-900">
 			<div className="col-span-6">
 				{datas2?.map((p, ind) => (
 					<div
 						key={ind}
-						className="container p-3 m-5 shadow-xl border rounded-xl mx-auto">
-						<section className="text-gray-600 body-font">
+						className="container p-3 m-5 shadow-xl border border-gray-200 dark:border-gray-700 rounded-xl mx-auto bg-white dark:bg-gray-800">
+						<section className="text-gray-600 dark:text-gray-300 body-font">
 							<div className="container p-3 m-3 mx-auto">
-								<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 mb-20">
+								<h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-gray-900 dark:text-white mb-20">
 									{p.category}
 									<br className="hidden sm:block" />
 									{p.name}
 								</h1>
 								<div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
 									<div className="p-4 md:w-1/2 lg:w-1/3 flex">
-										<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
+										<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-500 dark:text-indigo-300 mb-4 flex-shrink-0"></div>
 										<div className="flex-grow pl-6">
-											<h2 className="text-gray-900  text-left text-2xl text-strong title-font font-medium mb-2">
+											<h2 className="text-gray-900 dark:text-white text-left text-2xl text-strong title-font font-medium mb-2">
 												Website Link
 											</h2>
-											<p className="text-left mt-1 btn btn-warning  btn-sm d-block  text-white text-xl capitalize  ">
+											<p className="text-left mt-1 btn btn-warning btn-sm d-block text-white text-xl capitalize hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors duration-300">
 												<a
 													className="text-decoration-none"
 													target="_blank"
@@ -73,7 +73,7 @@ const MyportfolioImage = () => {
 													Live Website
 												</a>
 											</p>
-											<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
+											<p className="text-left mt-1 btn btn-warning btn-sm d-block text-white text-xl hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors duration-300">
 												<a
 													className="text-decoration-none"
 													target="_blank"
@@ -83,7 +83,7 @@ const MyportfolioImage = () => {
 												</a>
 											</p>
 											{p.liveServersite && (
-												<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
+												<p className="text-left mt-1 btn btn-warning btn-sm d-block text-white text-xl hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors duration-300">
 													<a
 														className="text-decoration-none"
 														target="_blank"
@@ -94,13 +94,11 @@ const MyportfolioImage = () => {
 												</p>
 											)}
 											{p.liveServersiteRepo && (
-												<p className="text-left mt-1 btn btn-warning  btn-sm d-block text-white text-xl ">
+												<p className="text-left mt-1 btn btn-warning btn-sm d-block text-white text-xl hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors duration-300">
 													<a
 														className="text-decoration-none"
 														target="_blank"
-														href={
-															p.liveServersiteRepo
-														}
+														href={p.liveServersiteRepo}
 														rel="noreferrer">
 														LiveServer Site Repo
 													</a>
@@ -109,19 +107,19 @@ const MyportfolioImage = () => {
 										</div>
 									</div>
 									<div className="p-4 md:w-1/3 flex">
-										<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0"></div>
+										<div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-500 dark:text-indigo-300 mb-4 flex-shrink-0"></div>
 										<div className="flex-grow pl-6">
-											<h2 className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-2xl  font-medium mb-2">
+											<h2 className="text-gray-900 dark:text-white bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 dark:from-yellow-600 dark:via-yellow-500 dark:to-yellow-800 p-2 rounded text-2xl font-medium mb-2">
 												Used Technologies
 											</h2>
-											<p className="leading-relaxed text-base">
+											<p className="leading-relaxed text-base text-gray-700 dark:text-gray-300">
 												{p.technology}
 											</p>
 										</div>
 									</div>
 									<div className="p-4 md:w-1/3 flex">
 										<div className="flex-grow pl-6">
-											<h2 className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 p-2 rounded text-2xl  font-medium mb-2">
+											<h2 className="text-gray-900 dark:text-white bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 dark:from-yellow-600 dark:via-yellow-500 dark:to-yellow-800 p-2 rounded text-2xl font-medium mb-2">
 												Overview
 											</h2>
 											{showMore ? (
@@ -130,7 +128,7 @@ const MyportfolioImage = () => {
 														(over, ind) => (
 															<p
 																key={ind}
-																className="text-left ">
+																className="text-left text-gray-700 dark:text-gray-300">
 																{over}
 															</p>
 														),
@@ -143,7 +141,7 @@ const MyportfolioImage = () => {
 														.map((over, ind) => (
 															<p
 																key={ind}
-																className="text-left ">
+																className="text-left text-gray-700 dark:text-gray-300">
 																{over}
 															</p>
 														))}
@@ -151,7 +149,7 @@ const MyportfolioImage = () => {
 											)}
 
 											<button
-												className="btn btn-danger d flex"
+												className="btn btn-danger d flex bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white transition-colors duration-300"
 												onClick={() =>
 													setShowMore(!showMore)
 												}>
@@ -175,15 +173,16 @@ const MyportfolioImage = () => {
 							</div>
 						</section>
 
-						<div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3">
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{p?.image?.map((imgs, ind) => (
 								<div key={ind} className="">
-									<div className=" border m-2 p-2 rounded transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-150 hover:bg-indigo-500 duration-300">
+									<div className="border border-gray-200 dark:border-gray-700 m-2 p-2 rounded transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-indigo-500 dark:hover:bg-indigo-600 duration-300">
 										<PhotoProvider>
 											<PhotoView src={`images/${imgs}`}>
 												<img
 													src={`images/${imgs}`}
 													alt="Pic of portfolios"
+													className="w-full h-auto rounded transition-all duration-300 dark:brightness-90 dark:contrast-110"
 												/>
 											</PhotoView>
 										</PhotoProvider>

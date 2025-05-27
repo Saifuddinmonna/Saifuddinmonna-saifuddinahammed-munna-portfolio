@@ -24,7 +24,7 @@ const SingleLayout = () => {
 		<div className="min-h-window">
 			{/* <h1>this is main page</h1> */}
 
-			 <NavbarPage2 />
+		
 			{confettiStart && <ReactConfetti />}
 			<Outlet></Outlet>
 		</div>

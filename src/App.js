@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
-import Footer from "./components/BodyDiv/Footer";
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -11,22 +10,26 @@ export const ThemeContext = createContext();
 // Theme Provider Component
 const ThemeProvider = ({ children }) => {
 	const [isDarkMode, setIsDarkMode] = useState(() => {
+		// Check localStorage first, then system preference
 		const savedTheme = localStorage.getItem('theme');
-		return savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+		if (savedTheme) {
+			return savedTheme === 'dark';
+		}
+		return window.matchMedia('(prefers-color-scheme: dark)').matches;
 	});
 
 	useEffect(() => {
-		if (isDarkMode) {
-			document.documentElement.classList.add('dark');
-			localStorage.setItem('theme', 'dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-			localStorage.setItem('theme', 'light');
-		}
+		// Prevent flash of wrong theme
+		const root = window.document.documentElement;
+		root.classList.remove('light', 'dark');
+		root.classList.add(isDarkMode ? 'dark' : 'light');
+		
+		// Update localStorage
+		localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
 	}, [isDarkMode]);
 
 	const toggleTheme = () => {
-		setIsDarkMode(!isDarkMode);
+		setIsDarkMode(prev => !prev);
 	};
 
 	return (
@@ -37,7 +40,7 @@ const ThemeProvider = ({ children }) => {
 };
 
 // Lazy load components
-const MainLayout = lazy(() => import("./components/MainLayouts/Main"));
+const MainLayout = lazy(() => import("./components/MainLayouts/MainLayout.js"));
 const HomeLayout = lazy(() => import("./components/MainLayouts/HomeLayout"));
 const About = lazy(() => import("./components/About/About"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
@@ -46,6 +49,7 @@ const Blog = lazy(() => import("./components/Blog/Blog"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 const PortfolioLayout = lazy(() => import("./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
 const MyportfolioImage = lazy(() => import("./components/MyPortfolios/MyportfolioImage"));
+const GalleryPage = lazy(() => import("./pages/GalleryPage"));
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -100,6 +104,14 @@ function App() {
 					),
 				},
 				{
+					path: "/gallery",
+					element: (
+						<Suspense fallback={<LoadingSpinner />}>
+							<GalleryPage />
+						</Suspense>
+					),
+				},
+				{
 					path: "/contractMe",
 					element: (
 						<Suspense fallback={<LoadingSpinner />}>
@@ -137,10 +149,7 @@ function App() {
 					path: "/portfoliolayout/:UsedPhone",
 					element: (
 						<Suspense fallback={<LoadingSpinner />}>
-							<>
-								<MyportfolioImage />
-								<Footer />
-							</>
+							<MyportfolioImage />
 						</Suspense>
 					),
 					loader: () => {
@@ -161,6 +170,7 @@ function App() {
 	return (
 		<ThemeProvider>
 			<QueryClientProvider client={queryClient}>
+			
 				<div className="App max-w-[1440px] mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
 					{confettiStart && <ReactConfetti />}
 					<RouterProvider router={router} />

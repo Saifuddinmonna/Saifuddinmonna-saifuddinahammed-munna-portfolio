@@ -35,10 +35,10 @@ const Main = () => {
                     <Outlet />
                 </div>
                 <aboutPageForHome />
+                <Footer/>   
             </main>
 
-            {/* Footer can also have its content constrained similarly if desired */}
-            <Footer /> {/* If Footer content also needs to align, it needs similar max-w and padding internally */}
+           
         </div>
     );
 };
