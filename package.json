@@ -27,6 +27,7 @@
     "react-router-dom": "^6.4.5",
     "react-scripts": "^5.0.1",
     "react-toastify": "^9.1.1",
+    "recharts": "^2.15.3",
     "tailgrids-react": "^0.1.5",
     "typewriter-effect": "^2.19.0",
     "web-vitals": "^3.1.0"
