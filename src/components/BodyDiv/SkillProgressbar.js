@@ -18,7 +18,7 @@ function SkillProgressbar() {
 
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6 lg:gap-8  bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-xl dark:hover:shadow-indigo-500/20 rounded-xl p-6">
-            <div className="flex flex-col space-y-3  bg-gray-50 dark:bg-gray-900 ">
+            <div className="flex flex-col space-y-3 bg-white dark:bg-gray-800">
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   HTML
@@ -35,6 +35,7 @@ function SkillProgressbar() {
                 </label>
                 <div style={{ width: "98%" }} className="absolute top-0 h-4 rounded shim-red"></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   Bootstrap
@@ -44,13 +45,14 @@ function SkillProgressbar() {
                   className="absolute top-0 h-4 rounded shim-blue"
                 ></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   TailwindCSS
                 </label>
                 <div
                   style={{ width: "98%" }}
-                  className="absolute top-0 h-4 rounded shim-green "
+                  className="absolute top-0 h-4 rounded shim-green"
                 ></div>
               </div>
 
@@ -63,12 +65,14 @@ function SkillProgressbar() {
                   className="absolute top-0 h-4 rounded shim-blue"
                 ></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   TypeScript
                 </label>
                 <div style={{ width: "75%" }} className="absolute top-0 h-4 rounded shim-red"></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   React
@@ -98,12 +102,14 @@ function SkillProgressbar() {
                   className="absolute top-0 h-4 rounded shim-green"
                 ></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   MongoDb
                 </label>
                 <div style={{ width: "80%" }} className="absolute top-0 h-4 rounded shim-red"></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   SQL (Postgresql)
@@ -113,6 +119,7 @@ function SkillProgressbar() {
                   className="absolute top-0 h-4 rounded shim-green"
                 ></div>
               </div>
+
               <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
                 <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
                   Pisma
@@ -124,7 +131,7 @@ function SkillProgressbar() {
 
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-xl dark:hover:shadow-indigo-500/20 rounded-xl p-6 mt-6">
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white capitalize mb-6 bg-gray-50 dark:bg-gray-900">
-              Skills <span className="text-indigo-600 dark:text-indigo-400">Overview</span>
+              Skills <span className="text-indigo-600 dark:text-indigo-400">Details</span>
             </h1>
             <div className="border  bg-gray-50 dark:bg-gray-900 rounded-lg hover:shadow-[0_0_10px_gray] duration-300  grid shadow-md ">
               <div className="  rounded-lg ">
