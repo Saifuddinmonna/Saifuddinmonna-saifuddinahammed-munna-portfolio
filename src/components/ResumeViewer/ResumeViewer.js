@@ -122,8 +122,8 @@ const ResumeViewer = () => {
       case "cv":
       case "singlePage":
         return (
-          <div className="relative">
-            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-3 rounded-t-lg">
+          <div className="relative ">
+            <div className="mt-5 absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-3 rounded-t-lg">
               <p className="text-sm text-white font-medium flex items-center">
                 {resumeData[activeTab].icon}
                 <span className="ml-2">Viewing: {resumeData[activeTab].title}</span>
@@ -330,10 +330,10 @@ const ResumeViewer = () => {
                 <a
                   href={resumeData.html.url}
                   download
-                  className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300"
+                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
                 >
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-4 h-4 mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -345,15 +345,16 @@ const ResumeViewer = () => {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  Download HTML Resume
+                  <span className="relative z-10 font-['Poppins']">Download HTML Resume</span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                 </a>
                 <a
                   href={resumeData.cv.url}
                   download
-                  className="flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg hover:from-green-700 hover:to-emerald-600 transition-all duration-300"
+                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] border border-green-400/10 hover:border-green-300/20 dark:border-green-500/10 dark:hover:border-green-400/20"
                 >
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-4 h-4 mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -365,15 +366,16 @@ const ResumeViewer = () => {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  Download HTML CV
+                  <span className="relative z-10 font-['Poppins']">Download HTML CV</span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                 </a>
                 <a
                   href={resumeData.singlePage.url}
                   download
-                  className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg hover:from-purple-700 hover:to-indigo-600 transition-all duration-300"
+                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(124,58,237,0.6)] dark:hover:shadow-[0_0_30px_rgba(124,58,237,0.4)] border border-purple-400/10 hover:border-purple-300/20 dark:border-purple-500/10 dark:hover:border-purple-400/20"
                 >
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-4 h-4 mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -385,15 +387,18 @@ const ResumeViewer = () => {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  Download Single Page Resume
+                  <span className="relative z-10 font-['Poppins']">
+                    Download Single Page Resume
+                  </span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                 </a>
                 <a
                   href={resumeData.pdf.url}
                   download
-                  className="flex items-center px-4 py-2 bg-gradient-to-r from-red-600 to-pink-500 text-white rounded-lg hover:from-red-700 hover:to-pink-600 transition-all duration-300"
+                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-red-600 to-pink-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(239,68,68,0.6)] dark:hover:shadow-[0_0_30px_rgba(239,68,68,0.4)] border border-red-400/10 hover:border-red-300/20 dark:border-red-500/10 dark:hover:border-red-400/20"
                 >
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-4 h-4 mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -405,15 +410,16 @@ const ResumeViewer = () => {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  Download PDF Resume
+                  <span className="relative z-10 font-['Poppins']">Download PDF Resume</span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                 </a>
                 <a
                   href={resumeData.cvPdf.url}
                   download
-                  className="flex items-center px-4 py-2 bg-gradient-to-r from-orange-600 to-yellow-500 text-white rounded-lg hover:from-orange-700 hover:to-yellow-600 transition-all duration-300"
+                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-orange-600 to-yellow-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] dark:hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] border border-orange-400/10 hover:border-orange-300/20 dark:border-orange-500/10 dark:hover:border-orange-400/20"
                 >
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-4 h-4 mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -425,7 +431,8 @@ const ResumeViewer = () => {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  Download PDF CV
+                  <span className="relative z-10 font-['Poppins']">Download PDF CV</span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                 </a>
               </div>
             </motion.div>
