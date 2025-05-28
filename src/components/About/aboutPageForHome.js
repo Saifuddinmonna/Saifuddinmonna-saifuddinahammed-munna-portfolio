@@ -120,41 +120,6 @@ const AboutPageForHome = () => {
         initial="hidden"
         animate="visible"
       >
-        {/* --- Hero Section --- */}
-        {/* <motion.section
-                    className="flex flex-col lg:flex-row items-center bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 sm:p-10 mb-12"
-                    variants={itemVariants}
-                >
-                    <motion.img
-                        src="images/profile1.png" // Make sure this path is correct
-                        alt="Saifuddin Ahammed Monna"
-                        className="w-48 h-48 sm:w-60 sm:h-60 rounded-full object-cover shadow-lg mb-6 lg:mb-0 lg:mr-10 border-4 border-sky-500"
-                        whileHover={{ scale: 1.05, rotate: 2 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                    />
-                    <div className="text-center lg:text-left">
-                        <motion.h1
-                            className="text-4xl sm:text-5xl font-bold text-sky-600 dark:text-sky-400 mb-3"
-                            variants={itemVariants}
-                        >
-                            Saifuddin Ahammed Monna
-                        </motion.h1>
-                        <motion.p
-                            className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-6"
-                            variants={itemVariants}
-                        >
-                            Passionate Web Developer & Educator
-                        </motion.p>
-                        <motion.a
-                            href="#contact" // Link to your contact section or page
-                            className="inline-block bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105 text-lg"
-                            variants={itemVariants}
-                        >
-                            Let's Connect
-                        </motion.a>
-                    </div>
-                </motion.section> */}
-
         {/* --- My Story Section --- */}
         <motion.section
           className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
@@ -163,14 +128,14 @@ const AboutPageForHome = () => {
           <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
             <FaUserGraduate className="mr-3 text-sky-500" /> My Journey
           </h2>
-          <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-            <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed text-justify indent-8">
+          <div className="p-4 rounded-lg  bg-white dark:bg-gray-700">
+            <p className="text-lg text-gray-800 dark:text-gray-100 leading-relaxed text-justify indent-8">
               Born in Mymensingh Sadar, Bangladesh, I grew up with a supportive family of three
               brothers and my parents. My academic path led me to complete a post-graduation in
               Public Administration in 2017. While I have a background in teaching, my true passion
               ignited when I delved into the world of coding.
             </p>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 leading-relaxed text-justify indent-8">
+            <p className="mt-4 text-lg  bg-white text-gray-800 dark:text-gray-100 dark: dark:bg-gray-800 leading-relaxed text-justify indent-8">
               For the past few years, I've dedicated myself to web design and development, driven by
               the desire to help individuals and businesses establish their online presence and
               enhance functionality. I find immense joy in crafting digital experiences and solving
@@ -187,21 +152,21 @@ const AboutPageForHome = () => {
           variants={itemVariants}
         >
           <h2 className="text-3xl font-semibold mb-8 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
-            <FaCode className="mr-3 text-sky-500" /> My Technical Toolkit
+            <FaCode className="mr-3 text-secondary" /> My Technical Toolkit
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
             {skills.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition-shadow text-gray-800 dark:text-gray-200"
+                className="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition-shadow text-gray-800 dark:text-gray-100"
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
               >
                 <div className="text-4xl mb-2">{skill.icon}</div>
-                <h3 className="text-md font-medium text-gray-700 dark:text-gray-300">
+                <h3 className="text-md font-medium text-gray-800 dark:text-gray-200">
                   {skill.name}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{skill.level}</p>
+                <p className="text-xs text-gray-800 dark:text-gray-100">{skill.level}</p>
               </motion.div>
             ))}
           </div>
@@ -215,8 +180,8 @@ const AboutPageForHome = () => {
           <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
             <FaBullseye className="mr-3 text-sky-500" /> My Vision
           </h2>
-          <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-            <p className="text-lg bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  leading-relaxed text-center italic">
+          <div className="p-4 rounded-lg bg-white dark:bg-gray-700">
+            <p className="text-lg bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100  leading-relaxed text-center italic">
               "My ultimate goal is to become a highly proficient web developer and contribute
               meaningfully to the open-source community, particularly by building optimized NPM
               packages for React. I believe in the power of shared knowledge and aim to create tools

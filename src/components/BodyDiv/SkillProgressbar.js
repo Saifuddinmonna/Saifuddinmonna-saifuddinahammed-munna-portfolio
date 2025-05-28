@@ -1,204 +1,116 @@
+import React from "react";
+import { motion } from "framer-motion";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import { IconName, GrUserExpert } from "react-icons/gr";
-import SkillTag from "../SkillTag"; // path adjust koro jodi onno folder e thake
+import SkillTag from "../SkillTag"; // Using the imported SkillTag component
 
-function SkillProgressbar() {
+const SkillSection = ({ title, skills }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5 }}
+    className="mb-6"
+  >
+    <h4 className="text-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent p-2 m-3">
+      {title}
+    </h4>
+    <div className="p-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      {skills.split(",").map((skill, idx) => (
+        <SkillTag key={idx} name={skill} />
+      ))}
+    </div>
+  </motion.div>
+);
+
+const SkillProgressbar = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
   const similar =
     "Node Mailer Tools: Github, VS-Code,Brackets, Chrome Dev Tools, Heroku, Netlify,Postman, Photoshop, Figma,Illustrator etc.";
   const similararray = similar.split(",");
   console.log(similararray);
   return (
-    <section id="skills" className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4  text-gray-800 dark:text-white">
-        <div className="mb-12 lg:mb-16 text-center ">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white capitalize">
-            My Professional <span className="text-indigo-600 dark:text-indigo-400">Skills...</span>
-          </h1>
-        </div>
+    <section className="py-12 px-4 sm:px-6 lg:px-8">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="max-w-7xl mx-auto"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg rounded-2xl p-8 transition-all duration-300 hover:shadow-xl dark:hover:shadow-indigo-500/10"
+        >
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-bold text-gray-800 dark:text-white mb-8"
+          >
+            Skills{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">
+              Overview
+            </span>
+          </motion.h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-6 lg:gap-8  bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white">
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-xl dark:hover:shadow-indigo-500/20 rounded-xl p-6">
-            <div className="flex flex-col space-y-3  bg-gray-50 dark:bg-gray-900 ">
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  HTML
-                </label>
-                <div
-                  style={{ width: "100%" }}
-                  className="absolute top-0 h-4 rounded shim-blue"
-                ></div>
-              </div>
+          <div className="space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300"
+            >
+              <SkillSection
+                title="Expertise"
+                skills="JavaScript, ReactJS, Node.js, MongoDB, Mongoose, Express.js, Redux, SQL, PostgreSQL, Rest API, Html5, CSS3, Bootstrap-5, Tailwind CSS, ES6, React Router, React Hook, DaisyUI, Headless, EmailJS, Npm Packages"
+              />
+              <SkillSection
+                title="Comfortable"
+                skills="Firebase, Prisma, Material UI, Next.js, Figma, SSL-COMMERCE, Stripe, GitHub, Claude.ai, TypeScript, Particle.js"
+              />
+              <SkillSection
+                title="Familiar"
+                skills="Node Mailer Tools, GitHub, VS-Code, Brackets, Chrome Dev Tools, Heroku, Netlify, Postman, Photoshop, Figma, Illustrator"
+              />
+            </motion.div>
 
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  CSS
-                </label>
-                <div style={{ width: "98%" }} className="absolute top-0 h-4 rounded shim-red"></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  Bootstrap
-                </label>
-                <div
-                  style={{ width: "95%" }}
-                  className="absolute top-0 h-4 rounded shim-blue"
-                ></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  TailwindCSS
-                </label>
-                <div
-                  style={{ width: "98%" }}
-                  className="absolute top-0 h-4 rounded shim-green "
-                ></div>
-              </div>
-
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  JavaScript
-                </label>
-                <div
-                  style={{ width: "95%" }}
-                  className="absolute top-0 h-4 rounded shim-blue"
-                ></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  TypeScript
-                </label>
-                <div style={{ width: "75%" }} className="absolute top-0 h-4 rounded shim-red"></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  React
-                </label>
-                <div
-                  style={{ width: "90%" }}
-                  className="absolute top-0 h-4 rounded shim-green"
-                ></div>
-              </div>
-
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  NextJs
-                </label>
-                <div
-                  style={{ width: "60%" }}
-                  className="absolute top-0 h-4 rounded shim-blue"
-                ></div>
-              </div>
-
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  NodeJs
-                </label>
-                <div
-                  style={{ width: "70%" }}
-                  className="absolute top-0 h-4 rounded shim-green"
-                ></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  MongoDb
-                </label>
-                <div style={{ width: "80%" }} className="absolute top-0 h-4 rounded shim-red"></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  SQL (Postgresql)
-                </label>
-                <div
-                  style={{ width: "60%" }}
-                  className="absolute top-0 h-4 rounded shim-green"
-                ></div>
-              </div>
-              <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded">
-                <label className="block text-xl font-semibold text-gray-800 dark:text-white mt-3 mb-1">
-                  Pisma
-                </label>
-                <div style={{ width: "55%" }} className="absolute top-0 h-4 rounded shim-red"></div>
-              </div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300"
+            >
+              <SkillSection
+                title="Frontend"
+                skills="JavaScript, TypeScript, React, Redux, Redux-Thunk/Saga, HTML5, CSS3, Styled Components, SCSS"
+              />
+              <SkillSection
+                title="Backend"
+                skills="Node.js, Express.js, MongoDB, PostgreSQL, Firebase, REST APIs"
+              />
+              <SkillSection
+                title="DevOps"
+                skills="Git, GitHub, VS Code, Netlify, Vercel, Heroku, React Dev Tools, Redux Dev Tools, Figma, Brackets, Chrome DevTools, Postman, Photoshop, Illustrator"
+              />
+            </motion.div>
           </div>
-
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-xl dark:hover:shadow-indigo-500/20 rounded-xl p-6 mt-6">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white capitalize mb-6 bg-gray-50 dark:bg-gray-900">
-              Skills <span className="text-indigo-600 dark:text-indigo-400">Overview</span>
-            </h1>
-            <div className="border  bg-gray-50 dark:bg-gray-900 rounded-lg hover:shadow-[0_0_10px_gray] duration-300  grid shadow-md ">
-              <div className="  rounded-lg ">
-                {" "}
-                <h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded   d-block text-left ">
-                  Expertise:
-                </h4>
-                <p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                  {"JavaScript, ReactJS, Node.js, MongoDB, Mongoose, Express.js, Redux,SQL, PostgreSQL, Rest API, Html5, CSS3, Bootstrap-5, tailwind CSS ,ES6, Rest API, ReactRouter, React Hook, DaisyUi , familiar withHeadless ,EmailJS, Npm Packages"
-                    .split(",")
-                    .map((tp, idx) => (
-                      <SkillTag key={idx} name={tp} />
-                    ))}
-                </p>
-                <h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded d-block text-left ">
-                  Comfortable:
-                </h4>
-                <p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                  {"Firebase, Prisma, Material UI, Next.Js,Figma, SSL-COMMERCE and Stripe, GitHub, claude.ai, Typescript,Prticle.js"
-                    .split(",")
-                    .map((tp, idx) => (
-                      <SkillTag key={idx} name={tp} />
-                    ))}
-                </p>
-                <h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded  d-block text-left ">
-                  Familiar:
-                </h4>
-                <p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                  {"Node Mailer Tools, Github, VS-Code, Brackets, Chrome Dev Tools, Heroku, Netlify, Postman, Photoshop, Figma, Illustrator"
-                    .split(",")
-                    .map((tp, idx) => (
-                      <SkillTag key={idx} name={tp} />
-                    ))}
-                </p>
-              </div>
-            </div>
-            <div className="border  rounded-lg  bg-gray-50 dark:bg-gray-900 hover:shadow-[0_0_10px_gray] duration-300 grid shadow-md">
-              <h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
-                Front end:
-              </h4>
-              <p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                {"JavaScript, TypeScript, React, Redux,Redux-Thunk/Saga, HTML5, CSS3, Styledcomponents, SCSS"
-                  .split(",")
-                  .map((tp, idx) => (
-                    <SkillTag key={idx} name={tp} />
-                  ))}
-              </p>
-              <h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
-                Back end:
-              </h4>
-              <p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                {"Node.js, Express.js, MongoDB, PostgreSQL, Firebase, REST APIs"
-                  .split(",")
-                  .map((tp, idx) => (
-                    <SkillTag key={idx} name={tp} />
-                  ))}
-              </p>
-              <h4 className="text-strong text-bold bg-gradient-to-r from-cyan-500 to-blue-500 ... p-2 m-3 rounded ">
-                DevOps:
-              </h4>
-
-              <p className="p-2 text-lg grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                {"Git, GitHub, VS Code, Netlify, Vercel, Heroku ,VS Code , React Dev Tools, Redux Dev tools ,Figma, Brackets, Chrome DevTools, Heroku, Netlify, Postman, Photoshop,Illustrator etc."
-                  .split(",")
-                  .map((tp, idx) => (
-                    <SkillTag key={idx} name={tp} />
-                  ))}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
-}
+};
 
 export default SkillProgressbar;

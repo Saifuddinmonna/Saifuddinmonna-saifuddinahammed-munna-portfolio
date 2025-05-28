@@ -167,7 +167,8 @@ select:focus {
   :root {
     /* Light mode variables */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: rgb(13, 20, 17);
+    /* --foreground: 222.2 84% 4.9%; */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -186,7 +187,7 @@ select:focus {
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-    color-scheme: light dark;
+    color-scheme: light;
   }
 
   .dark {
@@ -216,28 +217,28 @@ select:focus {
 
 /* ===== COMPONENT BACKGROUND OVERRIDES ===== */
 .bg-white {
-  background-color: rgb(255, 255, 255) !important;
+  background-color: hsl(var(--background)) !important;
 }
 
 .dark .dark\:bg-gray-800 {
-  background-color: rgb(31, 41, 55) !important;
+  background-color: hsl(var(--card)) !important;
 }
 
 .dark .dark\:bg-gray-700 {
-  background-color: rgb(55, 65, 81) !important;
+  background-color: hsl(var(--muted)) !important;
 }
 
 .dark .dark\:bg-gray-900 {
-  background-color: rgb(17, 24, 39) !important;
+  background-color: hsl(var(--background)) !important;
 }
 
 /* Text color overrides */
 .text-gray-800 {
-  color: rgb(31, 41, 55) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .dark .dark\:text-gray-200 {
-  color: rgb(229, 231, 235) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Shadow overrides */
@@ -254,12 +255,12 @@ select:focus {
 @layer base {
   * {
     @apply border-gray-200 dark:border-gray-700;
-    transition-property: background-color, border-color, color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
   }
+
   body {
     @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -269,21 +270,16 @@ select:focus {
 }
 
 /* ===== THEME SPECIFIC STYLES ===== */
-.dark {
-  color-scheme: dark;
-}
-
-.dark nav {
-  background-color: rgb(17, 24, 39) !important; /* dark:bg-gray-900 */
-}
-
-/* Light mode specific styles */
 .light {
   color-scheme: light;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
-.light nav {
-  background-color: rgb(255, 255, 255) !important; /* bg-white */
+.dark {
+  color-scheme: dark;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 /* ===== ACCESSIBILITY ===== */

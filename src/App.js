@@ -40,6 +40,12 @@ const ThemeProvider = ({ children }) => {
         }
       });
     });
+
+    // Update meta theme-color
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute("content", isDarkMode ? "#1f2937" : "#ffffff");
+    }
   }, [isDarkMode]);
 
   const toggleTheme = () => {
