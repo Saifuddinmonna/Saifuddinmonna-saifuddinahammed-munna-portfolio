@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saifuddin Ahammed Monna - Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol", "Noto Color Emoji";
+        color: #2d3748; /* gray-800 */
+      }
+      .section-title {
+        font-size: 1.125rem; /* text-lg */
+        font-weight: 600; /* semibold */
+        color: #4a5568; /* gray-700 */
+        border-bottom-width: 2px;
+        border-color: #a0aec0; /* gray-500 */
+        padding-bottom: 0.25rem; /* pb-1 */
+        margin-bottom: 0.75rem; /* mb-3 */
+      }
+      .subsection-title {
+        font-weight: 600; /* semibold */
+        color: #4a5568; /* gray-700 */
+      }
+      .symbol-diamond {
+        /* ❖ */
+        color: #4299e1; /* blue-500 */
+        margin-right: 0.5rem;
+        font-size: 1.1em;
+      }
+      .symbol-bullet {
+        /* • */
+        color: #4a5568; /* gray-700 */
+        margin-right: 0.5rem;
+      }
+      .symbol-checkmark {
+        /* ✓ */
+        color: #48bb78; /* green-500 */
+        margin-right: 0.5rem;
+        font-weight: bold;
+      }
+
+      /* For printing */
+      @media print {
+        body {
+          background-color: #fff !important;
+          -webkit-print-color-adjust: exact;
+          color-adjust: exact;
+        }
+        .resume-page {
+          box-shadow: none !important;
+          border: 1px solid #ccc !important;
+          margin: 0 !important;
+          padding: 20px !important;
+          max-width: 100% !important;
+          border-radius: 0 !important;
+        }
+        .profile-image-container {
+          page-break-inside: avoid;
+        }
+        img {
+          max-width: 100% !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-200 min-h-screen flex items-start justify-center py-8 px-4 sm:px-6">
+    <div
+      class="resume-page max-w-5xl w-full bg-white shadow-xl p-8 sm:p-10 border border-gray-400 text-gray-800 rounded-md"
+    >
+      <!-- Header with Profile Image -->
+      <header
+        class="flex flex-col md:flex-row justify-between items-start mb-6 pb-4 border-b border-gray-300"
+      >
+        <div class="md:w-3/4">
+          <h1 class="text-3xl font-bold text-gray-800">Saifuddin Ahammed Monna</h1>
+          <p class="text-xl text-gray-700">Junior Full Stack Web Developer (MERN STACK)</p>
+          <p class="text-md text-gray-600 mb-4">Mymensingh, Bangladesh.</p>
+          <div class="text-sm text-gray-700 space-y-1">
+            <p>
+              <span class="font-semibold">Email:</span>
+              <a href="mailto:saifuddinmonna@email.com" class="text-blue-600 hover:underline"
+                >saifuddinmonna@email.com</a
+              >
+            </p>
+            <p>
+              <span class="font-semibold">Mobile Number:</span>
+              <a href="tel:+880-1623361191" class="text-blue-600 hover:underline"
+                >+880-1623361191</a
+              >
+            </p>
+            <p>
+              <span class="font-semibold">Facebook:</span>
+              <a
+                href="https://www.facebook.com/SaifuddinAhammedMunna"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:underline"
+                >Saifuddin Ahammed Munna</a
+              >
+            </p>
+            <p>
+              <span class="font-semibold">GitHub:</span>
+              <a
+                href="https://github.com/Saifuddinmonna"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:underline"
+                >https://github.com/Saifuddinmonna</a
+              >
+            </p>
+            <p>
+              <span class="font-semibold">LinkedIn:</span>
+              <a
+                href="https://www.linkedin.com/in/saifuddin-ahammed-monna/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:underline"
+                >https://www.linkedin.com/in/saifuddin-ahammed-monna/</a
+              >
+            </p>
+            <p>
+              <span class="font-semibold">Portfolio:</span>
+              <a
+                href="https://saifuddinahammed-monna.web.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:underline"
+                >https://saifuddinahammed-monna.web.app/</a
+              >
+            </p>
+          </div>
+        </div>
+        <div class="md:w-1/4 mt-6 md:mt-0 flex md:justify-end profile-image-container">
+          <img
+            src="profile1.png"
+            alt="Saifuddin Ahammed Monna"
+            class="rounded-md shadow-md w-36 h-44 object-cover"
+          />
+        </div>
+      </header>
+
+      <!-- About Me -->
+      <section class="mb-6">
+        <h2 class="section-title">About Me</h2>
+        <p class="text-gray-700 leading-relaxed text-sm">
+          I am a full stack software developer with MERN STACK, I am maintaining and deploying
+          single page/eCommerce applications and can adapt onto any technology rapidly making myself
+          flexible upon any tech stack. A passionate, diligent person who wants to learn
+          continuously.
+        </p>
+      </section>
+
+      <!-- Objectives -->
+      <section class="mb-6">
+        <h2 class="section-title">Objectives</h2>
+        <ul class="list-none pl-0 text-gray-700 leading-relaxed text-sm space-y-1">
+          <li>
+            To work as a Web developer and acquire experience and skills to build up career as a
+            Full Stack Web Developer
+          </li>
+          <li>
+            A highly motivated individual wishing to develop a career in an environment where my
+            aesthetic creativity will be appreciated and where there is an opportunity of
+            self-actualization and suitable environment for leading an honest life with dignity.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Professional Skills -->
+      <section class="mb-6">
+        <h2 class="section-title">Professional Skills</h2>
+        <div class="text-sm space-y-3">
+          <div>
+            <h3 class="subsection-title flex items-center">
+              <span class="symbol-diamond">❖</span>Expertise:
+            </h3>
+            <p class="ml-8 text-gray-600">
+              ReactJs, JavaScript, ES6, Rest API, Html5, CSS3, CSS, Tailwind CSS, Bootstrap-5
+              (Daisyui and familiar with Headless), React Router, React Hook, Npm Packages,
+              react-toastify, TypewriterJS and Prticle.js.
+            </p>
+          </div>
+          <div>
+            <h3 class="subsection-title flex items-center">
+              <span class="symbol-diamond">❖</span>Comfortable:
+            </h3>
+            <p class="ml-8 text-gray-600">
+              Node.js, MongoDb, Firebase, Material UI, ExpressJs, Redux, Next.Js, SSL-COMMERCE and
+              Stripe.
+            </p>
+          </div>
+          <div>
+            <h3 class="subsection-title flex items-center">
+              <span class="symbol-diamond">❖</span>Familiar:
+            </h3>
+            <p class="ml-8 text-gray-600">Node Mailer,</p>
+          </div>
+          <div>
+            <h3 class="subsection-title flex items-center">
+              <span class="symbol-diamond">❖</span>Tools:
+            </h3>
+            <p class="ml-8 text-gray-600">
+              GitHub, VS Code, Recharts, Photopea, Chrome Dev Tools, Netlify, Postman, Photoshop,
+              Figma and Illustrator.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary of Skills -->
+      <section class="mb-6">
+        <h2 class="section-title">Summary of Skills</h2>
+        <p class="text-gray-700 leading-relaxed text-sm">
+          I can build a full stack project with MERN Stack (<strong class="font-semibold"
+            >JavaScript</strong
+          >
+          and <strong class="font-semibold">React</strong>,
+          <strong class="font-semibold">NodeJS</strong>,
+          <strong class="font-semibold">ExpressJS</strong>,
+          <strong class="font-semibold">Bootstrap</strong>,
+          <strong class="font-semibold">Tailwind</strong>,
+          <strong class="font-semibold">Daisy</strong>,
+          <strong class="font-semibold">Headless</strong>,
+          <strong class="font-semibold">MongoDB</strong> and
+          <strong class="font-semibold">Rest API</strong>,
+          <strong class="font-semibold">Dotenv</strong>,
+          <strong class="font-semibold">Firebase</strong>)
+        </p>
+      </section>
+
+      <!-- Personal Profile -->
+      <section class="mb-6">
+        <h2 class="section-title">Personal profile</h2>
+        <div class="grid grid-cols-[max-content_auto] gap-x-3 gap-y-1 text-sm text-gray-700">
+          <span class="font-semibold">Name</span><span>: Munna Ahammed</span>
+          <span class="font-semibold">Father's name</span><span>: Unus Ali</span>
+          <span class="font-semibold">Mother's name</span><span>: Sahida Khatun</span>
+          <span class="font-semibold">Present address</span
+          ><span>: Gohailkandi Jamtola Bylane -1, Mymensingh Sadar, Mymensingh.</span>
+          <span class="font-semibold">Permanent address</span><span>: Same/Do</span>
+          <span class="font-semibold">Cell</span><span>: 01912157648</span>
+          <span class="font-semibold">Date of birth</span><span>: 07/02/1992</span>
+          <span class="font-semibold">Marital status</span><span>: Single</span>
+          <span class="font-semibold">Religion</span><span>: Islam</span>
+          <span class="font-semibold">Nationality</span><span>: Bangladeshi</span>
+        </div>
+      </section>
+
+      <!-- Educational Qualification -->
+      <section class="mb-6">
+        <h2 class="section-title">Educational Qualification:</h2>
+        <h3 class="text-md font-semibold text-gray-700 mb-2">Academic Education</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse border border-gray-300 mb-4">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="border border-gray-300 p-2 text-left font-semibold text-gray-700">
+                  Name of Exams
+                </th>
+                <th class="border border-gray-300 p-2 text-left font-semibold text-gray-700">
+                  Name of Board/ University
+                </th>
+                <th class="border border-gray-300 p-2 text-left font-semibold text-gray-700">
+                  G.P.A.S/Class
+                </th>
+                <th class="border border-gray-300 p-2 text-left font-semibold text-gray-700">
+                  Year of exams
+                </th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-700">
+              <tr>
+                <td class="border border-gray-300 p-2">MSS (Public Administration)</td>
+                <td class="border border-gray-300 p-2">JKKNIU</td>
+                <td class="border border-gray-300 p-2">1st Class (3.35)</td>
+                <td class="border border-gray-300 p-2">2017</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 p-2">BSS (Public Administration)</td>
+                <td class="border border-gray-300 p-2">JKKNIU</td>
+                <td class="border border-gray-300 p-2">1st Class (3.26)</td>
+                <td class="border border-gray-300 p-2">2015</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 p-2">H.S.C (Humanity)</td>
+                <td class="border border-gray-300 p-2">Dhaka</td>
+                <td class="border border-gray-300 p-2">G.P.A.5</td>
+                <td class="border border-gray-300 p-2">2010</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 p-2">S.S.C (Science)</td>
+                <td class="border border-gray-300 p-2">Dhaka</td>
+                <td class="border border-gray-300 p-2">G.P.A.5</td>
+                <td class="border border-gray-300 p-2">2008</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="text-md font-semibold text-gray-700 mb-2">Relevant Coursework</h3>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-center">
+            <span class="symbol-checkmark">✓</span>Computer Technology
+          </li>
+          <li class="flex items-center">
+            <span class="symbol-checkmark">✓</span>Web Development in MERN Stack from Programming
+            Hero, Bangladesh.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Career and Application Information -->
+      <section class="mb-6">
+        <h2 class="section-title">Career and Application Information</h2>
+        <div class="grid grid-cols-[max-content_auto] gap-x-3 gap-y-1 text-sm text-gray-700">
+          <span class="font-semibold">Looking For</span
+          ><span>: Full Stack Web Developer (MERN STACK)</span>
+          <span class="font-semibold">Available For</span><span>: Full Time</span>
+          <span class="font-semibold">Present Salary</span><span>: Tk. 30000</span>
+          <span class="font-semibold">Expected Salary</span><span>: Tk. 40000</span>
+          <span class="font-semibold">Preferred Job Category</span
+          ><span>: MERN STACK (font-end or full stack)</span>
+          <span class="font-semibold">Preferred Location</span
+          ><span>: Foreign country (Specially Europe, USA, America, Singapore, Malaysia)</span>
+        </div>
+      </section>
+
+      <!-- Work Experience -->
+      <section class="mb-6">
+        <h2 class="section-title">Work Experience:</h2>
+        <p class="text-sm text-gray-700 mb-2">
+          working with some projects since
+          <span class="font-semibold">January 1,2022 still now</span>
+        </p>
+        <p class="text-sm text-gray-700 mb-2">I am working some projects for</p>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Maintain and update websites based on feedback from
+            clients
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Troubleshoot website problems
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Collaborate others on projects and product needs
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Present design ideas to others to receive feedback
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Completed assignments from project programming hero
+            in order of priority
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Developed clean code for client projects
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Reviewed websites to ensure functionality
+          </li>
+        </ul>
+      </section>
+
+      <!-- Projects -->
+      <section class="mb-6">
+        <h2 class="section-title">Projects</h2>
+        <p class="text-sm text-gray-700 mb-3">
+          I am Entry-Level Full Stack Web Developer (MERN STACK) but I have Completed and Resolved
+          some web designs and development projects which are given below:
+        </p>
+
+        <div class="space-y-5 text-sm">
+          <!-- Project 1 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">
+              1. Used Product Selling and Buying Project: UsedPhone
+            </h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> React,
+              Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind, DaisyUI, Dotenv.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Site GitHub</a> |
+              <a href="#" class="text-blue-600 hover:underline">Live Server-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Server-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>UsedPhone website where users can buy or sell
+                used products.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Buyer can buy products and can pay through
+                Stripe payment gateway after booking.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Seller can Add Product, See all his buyers, all
+                his products.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>There have 3 different dashboard panel (Buyer/
+                Seller / Admin).
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Admin can see all sellers, all buyers, reported
+                items, delete and verify buyer and seller.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Admin Access (user: munna@gmail.com password:
+                123456Use#)
+              </li>
+            </ul>
+          </div>
+          <!-- Project 2 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">
+              2. Portfolio Website Project: saifuddinahammed-monna
+            </h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> React,
+              Firebase, Tailwind, API, JavaScript
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>This is a simple portfolio website to show
+                portfolio
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>JSON file is used to load data dynamically.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>A list of the owner's technical and
+                non-technical skills, highlighting their areas of expertise.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>A showcase of the owner's past and current
+                projects, with descriptions and images/media.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>A form or information for how to reach the
+                owner, such as an email address or phone number.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 3 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">3. Service Selling Project: RepairService</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> React,
+              Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a> |
+              <a href="#" class="text-blue-600 hover:underline">Live Server-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Server-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Individual RepairService Provider with Google
+                Login.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Including Login/Register to Add service or Leave
+                review for clients.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Users can see their review on My reviews page or
+                can add more services.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>Users can comment on receiving their services.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 4 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">4. Educational Project: EnglishLearning</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> React,
+              Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a> |
+              <a href="#" class="text-blue-600 hover:underline">Live Server-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Server-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>EnglishLearning an online based learning
+                platform
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>To get Premium Access of Courses you have to
+                register in EnglishLearning
+              </li>
+            </ul>
+          </div>
+          <!-- Project 5 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">5. Examination Taker Project: GoExam</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> React,
+              Vercel, Tailwind.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>GoExam is an online based learning platform for
+                taking MCQ examination.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>One can take MCQ test here.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>It is a pure JavaScript website.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 6 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">6. To-do Web App Project: myactivityservice</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap. JavaScript, React
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'myactivityservice' an online based Daily
+                activity tracking site
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>This project will be about creating a web
+                application with which you can keep track of your daily or weekly tasks.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>This essential and beginner-friendly app can
+                help streamline your tasks in the long run.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'myactivityservice' is used for free learning
+                purposes built with HTML, CSS and Bootstrap-5 and some pure JavaScript.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 7 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">
+              7. Typing Practice Error Fixing Project: munnatype
+            </h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap. JavaScript
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>.
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'munnatype' an online based learning platform
+                for type speedy and correctly.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>I work with 'munnatype' projects for error
+                fixing and debugging on various issues.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'munnatype' is used for free learning purposes
+                built with HTML, CSS and Bootstrap-5 and pure JavaScript.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 8 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">8. Educational Project: englishclub</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'englishclub' an online based learning platform
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'englishclub' is used for free learning purposes
+                built with HTML, CSS and Bootstrap-5
+              </li>
+            </ul>
+          </div>
+
+          <h3 class="font-semibold text-gray-700 pt-3 text-md">Basic Portfolio Website</h3>
+          <!-- Project 9 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">
+              9. Cost Calculation websites: my-team-selection
+            </h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, JavaScript, Bootstrap.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'my-team-selection' an online based team
+                management app
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'my-team-selection' can be used for calculating
+                cost of players, coaches and managers
+              </li>
+            </ul>
+          </div>
+          <!-- Project 10 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">10. News Portal Project: thenewsportal</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'thenewsportal' an online based news platform.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'thenewsportal' is used for reading news
+                purposes built with HTML, CSS and Bootstrap-5 and pure JavaScript.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>News content is divided into various categories.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 11 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">11. Weather App Project: munnatemperature</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'munnatemperature" is an online based weather
+                app.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'munnatemperature" is used for knowing update
+                temperature humidity and rain with HTML, CSS and Bootstrap-5 and pure JavaScript.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 12 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">12. Figma Copy Project: donate-today</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS,
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'donate-today' is simple website built from
+                figma Jpg.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'donate-today' is built for free learning
+                purposes built with HTML, CSS.
+              </li>
+            </ul>
+          </div>
+          <!-- Project 13 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">13. Basic Website Project: world-cup</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS,
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'world-cup' is simple website built with html
+                CSS
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'world-cup' is fully responsive website with
+                pure CSS
+              </li>
+            </ul>
+          </div>
+          <!-- Project 14 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">14. E-Commerce Website Project: rim-shoping</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap, JavaScript and React.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a> |
+              <a href="#" class="text-blue-600 hover:underline">Client-Side GitHub</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'rim-shoping' is simple e-commerce projects
+                built with html CSS, HTML, Bootstrap, JavaScript and React
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'rim-shoping' is fully responsive website.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>It very simple design and less code
+              </li>
+            </ul>
+          </div>
+          <!-- Project 15 -->
+          <div>
+            <h3 class="font-semibold text-gray-700">15. Educational Project: englishclub</h3>
+            <p class="italic text-gray-600">
+              <span class="font-semibold not-italic text-gray-700">Used-technologies:</span> HTML,
+              CSS, Bootstrap.
+            </p>
+            <p>
+              <span class="font-semibold text-gray-700">Project link:</span>
+              <a href="#" class="text-blue-600 hover:underline">Live Client-Side</a>
+            </p>
+            <p class="font-semibold text-gray-700 mt-1">Overview:</p>
+            <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'englishclub' an online based learning platform.
+              </li>
+              <li class="flex items-start">
+                <span class="symbol-bullet">•</span>'englishclub' is used for free learning purposes
+                built with HTML, CSS and Bootstrap-5.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="text-sm text-gray-700 mt-4">
+          **There are some more projects built with above-described technology in my
+          <a
+            href="https://github.com/Saifuddinmonna"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 hover:underline"
+            >GitHub: Saifuddinmonna</a
+          >
+        </p>
+      </section>
+
+      <!-- Extra Skills, Associations, Certs -->
+      <section class="mb-6">
+        <h2 class="section-title">Extra Skills</h2>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-start"><span class="symbol-diamond">❖</span>Analytical thinking</li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Resolving technical issues
+          </li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Communication skills
+          </li>
+          <li class="flex items-start"><span class="symbol-diamond">❖</span>Teamwork</li>
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Adaptability to any new technology and challenge.
+          </li>
+        </ul>
+
+        <h3 class="text-md font-semibold text-gray-700 mt-4 mb-2">Professional association</h3>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>International Web Association, 2010-present
+          </li>
+        </ul>
+
+        <h3 class="text-md font-semibold text-gray-700 mt-4 mb-2">License and certifications</h3>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-start">
+            <span class="symbol-diamond">❖</span>Certified Web Development from Programming Hero
+          </li>
+        </ul>
+      </section>
+
+      <!-- Languages & Hobbies -->
+      <section class="mb-6">
+        <h2 class="section-title">Languages</h2>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-start">
+            <span class="symbol-bullet">•</span>English: Comfortable in speaking, reading, writing
+            and listening.
+          </li>
+          <li class="flex items-start"><span class="symbol-bullet">•</span>Bangla: Native</li>
+        </ul>
+
+        <h3 class="text-md font-semibold text-gray-700 mt-4 mb-2">Hobbies and Interests</h3>
+        <ul class="list-none pl-0 text-sm text-gray-700 space-y-1">
+          <li class="flex items-start">
+            <span class="symbol-bullet">•</span>Coding and learning and teaching
+          </li>
+        </ul>
+      </section>
+
+      <!-- References -->
+      <section class="mb-6">
+        <h2 class="section-title">References:</h2>
+        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6 text-sm text-gray-700">
+          <div>
+            <h4 class="font-semibold text-gray-700 mb-1">Reference: 01</h4>
+            <div class="grid grid-cols-[max-content_auto] gap-x-2 gap-y-0.5">
+              <span class="font-semibold">Name</span><span>: Azizur Rahman</span>
+              <span class="font-semibold">Organization</span
+              ><span>: Jatiya Kabi Kazi Nazrul Islam University</span>
+              <span class="font-semibold">Designation</span
+              ><span>: Assistant Professor & Head of the Department</span>
+              <span class="font-semibold">Address</span
+              ><span
+                >: Jatiya Kabi Kazi Nazrul Islam University, Bangladesh, Trishal, Mymensingh</span
+              >
+              <span class="font-semibold">Mobile</span><span>: 01914343888</span>
+              <span class="font-semibold">E-Mail</span><span>: AEouHH02F@jkkniu.edu.bd</span>
+              <span class="font-semibold">Relation</span><span>: Academic</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-700 mb-1">Reference: 02</h4>
+            <div class="grid grid-cols-[max-content_auto] gap-x-2 gap-y-0.5">
+              <span class="font-semibold">Name</span><span>: Shajada Ahsan Habib</span>
+              <span class="font-semibold">Organization</span
+              ><span>: Jatiya Kabi Kazi Nazrul Islam University.</span>
+              <span class="font-semibold">Designation</span
+              ><span>: Ex- Department Head & Assistant Professors</span>
+              <span class="font-semibold">Address</span
+              ><span>: Jatiya Kabi Kazi Nazrul Islam University, Trishal, Mymensingh</span>
+              <span class="font-semibold">Mobile</span><span>: 01712090510</span>
+              <span class="font-semibold">E-Mail</span><span>: Not available</span>
+              <span class="font-semibold">Relation</span><span>: Academic</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="text-center text-gray-600 mt-10 pt-4 border-t border-gray-300">
+        <p>-***-</p>
+      </footer>
+    </div>
+  </body>
+</html>

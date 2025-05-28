@@ -58,7 +58,7 @@ import { ThemeContext } from "../../../App";
 import { motion, useScroll, useSpring } from "framer-motion";
 import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";
-import NavbarPage2 from "../../NavbarPage/NavbarPage2";
+import NavbarPage2 from "../../NavbarPage/NavbarPage";
 import Footer from "../../BodyDiv/Footer";
 
 // Constants

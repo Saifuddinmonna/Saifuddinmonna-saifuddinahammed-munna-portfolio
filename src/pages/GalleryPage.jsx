@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import GalleryGrid from "../components/Gallery/GalleryGrid";
 import portfoliosData from "../components/MyPortfolios/portfolios.json";
-import NavbarPage2 from "../components/NavbarPage/NavbarPage2";
+import NavbarPage2 from "../components/NavbarPage/NavbarPage";
 
 const GalleryPage = () => {
   const [images] = useState(() => {

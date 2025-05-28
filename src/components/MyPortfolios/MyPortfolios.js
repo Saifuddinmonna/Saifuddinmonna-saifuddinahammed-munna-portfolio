@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import NavbarPage2 from "../NavbarPage/NavbarPage2";
+import NavbarPage2 from "../NavbarPage/NavbarPage";
 import Footer from "../BodyDiv/Footer";
 
 // Assuming portfolios.json is in the public folder or accessible via fetch
