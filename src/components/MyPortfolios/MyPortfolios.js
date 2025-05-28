@@ -36,19 +36,22 @@ const MyPortfolios = () => {
       </div>
       <main className="flex-grow bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+          <h1 className="text-4xl font-bold text-center text-indigo-600 !important dark:text-indigo-300 !important mb-8">
             My Portfolios
           </h1>
-          <section className="py-16 md:py-20 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+          <section className="py-16 md:py-20 bg-whitetext-indigo-600 !important dark:text-indigo-300 !important rounded-xl shadow-lg">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.h2
-                className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800"
+                className="text-3xl md:text-4xl font-bold text-center mb-12 text-indigo-600 !important dark:text-indigo-300 !important"
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5 }}
               >
-                Explore My <span className="text-indigo-600">Recent Work</span>
+                Explore My{" "}
+                <span className="text-indigo-600 !important dark:text-indigo-300 !important">
+                  Recent Work
+                </span>
               </motion.h2>
 
               {recentProjects.length > 0 ? (

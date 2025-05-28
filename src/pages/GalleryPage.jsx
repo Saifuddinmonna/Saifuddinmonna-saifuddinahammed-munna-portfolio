@@ -40,8 +40,8 @@ const GalleryPage = () => {
           </h1>
 
           {/* Instructions Section */}
-          <div className="py-6    bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-3 mb-4 shadow-md">
-            <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+          <div className="    bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 rounded-lg p-3 mb-4 shadow-md">
+            <h2 className="text-xl font-semibold mb-2 text-gray-300 dark:text-white">
               How to Use the Gallery
             </h2>
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
