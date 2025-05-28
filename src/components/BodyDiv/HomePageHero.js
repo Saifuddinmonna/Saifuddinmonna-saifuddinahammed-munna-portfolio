@@ -1,18 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import "./Main.css"; // Jodi Main.css ekhaneo proyojon hoy
 import Typewriter from "typewriter-effect";
 import { motion } from "framer-motion"; // Framer Motion import kora
+import { Link } from "react-router-dom"; // Add this import
+import ResumeButtons from "../Buttons/ResumeButtons";
 
 const HomePageHero = () => {
-  // "Let's Connect" button er jonno scroll function (jodi proyojon hoy, kintu amra eta bad dichchi)
-  // const handleLetsConnectClick = () => {
-  // 	const contactSection = document.getElementById('contact-section'); // HomeLayout.js e contact section e ei ID thakte hobe
-  // 	if (contactSection) {
-  // 		contactSection.scrollIntoView({ behavior: 'smooth' });
-  // 	}
-  // };
-
   // Button animation variants
   const buttonVariants = {
     initial: { scale: 1 },
@@ -36,7 +29,7 @@ const HomePageHero = () => {
 
   return (
     <div className="mt-8 transition-all duration-300 hover:-translate-y-1">
-      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-600 dark:to-blue-600 rounded-2xl mx-2 md:mx-4 p-6 shadow-xl">
+      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-700 dark:to-blue-gray-900 rounded-2xl mx-2 md:mx-4 p-3 shadow-xl">
         <div className="flex items-center justify-around flex-col lg:flex-row-reverse gap-8 lg:gap-12">
           <motion.img
             src="images/profile1.png"
@@ -45,15 +38,15 @@ const HomePageHero = () => {
             whileHover={{ scale: 1.05, rotate: 1 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <div className="p-4 lg:p-6 text-center lg:text-left">
+          <div className="p-2 pb-6 lg:p-6 text-center lg:text-left">
             {" "}
             {/* Text alignment adjusted for consistency */}
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-white/90 mb-6 tracking-tight font-sans">
               {" "}
               {/* Changed h3 to h1 for semantic hero title */}
               Saifuddin Ahammed Munna
             </h1>
-            <h2 className="text-3xl font-bold text-white/90">
+            <h2 className="text-2xl font-semibold text-white/95 mb-2 tracking-wide font-sans">
               {" "}
               {/* Changed h3 to h2, adjusted color */}
               <Typewriter
@@ -65,52 +58,25 @@ const HomePageHero = () => {
                 }}
               />
             </h2>
-            <h3 className="py-6 text-2xl font-bold text-white/80">
+            <h3 className="py-2 text-2xl font-medium text-white/90 tracking-wide font-sans">
               {" "}
               {/* Changed h3, adjusted size and color */}
               <Typewriter
                 options={{
-                  strings: ["Proficiency in MERN Stack"],
+                  strings: ["Proficiency in MERN Stack with SQL"],
                   autoStart: true,
                   loop: true,
                 }}
               />
             </h3>
+            {/* <p className="text-white/90 italic text-lg mt-4 leading-relaxed font-sans">
+              Passionate full-stack developer with expertise in MERN stack with SQL. Specializing in
+              building responsive, user-friendly web applications with modern technologies and best
+              practices.
+            </p> */}
             {/* "Passionate Web Developer & Educator" section removed */}
             <div className="mt-8">
-              {" "}
-              {/* Added margin-top for button spacing */}
-              <a
-                target="_blank"
-                href="https://drive.google.com/open?id=154ZAjEGKPwBAw_wZe0Ij102ZSx_GR4UL&authuser=0&usp=drive_link"
-                rel="noreferrer"
-              >
-                <motion.button
-                  variants={buttonVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  whileTap="tap"
-                  className="shadow-2xl bg-white/10 backdrop-blur-sm text-gray-100 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg m-2 border border-white/20"
-                >
-                  View My CV
-                </motion.button>
-              </a>
-              <a
-                target="_blank"
-                href="https://docs.google.com/document/d/1swwhu1h5hZ7TdFsgEkk1HpNNr5g_Dzq7/edit?usp=drive_link&ouid=106856683926414141088&rtpof=true&sd=true"
-                rel="noreferrer"
-              >
-                <motion.button
-                  variants={buttonVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  whileTap="tap"
-                  className="bg-white/10 backdrop-blur-sm text-gray-50 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg m-2 border border-white/20"
-                >
-                  View My Resume
-                </motion.button>
-              </a>
-              {/* "Let's Connect" button removed from here, as it's prominent in About page hero */}
+              <ResumeButtons />
             </div>
           </div>
         </div>

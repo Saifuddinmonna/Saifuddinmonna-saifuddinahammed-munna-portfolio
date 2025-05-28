@@ -28,7 +28,7 @@ const HeaderPage = () => {
                   }}
                 />
               </h3>
-              <h3 className="py-6  font-bold">
+              <h3 className="py-2  font-bold">
                 <Typewriter
                   options={{
                     strings: ["Proficiency in MERN Stack"],
@@ -37,8 +37,12 @@ const HeaderPage = () => {
                   }}
                 />
               </h3>
-              <div className="mb-8">
-                <p className=" font-bold ">Passionate Web Developer & Educator</p>
+              <div className="mb-8 text-gray-100">
+                <p className=" font-bold ">
+                  Passionate full-stack developer with expertise in MERN stack. Specializing in
+                  building responsive, user-friendly web applications with modern technologies and
+                  best practices.
+                </p>
                 <p className=" font-bold"></p>
               </div>
               <div>

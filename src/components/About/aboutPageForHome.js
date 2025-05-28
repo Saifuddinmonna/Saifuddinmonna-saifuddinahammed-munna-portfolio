@@ -173,7 +173,7 @@ const AboutPageForHome = () => {
         </motion.section>
 
         {/* --- Vision Section --- */}
-        <motion.section
+        {/* <motion.section
           className="p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
           variants={itemVariants}
         >
@@ -191,7 +191,7 @@ const AboutPageForHome = () => {
           <div className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  text-center text-3xl text-sky-500 mt-6">
             ~ Saifuddin Ahammed Monna ~
           </div>
-        </motion.section>
+        </motion.section> */}
       </motion.div>
     </div>
   );
