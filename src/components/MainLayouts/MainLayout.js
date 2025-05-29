@@ -5,10 +5,9 @@ import Footer from "../CommonComponents/Footer";
 import { Outlet } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
 import ContactPage from "../../pages/ContactPage";
-import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents"; // Assuming this is a component you want to include
-import HomeLayout from "../MainLayouts/HomeLayout"; // Assuming this is a component you want to include
+import aboutPageForHome from "../About/aboutPageForHome"; // Assuming this is a component you want to include
 
-const MainLayout = () => {
+const Main = () => {
   const { scrollYProgress } = useScroll();
   // ... other states and effects ...
 
@@ -21,7 +20,6 @@ const MainLayout = () => {
         <NavbarPage2 />
       </div>
       {/* Progress Bar */}
-      <HomeLayout />
       <motion.div
         className="fixed left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 z-40"
         style={{
@@ -36,10 +34,11 @@ const MainLayout = () => {
           {/* ... confetti if you have it here ... */}
           <Outlet />
         </div>
+        <aboutPageForHome />
         <Footer />
       </main>
     </div>
   );
 };
 
-export default MainLayout;
+export default Main;

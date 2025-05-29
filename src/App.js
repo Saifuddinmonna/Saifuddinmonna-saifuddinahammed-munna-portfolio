@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
 import router from "./components/Router/router";
-import React from "react";
-import MainLayout from "./components/MainLayouts/MainLayout";
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -76,16 +74,6 @@ function App() {
       setConfettiStart(false);
     }, 8000);
     return () => clearTimeout(timer);
-  }, []);
-
-  const setDarkMode = () => {
-    if (!document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.add("dark");
-    }
-  };
-
-  React.useEffect(() => {
-    setDarkMode();
   }, []);
 
   return (

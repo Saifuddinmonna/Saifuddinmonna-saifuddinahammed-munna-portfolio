@@ -277,31 +277,21 @@ const ResumeViewer = () => {
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
               Resume Collections:
             </h1>
-            <div className="flex space-x-2">
+            <div className="flex space-x-4">
               {Object.keys(resumeData).map(tab => (
                 <motion.button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  whileHover={{ scale: 1.02, y: -1 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`relative flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 overflow-hidden group ${
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     activeTab === tab
                       ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg"
                       : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  <span className="relative z-10 flex items-center">
-                    {resumeData[tab].icon}
-                    <span className="ml-1.5">{resumeData[tab].title}</span>
-                  </span>
-                  {activeTab === tab && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                  {resumeData[tab].icon}
+                  <span className="ml-2">{resumeData[tab].title}</span>
                 </motion.button>
               ))}
             </div>
