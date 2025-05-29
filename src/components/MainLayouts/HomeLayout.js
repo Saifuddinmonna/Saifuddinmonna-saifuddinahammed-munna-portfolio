@@ -9,7 +9,7 @@ import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfolios";
 import MyServicesv2 from "../Myservices/MyServicesv2";
 import aboutPageForHome from "../About/aboutPageForHome";
-// HomeLayout.js (Example)
+import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
 import AboutPageForHome from "../About/aboutPageForHome"; // Import naam-e 'A' boro haater hob
 
 // Animation variants for sections
@@ -67,6 +67,7 @@ const HomeLayout = () => {
           <HomePageHero /> {/* HeaderPage er bodole HomePageHero use kora hocche */}
         </motion.div>
         <AboutPageForHome />
+        <HomeLayoutComponents />
         <motion.div
           variants={sectionVariants}
           initial="hidden"

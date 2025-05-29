@@ -1,10 +1,11 @@
 import React from "react";
-import HomePageHero from "./HomePageHero";
+
+import ProfessionalProfile from "./ProfessionalProfile";
 
 const HomeLayoutComponents = () => {
   return (
     <div className="space-y-24">
-      <HomePageHero />
+      <ProfessionalProfile />
     </div>
   );
 };
