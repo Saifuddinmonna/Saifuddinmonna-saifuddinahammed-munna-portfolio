@@ -30,9 +30,29 @@ const SkillChart = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-gray-800 text-white p-3 rounded-lg shadow-lg border border-gray-700">
-          <p className="font-semibold">{label}</p>
-          <p className="text-indigo-400">{`Skill Level: ${payload[0].value}%`}</p>
+        <div className="bg-gray-800/90 backdrop-blur-sm text-white p-4 rounded-lg shadow-xl border border-gray-700 transform -translate-y-2">
+          <div className="flex items-center gap-2 mb-2">
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: payload[0].payload.fill }}
+            />
+            <p className="font-bold text-lg">{label}</p>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-gray-300">Skill Level:</p>
+            <p className="text-indigo-400 font-semibold">{`${payload[0].value}%`}</p>
+          </div>
+          <div className="mt-2 pt-2 border-t border-gray-700">
+            <p className="text-sm text-gray-400">
+              {payload[0].value >= 90
+                ? "Expert"
+                : payload[0].value >= 75
+                ? "Advanced"
+                : payload[0].value >= 60
+                ? "Intermediate"
+                : "Beginner"}
+            </p>
+          </div>
         </div>
       );
     }
@@ -70,7 +90,11 @@ const SkillChart = () => {
               domain={[0, 100]}
               tickFormatter={value => `${value}%`}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={{ fill: "rgba(79, 70, 229, 0.1)" }}
+              position={{ x: 0, y: 0 }}
+            />
             <Legend />
             <Bar
               dataKey="level"
@@ -80,7 +104,11 @@ const SkillChart = () => {
               animationDuration={2000}
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={`hsl(${index * 30}, 70%, 50%)`} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={`hsl(${index * 30}, 70%, 50%)`}
+                  style={{ cursor: "pointer" }}
+                />
               ))}
             </Bar>
           </BarChart>
