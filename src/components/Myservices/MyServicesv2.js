@@ -21,13 +21,16 @@ const SkillsOverview = () => {
       <div className="container mx-auto px-4">
         <div className="mb-16 lg:mb-20 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white capitalize mb-6">
-            Skills{" "}
+            What I Skills{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-400">
-              Overview
+              offer
             </span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            My technical expertise and core competencies in web development
+          <p
+            className="mt-4 bold font-bold
+           text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
+          >
+            My technical Tecnical support and core competencies in web development
           </p>
         </div>
 

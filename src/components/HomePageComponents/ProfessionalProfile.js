@@ -17,7 +17,12 @@ import { DiPostgresql, DiFirebase } from "react-icons/di";
 import { TbBrandNextjs } from "react-icons/tb";
 import { BsGit, BsGithub } from "react-icons/bs";
 
+/**
+ * ProfessionalProfile Component
+ * Displays professional skills, expertise, and tools in an animated grid layout
+ */
 const ProfessionalProfile = () => {
+  // Data for expertise section with icons and names
   const expertise = [
     { icon: <SiJavascript className="text-yellow-400" />, name: "JavaScript" },
     { icon: <SiReact className="text-blue-400" />, name: "ReactJS" },
@@ -31,6 +36,7 @@ const ProfessionalProfile = () => {
     { icon: <SiTailwindcss className="text-cyan-500" />, name: "Tailwind CSS" },
   ];
 
+  // Data for comfortable technologies section
   const comfortable = [
     { icon: <DiPostgresql className="text-blue-600" />, name: "PostgreSQL" },
     { icon: <DiFirebase className="text-orange-500" />, name: "Firebase" },
@@ -39,6 +45,7 @@ const ProfessionalProfile = () => {
     { icon: <BsGithub className="text-gray-800 dark:text-white" />, name: "GitHub" },
   ];
 
+  // List of development tools
   const tools = [
     "VS Code",
     "Chrome Dev Tools",
@@ -49,6 +56,7 @@ const ProfessionalProfile = () => {
     "Illustrator",
   ];
 
+  // Animation variants for container
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -59,6 +67,7 @@ const ProfessionalProfile = () => {
     },
   };
 
+  // Animation variants for individual items
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -76,7 +85,7 @@ const ProfessionalProfile = () => {
       variants={containerVariants}
     >
       <div className="max-w-7xl mx-auto">
-        {/* Summary Section */}
+        {/* Professional Summary Section */}
         <motion.div className="text-center mb-16" variants={itemVariants}>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Professional Summary
@@ -109,7 +118,7 @@ const ProfessionalProfile = () => {
           </div>
         </motion.div>
 
-        {/* Comfortable Section */}
+        {/* Comfortable Technologies Section */}
         <motion.div className="mb-16" variants={itemVariants}>
           <div className="flex items-center mb-8">
             <FaLaptopCode className="text-4xl text-green-600 mr-4" />

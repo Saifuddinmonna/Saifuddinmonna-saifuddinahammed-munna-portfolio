@@ -121,77 +121,8 @@ const AboutPageForHome = () => {
         animate="visible"
       >
         {/* --- My Story Section --- */}
-        <motion.section
-          className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
-          variants={itemVariants}
-        >
-          <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
-            <FaUserGraduate className="mr-3 text-sky-500" /> My Journey
-          </h2>
-          <div className="p-4 rounded-lg  bg-white dark:bg-gray-700">
-            <p className="text-lg text-gray-800 dark:text-gray-100 leading-relaxed text-justify indent-8">
-              Born in Mymensingh Sadar, Bangladesh, I grew up with a supportive family of three
-              brothers and my parents. My academic path led me to complete a post-graduation in
-              Public Administration in 2017. While I have a background in teaching, my true passion
-              ignited when I delved into the world of coding.
-            </p>
-            <p className="mt-4 text-lg  bg-white text-gray-800 dark:text-gray-100 dark: dark:bg-gray-800 leading-relaxed text-justify indent-8">
-              For the past few years, I've dedicated myself to web design and development, driven by
-              the desire to help individuals and businesses establish their online presence and
-              enhance functionality. I find immense joy in crafting digital experiences and solving
-              complex problems through code. This isn't just a job for me; it's a significant part
-              of my life where I continuously learn and evolve, dedicating many hours each day to
-              hone my skills.
-            </p>
-          </div>
-        </motion.section>
 
         {/* --- Skills Section --- */}
-        <motion.section
-          className="mb-12 p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
-          variants={itemVariants}
-        >
-          <h2 className="text-3xl font-semibold mb-8 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
-            <FaCode className="mr-3 text-secondary" /> My Technical Toolkit
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-            {skills.map((skill, index) => (
-              <motion.div
-                key={index}
-                className="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition-shadow text-gray-800 dark:text-gray-100"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <div className="text-4xl mb-2">{skill.icon}</div>
-                <h3 className="text-md font-medium text-gray-800 dark:text-gray-200">
-                  {skill.name}
-                </h3>
-                <p className="text-xs text-gray-800 dark:text-gray-100">{skill.level}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* --- Vision Section --- */}
-        {/* <motion.section
-          className="p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-800 dark:text-gray-200"
-          variants={itemVariants}
-        >
-          <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300 flex items-center justify-center">
-            <FaBullseye className="mr-3 text-sky-500" /> My Vision
-          </h2>
-          <div className="p-4 rounded-lg bg-white dark:bg-gray-700">
-            <p className="text-lg bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100  leading-relaxed text-center italic">
-              "My ultimate goal is to become a highly proficient web developer and contribute
-              meaningfully to the open-source community, particularly by building optimized NPM
-              packages for React. I believe in the power of shared knowledge and aim to create tools
-              that simplify and enhance the development experience for others."
-            </p>
-          </div>
-          <div className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  text-center text-3xl text-sky-500 mt-6">
-            ~ Saifuddin Ahammed Monna ~
-          </div>
-        </motion.section> */}
       </motion.div>
     </div>
   );

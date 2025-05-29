@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import ReactConfetti from "react-confetti";
-import { motion } from "framer-motion"; // Import motion
-import HomePageHero from "../CommonComponents/HomePageHero"; // HeaderPage er bodole HomePageHero import
-import About from "../About/About";
+import { motion } from "framer-motion";
+import HomePageHero from "../CommonComponents/HomePageHero";
 import SkillProgressbar from "../CommonComponents/SkillProgressbar";
 import SkillChart from "../CommonComponents/SkillChart";
 import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfolios";
 import MyServicesv2 from "../Myservices/MyServicesv2";
-import aboutPageForHome from "../About/aboutPageForHome";
 import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
-import AboutPageForHome from "../About/aboutPageForHome"; // Import naam-e 'A' boro haater hob
 
-// Animation variants for sections
+/**
+ * Animation variants for section transitions
+ * Controls how sections animate when they come into view
+ */
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -22,17 +22,23 @@ const sectionVariants = {
   },
 };
 
+/**
+ * HomeLayout Component
+ * Main layout component for the home page
+ * Includes hero section, skills, portfolio, services, and contact sections
+ */
 const HomeLayout = () => {
+  // State for confetti animation and back-to-top button
   const [confettiStart, setConfettiStart] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
+  // Initialize page and set up scroll behavior
   useEffect(() => {
+    // Scroll to top on initial load
     window.scrollTo(0, 0);
-
-    // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = "smooth";
 
-    // Handle scroll for back to top button
+    // Handle scroll event for back-to-top button
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 400);
     };
@@ -41,12 +47,17 @@ const HomeLayout = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Stop confetti animation after 5 seconds
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setConfettiStart(false);
-    }, 5000); // Reduced from 8000 to 5000ms
+    }, 5000);
+    return () => clearTimeout(timer);
   }, []);
 
+  /**
+   * Scroll to top of the page smoothly
+   */
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -56,18 +67,25 @@ const HomeLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+      {/* Confetti animation on initial load */}
       {confettiStart && <ReactConfetti />}
+
+      {/* Main content sections */}
       <div className="space-y-24">
+        {/* Hero Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <HomePageHero /> {/* HeaderPage er bodole HomePageHero use kora hocche */}
+          <HomePageHero />
         </motion.div>
-        <AboutPageForHome />
+
+        {/* Professional Profile Section */}
         <HomeLayoutComponents />
+
+        {/* Skills Chart Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -76,16 +94,16 @@ const HomeLayout = () => {
         >
           <SkillChart />
         </motion.div>
-        {/* 3. Portfolio/Work Teaser Section */}
+
+        {/* Portfolio Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-        >
-          <MyPortfolios />
-        </motion.div>
-        {/* 4. Services Section */}
+        ></motion.div>
+
+        {/* Services Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -94,7 +112,8 @@ const HomeLayout = () => {
         >
           <MyServicesv2 />
         </motion.div>
-        {/* 5. Skills Section */}
+
+        {/* Skills Progress Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -103,7 +122,16 @@ const HomeLayout = () => {
         >
           <SkillProgressbar />
         </motion.div>
-        {/* 6. Contact Section */}
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <MyPortfolios />
+        </motion.div>
+
+        {/* Contact Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
