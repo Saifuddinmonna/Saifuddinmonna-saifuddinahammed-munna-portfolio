@@ -43,6 +43,7 @@ const NavbarPage2 = () => {
     { path: "/gallery", label: "Gallery" },
     { path: "/about", label: "About" },
     { path: "/blog", label: "Blog" },
+    { path: "/resume", label: "Resume" },
   ];
 
   const mobileMenuVariants = {
@@ -71,38 +72,152 @@ const NavbarPage2 = () => {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2">
               {navItems.map(item => (
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`no-underline  text-gray-800  relative px-4 py-1.5 text-base font-bold tracking-wide rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 ${
+                  className={`no-underline relative px-3 py-1.5 text-sm text-white/90 font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0 )] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-white      hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 ${
                     isActive(item.path)
-                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white"
-                      : "bg-gradient-to-r from-blue-500/10 to-cyan-400/10 dark:from-blue-400/10 dark:to-cyan-300/10 text-gray-800 dark:text-gray-100 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 hover:text-white"
+                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400"
+                      : "  dark:from-blue-400/10 dark:to-cyan-300/10 text-gray-800 dark:text-gray-100 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 hover:text-white"
                   }`}
                 >
-                  <span className="relative z-10 font-['Poppins']">{item.label}</span>
+                  <span className="relative z-10 flex items-center">
+                    {item.label === "Home" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        />
+                      </svg>
+                    )}
+                    {item.label === "My Work" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                    )}
+                    {item.label === "Gallery" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    )}
+                    {item.label === "About" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                    )}
+                    {item.label === "Blog" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                        />
+                      </svg>
+                    )}
+                    {item.label === "Resume" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    )}
+                    {item.label}
+                  </span>
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  {isActive(item.path) && (
+                    <motion.div
+                      layoutId="activeNav"
+                      className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
                 </Link>
               ))}
               <button
-                onClick={() => handleNavigation("/contractMe")}
-                className="ml-4 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white text-base font-bold tracking-wide rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
+                onClick={() => handleNavigation("/contact")}
+                className="ml-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-white hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
               >
-                <span className="relative z-10 font-['Poppins']">Contact Me</span>
+                <span className="relative z-10 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1.5 text-inherit"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Contact Me
+                </span>
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               </button>
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="ml-4 p-1.5 rounded-lg bg-gradient-to-r from-blue-500/10 to-cyan-400/10 dark:from-blue-400/10 dark:to-cyan-300/10 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 transition-all duration-200 shadow-[0_0_20px_rgba(0,0,0,0.15)] hover:shadow-[0_0_25px_rgba(0,0,0,0.25)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
+                className="ml-2 p-1.5 rounded-md bg-gradient-to-r from-blue-500/10 to-cyan-400/10 dark:from-blue-400/10 dark:to-cyan-300/5 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 transform hover:scale-[1.02] hover:-translate-y-0.5"
                 aria-label="Toggle theme"
               >
                 {isDarkMode ? (
-                  <FaSun className="w-5 h-5 text-yellow-500" />
+                  <FaSun className="w-4 h-4 text-yellow-500" />
                 ) : (
-                  <FaMoon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                  <FaMoon className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                 )}
               </button>
             </div>
@@ -186,7 +301,7 @@ const NavbarPage2 = () => {
                   </Link>
                 ))}
                 <button
-                  onClick={() => handleNavigation("/contractMe")}
+                  onClick={() => handleNavigation("/contract")}
                   className="w-full mt-2 block text-left px-4 py-1.5 rounded-lg text-base font-bold tracking-wide bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
                 >
                   <span className="relative z-10 font-['Poppins']">Contact Me</span>

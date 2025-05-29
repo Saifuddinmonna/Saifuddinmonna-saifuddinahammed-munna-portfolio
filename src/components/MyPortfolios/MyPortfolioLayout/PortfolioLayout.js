@@ -59,7 +59,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";
 import NavbarPage2 from "../../NavbarPage/NavbarPage";
-import Footer from "../../BodyDiv/Footer";
+import Footer from "../../CommonComponents/Footer";
 
 // Constants
 const CONFETTI_DURATION = 8000;

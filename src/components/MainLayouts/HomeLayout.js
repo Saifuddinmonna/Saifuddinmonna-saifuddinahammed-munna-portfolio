@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import ReactConfetti from "react-confetti";
-import { motion } from "framer-motion"; // Import motion
-import HomePageHero from "../BodyDiv/HomePageHero"; // HeaderPage er bodole HomePageHero import
-import About from "../About/About";
-import SkillProgressbar from "../BodyDiv/SkillProgressbar";
-import SkillChart from "../BodyDiv/SkillChart";
+import { motion } from "framer-motion";
+import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
+import SkillProgressbar from "../CommonComponents/SkillProgressbar";
+import SkillChart from "../CommonComponents/SkillChart";
 import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfolios";
 import MyServicesv2 from "../Myservices/MyServicesv2";
-import aboutPageForHome from "../About/aboutPageForHome";
-// HomeLayout.js (Example)
-import AboutPageForHome from "../About/aboutPageForHome"; // Import naam-e 'A' boro haater hob
 
 // Animation variants for sections
 const sectionVariants = {
@@ -28,11 +24,8 @@ const HomeLayout = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = "smooth";
 
-    // Handle scroll for back to top button
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 400);
     };
@@ -44,7 +37,7 @@ const HomeLayout = () => {
   useEffect(() => {
     setTimeout(() => {
       setConfettiStart(false);
-    }, 5000); // Reduced from 8000 to 5000ms
+    }, 5000);
   }, []);
 
   const scrollToTop = () => {
@@ -55,7 +48,7 @@ const HomeLayout = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+    <div className="flex flex-col min-h-screen">
       {confettiStart && <ReactConfetti />}
       <div className="space-y-24">
         <motion.div
@@ -64,9 +57,9 @@ const HomeLayout = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <HomePageHero /> {/* HeaderPage er bodole HomePageHero use kora hocche */}
+          <HomeLayoutComponents />
         </motion.div>
-        <AboutPageForHome />
+
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -75,7 +68,7 @@ const HomeLayout = () => {
         >
           <SkillChart />
         </motion.div>
-        {/* 3. Portfolio/Work Teaser Section */}
+
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -84,7 +77,7 @@ const HomeLayout = () => {
         >
           <MyPortfolios />
         </motion.div>
-        {/* 4. Services Section */}
+
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -93,7 +86,7 @@ const HomeLayout = () => {
         >
           <MyServicesv2 />
         </motion.div>
-        {/* 5. Skills Section */}
+
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -102,7 +95,7 @@ const HomeLayout = () => {
         >
           <SkillProgressbar />
         </motion.div>
-        {/* 6. Contact Section */}
+
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -113,7 +106,6 @@ const HomeLayout = () => {
         </motion.div>
       </div>
 
-      {/* Back to Top Button */}
       {showBackToTop && (
         <motion.button
           onClick={scrollToTop}

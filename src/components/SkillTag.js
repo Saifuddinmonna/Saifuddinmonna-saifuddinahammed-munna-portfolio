@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 // Props: name (skill name), icon (optional)
 const SkillTag = ({ name }) => {
-  return (
+	return (
     <motion.span
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -15,7 +15,7 @@ const SkillTag = ({ name }) => {
     >
       {name.trim()}
     </motion.span>
-  );
+	);
 };
 
 export default SkillTag;

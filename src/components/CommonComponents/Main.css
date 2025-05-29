@@ -1,0 +1,190 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.mother-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+:root {
+  --mainColor: linear-gradient(to right, rgb(6, 184, 214), rgb(63, 131, 247));
+  --mainColorLight: #5767aa;
+  --secondaryColor: #db2b39;
+  --textColor: #eee;
+}
+
+.header-title {
+  padding: 0 10px;
+}
+
+.header-title h1 {
+  color: azure;
+  text-transform: capitalize;
+  font-style: italic;
+  font-size: clamp(32px, 5vw, 50px);
+}
+
+.header-title h2 {
+  color: azure;
+  text-transform: capitalize;
+  font-size: clamp(22px, 3vw, 30px);
+}
+
+/* image css here ----------------------
+------------------------ */
+
+/* skilled animation start here*/
+
+.shim-green,
+.shim-blue,
+.shim-red {
+  position: relative;
+  overflow: hidden;
+}
+
+.shim-green {
+  background-color: rgba(0, 255, 0, 0.7);
+}
+
+.shim-blue {
+  background-color: rgba(0, 155, 255, 0.7);
+}
+
+.shim-red {
+  background-color: rgba(255, 0, 0, 0.7);
+}
+
+.shim-green::after,
+.shim-blue::after,
+.shim-red::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(233, 233, 233, 1) 0,
+    rgba(233, 233, 233, 0.9) 50%,
+    rgba(233, 233, 233, 0.8) 100%
+  );
+  content: "";
+  will-change: transform;
+}
+
+.shim-green::after {
+  animation: shimmer 2s ease-out infinite;
+}
+
+.shim-blue::after {
+  animation: shimmer 2.5s ease-out infinite;
+}
+
+.shim-red::after {
+  animation: shimmer 3s ease-out infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(0%);
+    opacity: 0;
+  }
+}
+
+.img-div img {
+  max-width: 100%;
+  height: auto;
+  border: 10px solid #f1c40f;
+  border-radius: 50%;
+  box-shadow: 10px 10px 15px 2px rgba(0, 0, 0, 0.355);
+  will-change: transform;
+}
+
+.nav-container {
+  background-color: rgb(0, 0, 0);
+  width: 100%;
+  border: #fbf4d7;
+  border-radius: 15px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nav-container a {
+  color: azure;
+  font-size: 22px;
+  text-decoration: none;
+  padding: 10px 15px;
+  margin: 5px;
+  background-color: rgba(255, 0, 0, 0.623);
+  border: 1px solid #8b3f4deb;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/*footer designing starts here */
+.footer-menu {
+  margin-top: 12px;
+}
+
+.footer-menu a {
+  display: inline;
+  font-size: 1rem;
+  margin: 10px;
+}
+/* footer designing ends here*/
+
+@media only screen and (max-width: 688px) {
+  .nav-container {
+    flex-direction: column;
+  }
+
+  .nav-container > a {
+    display: block;
+  }
+
+  .personal-information-container {
+    grid-template-columns: minmax(400px, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .social-icon-container a {
+    display: inline-block;
+  }
+
+  .table-container {
+    padding: 2px;
+  }
+
+  thead {
+    padding-y: 10px;
+  }
+
+  th,
+  td {
+    padding-y: 10px;
+    font-size: 10px;
+  }
+}
+
+/* responsive for tablate  */
+
+@media only screen and (min-width: 689px) and (max-width: 992px) {
+}
+
+/* Main.css */
+.location-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Add any other common styles here */
