@@ -109,7 +109,7 @@ const ResumeViewer = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2z"
           />
         </svg>
       ),
@@ -122,9 +122,9 @@ const ResumeViewer = () => {
       case "cv":
       case "singlePage":
         return (
-          <div className="relative ">
-            <div className="mt-5 absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-3 rounded-t-lg">
-              <p className="text-sm text-white font-medium flex items-center">
+          <div className="relative">
+            <div className="-mt-[10%] absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-3 rounded-t-lg z-50">
+              <p className="text-sm text-white/80 font-medium flex items-center">
                 {resumeData[activeTab].icon}
                 <span className="ml-2">Viewing: {resumeData[activeTab].title}</span>
               </p>
@@ -273,9 +273,9 @@ const ResumeViewer = () => {
       {/* Top Navigation Bar */}
       <div className="bg-white dark:bg-gray-800 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Resume Collection
+          <div className="flex justify-between items-center pt-3 h-16">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              Resume Collections:
             </h1>
             <div className="flex space-x-4">
               {Object.keys(resumeData).map(tab => (
@@ -323,17 +323,17 @@ const ResumeViewer = () => {
               transition={{ duration: 0.3, delay: 0.1 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4">
-                <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
+              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-2">
+                <h2 className="text-lg font-semibold text-white/80">Quick Actions</h2>
               </div>
-              <div className="p-4 space-y-2">
+              <div className="p-2 space-y-1.5">
                 <a
                   href={resumeData.html.url}
                   download
-                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
+                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-blue-700 to-cyan-600 text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-blue-500/20 hover:border-blue-400/30"
                 >
                   <svg
-                    className="w-4 h-4 mr-2"
+                    className="w-3.5 h-3.5 mr-1.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -351,10 +351,10 @@ const ResumeViewer = () => {
                 <a
                   href={resumeData.cv.url}
                   download
-                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] border border-green-400/10 hover:border-green-300/20 dark:border-green-500/10 dark:hover:border-green-400/20"
+                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-green-700 to-deep-orange-800     text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(16,185,129,0.4)] border border-green-500/20 hover:border-green-400/30"
                 >
                   <svg
-                    className="w-4 h-4 mr-2"
+                    className="w-3.5 h-3.5 mr-1.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -372,10 +372,10 @@ const ResumeViewer = () => {
                 <a
                   href={resumeData.singlePage.url}
                   download
-                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(124,58,237,0.6)] dark:hover:shadow-[0_0_30px_rgba(124,58,237,0.4)] border border-purple-400/10 hover:border-purple-300/20 dark:border-purple-500/10 dark:hover:border-purple-400/20"
+                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-purple-700 to-indigo-600 text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(124,58,237,0.4)] border border-purple-500/20 hover:border-purple-400/30"
                 >
                   <svg
-                    className="w-4 h-4 mr-2"
+                    className="w-3.5 h-3.5 mr-1.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -395,10 +395,10 @@ const ResumeViewer = () => {
                 <a
                   href={resumeData.pdf.url}
                   download
-                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-red-600 to-pink-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(239,68,68,0.6)] dark:hover:shadow-[0_0_30px_rgba(239,68,68,0.4)] border border-red-400/10 hover:border-red-300/20 dark:border-red-500/10 dark:hover:border-red-400/20"
+                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-red-700 to-pink-600 text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(239,68,68,0.4)] border border-red-500/20 hover:border-red-400/30"
                 >
                   <svg
-                    className="w-4 h-4 mr-2"
+                    className="w-3.5 h-3.5 mr-1.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -416,10 +416,10 @@ const ResumeViewer = () => {
                 <a
                   href={resumeData.cvPdf.url}
                   download
-                  className="flex items-center px-4 py-2 text-sm font-bold tracking-wide bg-gradient-to-r from-orange-600 to-yellow-500 text-white rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] dark:hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] border border-orange-400/10 hover:border-orange-300/20 dark:border-orange-500/10 dark:hover:border-orange-400/20"
+                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-orange-700 to-yellow-600 text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(249,115,22,0.4)] border border-orange-500/20 hover:border-orange-400/30"
                 >
                   <svg
-                    className="w-4 h-4 mr-2"
+                    className="w-3.5 h-3.5 mr-1.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -443,10 +443,10 @@ const ResumeViewer = () => {
               transition={{ duration: 0.3, delay: 0.2 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4">
-                <h2 className="text-lg font-semibold text-white">Resume Info</h2>
+              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-2">
+                <h2 className="text-lg font-semibold text-white/80">Resume Info</h2>
               </div>
-              <div className="p-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+              <div className="p-2 space-y-1.5 text-sm text-gray-600 dark:text-gray-300">
                 <p className="flex items-center">
                   <svg
                     className="w-4 h-4 mr-2"
@@ -499,7 +499,7 @@ const ResumeViewer = () => {
                   <p className="font-medium mb-2">File Details:</p>
                   <ul className="space-y-1">
                     <li className="flex justify-between">
-                      <span>HTML Resume:</span>
+                      <span> Resume:</span>
                       <span>23KB</span>
                     </li>
                     <li className="flex justify-between">
