@@ -68,6 +68,16 @@ import {
   FaGithub,
   FaServer,
   FaExternalLinkAlt,
+  FaLayerGroup,
+  FaShoppingCart,
+  FaBriefcase,
+  FaGraduationCap,
+  FaQuestionCircle,
+  FaCode,
+  FaClipboardList,
+  FaMobileAlt,
+  FaCalculator,
+  FaNewspaper,
 } from "react-icons/fa";
 
 // Add Google Fonts
@@ -293,54 +303,65 @@ const PortfolioLayout = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       <span className="relative z-10 flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-1.5 text-inherit"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
+                        <FaLayerGroup className="w-4 h-4 mr-1.5 text-inherit" />
                         All Projects
                       </span>
                     </motion.button>
                     {Array.from(new Set(portfoliosName.map(p => p.category))).map(
-                      (category, index) => (
-                        <motion.button
-                          key={index}
-                          onClick={() => setSelectedCategory(category)}
-                          className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm ${
-                            selectedCategory === category
-                              ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md"
-                              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
-                          }`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                          <span className="relative z-10 flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1.5 text-inherit"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                              />
-                            </svg>
-                            {category}
-                          </span>
-                        </motion.button>
-                      )
+                      (category, index) => {
+                        let Icon;
+                        switch (category.toLowerCase()) {
+                          case "e-commerce website":
+                            Icon = FaShoppingCart;
+                            break;
+                          case "service selling project":
+                            Icon = FaBriefcase;
+                            break;
+                          case "educational project":
+                            Icon = FaGraduationCap;
+                            break;
+                          case "quiz app project":
+                            Icon = FaQuestionCircle;
+                            break;
+                          case "portfolio website project":
+                            Icon = FaCode;
+                            break;
+                          case "to-do app":
+                            Icon = FaClipboardList;
+                            break;
+                          case "our app":
+                            Icon = FaMobileAlt;
+                            break;
+                          case "cost calculation websites":
+                            Icon = FaCalculator;
+                            break;
+                          case "news portal project":
+                            Icon = FaNewspaper;
+                            break;
+                          default:
+                            Icon = FaCode; // Default icon
+                        }
+
+                        return (
+                          <motion.button
+                            key={index}
+                            onClick={() => setSelectedCategory(category)}
+                            className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm ${
+                              selectedCategory === category
+                                ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md"
+                                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
+                            }`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                            <span className="relative z-10 flex items-center">
+                              <Icon className="w-4 h-4 mr-1.5 text-inherit" />
+                              {category}
+                            </span>
+                          </motion.button>
+                        );
+                      }
                     )}
                   </div>
                 </div>
@@ -403,7 +424,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveWebsite}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -420,7 +441,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveWebsiteRepo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -437,7 +458,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveServersite}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -454,7 +475,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveServersiteRepo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -479,7 +500,6 @@ const PortfolioLayout = () => {
                               setShowMore={setShowMore}
                             />
                           </div>
-
                           {/* Project Images */}
                           <div
                             className={`grid ${
