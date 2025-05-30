@@ -5,7 +5,7 @@ import HomePageHero from "../CommonComponents/HomePageHero";
 import SkillProgressbar from "../CommonComponents/SkillProgressbar";
 import SkillChart from "../CommonComponents/SkillChart";
 import ContractMe from "../ContractMe/ContractMe";
-import MyPortfolios from "../MyPortfolios/MyPortfolios";
+import MyPortfolios from "../MyPortfolios/MyPortfoliosForHomePage";
 import MyServicesv2 from "../Myservices/MyServicesv2";
 import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
 

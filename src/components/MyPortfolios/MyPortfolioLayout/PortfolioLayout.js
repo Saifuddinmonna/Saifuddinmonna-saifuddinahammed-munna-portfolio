@@ -283,30 +283,62 @@ const PortfolioLayout = () => {
                   <div className="space-y-2">
                     <motion.button
                       onClick={() => setSelectedCategory(null)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors font-['Poppins'] text-base ${
+                      className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm ${
                         selectedCategory === null
-                          ? "bg-indigo-600 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
+                          ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md"
+                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
                       }`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      All Projects
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                      <span className="relative z-10 flex items-center">
+                        <svg
+                          className="w-4 h-4 mr-1.5 text-inherit"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        All Projects
+                      </span>
                     </motion.button>
                     {Array.from(new Set(portfoliosName.map(p => p.category))).map(
                       (category, index) => (
                         <motion.button
                           key={index}
                           onClick={() => setSelectedCategory(category)}
-                          className={`w-full text-left px-4 py-2 rounded-lg transition-colors font-['Poppins'] text-base ${
+                          className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm ${
                             selectedCategory === category
-                              ? "bg-indigo-600 text-white"
-                              : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
+                              ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md"
+                              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
                           }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          {category}
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                          <span className="relative z-10 flex items-center">
+                            <svg
+                              className="w-4 h-4 mr-1.5 text-inherit"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                              />
+                            </svg>
+                            {category}
+                          </span>
                         </motion.button>
                       )
                     )}

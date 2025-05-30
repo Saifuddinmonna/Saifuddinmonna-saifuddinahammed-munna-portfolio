@@ -11,9 +11,9 @@ const LoadingSpinner = () => (
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
 const HomeLayout = lazy(() => import("../MainLayouts/HomeLayout"));
-const About = lazy(() => import("../About/About"));
+const About = lazy(() => import("../About/About1.js"));
 const ContactPage = lazy(() => import("../../pages/ContactPage"));
-const MyPortfolios = lazy(() => import("../MyPortfolios/MyPortfolios"));
+const MyPortfolios = lazy(() => import("../MyPortfolios/MyPortfoliosForHomePage.js"));
 const Blog = lazy(() => import("../Blog/Blog"));
 const ProjectPage = lazy(() => import("../../pages/ProjectPage"));
 const PortfolioLayout = lazy(() => import("../MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
