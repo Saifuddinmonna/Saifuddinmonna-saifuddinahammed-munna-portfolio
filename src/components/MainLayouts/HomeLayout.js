@@ -66,7 +66,7 @@ const HomeLayout = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+    <div className="flex flex-col min-h-screen bg-[var(--background-default)]">
       {/* Confetti animation on initial load */}
       {confettiStart && <ReactConfetti />}
 

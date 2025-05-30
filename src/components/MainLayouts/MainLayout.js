@@ -12,8 +12,7 @@ const Main = () => {
   // ... other states and effects ...
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
-      {" "}
+    <div className="min-h-screen flex flex-col bg-[var(--background-default)]">
       {/* Added bg-gray-100 for body to see edges */}
       {/* Fixed Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50">
@@ -29,12 +28,12 @@ const Main = () => {
         }}
       />
       {/* Main content area with padding for fixed navbar */}
-      <main className="flex-grow pt-14 bg-white dark:bg-gray-900">
+      <main className="flex-grow pt-14 bg-[var(--background-default)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* ... confetti if you have it here ... */}
           <Outlet />
         </div>
-        <aboutPageForHome />
+
         <Footer />
       </main>
     </div>
