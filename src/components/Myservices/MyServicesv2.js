@@ -18,16 +18,18 @@ import { AiOutlineApi, AiOutlineSecurityScan, AiOutlineCloudServer } from "react
 const ServiceCard = ({ icon: Icon, title, description, techIcons }) => {
   return (
     <motion.div
-      className="p-6 rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 backdrop-blur-sm hover:-translate-y-2 hover:scale-[1.02] hover:border-indigo-500/50 dark:hover:border-indigo-400/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)] text-center group"
+      className="p-6 rounded-xl border border-[var(--border-light)] dark:border-[var(--border-main)] transition-all duration-300 ease-in-out bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] backdrop-blur-sm hover:-translate-y-2 hover:scale-[1.02] hover:border-[var(--primary-main)]/50 dark:hover:border-[var(--primary-light)]/50 hover:shadow-[var(--shadow-lg)] dark:hover:shadow-[var(--shadow-lg)] text-center group"
       variants={itemVariants}
     >
-      <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl mb-6 shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/5 group-hover:scale-110 transition-transform duration-300">
-        <Icon className="w-8 h-8 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300" />
+      <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-[var(--background-elevated)] dark:to-[var(--background-paper)] rounded-2xl mb-6 shadow-lg shadow-[var(--primary-main)]/10 dark:shadow-[var(--primary-light)]/5 group-hover:scale-110 transition-transform duration-300">
+        <Icon className="w-8 h-8 text-[var(--primary-main)] dark:text-[var(--primary-light)] group-hover:scale-110 transition-transform duration-300" />
       </div>
-      <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100 capitalize">
+      <h3 className="mb-4 text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] capitalize">
         {title}
       </h3>
-      <p className="text-sm text-gray-600 dark:text-gray-200 leading-relaxed">{description}</p>
+      <p className="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)] leading-relaxed">
+        {description}
+      </p>
       <div className="mt-4 flex justify-center gap-2">{techIcons}</div>
     </motion.div>
   );
@@ -128,7 +130,7 @@ const SkillsOverview = () => {
   return (
     <section
       id="skills"
-      className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
+      className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[var(--background-default)] to-[var(--background-paper)] dark:from-[var(--background-default)] dark:to-[var(--background-elevated)]"
     >
       <div className="container mx-auto px-4">
         <motion.div
@@ -138,13 +140,13 @@ const SkillsOverview = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-gray-100 capitalize mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--text-primary)] dark:text-[var(--text-primary)] capitalize mb-6">
             My Technical{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)]">
               Expertise
             </span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-200 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-lg text-[var(--text-secondary)] dark:text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
             Specialized in full-stack development with a focus on modern technologies and best
             practices
           </p>

@@ -80,11 +80,12 @@ const MyPortfolios = () => {
                           <motion.img
                             src={`/images/${project.image[0]}`}
                             alt={project.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition-all duration-300 dark:brightness-75 dark:contrast-110"
                             whileHover={{ scale: 1.1 }}
                             transition={{ duration: 0.3 }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <div className="absolute inset-0 bg-black/20 dark:bg-black/40 transition-all duration-300" />
                         </div>
                       </Link>
                       <div className="p-5 md:p-6 lg:p-7">

@@ -103,7 +103,7 @@ const HomeLayout = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          {/* <MyServicesv2 /> */}
+          <MyServicesv2 />
         </motion.div>
 
         {/* Skills Progress Section */}
@@ -131,7 +131,9 @@ const HomeLayout = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-        ></motion.div>
+        >
+          <ContactMeForHomePage />
+        </motion.div>
       </div>
 
       {/* Back to Top Button */}
