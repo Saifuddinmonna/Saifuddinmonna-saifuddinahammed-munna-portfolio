@@ -39,13 +39,13 @@ const MyPortfolios = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-[var(--background-default)] to-[var(--background-paper)] dark:from-[var(--background-default)] dark:to-[var(--background-elevated)]">
+    <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <div className="fixed top-0 left-0 right-0 z-50">
         <NavbarPage2 />
       </div>
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-6 sm:px-8 lg:px-12">
-          <section className="py-12 md:py-16 lg:py-20 bg-[var(--background-paper)]/50 dark:bg-[var(--background-elevated)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)]">
+          <section className="py-12 md:py-16 lg:py-20 bg-[var(--background-paper)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-color)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.h2
                 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 lg:mb-16 text-[var(--text-primary)]"
@@ -65,7 +65,7 @@ const MyPortfolios = () => {
                   {recentProjects.map((project, index) => (
                     <motion.div
                       key={project.name}
-                      className="group relative bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-xl shadow-[var(--shadow-lg)] overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-lg)]"
+                      className="group relative bg-[var(--background-paper)] rounded-xl shadow-[var(--shadow-lg)] overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-lg)] border border-[var(--border-color)]"
                       variants={cardVariants}
                       initial="hidden"
                       whileInView="visible"
@@ -132,7 +132,7 @@ const MyPortfolios = () => {
                               href={project.liveWebsiteRepo}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] dark:bg-[var(--background-default)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-default)] dark:hover:bg-[var(--background-paper)] transition-all duration-300"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-all duration-300 border border-[var(--border-color)]"
                               whileHover={{ scale: 1.05, y: -2 }}
                               whileTap={{ scale: 0.95 }}
                             >
@@ -165,13 +165,13 @@ const MyPortfolios = () => {
               >
                 <Link to="/PortfolioLayout">
                   <motion.button
-                    className="relative group px-8 py-3 md:px-10 md:py-4 text-[var(--primary-main)] dark:text-[var(--primary-light)] font-bold rounded-lg overflow-hidden"
+                    className="relative group px-8 py-3 md:px-10 md:py-4 text-[var(--primary-main)] dark:text-[var(--primary-light)] font-bold rounded-lg overflow-hidden border border-[var(--primary-main)] dark:border-[var(--primary-light)] hover:border-[var(--primary-dark)] dark:hover:border-[var(--primary-main)] transition-colors duration-300"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <span className="relative z-10 text-base md:text-lg">View All Projects</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-main)]/10 to-[var(--secondary-main)]/10 dark:from-[var(--primary-light)]/20 dark:to-[var(--secondary-light)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute inset-0 border-2 border-[var(--primary-main)]/30 dark:border-[var(--primary-light)]/30 rounded-lg" />
+                    {/* <div className="absolute inset-0 border-2 border-[var(--primary-main)]/30 dark:border-[var(--primary-light)]/30 rounded-lg" /> */}
                   </motion.button>
                 </Link>
               </motion.div>

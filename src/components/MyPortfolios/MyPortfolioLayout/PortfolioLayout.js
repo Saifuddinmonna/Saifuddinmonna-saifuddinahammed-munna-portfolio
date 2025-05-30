@@ -221,20 +221,23 @@ const PortfolioLayout = () => {
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
-    <div className="animate-pulse">
+    <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
       {[1, 2, 3].map(i => (
-        <div key={i} className="m-5 p-6 bg-gray-200 dark:bg-gray-700 rounded-xl">
-          <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2 mb-2"></div>
-          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+        <div
+          key={i}
+          className="p-6 bg-[var(--background-paper)] rounded-xl border border-[var(--border-color)] shadow-md"
+        >
+          <div className="h-8 bg-[var(--background-elevated)] rounded w-3/4 mb-4"></div>
+          <div className="h-4 bg-[var(--background-elevated)] rounded w-1/2 mb-2"></div>
+          <div className="h-4 bg-[var(--background-elevated)] rounded w-full mb-2"></div>
+          <div className="h-4 bg-[var(--background-elevated)] rounded w-2/3"></div>
         </div>
       ))}
     </div>
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+    <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <style>{fontStyles}</style>
       {confettiStart && <ReactConfetti />}
 
@@ -243,402 +246,376 @@ const PortfolioLayout = () => {
         <NavbarPage2 />
       </div>
 
-      <main className="flex-grow bg-white dark:bg-gray-900 pt-20">
+      <main className="flex-grow bg-[var(--background-default)] pt-20">
         <div className="container mx-auto px-4 py-4">
-          {/* Search and Filter Bar */}
-          <div className="mb-6 flex flex-wrap items-center gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search projects..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-['Inter'] text-base"
-                />
-                <FaSearch className="absolute left-2  color-green-400 top-3  text-gray-400" />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value)}
-                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-['Inter'] text-base"
-              >
-                <option value={SORT_OPTIONS.NEWEST}>Newest First</option>
-                <option value={SORT_OPTIONS.OLDEST}>Oldest First</option>
-                <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
-                <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
-              </select>
-              <button
-                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                {viewMode === "grid" ? <FaList /> : <FaThLarge />}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Sidebar Navigation */}
-            <div className="w-full md:w-1/4 lg:w-1/5">
-              <div className="sticky top-20 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+          {/* Left Side Categories Menu */}
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="w-full md:w-64 lg:w-72 shrink-0">
+              <div className="sticky top-24 bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-lg shadow-md border border-[var(--border-color)] p-4">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+                  Categories
+                </h3>
                 <div className="space-y-2">
-                  <motion.div
-                    className="progress-bar h-1 bg-indigo-500 dark:bg-indigo-400 z-[99998] absolute mx-3 rounded-xl bottom-0"
-                    style={{ scaleX: scrollYProgress }}
-                  />
-
-                  {/* Category Buttons */}
-                  <div className="space-y-2 overflow-y-auto max-h-[82vh]">
-                    <motion.button
-                      onClick={() => setSelectedCategory(null)}
-                      className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm transition-all duration-200 ${
-                        selectedCategory === null
-                          ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md hover:brightness-105"
-                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm"
-                      }`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                      <span className="relative z-10 flex items-center">
-                        <FaLayerGroup className="w-4 h-4 mr-1.5 text-inherit" />
-                        All Projects
-                      </span>
-                    </motion.button>
-                    {Array.from(new Set(portfoliosName.map(p => p.category))).map(
-                      (category, index) => {
-                        let Icon;
-                        switch (category.toLowerCase()) {
-                          case "e-commerce website":
-                            Icon = FaShoppingCart;
-                            break;
-                          case "service selling project":
-                            Icon = FaBriefcase;
-                            break;
-                          case "educational project":
-                            Icon = FaGraduationCap;
-                            break;
-                          case "quiz app project":
-                            Icon = FaQuestionCircle;
-                            break;
-                          case "portfolio website project":
-                            Icon = FaCode;
-                            break;
-                          case "to-do app":
-                            Icon = FaClipboardList;
-                            break;
-                          case "our app":
-                            Icon = FaMobileAlt;
-                            break;
-                          case "cost calculation websites":
-                            Icon = FaCalculator;
-                            break;
-                          case "news portal project":
-                            Icon = FaNewspaper;
-                            break;
-                          default:
-                            Icon = FaCode; // Default icon
-                        }
-
-                        return (
-                          <motion.button
-                            key={index}
-                            onClick={() => setSelectedCategory(category)}
-                            className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm transition-all duration-200 ${
-                              selectedCategory === category
-                                ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md hover:brightness-105"
-                                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm"
-                            }`}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                            <span className="relative z-10 flex items-center">
-                              <Icon className="w-4 h-4 mr-1.5 text-inherit" />
-                              {category}
-                            </span>
-                          </motion.button>
-                        );
-                      }
-                    )}
-                  </div>
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 ${
+                      selectedCategory === null
+                        ? "bg-[var(--primary-main)] text-white"
+                        : "text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                    }`}
+                  >
+                    All Projects
+                  </button>
+                  {Array.from(new Set(portfoliosName.map(project => project.category))).map(
+                    category => (
+                      <button
+                        key={category}
+                        onClick={() => setSelectedCategory(category)}
+                        className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 ${
+                          selectedCategory === category
+                            ? "bg-[var(--primary-main)] text-white"
+                            : "text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Main Content Area */}
-            <div className="w-full md:w-3/4 lg:w-4/5">
+            <div className="flex-1">
+              {/* Search and Filter Bar */}
+              <div className="mb-6 flex flex-wrap items-center gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent"
+                    />
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]" />
+                  </div>
+                </div>
+
+                {/* Sort By Dropdown */}
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={e => setSortBy(e.target.value)}
+                    className="appearance-none bg-[var(--background-paper)] border border-[var(--border-color)] text-[var(--text-primary)] py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent"
+                  >
+                    <option value={SORT_OPTIONS.NEWEST}>Newest</option>
+                    <option value={SORT_OPTIONS.OLDEST}>Oldest</option>
+                    <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
+                    <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--text-secondary)]">
+                    <FaSort className="fill-current h-4 w-4" />
+                  </div>
+                </div>
+
+                {/* View Mode Buttons */}
+                <div className="flex rounded-md shadow-sm">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("grid")}
+                    className={`px-4 py-2 rounded-l-md border border-[var(--border-color)] ${
+                      viewMode === "grid"
+                        ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                        : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                    } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200`}
+                    aria-label="Grid view"
+                  >
+                    <FaThLarge />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={`px-4 py-2 rounded-r-md border border-[var(--border-color)] ${
+                      viewMode === "list"
+                        ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                        : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                    } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200`}
+                    aria-label="List view"
+                  >
+                    <FaList />
+                  </button>
+                </div>
+              </div>
+
+              {/* Portfolio Grid/List */}
               {isLoading ? (
                 <LoadingSkeleton />
-              ) : (
-                <AnimatePresence>
-                  <motion.div
-                    className={`space-y-6 ${
-                      viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : ""
-                    }`}
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                  >
-                    {datas?.map((portfolio, index) => (
-                      <motion.div
-                        key={portfolio.id}
+              ) : datas.length > 0 ? (
+                <motion.div
+                  className={`grid gap-6 md:gap-8 lg:gap-10 ${
+                    viewMode === "grid"
+                      ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                      : "grid-cols-1"
+                  }`}
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {datas.map(project => (
+                    <motion.div
+                      key={project.name}
+                      className={`bg-[var(--background-paper)] rounded-xl shadow-lg overflow-hidden transition-all duration-300 border border-[var(--border-color)] ${
+                        viewMode === "list" ? "flex flex-col md:flex-row" : ""
+                      }`}
+                      variants={cardVariants}
+                      whileHover={{
+                        y: viewMode === "grid" ? -5 : 0,
+                        boxShadow: isDarkMode
+                          ? "0 10px 15px -3px rgba(0 0 0 / 0.4)"
+                          : "0 10px 15px -3px rgba(0 0 0 / 0.1)",
+                      }}
+                    >
+                      <div
                         className={`${
-                          viewMode === "grid"
-                            ? ""
-                            : "pl-3 m-5 border shadow-lg rounded-xl mx-auto overflow-hidden"
-                        } bg-white dark:bg-gray-800 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-xl`}
-                        variants={cardVariants}
-                        layout
+                          viewMode === "list" ? "md:w-1/3 lg:w-1/4" : "aspect-video"
+                        } relative overflow-hidden`}
                       >
-                        {/* Portfolio Content */}
-                        <div className="p-6">
-                          <motion.h2
-                            className="text-2xl font-bold text-gray-900 dark:text-white mb-4 font-['Playfair_Display']"
-                            variants={titleVariants}
-                          >
-                            {portfolio.name}
-                            <span className="block text-sm font-normal text-indigo-600 dark:text-indigo-400 font-['Inter']">
-                              {portfolio.category}
-                            </span>
-                          </motion.h2>
-
-                          {/* Technology Tags */}
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {portfolio.technology.map((tech, i) => (
-                              <span
-                                key={i}
-                                className="px-3 py-1 text-sm bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full font-['Inter']"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-
-                          {/* Project Links */}
-                          <div className="flex flex-wrap gap-3 mb-4">
-                            {portfolio.liveWebsite && (
-                              <motion.a
-                                href={portfolio.liveWebsite}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
-                                whileHover={{ scale: 1.02, y: -1 }}
-                                whileTap={{ scale: 0.98 }}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3 }}
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaExternalLinkAlt className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-                                <span className="relative z-10">Live Website</span>
-                              </motion.a>
-                            )}
-                            {portfolio.liveWebsiteRepo && (
-                              <motion.a
-                                href={portfolio.liveWebsiteRepo}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
-                                whileHover={{ scale: 1.02, y: -1 }}
-                                whileTap={{ scale: 0.98 }}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: 0.1 }}
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaGithub className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-                                <span className="relative z-10">Client Code</span>
-                              </motion.a>
-                            )}
-                            {portfolio.liveServersite && (
-                              <motion.a
-                                href={portfolio.liveServersite}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
-                                whileHover={{ scale: 1.02, y: -1 }}
-                                whileTap={{ scale: 0.98 }}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: 0.2 }}
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaServer className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-                                <span className="relative z-10">Live Server</span>
-                              </motion.a>
-                            )}
-                            {portfolio.liveServersiteRepo && (
-                              <motion.a
-                                href={portfolio.liveServersiteRepo}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
-                                whileHover={{ scale: 1.02, y: -1 }}
-                                whileTap={{ scale: 0.98 }}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: 0.3 }}
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaServer className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-                                <span className="relative z-10">Server Code</span>
-                              </motion.a>
-                            )}
-                          </div>
-
-                          {/* Overview */}
-                          <div className="mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-['Playfair_Display']">
-                              Overview
-                            </h3>
-                            <PortfolioOverview
-                              overview={portfolio.overview}
-                              showMore={showMore}
-                              setShowMore={setShowMore}
+                        <PhotoProvider>
+                          <PhotoView src={`/images/${project.image[0]}`}>
+                            <motion.img
+                              src={`/images/${project.image[0]}`}
+                              alt={project.name}
+                              className="w-full h-full object-cover transition-all duration-300"
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ duration: 0.3 }}
                             />
-                          </div>
-                          {/* Project Images */}
-                          <div
-                            className={`grid ${
-                              viewMode === "grid" ? "grid-cols-1" : "grid-cols-2 md:grid-cols-3"
-                            } gap-4`}
-                          >
-                            {portfolio?.image?.map((img, imgIndex) => (
-                              <PortfolioImage key={imgIndex} img={img} index={imgIndex} />
-                            ))}
-                          </div>
+                          </PhotoView>
+                        </PhotoProvider>
+                        {viewMode === "grid" && (
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        )}
+                      </div>
+                      <div className={`p-5 md:p-6 lg:p-7 ${viewMode === "list" ? "flex-1" : ""}`}>
+                        <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-3">
+                          {project.name}
+                        </h3>
+                        <p className="text-sm md:text-base text-[var(--primary-main)] mb-3">
+                          {project.category}
+                        </p>
+                        <p className="text-[var(--text-secondary)] text-sm md:text-base line-clamp-3 mb-4">
+                          {project.overview[0]}
+                        </p>
+                        {viewMode === "list" && (
+                          <PortfolioOverview
+                            overview={project.overview}
+                            showMore={showMore}
+                            setShowMore={setShowMore}
+                          />
+                        )}
+
+                        {/* Project Links */}
+                        <div className="flex flex-wrap gap-3 mt-4">
+                          {project.liveWebsite && (
+                            <motion.a
+                              href={project.liveWebsite}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <FaExternalLinkAlt className="text-sm md:text-base" />
+                              <span>Live</span>
+                            </motion.a>
+                          )}
+                          {project.liveWebsiteRepo && (
+                            <motion.a
+                              href={project.liveWebsiteRepo}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <FaGithub className="text-sm md:text-base" />
+                              <span>Code</span>
+                            </motion.a>
+                          )}
+                          {project.liveServersite && (
+                            <motion.a
+                              href={project.liveServersite}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--success-main)] text-white rounded-lg hover:bg-[var(--success-dark)] transition-colors duration-300"
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <FaServer className="text-sm md:text-base" />
+                              <span>Server</span>
+                            </motion.a>
+                          )}
+                          {project.liveServersiteRepo && (
+                            <motion.a
+                              href={project.liveServersiteRepo}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <FaGithub className="text-sm md:text-base" />
+                              <span>Server Code</span>
+                            </motion.a>
+                          )}
                         </div>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </AnimatePresence>
+                        {viewMode === "grid" && (
+                          <div className="mt-4">
+                            {/* Render only a few technologies for grid view */}
+                            <div className="flex flex-wrap gap-2">
+                              {project.technology.slice(0, 4).map((tech, techIndex) => (
+                                <span
+                                  key={techIndex}
+                                  className="px-2 py-1 bg-[var(--background-elevated)] text-[var(--text-secondary)] text-xs rounded-md"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                              {project.technology.length > 4 && (
+                                <span className="px-2 py-1 bg-[var(--background-elevated)] text-[var(--text-secondary)] text-xs rounded-md">
+                                  + {project.technology.length - 4}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                // No projects found
+                <motion.p
+                  className="text-center text-xl text-[var(--text-secondary)] mt-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  No projects found matching your criteria.
+                </motion.p>
               )}
             </div>
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
 
-// Portfolio Overview Component
-const PortfolioOverview = ({ overview, showMore, setShowMore }) => (
-  <motion.div
-    className="space-y-3"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.5 }}
-  >
-    <motion.div
-      className="space-y-3"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, staggerChildren: 0.1 }}
-    >
-      {showMore
-        ? overview.map((item, index) => (
-            <motion.p
-              key={index}
-              className="text-gray-700 dark:text-gray-300 font-['Inter'] text-sm italic leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border-l-4 border-indigo-500 dark:border-indigo-400 shadow-sm hover:shadow-md transition-all duration-300"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              whileHover={{ x: 5 }}
-            >
-              {item}
-            </motion.p>
-          ))
-        : overview.slice(0, 2).map((item, index) => (
-            <motion.p
-              key={index}
-              className="text-gray-700 dark:text-gray-300 font-['Inter'] text-sm italic leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border-l-4 border-indigo-500 dark:border-indigo-400 shadow-sm hover:shadow-md transition-all duration-300"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              whileHover={{ x: 5 }}
-            >
-              {item}
-            </motion.p>
-          ))}
-    </motion.div>
-    {overview.length > 2 && (
-      <motion.div
-        className="flex justify-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+// Sub-components (kept for reference, assuming they are defined elsewhere or inline)
+
+const PortfolioLinks = ({ liveWebsite, liveWebsiteRepo, liveServersite, liveServersiteRepo }) => (
+  <div className="flex flex-wrap gap-3 mt-4">
+    {liveWebsite && (
+      <motion.a
+        href={liveWebsite}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
       >
-        <motion.button
-          className="group flex items-center gap-2 px-4 py-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-['Poppins'] font-medium text-sm bg-indigo-50 dark:bg-indigo-900/20 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-all duration-300"
-          onClick={() => setShowMore(!showMore)}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <span>{showMore ? "Show less" : "Show more"}</span>
-          <motion.svg
-            className="w-4 h-4 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            animate={{ rotate: showMore ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </motion.svg>
-        </motion.button>
-      </motion.div>
+        <FaExternalLinkAlt className="text-sm md:text-base" />
+        <span>Live</span>
+      </motion.a>
     )}
-  </motion.div>
+    {liveWebsiteRepo && (
+      <motion.a
+        href={liveWebsiteRepo}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <FaGithub className="text-sm md:text-base" />
+        <span>Code</span>
+      </motion.a>
+    )}
+    {liveServersite && (
+      <motion.a
+        href={liveServersite}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--success-main)] text-white rounded-lg hover:bg-[var(--success-dark)] transition-colors duration-300"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <FaServer className="text-sm md:text-base" />
+        <span>Server</span>
+      </motion.a>
+    )}
+    {liveServersiteRepo && (
+      <motion.a
+        href={liveServersiteRepo}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <FaGithub className="text-sm md:text-base" />
+        <span>Server Code</span>
+      </motion.a>
+    )}
+  </div>
 );
 
-// Portfolio Image Component
-const PortfolioImage = ({ img, index }) => (
-  <motion.div
-    className="relative group overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all duration-300"
-    initial={{ opacity: 0, scale: 0.8 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.3, delay: index * 0.1 }}
-    whileHover={{ scale: 1.02, y: -5 }}
-  >
-    <PhotoProvider>
-      <PhotoView src={`images/${img}`}>
-        <div className="relative overflow-hidden aspect-video">
-          <img
-            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+const PortfolioOverview = ({ overview, showMore, setShowMore }) => (
+  <div className="mt-4">
+    <h4 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Overview</h4>
+    {showMore ? (
+      <>
+        {overview.map((item, index) => (
+          <p key={index} className="text-sm text-[var(--text-secondary)] mb-1">
+            {item}
+          </p>
+        ))}
+      </>
+    ) : (
+      <>
+        {overview.slice(0, 2).map((item, index) => (
+          <p key={index} className="text-sm text-[var(--text-secondary)] mb-1">
+            {item}
+          </p>
+        ))}
+      </>
+    )}
+    {overview.length > 2 && (
+      <button
+        onClick={() => setShowMore(!showMore)}
+        className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] text-sm mt-2 transition-colors duration-200 focus:outline-none"
+      >
+        {showMore ? "Show Less" : "Show More"}
+      </button>
+    )}
+  </div>
+);
+
+const PortfolioImage = ({ img }) => (
+  <div className="">
+    <div className="border border-[var(--border-color)] m-2 p-2 rounded transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 bg-[var(--background-paper)] duration-300">
+      <PhotoProvider>
+        <PhotoView src={`images/${img}`}>
+          <motion.img
             src={`images/${img}`}
-            alt="Portfolio screenshot"
+            alt="Portfolio image"
+            className="w-full h-auto rounded transition-all duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <motion.div
-              className="bg-white/90 dark:bg-gray-800/90 p-2 rounded-full"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <svg
-                className="w-6 h-6 text-gray-800 dark:text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                />
-              </svg>
-            </motion.div>
-          </div>
-        </div>
-      </PhotoView>
-    </PhotoProvider>
-    <div className="absolute inset-0 border-2 border-transparent group-hover:border-indigo-500 dark:group-hover:border-indigo-400 transition-colors duration-300 rounded-xl pointer-events-none" />
-  </motion.div>
+        </PhotoView>
+      </PhotoProvider>
+    </div>
+  </div>
 );
 
 export default PortfolioLayout;

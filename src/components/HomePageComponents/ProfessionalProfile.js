@@ -103,14 +103,14 @@ const ProfessionalProfile = () => {
         {/* Expertise Section */}
         <motion.div className="mb-12" variants={itemVariants}>
           <div className="flex items-center mb-6">
-            <FaCode className="text-3xl text-[var(--primary-main)] mr-3" />
+            <FaCode className="text-3xl text-[var(--primary-main)] dark:text-[var(--primary-light)] mr-3" />
             <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">Expertise</h3>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
             {expertise.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex items-center p-3 bg-[var(--background-paper)] rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[var(--border-color)]"
+                className="flex items-center p-3 bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[var(--border-color)]"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
@@ -126,7 +126,7 @@ const ProfessionalProfile = () => {
         {/* Comfortable Technologies Section */}
         <motion.div className="mb-12" variants={itemVariants}>
           <div className="flex items-center mb-6">
-            <FaLaptopCode className="text-3xl text-[var(--success-main)] mr-3" />
+            <FaLaptopCode className="text-3xl text-[var(--success-main)] dark:text-[var(--success-light)] mr-3" />
             <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
               Comfortable With
             </h3>
@@ -135,7 +135,7 @@ const ProfessionalProfile = () => {
             {comfortable.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex items-center p-3 bg-[var(--background-paper)] rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[var(--border-color)]"
+                className="flex items-center p-3 bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[var(--border-color)]"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
@@ -151,14 +151,14 @@ const ProfessionalProfile = () => {
         {/* Tools Section */}
         <motion.div variants={itemVariants}>
           <div className="flex items-center mb-6">
-            <FaTools className="text-3xl text-[var(--secondary-main)] mr-3" />
+            <FaTools className="text-3xl text-[var(--secondary-main)] dark:text-[var(--secondary-light)] mr-3" />
             <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)]">Tools</h3>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
             {tools.map((tool, index) => (
               <motion.div
                 key={index}
-                className="p-3 bg-[var(--background-paper)] rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[var(--border-color)] text-center"
+                className="p-3 bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-[var(--border-color)] text-center"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
