@@ -30,20 +30,23 @@ const SkillChart = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-gray-800/90 backdrop-blur-sm text-white p-4 rounded-lg shadow-xl border border-gray-700 transform -translate-y-2">
+        <div className="bg-gray-800/90 backdrop-blur-sm text-white p-4 rounded-lg shadow-xl border border-gray-700 transform translate-x-3 -translate-y-[105%] pointer-events-none">
           <div className="flex items-center gap-2 mb-2">
             <div
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: payload[0].payload.fill }}
             />
-            <p className="font-bold text-lg">{label}</p>
+            <p className="font-bold text-white/80 text-lg">{label}</p> {/* Inherits text-white */}
           </div>
           <div className="flex items-center justify-between gap-4">
-            <p className="text-gray-300">Skill Level:</p>
-            <p className="text-indigo-400 font-semibold">{`${payload[0].value}%`}</p>
+            <p className="text-gray-300">Skill Level:</p> {/* Slightly dimmer white */}
+            <p className="text-indigo-400 font-semibold">{`${payload[0].value}%`}</p>{" "}
+            {/* Accent color for value */}
           </div>
           <div className="mt-2 pt-2 border-t border-gray-700">
             <p className="text-sm text-gray-400">
+              {" "}
+              {/* Dimmer white for proficiency status */}
               {payload[0].value >= 90
                 ? "Expert"
                 : payload[0].value >= 75
@@ -79,22 +82,18 @@ const SkillChart = () => {
             <XAxis
               dataKey="name"
               stroke="#9CA3AF"
-              tick={{ fill: "#9CA3AF" }}
+              tick={{ fill: "#374151", fontWeight: "bold" }} // Changed fill to a darker gray and added fontWeight
               angle={-45}
               textAnchor="end"
               height={70}
             />
             <YAxis
               stroke="#9CA3AF"
-              tick={{ fill: "#9CA3AF" }}
+              tick={{ fill: "#374151", fontWeight: "bold" }} // Changed fill to a darker gray and added fontWeight
               domain={[0, 100]}
               tickFormatter={value => `${value}%`}
             />
-            <Tooltip
-              content={<CustomTooltip />}
-              cursor={{ fill: "rgba(79, 70, 229, 0.1)" }}
-              position={{ x: 0, y: 0 }}
-            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(79, 70, 229, 0.1)" }} />
             <Legend />
             <Bar
               dataKey="level"
