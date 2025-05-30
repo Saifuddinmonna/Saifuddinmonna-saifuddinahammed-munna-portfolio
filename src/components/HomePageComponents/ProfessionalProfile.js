@@ -30,7 +30,7 @@ const ProfessionalProfile = () => {
     { icon: <SiReact className="text-blue-400" />, name: "ReactJS" },
     { icon: <SiNodedotjs className="text-green-500" />, name: "Node.js" },
     { icon: <SiMongodb className="text-green-600" />, name: "MongoDB" },
-    { icon: <SiExpress className="text-gray-800" />, name: "Express.js" },
+    { icon: <SiExpress className="text-gray-700 dark:text-gray-300" />, name: "Express.js" },
     { icon: <SiRedux className="text-purple-500" />, name: "Redux" },
     { icon: <SiHtml5 className="text-orange-500" />, name: "HTML5" },
     { icon: <SiCss3 className="text-blue-500" />, name: "CSS3" },
@@ -112,7 +112,7 @@ const ProfessionalProfile = () => {
             {expertise.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex items-center p-3 bg-[var(--background-paper)] rounded-lg shadow-md hover:shadow-lg transition-shadow"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
@@ -137,7 +137,7 @@ const ProfessionalProfile = () => {
             {comfortable.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex items-center p-3 bg-[var(--background-paper)] rounded-lg shadow-md hover:shadow-lg transition-shadow"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
@@ -160,7 +160,7 @@ const ProfessionalProfile = () => {
             {tools.map((tool, index) => (
               <motion.div
                 key={index}
-                className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center"
+                className="p-3 bg-[var(--background-paper)] rounded-lg shadow-md hover:shadow-lg transition-shadow text-center"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
