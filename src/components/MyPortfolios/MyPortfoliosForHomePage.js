@@ -179,7 +179,6 @@ const MyPortfolios = () => {
           </section>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

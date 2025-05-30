@@ -8,6 +8,7 @@ import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfoliosForHomePage";
 import MyServicesv2 from "../Myservices/MyServicesv2";
 import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
+import ContactMeForHomePage from "../ContractMe/ContactMeForHomePage";
 
 /**
  * Animation variants for section transitions
@@ -102,7 +103,7 @@ const HomeLayout = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <MyServicesv2 />
+          {/* <MyServicesv2 /> */}
         </motion.div>
 
         {/* Skills Progress Section */}
@@ -130,9 +131,7 @@ const HomeLayout = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-        >
-          <ContractMe />
-        </motion.div>
+        ></motion.div>
       </div>
 
       {/* Back to Top Button */}

@@ -10,39 +10,120 @@ import {
   SiNextdotjs,
   SiRedux,
   SiExpress,
-  SiReact,
+  // SiReact, // FaReact is used from react-icons/fa for the main icon
 } from "react-icons/si";
 import { AiOutlineApi, AiOutlineSecurityScan, AiOutlineCloudServer } from "react-icons/ai";
 
+// Card Components
+const ServiceCard = ({ icon: Icon, title, description, techIcons }) => {
+  return (
+    <motion.div
+      className="p-6 rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 backdrop-blur-sm hover:-translate-y-2 hover:scale-[1.02] hover:border-indigo-500/50 dark:hover:border-indigo-400/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)] text-center group"
+      variants={itemVariants}
+    >
+      <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl mb-6 shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/5 group-hover:scale-110 transition-transform duration-300">
+        <Icon className="w-8 h-8 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300" />
+      </div>
+      <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100 capitalize">
+        {title}
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-200 leading-relaxed">{description}</p>
+      <div className="mt-4 flex justify-center gap-2">{techIcons}</div>
+    </motion.div>
+  );
+};
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+  },
+};
+
 const SkillsOverview = () => {
-  // Base classes for consistent styling
-  const cardBaseClasses =
-    "p-6 rounded-xl border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 backdrop-blur-sm";
-  const cardHoverClasses =
-    "hover:-translate-y-2 hover:scale-[1.02] hover:border-indigo-500/50 dark:hover:border-indigo-400/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)]";
-
-  const iconWrapperClasses =
-    "inline-flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl mb-6 shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/5";
-  const iconClasses = "w-8 h-8 text-indigo-600 dark:text-indigo-400";
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
+  const services = [
+    {
+      icon: FaReact,
+      title: "Frontend Development",
+      description:
+        "Expert in React.js, Next.js, and modern frontend frameworks. Specialized in creating responsive, interactive UIs with TypeScript and Redux for state management.",
+      techIcons: [
+        <FaReact key="react" className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
+        <SiNextdotjs key="next" className="w-6 h-6 text-gray-800 dark:text-gray-100" />,
+        <SiRedux key="redux" className="w-6 h-6 text-purple-500 dark:text-purple-400" />,
+      ],
     },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
+    {
+      icon: FaNodeJs,
+      title: "Backend Development",
+      description:
+        "Proficient in Node.js and Express.js development. Experience in building scalable, secure, and efficient server-side applications with RESTful APIs.",
+      techIcons: [
+        <FaNodeJs key="node" className="w-6 h-6 text-green-500 dark:text-green-400" />,
+        <SiExpress key="express" className="w-6 h-6 text-gray-800 dark:text-gray-100" />,
+        <AiOutlineApi key="api" className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
+      ],
     },
-  };
+    {
+      icon: FaDatabase,
+      title: "Database Management",
+      description:
+        "Skilled in both SQL and NoSQL databases. Experience with MongoDB, PostgreSQL, and database design, optimization, and management.",
+      techIcons: [
+        <SiMongodb key="mongo" className="w-6 h-6 text-green-600 dark:text-green-400" />,
+        <SiPostgresql key="postgres" className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
+        <FaDatabase key="db" className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
+      ],
+    },
+    {
+      icon: AiOutlineCloudServer,
+      title: "DevOps & Cloud",
+      description:
+        "Experience with AWS, Docker, and CI/CD pipelines. Skilled in cloud deployment, containerization, and infrastructure management.",
+      techIcons: [
+        <FaAws key="aws" className="w-6 h-6 text-orange-500 dark:text-orange-400" />,
+        <FaDocker key="docker" className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
+        <FaGitAlt key="git" className="w-6 h-6 text-orange-600 dark:text-orange-400" />,
+      ],
+    },
+    {
+      icon: AiOutlineSecurityScan,
+      title: "Security & Performance",
+      description:
+        "Focus on application security, performance optimization, and best practices. Experience with JWT, OAuth, and security protocols.",
+      techIcons: [
+        <AiOutlineSecurityScan
+          key="security"
+          className="w-6 h-6 text-green-500 dark:text-green-400"
+        />,
+        <SiTypescript key="typescript" className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
+        <SiJavascript key="javascript" className="w-6 h-6 text-yellow-400 dark:text-yellow-300" />,
+      ],
+    },
+    {
+      icon: SiTailwindcss,
+      title: "UI/UX Development",
+      description:
+        "Expert in Tailwind CSS, responsive design, and modern UI frameworks. Focus on creating beautiful, accessible, and user-friendly interfaces.",
+      techIcons: [
+        <SiTailwindcss key="tailwind" className="w-6 h-6 text-cyan-500 dark:text-cyan-400" />,
+        <SiJavascript key="javascript" className="w-6 h-6 text-yellow-400 dark:text-yellow-300" />,
+        <FaReact key="react" className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
+      ],
+    },
+  ];
 
   return (
     <section
@@ -57,13 +138,13 @@ const SkillsOverview = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white capitalize mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-gray-100 capitalize mb-6">
             My Technical{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-400">
               Expertise
             </span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-200 max-w-2xl mx-auto leading-relaxed">
             Specialized in full-stack development with a focus on modern technologies and best
             practices
           </p>
@@ -76,161 +157,9 @@ const SkillsOverview = () => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {/* Frontend Development */}
-          <motion.div
-            className={`${cardBaseClasses} ${cardHoverClasses} text-center group`}
-            variants={itemVariants}
-          >
-            <div
-              className={`${iconWrapperClasses} group-hover:scale-110 transition-transform duration-300`}
-            >
-              <FaReact
-                className={`${iconClasses} group-hover:scale-110 transition-transform duration-300`}
-              />
-            </div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white capitalize">
-              Frontend Development
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Expert in React.js, Next.js, and modern frontend frameworks. Specialized in creating
-              responsive, interactive UIs with TypeScript and Redux for state management.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <SiReact className="w-6 h-6 text-blue-500" />
-              <SiNextdotjs className="w-6 h-6 text-gray-800 dark:text-white" />
-              <SiRedux className="w-6 h-6 text-purple-500" />
-            </div>
-          </motion.div>
-
-          {/* Backend Development */}
-          <motion.div
-            className={`${cardBaseClasses} ${cardHoverClasses} text-center group`}
-            variants={itemVariants}
-          >
-            <div
-              className={`${iconWrapperClasses} group-hover:scale-110 transition-transform duration-300`}
-            >
-              <FaNodeJs
-                className={`${iconClasses} group-hover:scale-110 transition-transform duration-300`}
-              />
-            </div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white capitalize">
-              Backend Development
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Proficient in Node.js and Express.js development. Experience in building scalable,
-              secure, and efficient server-side applications with RESTful APIs.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <FaNodeJs className="w-6 h-6 text-green-500" />
-              <SiExpress className="w-6 h-6 text-gray-800 dark:text-white" />
-              <AiOutlineApi className="w-6 h-6 text-blue-500" />
-            </div>
-          </motion.div>
-
-          {/* Database Management */}
-          <motion.div
-            className={`${cardBaseClasses} ${cardHoverClasses} text-center group`}
-            variants={itemVariants}
-          >
-            <div
-              className={`${iconWrapperClasses} group-hover:scale-110 transition-transform duration-300`}
-            >
-              <FaDatabase
-                className={`${iconClasses} group-hover:scale-110 transition-transform duration-300`}
-              />
-            </div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white capitalize">
-              Database Management
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Skilled in both SQL and NoSQL databases. Experience with MongoDB, PostgreSQL, and
-              database design, optimization, and management.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <SiMongodb className="w-6 h-6 text-green-600" />
-              <SiPostgresql className="w-6 h-6 text-blue-600" />
-              <FaDatabase className="w-6 h-6 text-blue-500" />
-            </div>
-          </motion.div>
-
-          {/* DevOps & Cloud */}
-          <motion.div
-            className={`${cardBaseClasses} ${cardHoverClasses} text-center group`}
-            variants={itemVariants}
-          >
-            <div
-              className={`${iconWrapperClasses} group-hover:scale-110 transition-transform duration-300`}
-            >
-              <AiOutlineCloudServer
-                className={`${iconClasses} group-hover:scale-110 transition-transform duration-300`}
-              />
-            </div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white capitalize">
-              DevOps & Cloud
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Experience with AWS, Docker, and CI/CD pipelines. Skilled in cloud deployment,
-              containerization, and infrastructure management.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <FaAws className="w-6 h-6 text-orange-500" />
-              <FaDocker className="w-6 h-6 text-blue-500" />
-              <FaGitAlt className="w-6 h-6 text-orange-600" />
-            </div>
-          </motion.div>
-
-          {/* Security & Performance */}
-          <motion.div
-            className={`${cardBaseClasses} ${cardHoverClasses} text-center group`}
-            variants={itemVariants}
-          >
-            <div
-              className={`${iconWrapperClasses} group-hover:scale-110 transition-transform duration-300`}
-            >
-              <AiOutlineSecurityScan
-                className={`${iconClasses} group-hover:scale-110 transition-transform duration-300`}
-              />
-            </div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white capitalize">
-              Security & Performance
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Focus on application security, performance optimization, and best practices.
-              Experience with JWT, OAuth, and security protocols.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <AiOutlineSecurityScan className="w-6 h-6 text-green-500" />
-              <SiTypescript className="w-6 h-6 text-blue-500" />
-              <SiJavascript className="w-6 h-6 text-yellow-400" />
-            </div>
-          </motion.div>
-
-          {/* UI/UX Development */}
-          <motion.div
-            className={`${cardBaseClasses} ${cardHoverClasses} text-center group`}
-            variants={itemVariants}
-          >
-            <div
-              className={`${iconWrapperClasses} group-hover:scale-110 transition-transform duration-300`}
-            >
-              <SiTailwindcss
-                className={`${iconClasses} group-hover:scale-110 transition-transform duration-300`}
-              />
-            </div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white capitalize">
-              UI/UX Development
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Expert in Tailwind CSS, responsive design, and modern UI frameworks. Focus on creating
-              beautiful, accessible, and user-friendly interfaces.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <SiTailwindcss className="w-6 h-6 text-cyan-500" />
-              <SiJavascript className="w-6 h-6 text-yellow-400" />
-              <FaReact className="w-6 h-6 text-blue-500" />
-            </div>
-          </motion.div>
+          {services.map((service, index) => (
+            <ServiceCard key={index} {...service} />
+          ))}
         </motion.div>
       </div>
     </section>
