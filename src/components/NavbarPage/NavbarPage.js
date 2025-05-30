@@ -56,8 +56,8 @@ const NavbarPage2 = () => {
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg"
-            : "bg-white dark:bg-gray-900"
+            ? "bg-[var(--background-default)] bg-opacity-95 backdrop-blur-sm shadow-lg"
+            : "bg-[var(--background-default)]"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,10 +77,10 @@ const NavbarPage2 = () => {
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`no-underline relative px-3 py-1.5 text-sm text-white/90 font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0 )] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-white      hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 ${
+                  className={`no-underline relative px-3 py-1.5 text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-transparent hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 ${
                     isActive(item.path)
-                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400"
-                      : "  dark:from-blue-400/10 dark:to-cyan-300/10 text-gray-800 dark:text-gray-100 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 hover:text-white"
+                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white"
+                      : "text-gray-800 dark:text-gray-100 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 hover:text-white"
                   }`}
                 >
                   <span className="relative z-10 flex items-center">

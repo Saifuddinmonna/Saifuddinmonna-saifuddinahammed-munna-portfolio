@@ -167,8 +167,7 @@ select:focus {
   :root {
     /* Light mode variables */
     --background: 0 0% 100%;
-    --foreground: rgb(13, 20, 17);
-    /* --foreground: 222.2 84% 4.9%; */
+    --foreground: rgb(31, 41, 55); /* Updated to gray-800 equivalent */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -216,49 +215,38 @@ select:focus {
 }
 
 /* ===== COMPONENT BACKGROUND OVERRIDES ===== */
-.bg-white {
-  background-color: hsl(var(--background)) !important;
-}
 
 .dark .dark\:bg-gray-800 {
-  background-color: hsl(var(--card)) !important;
+  background-color: hsl(
+    var(--card)
+  ); /* Keep if this is the intended dark mode override for this specific class */
 }
 
 .dark .dark\:bg-gray-700 {
-  background-color: hsl(var(--muted)) !important;
+  background-color: hsl(var(--muted)); /* Keep if this is the intended dark mode override */
 }
 
 .dark .dark\:bg-gray-900 {
-  background-color: hsl(var(--background)) !important;
+  background-color: hsl(var(--background)); /* Keep if this is the intended dark mode override */
 }
 
 /* Text color overrides */
 .text-gray-800 {
-  color: hsl(var(--foreground)) !important;
+  /* This rule is problematic as it redefines .text-gray-800 based on theme. Remove it. */
 }
 
 .dark .dark\:text-gray-200 {
-  color: hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground)); /* Keep if this is the intended dark mode override */
 }
 
 /* Shadow overrides */
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-}
-
-/* Border radius override */
-.rounded-xl {
-  border-radius: 0.75rem !important;
-}
-
-/* ===== BASE STYLES ===== */
 @layer base {
   * {
     @apply border-gray-200 dark:border-gray-700;
   }
 
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100; /* Updated light mode text color */
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
