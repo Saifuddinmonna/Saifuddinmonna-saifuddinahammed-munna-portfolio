@@ -290,13 +290,13 @@ const PortfolioLayout = () => {
                   />
 
                   {/* Category Buttons */}
-                  <div className="space-y-2">
+                  <div className="space-y-2 overflow-y-auto max-h-[82vh]">
                     <motion.button
                       onClick={() => setSelectedCategory(null)}
-                      className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm ${
+                      className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm transition-all duration-200 ${
                         selectedCategory === null
-                          ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md"
-                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
+                          ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md hover:brightness-105"
+                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm"
                       }`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
@@ -346,10 +346,10 @@ const PortfolioLayout = () => {
                           <motion.button
                             key={index}
                             onClick={() => setSelectedCategory(category)}
-                            className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm ${
+                            className={`group relative w-full text-left px-4 py-2 rounded-lg overflow-hidden font-['Poppins'] text-sm transition-all duration-200 ${
                               selectedCategory === category
-                                ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md"
-                                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
+                                ? "bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white shadow-md hover:brightness-105"
+                                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm"
                             }`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
@@ -424,7 +424,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveWebsite}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -432,7 +432,7 @@ const PortfolioLayout = () => {
                                 transition={{ duration: 0.3 }}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaExternalLinkAlt className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <FaExternalLinkAlt className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
                                 <span className="relative z-10">Live Website</span>
                               </motion.a>
                             )}
@@ -441,7 +441,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveWebsiteRepo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -449,7 +449,7 @@ const PortfolioLayout = () => {
                                 transition={{ duration: 0.3, delay: 0.1 }}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaGithub className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <FaGithub className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
                                 <span className="relative z-10">Client Code</span>
                               </motion.a>
                             )}
@@ -458,7 +458,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveServersite}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -466,7 +466,7 @@ const PortfolioLayout = () => {
                                 transition={{ duration: 0.3, delay: 0.2 }}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaServer className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <FaServer className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
                                 <span className="relative z-10">Live Server</span>
                               </motion.a>
                             )}
@@ -475,7 +475,7 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveServersiteRepo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group no-underline relative flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="group no-underline relative flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium text-xs shadow-lg hover:shadow-xl transition-all duration-300"
                                 whileHover={{ scale: 1.02, y: -1 }}
                                 whileTap={{ scale: 0.98 }}
                                 initial={{ opacity: 0, y: 20 }}
@@ -483,7 +483,7 @@ const PortfolioLayout = () => {
                                 transition={{ duration: 0.3, delay: 0.3 }}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <FaServer className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <FaServer className="text-base relative z-10 group-hover:rotate-12 transition-transform duration-300" />
                                 <span className="relative z-10">Server Code</span>
                               </motion.a>
                             )}
