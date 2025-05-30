@@ -39,23 +39,23 @@ const MyPortfolios = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-[var(--background-default)] to-[var(--background-paper)] dark:from-[var(--background-default)] dark:to-[var(--background-elevated)]">
       <div className="fixed top-0 left-0 right-0 z-50">
         <NavbarPage2 />
       </div>
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-6 sm:px-8 lg:px-12">
-          <section className="py-12 md:py-16 lg:py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-xl">
+          <section className="py-12 md:py-16 lg:py-20 bg-[var(--background-paper)]/50 dark:bg-[var(--background-elevated)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.h2
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 lg:mb-16 text-gray-800 dark:text-gray-100"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 lg:mb-16 text-[var(--text-primary)]"
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5 }}
               >
                 Explore My{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)]">
                   Recent Work
                 </span>
               </motion.h2>
@@ -65,7 +65,7 @@ const MyPortfolios = () => {
                   {recentProjects.map((project, index) => (
                     <motion.div
                       key={project.name}
-                      className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                      className="group relative bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-xl shadow-[var(--shadow-lg)] overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-lg)]"
                       variants={cardVariants}
                       initial="hidden"
                       whileInView="visible"
@@ -85,7 +85,6 @@ const MyPortfolios = () => {
                             transition={{ duration: 0.3 }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          <div className="absolute inset-0 bg-black/20 dark:bg-black/40 transition-all duration-300" />
                         </div>
                       </Link>
                       <div className="p-5 md:p-6 lg:p-7">
@@ -94,20 +93,20 @@ const MyPortfolios = () => {
                           className="block mb-3"
                         >
                           <motion.h3
-                            className="text-xl md:text-2xl font-semibold text-gray-800 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
+                            className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-main)] dark:group-hover:text-[var(--primary-light)] transition-colors"
                             whileHover={{ x: 5 }}
                           >
                             {project.name}
                           </motion.h3>
                         </Link>
                         <motion.p
-                          className="text-sm md:text-base text-indigo-500 dark:text-indigo-400 mb-3 md:mb-4"
+                          className="text-sm md:text-base text-[var(--primary-main)] dark:text-[var(--primary-light)] mb-3 md:mb-4"
                           whileHover={{ x: 5 }}
                         >
                           {project.category}
                         </motion.p>
                         <motion.p
-                          className="text-gray-600 dark:text-gray-300 text-sm md:text-base line-clamp-2 mb-4 md:mb-5"
+                          className="text-[var(--text-secondary)] text-sm md:text-base line-clamp-2 mb-4 md:mb-5"
                           whileHover={{ x: 5 }}
                         >
                           {project.overview[0]}
@@ -120,7 +119,7 @@ const MyPortfolios = () => {
                               href={project.liveWebsite}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white rounded-lg hover:from-[var(--primary-dark)] hover:to-[var(--secondary-dark)] transition-all duration-300"
                               whileHover={{ scale: 1.05, y: -2 }}
                               whileTap={{ scale: 0.95 }}
                             >
@@ -133,7 +132,7 @@ const MyPortfolios = () => {
                               href={project.liveWebsiteRepo}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg hover:from-gray-900 hover:to-black transition-all duration-300"
+                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] dark:bg-[var(--background-default)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-default)] dark:hover:bg-[var(--background-paper)] transition-all duration-300"
                               whileHover={{ scale: 1.05, y: -2 }}
                               whileTap={{ scale: 0.95 }}
                             >
@@ -148,7 +147,7 @@ const MyPortfolios = () => {
                 </div>
               ) : (
                 <motion.p
-                  className="text-center text-gray-600 dark:text-gray-400 mb-12 md:mb-16"
+                  className="text-center text-[var(--text-secondary)] mb-12 md:mb-16"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
@@ -166,13 +165,13 @@ const MyPortfolios = () => {
               >
                 <Link to="/PortfolioLayout">
                   <motion.button
-                    className="relative group px-8 py-3 md:px-10 md:py-4 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg overflow-hidden"
+                    className="relative group px-8 py-3 md:px-10 md:py-4 text-[var(--primary-main)] dark:text-[var(--primary-light)] font-bold rounded-lg overflow-hidden"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <span className="relative z-10 text-base md:text-lg">View All Projects</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute inset-0 border-2 border-indigo-300 dark:border-indigo-600 rounded-lg" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-main)]/10 to-[var(--secondary-main)]/10 dark:from-[var(--primary-light)]/20 dark:to-[var(--secondary-light)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 border-2 border-[var(--primary-main)]/30 dark:border-[var(--primary-light)]/30 rounded-lg" />
                   </motion.button>
                 </Link>
               </motion.div>
