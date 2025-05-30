@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import router from "react-router-dom";
 import ReactConfetti from "react-confetti";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   FaUserGraduate,
   FaCode,
@@ -58,6 +60,7 @@ import {
 
 // Corrected import for VS Code icon
 import { VscVscode } from "react-icons/vsc";
+import { Router } from "react-router-dom";
 
 // Helper: Section Component for consistent styling and animation
 const Section = ({ children, className = "", delay = 0 }) => (
@@ -388,20 +391,21 @@ const About = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <a
-                  href="mailto:saifuddinmonna@email.com"
-                  className="inline-flex items-center bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
+                <Link
+                  to="/contact"
+                  className=" no-underline inline-flex items-center bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
                 >
                   <FaEnvelope className="mr-2" /> Get In Touch
-                </a>
-                <a
-                  href="https://saifuddinahammed-monna.web.app/resume.pdf" // Link to your PDF resume
+                </Link>
+                <Link
+                  to="/resume"
+                  // Link to your PDF resume
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
                 >
                   <FaUserGraduate className="mr-2" /> View Resume
-                </a>
+                </Link>
               </motion.div>
               <motion.div
                 className="flex justify-center lg:justify-start space-x-6"

@@ -55,11 +55,25 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useParams } from "react-router-dom";
 import { ThemeContext } from "../../../App";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";
 import NavbarPage2 from "../../NavbarPage/NavbarPage";
 import Footer from "../../CommonComponents/Footer";
+import {
+  FaSearch,
+  FaThLarge,
+  FaList,
+  FaSort,
+  FaGithub,
+  FaServer,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
+
+// Add Google Fonts
+const fontStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+`;
 
 // Constants
 const CONFETTI_DURATION = 8000;
@@ -67,6 +81,13 @@ const MOBILE_BREAKPOINT = 720;
 const SCROLL_POSITION = {
   mobile: 800,
   desktop: 0,
+};
+
+const SORT_OPTIONS = {
+  NEWEST: "newest",
+  OLDEST: "oldest",
+  NAME_ASC: "name_asc",
+  NAME_DESC: "name_desc",
 };
 
 const PortfolioLayout = () => {
@@ -80,47 +101,75 @@ const PortfolioLayout = () => {
   const [confettiStart, setConfettiStart] = useState(true);
   const [datas, setDatas] = useState(portfoliosName);
   const [showMore, setShowMore] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortBy, setSortBy] = useState(SORT_OPTIONS.NEWEST);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Fetch portfolio data
   useEffect(() => {
     const fetchPortfolioData = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch("portfolios.json");
         const data = await response.json();
         setDatas(data);
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
-        setDatas(portfoliosName); // Fallback to imported data
+        setDatas(portfoliosName);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchPortfolioData();
   }, []);
 
-  // Filter portfolio data based on category
-  const filterPortfolioData = useCallback(
-    async category => {
-      const filteredData = portfoliosName.filter(data => data.name === (category || nameFilter));
-      setDatas(filteredData);
+  // Filter and sort portfolio data
+  const filterAndSortData = useCallback(() => {
+    let filteredData = [...portfoliosName];
 
-      // Scroll to appropriate position based on screen size
-      const scrollPosition =
-        window.screen.availWidth < MOBILE_BREAKPOINT
-          ? SCROLL_POSITION.mobile
-          : SCROLL_POSITION.desktop;
-      window.scrollTo(0, scrollPosition);
-    },
-    [nameFilter]
-  );
+    // Apply category filter
+    if (selectedCategory) {
+      filteredData = filteredData.filter(data => data.category === selectedCategory);
+    }
 
-  // Reset portfolio data to show all items
-  const resetPortfolioData = useCallback(async () => {
-    setDatas(portfoliosName);
-  }, []);
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filteredData = filteredData.filter(
+        data =>
+          data.name.toLowerCase().includes(query) ||
+          data.category.toLowerCase().includes(query) ||
+          data.technology.some(tech => tech.toLowerCase().includes(query))
+      );
+    }
 
-  // Handle category filter
+    // Apply sorting
+    switch (sortBy) {
+      case SORT_OPTIONS.NEWEST:
+        filteredData.sort((a, b) => b.id - a.id);
+        break;
+      case SORT_OPTIONS.OLDEST:
+        filteredData.sort((a, b) => a.id - b.id);
+        break;
+      case SORT_OPTIONS.NAME_ASC:
+        filteredData.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case SORT_OPTIONS.NAME_DESC:
+        filteredData.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        break;
+    }
+
+    setDatas(filteredData);
+  }, [searchQuery, sortBy, selectedCategory]);
+
+  // Apply filters when dependencies change
   useEffect(() => {
-    filterPortfolioData();
-  }, [nameFilter, filterPortfolioData]);
+    filterAndSortData();
+  }, [filterAndSortData]);
 
   // Confetti animation control
   useEffect(() => {
@@ -131,40 +180,52 @@ const PortfolioLayout = () => {
     return () => clearTimeout(timer);
   }, [datas]);
 
-  // Animation variants for motion components
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: index => ({
+    visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, delay: index * 0.1 },
-    }),
+      transition: { type: "spring", stiffness: 100 },
+    },
   };
 
   const titleVariants = {
     hidden: { opacity: 0, y: -20 },
-    visible: index => ({
+    visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4, delay: 0.2 + index * 0.1 },
-    }),
+      transition: { duration: 0.4 },
+    },
   };
 
-  // Button hover animations
-  const buttonHoverAnimation = {
-    scale: 1.05,
-    boxShadow: "0px 5px 15px rgba(99, 102, 241, 0.4)",
-  };
-
-  const linkHoverAnimation = {
-    scale: 1.1,
-    x: 5,
-    rotate: -2,
-    boxShadow: "0px 8px 20px rgba(236, 72, 153, 0.5)",
-  };
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="animate-pulse">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="m-5 p-6 bg-gray-200 dark:bg-gray-700 rounded-xl">
+          <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-4"></div>
+          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2 mb-2"></div>
+          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+      <style>{fontStyles}</style>
       {confettiStart && <ReactConfetti />}
 
       {/* Fixed Navigation */}
@@ -172,8 +233,42 @@ const PortfolioLayout = () => {
         <NavbarPage2 />
       </div>
 
-      <main className="flex-grow bg-white dark:bg-gray-900">
+      <main className="flex-grow bg-white dark:bg-gray-900 pt-20">
         <div className="container mx-auto px-4 py-4">
+          {/* Search and Filter Bar */}
+          <div className="mb-6 flex flex-wrap items-center gap-4">
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-['Inter'] text-base"
+                />
+                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-['Inter'] text-base"
+              >
+                <option value={SORT_OPTIONS.NEWEST}>Newest First</option>
+                <option value={SORT_OPTIONS.OLDEST}>Oldest First</option>
+                <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
+                <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
+              </select>
+              <button
+                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+                className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                {viewMode === "grid" ? <FaList /> : <FaThLarge />}
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col md:flex-row gap-4">
             {/* Sidebar Navigation */}
             <div className="w-full md:w-1/4 lg:w-1/5">
@@ -185,163 +280,174 @@ const PortfolioLayout = () => {
                   />
 
                   {/* Category Buttons */}
-                  {portfoliosName?.map((category, index) => (
-                    <div key={index}>
-                      <motion.button
-                        onClick={() => filterPortfolioData(category.name)}
-                        className="flex flex-wrap text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-400 font-medium rounded-xl text-sm block w-full m-2 p-2"
-                        whileHover={buttonHoverAnimation}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        {category.category}
-                      </motion.button>
-                    </div>
-                  ))}
-
-                  {/* Reset Button */}
-                  <motion.button
-                    onClick={resetPortfolioData}
-                    className="text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-400 font-medium rounded-xl text-sm block w-full m-2 p-2"
-                    whileHover={buttonHoverAnimation}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    All
-                  </motion.button>
+                  <div className="space-y-2">
+                    <motion.button
+                      onClick={() => setSelectedCategory(null)}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors font-['Poppins'] text-base ${
+                        selectedCategory === null
+                          ? "bg-indigo-600 text-white"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      All Projects
+                    </motion.button>
+                    {Array.from(new Set(portfoliosName.map(p => p.category))).map(
+                      (category, index) => (
+                        <motion.button
+                          key={index}
+                          onClick={() => setSelectedCategory(category)}
+                          className={`w-full text-left px-4 py-2 rounded-lg transition-colors font-['Poppins'] text-base ${
+                            selectedCategory === category
+                              ? "bg-indigo-600 text-white"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
+                          }`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {category}
+                        </motion.button>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Main Content Area */}
             <div className="w-full md:w-3/4 lg:w-4/5">
-              <div className="space-y-6">
-                {datas?.map((portfolio, index) => (
+              {isLoading ? (
+                <LoadingSkeleton />
+              ) : (
+                <AnimatePresence>
                   <motion.div
-                    key={index}
-                    className="pl-3 m-5 border shadow-lg rounded-xl mx-auto overflow-hidden bg-white dark:bg-gray-800 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-xl"
-                    variants={cardVariants}
+                    className={`space-y-6 ${
+                      viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : ""
+                    }`}
+                    variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    custom={index}
                   >
-                    {/* Portfolio Header */}
-                    <motion.h1
-                      className="mt-3 text-3xl font-semibold text-center text-gray-800 dark:text-white capitalize lg:text-4xl"
-                      variants={titleVariants}
-                      initial="hidden"
-                      animate="visible"
-                      custom={index}
-                    >
-                      <motion.span
-                        className="p-2 px-3 border shadow-lg bg-indigo-500 dark:bg-indigo-600 text-white rounded-full"
-                        whileHover={{
-                          scale: 1.1,
-                          boxShadow: "0px 0px 15px rgba(99, 102, 241, 0.8)",
-                        }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                    {datas?.map((portfolio, index) => (
+                      <motion.div
+                        key={portfolio.id}
+                        className={`${
+                          viewMode === "grid"
+                            ? ""
+                            : "pl-3 m-5 border shadow-lg rounded-xl mx-auto overflow-hidden"
+                        } bg-white dark:bg-gray-800 hover:-translate-y-1 hover:scale-102 hover:border-indigo-500 hover:shadow-xl`}
+                        variants={cardVariants}
+                        layout
                       >
-                        {datas.length}
-                      </motion.span>{" "}
-                      {datas.length > 1 ? " Websites Are" : "Website Is"}
-                      <motion.span
-                        className="text-indigo-600 dark:text-indigo-300"
-                        whileHover={{ color: "#EC4899" }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {" "}
-                        Founded {datas.length === 14 ? "Here " : "in This Category"}
-                      </motion.span>
-                    </motion.h1>
-
-                    {/* Portfolio Content */}
-                    <section className="text-gray-600 dark:text-gray-200 body-font">
-                      <div className="container p-3 m-3 mx-auto">
-                        {/* Portfolio Title */}
-                        <motion.h1
-                          className="text-3xl font-semibold text-center text-gray-800 dark:text-white capitalize lg:text-4xl"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                        >
-                          {portfolio.category} :{" "}
-                          <motion.span
-                            className="text-indigo-600 dark:text-indigo-300"
-                            whileHover={{ letterSpacing: "0.5px", color: "#EC4899" }}
-                            transition={{ duration: 0.2 }}
+                        {/* Portfolio Content */}
+                        <div className="p-6">
+                          <motion.h2
+                            className="text-2xl font-bold text-gray-900 dark:text-white mb-4 font-['Playfair_Display']"
+                            variants={titleVariants}
                           >
                             {portfolio.name}
-                          </motion.span>
-                        </motion.h1>
+                            <span className="block text-sm font-normal text-indigo-600 dark:text-indigo-400 font-['Inter']">
+                              {portfolio.category}
+                            </span>
+                          </motion.h2>
 
-                        {/* Portfolio Details Grid */}
-                        <div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
-                          {/* Links Section */}
-                          <div className="p-4 sm:1 md:w-1/2 lg:w-1/3 md:flex">
-                            <div className="flex-grow pl-6">
-                              <h2 className="text-gray-900 dark:text-white text-left text-2xl text-strong title-font font-medium mb-2">
-                                Website Link
-                              </h2>
-                              {/* Portfolio Links */}
-                              <PortfolioLinks
-                                portfolio={portfolio}
-                                linkHoverAnimation={linkHoverAnimation}
-                              />
-                            </div>
+                          {/* Technology Tags */}
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {portfolio.technology.map((tech, i) => (
+                              <span
+                                key={i}
+                                className="px-3 py-1 text-sm bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full font-['Inter']"
+                              >
+                                {tech}
+                              </span>
+                            ))}
                           </div>
 
-                          {/* Technologies Section */}
-                          <div className="p-4 md:w-1/3 flex">
-                            <div className="flex-grow pl-6">
-                              <motion.h2
-                                className="text-white bg-indigo-600 dark:bg-indigo-500 p-2 rounded text-2xl font-medium mb-2"
-                                whileHover={{
-                                  letterSpacing: "0.2px",
-                                  boxShadow: "0px 5px 15px rgba(99, 102, 241, 0.4)",
-                                }}
-                                transition={{ type: "spring", stiffness: 300 }}
+                          {/* Project Links */}
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {portfolio.liveWebsite && (
+                              <motion.a
+                                href={portfolio.liveWebsite}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
                               >
-                                Used Technologies
-                              </motion.h2>
-                              <p className="leading-relaxed text-base text-gray-700 dark:text-gray-200">
-                                {portfolio.technology}
-                              </p>
-                            </div>
+                                <FaExternalLinkAlt />
+                                Live Website
+                              </motion.a>
+                            )}
+                            {portfolio.liveWebsiteRepo && (
+                              <motion.a
+                                href={portfolio.liveWebsiteRepo}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <FaGithub />
+                                Client Code
+                              </motion.a>
+                            )}
+                            {portfolio.liveServersite && (
+                              <motion.a
+                                href={portfolio.liveServersite}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <FaServer />
+                                Live Server
+                              </motion.a>
+                            )}
+                            {portfolio.liveServersiteRepo && (
+                              <motion.a
+                                href={portfolio.liveServersiteRepo}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <FaServer />
+                                Server Code
+                              </motion.a>
+                            )}
                           </div>
 
-                          {/* Overview Section */}
-                          <div className="p-4 md:w-1/3 flex">
-                            <div className="flex-grow pl-6">
-                              <motion.h2
-                                className="text-white bg-indigo-600 dark:bg-indigo-500 p-2 rounded text-2xl font-medium mb-2"
-                                whileHover={{
-                                  letterSpacing: "0.2px",
-                                  boxShadow: "0px 5px 15px rgba(99, 102, 241, 0.4)",
-                                }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                              >
-                                Overview
-                              </motion.h2>
-                              <PortfolioOverview
-                                overview={portfolio.overview}
-                                showMore={showMore}
-                                setShowMore={setShowMore}
-                              />
-                            </div>
+                          {/* Overview */}
+                          <div className="mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-['Playfair_Display']">
+                              Overview
+                            </h3>
+                            <PortfolioOverview
+                              overview={portfolio.overview}
+                              showMore={showMore}
+                              setShowMore={setShowMore}
+                            />
+                          </div>
+
+                          {/* Project Images */}
+                          <div
+                            className={`grid ${
+                              viewMode === "grid" ? "grid-cols-1" : "grid-cols-2 md:grid-cols-3"
+                            } gap-4`}
+                          >
+                            {portfolio?.image?.map((img, imgIndex) => (
+                              <PortfolioImage key={imgIndex} img={img} index={imgIndex} />
+                            ))}
                           </div>
                         </div>
-                      </div>
-                    </section>
-
-                    {/* Portfolio Images Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-                      {portfolio?.image?.map((img, imgIndex) => (
-                        <PortfolioImage key={imgIndex} img={img} index={imgIndex} />
-                      ))}
-                    </div>
+                      </motion.div>
+                    ))}
                   </motion.div>
-                ))}
-              </div>
+                </AnimatePresence>
+              )}
             </div>
           </div>
         </div>
@@ -351,82 +457,84 @@ const PortfolioLayout = () => {
   );
 };
 
-// Portfolio Links Component
-const PortfolioLinks = ({ portfolio, linkHoverAnimation }) => (
-  <>
-    <motion.p
-      className="text-left mt-2 btn btn-sm block uppercase tracking-wider font-bold text-sm text-white bg-pink-600 hover:bg-pink-700 dark:bg-pink-500 dark:hover:bg-pink-600 shadow-md hover:shadow-lg"
-      whileHover={linkHoverAnimation}
-      whileTap={{ scale: 0.9, rotate: 0 }}
-      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-    >
-      <a
-        className="text-decoration-none block"
-        target="_blank"
-        href={portfolio.liveWebsite}
-        rel="noreferrer"
-      >
-        Live Website Link
-      </a>
-    </motion.p>
-    {/* Add other links similarly */}
-  </>
-);
-
 // Portfolio Overview Component
 const PortfolioOverview = ({ overview, showMore, setShowMore }) => (
-  <>
+  <div className="space-y-2">
     {showMore
       ? overview.map((item, index) => (
-          <p key={index} className="text-left text-gray-700 dark:text-gray-200">
+          <p key={index} className="text-gray-700 dark:text-gray-300 font-['Inter']">
             {item}
           </p>
         ))
       : overview.slice(0, 2).map((item, index) => (
-          <p key={index} className="text-left text-gray-700 dark:text-gray-200">
+          <p key={index} className="text-gray-700 dark:text-gray-300 font-['Inter']">
             {item}
           </p>
         ))}
     {overview.length > 2 && (
-      <button
-        className="btn btn-xs flex items-center text-white bg-pink-500 hover:bg-pink-600 dark:bg-pink-600 dark:hover:bg-pink-700 mt-2"
+      <motion.button
+        className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-['Poppins'] font-medium"
         onClick={() => setShowMore(!showMore)}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         {showMore ? "Show less" : "Show more"}
         <svg
+          className={`w-4 h-4 transition-transform ${showMore ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          className="w-4 h-4 ml-2 d-inline-block"
           viewBox="0 0 24 24"
         >
-          <path d="M5 12h14M12 5l7 7-7 7" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
-      </button>
+      </motion.button>
     )}
-  </>
+  </div>
 );
 
 // Portfolio Image Component
 const PortfolioImage = ({ img, index }) => (
   <motion.div
-    className="m-2 p-1 rounded-xl bg-white dark:bg-gray-800"
-    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
+    className="relative group overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all duration-300"
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.3, delay: index * 0.1 }}
-    whileHover={{
-      scale: 1.08,
-      y: -5,
-      boxShadow: "0px 10px 20px rgba(0,0,0,0.25)",
-    }}
+    whileHover={{ scale: 1.02, y: -5 }}
   >
     <PhotoProvider>
       <PhotoView src={`images/${img}`}>
-        <img className="rounded-xl maxHight" src={`images/${img}`} alt="Portfolio screenshot" />
+        <div className="relative overflow-hidden aspect-video">
+          <img
+            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            src={`images/${img}`}
+            alt="Portfolio screenshot"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <motion.div
+              className="bg-white/90 dark:bg-gray-800/90 p-2 rounded-full"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <svg
+                className="w-6 h-6 text-gray-800 dark:text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                />
+              </svg>
+            </motion.div>
+          </div>
+        </div>
       </PhotoView>
     </PhotoProvider>
+    <div className="absolute inset-0 border-2 border-transparent group-hover:border-indigo-500 dark:group-hover:border-indigo-400 transition-colors duration-300 rounded-xl pointer-events-none" />
   </motion.div>
 );
 

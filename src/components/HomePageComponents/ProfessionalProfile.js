@@ -12,8 +12,10 @@ import {
   SiCss3,
   SiBootstrap,
   SiTailwindcss,
+  SiMysql,
 } from "react-icons/si";
-import { DiPostgresql, DiFirebase } from "react-icons/di";
+import { DiPostgresql } from "react-icons/di";
+import { DiFirebase } from "react-icons/di";
 import { TbBrandNextjs } from "react-icons/tb";
 import { BsGit, BsGithub } from "react-icons/bs";
 
@@ -39,6 +41,7 @@ const ProfessionalProfile = () => {
   // Data for comfortable technologies section
   const comfortable = [
     { icon: <DiPostgresql className="text-blue-600" />, name: "PostgreSQL" },
+    { icon: <SiMysql className="text-blue-600" />, name: "SQL" },
     { icon: <DiFirebase className="text-orange-500" />, name: "Firebase" },
     { icon: <TbBrandNextjs className="text-black dark:text-white" />, name: "Next.js" },
     { icon: <BsGit className="text-orange-600" />, name: "Git" },
