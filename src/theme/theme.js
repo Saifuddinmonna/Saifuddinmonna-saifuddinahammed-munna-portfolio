@@ -30,6 +30,17 @@ export const theme = {
       md: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
       lg: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
     },
+    footer: {
+      background: "rgb(79, 70, 229)", // Example: Indigo-600, adjust as needed
+      text: "rgb(255, 255, 255)", // White
+      heading: "rgb(255, 255, 255)", // White
+      link: "rgb(34, 211, 238)", // Example: Cyan-400, adjust as needed
+      linkHover: "rgb(6, 182, 212)", // Example: Cyan-500, adjust as needed
+    },
+    headerGradient: {
+      start: "rgb(96, 165, 250)", // Example: Blue-400, adjust as needed
+      end: "rgb(75, 192, 192)", // Example: Teal-400, adjust as needed
+    },
   },
   dark: {
     primary: {

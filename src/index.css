@@ -28,6 +28,13 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+
+  /* Footer Light Mode Variables */
+  --footer-background-light: #5b21b6; /* Violet-700 */
+  --footer-text-light: #ffffff; /* White */
+  --footer-heading-light: #ffffff; /* White */
+  --footer-link-light: #0ea5e9; /* Sky-500 */
+  --footer-link-hover-light: #38bdf8; /* Sky-400 */
 }
 
 /* Base styles */
@@ -187,6 +194,13 @@ select:focus {
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
     color-scheme: light;
+
+    /* Footer Light Mode Variables - Added automatically */
+    --footer-background-light: #5b21b6; /* Example Violet */
+    --footer-text-light: #ffffff; /* White */
+    --footer-heading-light: #ffffff; /* White */
+    --footer-link-light: #0ea5e9; /* Example Sky Blue */
+    --footer-link-hover-light: #38bdf8; /* Example Lighter Sky Blue */
   }
 
   .dark {

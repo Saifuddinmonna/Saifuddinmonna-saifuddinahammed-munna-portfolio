@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactConfetti from "react-confetti";
 import { motion } from "framer-motion";
 import HomePageHero from "../CommonComponents/HomePageHero";
-import SkillProgressbar from "../CommonComponents/SkillProgressbar";
+import SkillDetails from "../CommonComponents/SkillProgressbar";
 import SkillChart from "../CommonComponents/SkillChart";
 import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfoliosForHomePage";
@@ -106,14 +106,14 @@ const HomeLayout = () => {
           <MyServicesv2 />
         </motion.div>
 
-        {/* Skills Progress Section */}
+        {/* Skills Details Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <SkillProgressbar />
+          <SkillDetails />
         </motion.div>
 
         <motion.div

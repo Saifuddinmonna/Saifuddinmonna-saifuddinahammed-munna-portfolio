@@ -12,9 +12,7 @@ const SkillSection = ({ title, skills }) => (
     transition={{ duration: 0.5 }}
     className="mb-6"
   >
-    <h4 className="text-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent p-2 m-3">
-      {title}
-    </h4>
+    <h4 className="text-lg font-semibold text-[var(--primary-main)] p-2 m-3">{title}</h4>
     <div className="p-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       {skills.split(",").map((skill, idx) => (
         <SkillTag key={idx} name={skill} />
@@ -23,7 +21,7 @@ const SkillSection = ({ title, skills }) => (
   </motion.div>
 );
 
-const SkillProgressbar = () => {
+const SkillDetails = () => {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -52,18 +50,15 @@ const SkillProgressbar = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg rounded-2xl p-8 transition-all duration-300 hover:shadow-xl dark:hover:shadow-indigo-500/10"
+          className="bg-[var(--background-paper)] backdrop-blur-sm border border-[var(--border-color)] shadow-lg rounded-2xl p-8 transition-all duration-300 hover:shadow-xl"
         >
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold text-gray-800 dark:text-white mb-8"
+            className="text-3xl font-bold text-[var(--text-primary)] mb-8"
           >
-            Skills{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">
-              Overview
-            </span>
+            Skill <span className="text-[var(--primary-main)]">Details</span>
           </motion.h1>
 
           <div className="space-y-8">
@@ -71,7 +66,7 @@ const SkillProgressbar = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300"
+              className="bg-[var(--background-default)] backdrop-blur-sm rounded-xl p-6 border border-[var(--border-color)] hover:shadow-lg transition-all duration-300"
             >
               <SkillSection
                 title="Expertise"
@@ -91,7 +86,7 @@ const SkillProgressbar = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300"
+              className="bg-[var(--background-default)] backdrop-blur-sm rounded-xl p-6 border border-[var(--border-color)] hover:shadow-lg transition-all duration-300"
             >
               <SkillSection
                 title="Frontend"
@@ -113,4 +108,4 @@ const SkillProgressbar = () => {
   );
 };
 
-export default SkillProgressbar;
+export default SkillDetails;

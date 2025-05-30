@@ -56,8 +56,8 @@ const NavbarPage2 = () => {
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[var(--background-default)] bg-opacity-95 backdrop-blur-sm shadow-lg"
-            : "bg-[var(--background-default)]"
+            ? "bg-[var(--background-paper)] bg-opacity-95 backdrop-blur-sm shadow-lg"
+            : "bg-[var(--background-paper)]"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +65,7 @@ const NavbarPage2 = () => {
             {/* Logo/Brand */}
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center group" onClick={() => setIsOpen(false)}>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300 text-transparent bg-clip-text group-hover:from-blue-700 group-hover:to-cyan-600 dark:group-hover:from-blue-300 dark:group-hover:to-cyan-200 transition-all duration-300">
+                <span className="text-2xl font-bold text-[var(--primary-main)] group-hover:text-[var(--primary-dark)] transition-all duration-300">
                   MyPortfolio
                 </span>
               </Link>
@@ -77,10 +77,10 @@ const NavbarPage2 = () => {
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`no-underline relative px-3 py-1.5 text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-transparent hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 ${
+                  className={`no-underline relative px-3 py-1.5 text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-transparent hover:border-[var(--primary-light)] ${
                     isActive(item.path)
-                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white"
-                      : "text-gray-800 dark:text-gray-100 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 hover:text-white"
+                      ? "bg-[var(--primary-main)] text-white"
+                      : "text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white"
                   }`}
                 >
                   <span className="relative z-10 flex items-center">
@@ -180,7 +180,7 @@ const NavbarPage2 = () => {
                   {isActive(item.path) && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
+                      className="absolute inset-0 bg-[var(--primary-main)]"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -188,7 +188,7 @@ const NavbarPage2 = () => {
               ))}
               <button
                 onClick={() => handleNavigation("/contact")}
-                className="ml-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-white hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
+                className="ml-2 px-3 py-1.5 bg-[var(--primary-main)] text-white text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-white hover:border-[var(--primary-light)]"
               >
                 <span className="relative z-10 flex items-center">
                   <svg
@@ -211,13 +211,13 @@ const NavbarPage2 = () => {
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="ml-2 p-1.5 rounded-md bg-gradient-to-r from-blue-500/10 to-cyan-400/10 dark:from-blue-400/10 dark:to-cyan-300/5 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 transform hover:scale-[1.02] hover:-translate-y-0.5"
+                className="ml-2 p-1.5 rounded-md bg-[var(--background-default)] hover:bg-[var(--primary-light)] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-[var(--border-color)] hover:border-[var(--primary-light)] transform hover:scale-[1.02] hover:-translate-y-0.5"
                 aria-label="Toggle theme"
               >
                 {isDarkMode ? (
-                  <FaSun className="w-4 h-4 text-yellow-500" />
+                  <FaSun className="w-4 h-4 text-[var(--warning-main)]" />
                 ) : (
-                  <FaMoon className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                  <FaMoon className="w-4 h-4 text-[var(--text-primary)]" />
                 )}
               </button>
             </div>
@@ -227,45 +227,30 @@ const NavbarPage2 = () => {
               {/* Theme Toggle Button for Mobile */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                className="p-2 rounded-lg bg-[var(--background-default)] hover:bg-[var(--background-paper)] transition-colors duration-200"
                 aria-label="Toggle theme"
               >
                 {isDarkMode ? (
-                  <FaSun className="w-5 h-5 text-yellow-500" />
+                  <FaSun className="w-5 h-5 text-[var(--warning-main)]" />
                 ) : (
-                  <FaMoon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                  <FaMoon className="w-5 h-5 text-[var(--text-primary)]" />
                 )}
               </button>
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 type="button"
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none transition-colors duration-300"
+                className="inline-flex items-center justify-center p-2 rounded-md text-[var(--text-primary)] hover:text-[var(--primary-main)] focus:outline-none transition-colors duration-300"
                 aria-controls="mobile-menu"
                 aria-expanded={isOpen}
               >
                 <span className="sr-only">Open main menu</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  {isOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16m-7 6h7"
-                    />
-                  )}
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+                  />
                 </svg>
               </button>
             </div>
@@ -276,36 +261,31 @@ const NavbarPage2 = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              className="md:hidden bg-white dark:bg-gray-900 shadow-lg"
-              id="mobile-menu"
               initial="closed"
               animate="open"
               exit="closed"
               variants={mobileMenuVariants}
-              style={{ overflow: "hidden" }}
+              className="md:hidden bg-[var(--background-paper)] border-t border-[var(--border-color)]"
             >
-              <div className="px-4 pt-2 pb-3 space-y-1">
+              <div className="px-2 pt-2 pb-3 space-y-1">
                 {navItems.map(item => (
-                  <Link
+                  <button
                     key={item.label}
-                    to={item.path}
                     onClick={() => handleNavigation(item.path)}
-                    className={`no-underline block px-4 py-1.5 rounded-lg text-base font-bold tracking-wide overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20 ${
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
                       isActive(item.path)
-                        ? "bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white"
-                        : "bg-gradient-to-r from-blue-500/10 to-cyan-400/10 dark:from-blue-400/10 dark:to-cyan-300/10 text-gray-800 dark:text-gray-100 hover:from-blue-600 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-400 hover:text-white"
+                        ? "bg-[var(--primary-main)] text-white"
+                        : "text-[var(--text-primary)] hover:bg-[var(--background-default)]"
                     }`}
                   >
-                    <span className="relative z-10 font-['Poppins']">{item.label}</span>
-                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                  </Link>
+                    {item.label}
+                  </button>
                 ))}
                 <button
-                  onClick={() => handleNavigation("/contract")}
-                  className="w-full mt-2 block text-left px-4 py-1.5 rounded-lg text-base font-bold tracking-wide bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 text-white overflow-hidden group transform hover:scale-105 transition-all duration-200 shadow-[0_0_25px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-400/10 hover:border-blue-300/20 dark:border-blue-500/10 dark:hover:border-blue-400/20"
+                  onClick={() => handleNavigation("/contact")}
+                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
                 >
-                  <span className="relative z-10 font-['Poppins']">Contact Me</span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  Contact Me
                 </button>
               </div>
             </motion.div>
