@@ -4,7 +4,7 @@ import ProfessionalProfile from "./ProfessionalProfile";
 
 const HomeLayoutComponents = () => {
   return (
-    <div className="space-y-24">
+    <div className="space-y-16 md:space-y-20">
       <ProfessionalProfile />
     </div>
   );

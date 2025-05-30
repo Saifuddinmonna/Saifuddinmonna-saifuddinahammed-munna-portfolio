@@ -71,7 +71,7 @@ const HomeLayout = () => {
       {confettiStart && <ReactConfetti />}
 
       {/* Main content sections */}
-      <div className="space-y-24">
+      <div className="space-y-16 md:space-y-20">
         {/* Hero Section */}
         <motion.div
           variants={sectionVariants}
@@ -95,14 +95,6 @@ const HomeLayout = () => {
           <SkillChart />
         </motion.div>
 
-        {/* Portfolio Section */}
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-        ></motion.div>
-
         {/* Services Section */}
         <motion.div
           variants={sectionVariants}
@@ -122,6 +114,7 @@ const HomeLayout = () => {
         >
           <SkillProgressbar />
         </motion.div>
+
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -146,7 +139,7 @@ const HomeLayout = () => {
       {showBackToTop && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors duration-300"
+          className="fixed bottom-6 right-6 bg-indigo-600 text-white p-2.5 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors duration-300"
           aria-label="Back to top"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -155,7 +148,7 @@ const HomeLayout = () => {
           whileTap={{ scale: 0.9 }}
         >
           <svg
-            className="w-6 h-6"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

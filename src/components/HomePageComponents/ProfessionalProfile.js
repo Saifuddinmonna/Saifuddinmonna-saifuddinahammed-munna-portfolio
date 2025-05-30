@@ -81,7 +81,7 @@ const ProfessionalProfile = () => {
 
   return (
     <motion.div
-      className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+      className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
@@ -89,11 +89,11 @@ const ProfessionalProfile = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Professional Summary Section */}
-        <motion.div className="text-center mb-16" variants={itemVariants}>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <motion.div className="text-center mb-12" variants={itemVariants}>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
             Professional Summary
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             I want to be an experienced and skilful Web Developer to build up a career as a Full
             Stack Web Developer. I also have a special interest to develop NPM packages to build
             more efficient and effective user experience both front end and back-end.
@@ -101,42 +101,50 @@ const ProfessionalProfile = () => {
         </motion.div>
 
         {/* Expertise Section */}
-        <motion.div className="mb-16" variants={itemVariants}>
-          <div className="flex items-center mb-8">
-            <FaCode className="text-4xl text-blue-600 mr-4" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Expertise</h3>
+        <motion.div className="mb-12" variants={itemVariants}>
+          <div className="flex items-center mb-6">
+            <FaCode className="text-3xl text-blue-600 mr-3" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+              Expertise
+            </h3>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
             {expertise.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
-                <span className="text-2xl mr-3">{skill.icon}</span>
-                <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                <span className="text-xl md:text-2xl mr-2">{skill.icon}</span>
+                <span className="text-sm md:text-base text-gray-700 dark:text-gray-300">
+                  {skill.name}
+                </span>
               </motion.div>
             ))}
           </div>
         </motion.div>
 
         {/* Comfortable Technologies Section */}
-        <motion.div className="mb-16" variants={itemVariants}>
-          <div className="flex items-center mb-8">
-            <FaLaptopCode className="text-4xl text-green-600 mr-4" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Comfortable With</h3>
+        <motion.div className="mb-12" variants={itemVariants}>
+          <div className="flex items-center mb-6">
+            <FaLaptopCode className="text-3xl text-green-600 mr-3" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+              Comfortable With
+            </h3>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
             {comfortable.map((skill, index) => (
               <motion.div
                 key={index}
-                className="flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
-                <span className="text-2xl mr-3">{skill.icon}</span>
-                <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                <span className="text-xl md:text-2xl mr-2">{skill.icon}</span>
+                <span className="text-sm md:text-base text-gray-700 dark:text-gray-300">
+                  {skill.name}
+                </span>
               </motion.div>
             ))}
           </div>
@@ -144,19 +152,21 @@ const ProfessionalProfile = () => {
 
         {/* Tools Section */}
         <motion.div variants={itemVariants}>
-          <div className="flex items-center mb-8">
-            <FaTools className="text-4xl text-purple-600 mr-4" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Tools</h3>
+          <div className="flex items-center mb-6">
+            <FaTools className="text-3xl text-purple-600 mr-3" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Tools</h3>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
             {tools.map((tool, index) => (
               <motion.div
                 key={index}
-                className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center"
+                className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center"
                 whileHover={{ scale: 1.05 }}
                 variants={itemVariants}
               >
-                <span className="text-gray-700 dark:text-gray-300">{tool}</span>
+                <span className="text-sm md:text-base text-gray-700 dark:text-gray-300">
+                  {tool}
+                </span>
               </motion.div>
             ))}
           </div>

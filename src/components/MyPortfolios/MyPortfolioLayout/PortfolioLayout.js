@@ -246,7 +246,7 @@ const PortfolioLayout = () => {
                   onChange={e => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-['Inter'] text-base"
                 />
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                <FaSearch className="absolute left-2  color-green-400 top-3  text-gray-400" />
               </div>
             </div>
             <div className="flex gap-2">
@@ -365,18 +365,22 @@ const PortfolioLayout = () => {
                           </div>
 
                           {/* Project Links */}
-                          <div className="flex flex-wrap gap-2 mb-4">
+                          <div className="flex flex-wrap gap-3 mb-4">
                             {portfolio.liveWebsite && (
                               <motion.a
                                 href={portfolio.liveWebsite}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                whileHover={{ scale: 1.02, y: -1 }}
+                                whileTap={{ scale: 0.98 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
                               >
-                                <FaExternalLinkAlt />
-                                Live Website
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <FaExternalLinkAlt className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <span className="relative z-10">Live Website</span>
                               </motion.a>
                             )}
                             {portfolio.liveWebsiteRepo && (
@@ -384,12 +388,16 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveWebsiteRepo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                whileHover={{ scale: 1.02, y: -1 }}
+                                whileTap={{ scale: 0.98 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.1 }}
                               >
-                                <FaGithub />
-                                Client Code
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <FaGithub className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <span className="relative z-10">Client Code</span>
                               </motion.a>
                             )}
                             {portfolio.liveServersite && (
@@ -397,12 +405,16 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveServersite}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                whileHover={{ scale: 1.02, y: -1 }}
+                                whileTap={{ scale: 0.98 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.2 }}
                               >
-                                <FaServer />
-                                Live Server
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <FaServer className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <span className="relative z-10">Live Server</span>
                               </motion.a>
                             )}
                             {portfolio.liveServersiteRepo && (
@@ -410,12 +422,16 @@ const PortfolioLayout = () => {
                                 href={portfolio.liveServersiteRepo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-['Poppins'] font-medium"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className="group relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white rounded-lg overflow-hidden font-['Poppins'] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                whileHover={{ scale: 1.02, y: -1 }}
+                                whileTap={{ scale: 0.98 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.3 }}
                               >
-                                <FaServer />
-                                Server Code
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <FaServer className="text-lg relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                                <span className="relative z-10">Server Code</span>
                               </motion.a>
                             )}
                           </div>
@@ -459,37 +475,72 @@ const PortfolioLayout = () => {
 
 // Portfolio Overview Component
 const PortfolioOverview = ({ overview, showMore, setShowMore }) => (
-  <div className="space-y-2">
-    {showMore
-      ? overview.map((item, index) => (
-          <p key={index} className="text-gray-700 dark:text-gray-300 font-['Inter']">
-            {item}
-          </p>
-        ))
-      : overview.slice(0, 2).map((item, index) => (
-          <p key={index} className="text-gray-700 dark:text-gray-300 font-['Inter']">
-            {item}
-          </p>
-        ))}
+  <motion.div
+    className="space-y-3"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}
+  >
+    <motion.div
+      className="space-y-3"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, staggerChildren: 0.1 }}
+    >
+      {showMore
+        ? overview.map((item, index) => (
+            <motion.p
+              key={index}
+              className="text-gray-700 dark:text-gray-300 font-['Inter'] text-sm italic leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border-l-4 border-indigo-500 dark:border-indigo-400 shadow-sm hover:shadow-md transition-all duration-300"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              whileHover={{ x: 5 }}
+            >
+              {item}
+            </motion.p>
+          ))
+        : overview.slice(0, 2).map((item, index) => (
+            <motion.p
+              key={index}
+              className="text-gray-700 dark:text-gray-300 font-['Inter'] text-sm italic leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border-l-4 border-indigo-500 dark:border-indigo-400 shadow-sm hover:shadow-md transition-all duration-300"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              whileHover={{ x: 5 }}
+            >
+              {item}
+            </motion.p>
+          ))}
+    </motion.div>
     {overview.length > 2 && (
-      <motion.button
-        className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-['Poppins'] font-medium"
-        onClick={() => setShowMore(!showMore)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <motion.div
+        className="flex justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
       >
-        {showMore ? "Show less" : "Show more"}
-        <svg
-          className={`w-4 h-4 transition-transform ${showMore ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+        <motion.button
+          className="group flex items-center gap-2 px-4 py-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-['Poppins'] font-medium text-sm bg-indigo-50 dark:bg-indigo-900/20 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-all duration-300"
+          onClick={() => setShowMore(!showMore)}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </motion.button>
+          <span>{showMore ? "Show less" : "Show more"}</span>
+          <motion.svg
+            className="w-4 h-4 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            animate={{ rotate: showMore ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </motion.svg>
+        </motion.button>
+      </motion.div>
     )}
-  </div>
+  </motion.div>
 );
 
 // Portfolio Image Component
