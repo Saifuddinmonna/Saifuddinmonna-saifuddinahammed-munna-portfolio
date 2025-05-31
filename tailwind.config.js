@@ -10,5 +10,10 @@ module.exports = withMT({
   daisyui: {
     themes: ["garden", "cupcake", "dark", "cmyk"],
   },
-  plugins: [require("kutty"), require("flowbite/plugin"), require("daisyui")],
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("kutty"),
+    require("flowbite/plugin"),
+    require("daisyui"),
+  ],
 });

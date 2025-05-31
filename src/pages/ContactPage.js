@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaFacebookF, FaLinkedinIn, FaTwitter, FaGithub } from "react-icons/fa";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
+import { ThemeContext } from "../App";
 
 // Icons (replace with your preferred icon library like react-icons)
 const MapPinIcon = () => (
@@ -74,6 +75,7 @@ const ClockIcon = () => (
 );
 
 const ContactPage = () => {
+  const { isDarkMode } = useContext(ThemeContext);
   const form = useRef();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -150,7 +152,7 @@ const ContactPage = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
     >
       <Helmet>
         <title>Contact Me | Your Portfolio</title>
@@ -162,40 +164,42 @@ const ContactPage = () => {
 
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h1>
-          <p className="text-lg text-gray-600">Have a question or want to work together?</p>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4 transition-colors duration-300">
+            Get in Touch
+          </h1>
+          <p className="text-lg text-[var(--text-secondary)] transition-colors duration-300">
+            Have a question or want to work together?
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Information */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] p-6 rounded-lg shadow-lg transition-colors duration-300">
             <div className="space-y-6">
-              <InfoItem
-                icon={<MapPinIcon />}
-                label="Address"
-                value="Dhaka, Bangladesh" // Example, update if needed
-              />
+              <InfoItem icon={<MapPinIcon />} label="Address" value="Dhaka, Bangladesh" />
               <InfoItem
                 icon={<PhoneIcon />}
                 label="Phone"
-                value="+8801623361191" // Example, update if needed
+                value="+8801623361191"
                 href="tel:+8801623361191"
               />
               <InfoItem
                 icon={<EnvelopeIcon />}
                 label="Email"
-                value="Saifuddinmonna@gmail.com" // From Footer.js
+                value="Saifuddinmonna@gmail.com"
                 href="mailto:Saifuddinmonna@gmail.com"
               />
               <InfoItem
                 icon={<ClockIcon />}
                 label="Working Hours"
-                value="Sat - Thu, 10:00 AM - 7:00 PM (Flexible for projects)" // Example, update if needed
+                value="Sat - Thu, 10:00 AM - 7:00 PM (Flexible for projects)"
               />
             </div>
 
             <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Follow Me</h3>
+              <h3 className="text-lg font-semibold mb-4 text-[var(--text-primary)] transition-colors duration-300">
+                Follow Me
+              </h3>
               <div className="flex space-x-4">
                 <SocialIcon
                   href="https://www.facebook.com/ahammed.rafayel/"
@@ -205,15 +209,14 @@ const ContactPage = () => {
                   href="https://www.linkedin.com/in/saifuddin-ahammed-monna/"
                   icon={<FaLinkedinIn />}
                 />
-                <SocialIcon href="https://twitter.com/yourprofile" icon={<FaTwitter />} />{" "}
-                {/* Update Twitter if different from footer */}
+                <SocialIcon href="https://twitter.com/yourprofile" icon={<FaTwitter />} />
                 <SocialIcon href="https://github.com/saifuddinmonna" icon={<FaGithub />} />
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] p-6 rounded-lg shadow-lg transition-colors duration-300">
             <form ref={form} onSubmit={handleSubmit} className="space-y-6">
               <FormInput
                 label="Name"
@@ -250,23 +253,27 @@ const ContactPage = () => {
                 placeholder="Subject"
               />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-[var(--text-primary)] mb-2 transition-colors duration-300"
+                >
+                  Message
+                </label>
                 <textarea
+                  id="message"
                   name="message"
+                  rows="4"
                   value={formData.message}
                   onChange={handleChange}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  placeholder="Your Message"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-300"
+                  placeholder="Your message..."
                   required
-                ></textarea>
+                />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 px-4 rounded-md font-medium hover:from-blue-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${
-                  loading ? "opacity-70 cursor-not-allowed" : ""
-                }`}
+                className="w-full bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white py-3 px-6 rounded-lg font-medium hover:from-[var(--primary-dark)] hover:to-[var(--secondary-dark)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Sending..." : "Send Message"}
               </button>
@@ -274,65 +281,73 @@ const ContactPage = () => {
           </div>
         </div>
       </div>
-      <ToastContainer position="bottom-right" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={isDarkMode ? "dark" : "light"}
+      />
     </motion.div>
   );
 };
 
-// Helper component for Info Items
 const InfoItem = ({ icon, label, value, href }) => (
-  <motion.div
-    className="flex items-start space-x-4 group"
-    whileHover={{ x: 5 }}
-    transition={{ type: "spring", stiffness: 300 }}
-  >
-    <div className="flex-shrink-0 text-cyan-500 dark:text-cyan-400 text-2xl mt-1 group-hover:scale-110 transition-transform">
+  <div className="flex items-start space-x-4">
+    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary-main)] to-[var(--secondary-main)] text-white">
       {icon}
     </div>
     <div>
-      <h3 className="font-semibold text-gray-700 dark:text-gray-300 text-sm">{label}</h3>
+      <h3 className="text-sm font-medium text-[var(--text-secondary)] transition-colors duration-300">
+        {label}
+      </h3>
       {href ? (
         <a
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-800 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="text-[var(--text-primary)] hover:text-[var(--primary-main)] transition-colors duration-300"
         >
           {value}
         </a>
       ) : (
-        <p className="text-gray-800 dark:text-white text-base">{value}</p>
+        <p className="text-[var(--text-primary)] transition-colors duration-300">{value}</p>
       )}
     </div>
-  </motion.div>
+  </div>
 );
 
-// Helper component for Social Icons
 const SocialIcon = ({ href, icon }) => (
-  <motion.a
+  <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-2xl p-2 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700 transition-all duration-300"
-    whileHover={{ scale: 1.2, rotate: 5 }}
-    whileTap={{ scale: 0.9 }}
+    className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--background-default)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white transition-all duration-300"
   >
     {icon}
-  </motion.a>
+  </a>
 );
 
-// Helper component for Form Inputs
 const FormInput = ({ label, type, name, value, onChange, placeholder, required }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <label
+      htmlFor={name}
+      className="block text-sm font-medium text-[var(--text-primary)] mb-2 transition-colors duration-300"
+    >
+      {label}
+    </label>
     <input
       type={type}
+      id={name}
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      required={required}
       placeholder={placeholder}
+      required={required}
+      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-300"
     />
   </div>
 );
