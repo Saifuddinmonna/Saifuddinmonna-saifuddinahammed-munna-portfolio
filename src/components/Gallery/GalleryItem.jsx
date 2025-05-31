@@ -1,11 +1,11 @@
-import React from 'react';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import React from "react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const GalleryItem = ({ image, onClick }) => {
   const { src, alt, title, description, projectData } = image;
 
   return (
-    <div 
+    <div
       className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out aspect-[4/3]"
       onClick={() => onClick(image)}
     >
@@ -23,7 +23,7 @@ const GalleryItem = ({ image, onClick }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-between text-sm text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-400 hover:to-purple-400 transition-all duration-300 px-2 group/link"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <span className="flex items-center transform group-hover/link:translate-x-1 transition-transform duration-300">
               <FaExternalLinkAlt className="mr-2 group-hover/link:rotate-12 transition-transform duration-300" />
@@ -38,8 +38,12 @@ const GalleryItem = ({ image, onClick }) => {
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out flex flex-col justify-end p-4 z-10">
         <div className="transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className="text-xl font-bold text-white mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 delay-100">{title}</h3>
-          <p className="text-gray-200 mb-3 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 delay-150">{description}</p>
+          <h3 className="text-xl font-bold text-white mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 delay-100">
+            {title}
+          </h3>
+          <p className="text-gray-200 mb-3 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 delay-150">
+            {description}
+          </p>
           {projectData && (
             <div className="space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 delay-200">
               {projectData.liveWebsiteRepo && (
@@ -48,7 +52,7 @@ const GalleryItem = ({ image, onClick }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center text-sm text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-400 hover:to-purple-400 transition-all duration-300 bg-black/40 px-3 py-1.5 rounded hover:bg-black/60"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={e => e.stopPropagation()}
                 >
                   <FaExternalLinkAlt className="mr-2 group-hover:rotate-12 transition-transform duration-300" />
                   GitHub Repository
@@ -67,4 +71,4 @@ const GalleryItem = ({ image, onClick }) => {
   );
 };
 
-export default GalleryItem; 
+export default GalleryItem;

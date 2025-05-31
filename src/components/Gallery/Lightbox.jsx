@@ -1,26 +1,26 @@
-import React, { useEffect } from 'react';
-import { FaExternalLinkAlt, FaTimes } from 'react-icons/fa';
+import React, { useEffect } from "react";
+import { FaExternalLinkAlt, FaTimes } from "react-icons/fa";
 
 const Lightbox = ({ image, onClose }) => {
   useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
+    const handleEscape = e => {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
   const { src, alt, title, description, projectData } = image;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
       onClick={onClose}
     >
-      <div 
+      <div
         className="relative max-w-4xl w-full mx-4 bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
@@ -32,11 +32,7 @@ const Lightbox = ({ image, onClose }) => {
         </button>
 
         <div className="relative">
-          <img
-            src={src}
-            alt={alt}
-            className="w-full h-auto max-h-[70vh] object-contain"
-          />
+          <img src={src} alt={alt} className="w-full h-auto max-h-[70vh] object-contain" />
         </div>
 
         <div className="p-6">
@@ -72,14 +68,18 @@ const Lightbox = ({ image, onClose }) => {
 
               {projectData.technology && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Technologies Used</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Technologies Used
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-300">{projectData.technology}</p>
                 </div>
               )}
 
               {projectData.overview && projectData.overview.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Project Overview</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Project Overview
+                  </h3>
                   <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
                     {projectData.overview.map((item, index) => (
                       <li key={index}>{item}</li>
@@ -95,4 +95,4 @@ const Lightbox = ({ image, onClose }) => {
   );
 };
 
-export default Lightbox; 
+export default Lightbox;

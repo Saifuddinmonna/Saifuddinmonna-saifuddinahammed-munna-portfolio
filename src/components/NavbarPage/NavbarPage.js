@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { ThemeContext } from "../../App";
 
-const NavbarPage2 = () => {
+const NavbarPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -296,4 +296,4 @@ const NavbarPage2 = () => {
   );
 };
 
-export default NavbarPage2;
+export default NavbarPage;
