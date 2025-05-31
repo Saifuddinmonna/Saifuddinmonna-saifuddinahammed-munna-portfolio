@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
 import router from "./components/Router/router";
+import TestimonialsPage from "./pages/TestimonialsPage";
 
 // Create Theme Context
 export const ThemeContext = createContext();

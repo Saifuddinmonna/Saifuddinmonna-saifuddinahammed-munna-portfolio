@@ -41,6 +41,7 @@ const NavbarPage = () => {
     { path: "/", label: "Home" },
     { path: "/PortfolioLayout", label: "My Work" },
     { path: "/gallery", label: "Gallery" },
+    { path: "/testimonials", label: "Testimonials" },
     { path: "/about", label: "About" },
     { path: "/blog", label: "Blog" },
     { path: "/resume", label: "Resume" },
