@@ -78,6 +78,7 @@ import {
   FaMobileAlt,
   FaCalculator,
   FaNewspaper,
+  FaPalette,
 } from "react-icons/fa";
 
 // Add Google Fonts
@@ -100,6 +101,58 @@ const SORT_OPTIONS = {
   NAME_DESC: "name_desc",
 };
 
+const STYLE_OPTIONS = {
+  DEFAULT: "default",
+  MODERN: "modern",
+  MINIMAL: "minimal",
+  GRADIENT: "gradient",
+  NEUMORPHIC: "neumorphic",
+};
+
+const VIEW_MODES = {
+  GRID_1: "grid-1",
+  GRID_2: "grid-2",
+  GRID_3: "grid-3",
+  LIST: "list",
+};
+
+// Add Tooltip Component
+const Tooltip = ({ children, text }) => (
+  <div className="relative group">
+    {children}
+    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-[var(--background-elevated)] text-[var(--text-primary)] text-sm rounded-md shadow-lg border border-[var(--border-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+      {text}
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-[var(--background-elevated)]"></div>
+    </div>
+  </div>
+);
+
+// Add animation variants for buttons
+const buttonVariants = {
+  initial: { scale: 1 },
+  hover: {
+    scale: 1.05,
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10,
+    },
+  },
+  tap: {
+    scale: 0.95,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10,
+    },
+  },
+};
+
+// Common button styles
+const commonButtonStyles =
+  "transition-all duration-300 ease-in-out transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-md hover:shadow-lg";
+
 const PortfolioLayout = () => {
   // Context and Hooks
   const { isDarkMode } = useContext(ThemeContext);
@@ -112,10 +165,11 @@ const PortfolioLayout = () => {
   const [datas, setDatas] = useState(portfoliosName);
   const [showMore, setShowMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState(VIEW_MODES.GRID_3);
   const [sortBy, setSortBy] = useState(SORT_OPTIONS.NEWEST);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [currentStyle, setCurrentStyle] = useState(STYLE_OPTIONS.DEFAULT);
 
   // Fetch portfolio data
   useEffect(() => {
@@ -219,6 +273,55 @@ const PortfolioLayout = () => {
     },
   };
 
+  // Style variants for different preview modes
+  const getStyleClasses = style => {
+    switch (style) {
+      case STYLE_OPTIONS.MODERN:
+        return {
+          card: "bg-gradient-to-br from-[var(--background-paper)] to-[var(--background-elevated)] border-none shadow-lg hover:shadow-xl",
+          title: "text-[var(--primary-main)] dark:text-[var(--primary-light)]",
+          category: "text-[var(--secondary-main)] dark:text-[var(--secondary-light)]",
+          description: "text-[var(--text-secondary)]",
+          button:
+            "bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white hover:from-[var(--primary-dark)] hover:to-[var(--secondary-dark)]",
+        };
+      case STYLE_OPTIONS.MINIMAL:
+        return {
+          card: "bg-[var(--background-paper)] border border-[var(--border-color)] shadow-sm hover:shadow-md",
+          title: "text-[var(--text-primary)]",
+          category: "text-[var(--text-secondary)]",
+          description: "text-[var(--text-secondary)]",
+          button:
+            "bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)]",
+        };
+      case STYLE_OPTIONS.GRADIENT:
+        return {
+          card: "bg-gradient-to-r from-[var(--primary-main)]/10 to-[var(--secondary-main)]/10 border border-[var(--border-color)]/50",
+          title: "text-[var(--primary-main)] dark:text-[var(--primary-light)]",
+          category: "text-[var(--secondary-main)] dark:text-[var(--secondary-light)]",
+          description: "text-[var(--text-secondary)]",
+          button:
+            "bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white",
+        };
+      case STYLE_OPTIONS.NEUMORPHIC:
+        return {
+          card: "bg-[var(--background-paper)] shadow-[5px_5px_10px_rgba(0,0,0,0.1),-5px_-5px_10px_rgba(255,255,255,0.1)] border-none",
+          title: "text-[var(--text-primary)]",
+          category: "text-[var(--text-secondary)]",
+          description: "text-[var(--text-secondary)]",
+          button: "bg-[var(--background-elevated)] text-[var(--text-primary)] shadow-inner",
+        };
+      default:
+        return {
+          card: "bg-[var(--background-paper)] border border-[var(--border-color)]",
+          title: "text-[var(--text-primary)]",
+          category: "text-[var(--text-secondary)]",
+          description: "text-[var(--text-secondary)]",
+          button: "bg-[var(--primary-main)] text-white",
+        };
+    }
+  };
+
   // Loading skeleton component
   const LoadingSkeleton = () => (
     <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
@@ -290,62 +393,154 @@ const PortfolioLayout = () => {
               {/* Search and Filter Bar */}
               <div className="mb-6 flex flex-wrap items-center gap-4">
                 <div className="flex-1 min-w-[200px]">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search projects..."
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent"
-                    />
-                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]" />
-                  </div>
+                  <Tooltip text="Search projects by name, category, or technology">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search projects..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent shadow-md hover:shadow-lg transition-all duration-300"
+                      />
+                      <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]" />
+                    </div>
+                  </Tooltip>
                 </div>
 
                 {/* Sort By Dropdown */}
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={e => setSortBy(e.target.value)}
-                    className="appearance-none bg-[var(--background-paper)] border border-[var(--border-color)] text-[var(--text-primary)] py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent"
+                <Tooltip text="Sort projects by different criteria">
+                  <motion.div
+                    className="relative"
+                    variants={buttonVariants}
+                    initial="initial"
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    <option value={SORT_OPTIONS.NEWEST}>Newest</option>
-                    <option value={SORT_OPTIONS.OLDEST}>Oldest</option>
-                    <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
-                    <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--text-secondary)]">
-                    <FaSort className="fill-current h-4 w-4" />
-                  </div>
-                </div>
+                    <select
+                      value={sortBy}
+                      onChange={e => setSortBy(e.target.value)}
+                      className={`appearance-none bg-[var(--background-paper)] border border-[var(--border-color)] text-[var(--text-primary)] py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent ${commonButtonStyles}`}
+                    >
+                      <option value={SORT_OPTIONS.NEWEST}>Newest</option>
+                      <option value={SORT_OPTIONS.OLDEST}>Oldest</option>
+                      <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
+                      <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--text-secondary)]">
+                      <FaSort className="fill-current h-4 w-4" />
+                    </div>
+                  </motion.div>
+                </Tooltip>
+
+                {/* Style Preview Button */}
+                <Tooltip text="Change the visual style of project cards">
+                  <motion.div
+                    className="relative group"
+                    variants={buttonVariants}
+                    initial="initial"
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCurrentStyle(prev => {
+                          const styles = Object.values(STYLE_OPTIONS);
+                          const currentIndex = styles.indexOf(prev);
+                          return styles[(currentIndex + 1) % styles.length];
+                        })
+                      }
+                      className={`px-4 py-2 rounded-md bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-[var(--background-elevated)] ${commonButtonStyles}`}
+                    >
+                      <FaPalette className="h-4 w-4 inline-block mr-2" />
+                      <span>Style: {currentStyle}</span>
+                    </button>
+                    <div className="absolute right-0 mt-2 w-48 bg-[var(--background-paper)] rounded-md shadow-lg border border-[var(--border-color)] hidden group-hover:block z-50 transform transition-all duration-300 origin-top-right">
+                      {Object.values(STYLE_OPTIONS).map(style => (
+                        <motion.button
+                          key={style}
+                          onClick={() => setCurrentStyle(style)}
+                          className={`w-full text-left px-4 py-2 hover:bg-[var(--background-elevated)] ${
+                            currentStyle === style
+                              ? "bg-[var(--primary-main)] text-white"
+                              : "text-[var(--text-primary)]"
+                          } ${commonButtonStyles}`}
+                          whileHover={{ x: 5 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        >
+                          {style.charAt(0).toUpperCase() + style.slice(1)}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                </Tooltip>
 
                 {/* View Mode Buttons */}
-                <div className="flex rounded-md shadow-sm">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("grid")}
-                    className={`px-4 py-2 rounded-l-md border border-[var(--border-color)] ${
-                      viewMode === "grid"
-                        ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
-                        : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                    } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200`}
-                    aria-label="Grid view"
+                <Tooltip text="Change the number of cards per row">
+                  <motion.div
+                    className="flex rounded-md shadow-sm"
+                    variants={buttonVariants}
+                    initial="initial"
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    <FaThLarge />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("list")}
-                    className={`px-4 py-2 rounded-r-md border border-[var(--border-color)] ${
-                      viewMode === "list"
-                        ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
-                        : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                    } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200`}
-                    aria-label="List view"
-                  >
-                    <FaList />
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode(VIEW_MODES.GRID_1)}
+                      className={`px-4 py-2 rounded-l-md border border-[var(--border-color)] ${
+                        viewMode === VIEW_MODES.GRID_1
+                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
+                      aria-label="1 card per row"
+                    >
+                      <FaThLarge className="transform rotate-45" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode(VIEW_MODES.GRID_2)}
+                      className={`px-4 py-2 border-t border-b border-[var(--border-color)] ${
+                        viewMode === VIEW_MODES.GRID_2
+                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
+                      aria-label="2 cards per row"
+                    >
+                      <div className="flex gap-1">
+                        <FaThLarge className="transform rotate-45" />
+                        <FaThLarge className="transform rotate-45" />
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode(VIEW_MODES.GRID_3)}
+                      className={`px-4 py-2 border-t border-b border-[var(--border-color)] ${
+                        viewMode === VIEW_MODES.GRID_3
+                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
+                      aria-label="3 cards per row"
+                    >
+                      <div className="flex gap-1">
+                        <FaThLarge className="transform rotate-45" />
+                        <FaThLarge className="transform rotate-45" />
+                        <FaThLarge className="transform rotate-45" />
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode(VIEW_MODES.LIST)}
+                      className={`px-4 py-2 rounded-r-md border border-[var(--border-color)] ${
+                        viewMode === VIEW_MODES.LIST
+                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
+                      aria-label="List view"
+                    >
+                      <FaList />
+                    </button>
+                  </motion.div>
+                </Tooltip>
               </div>
 
               {/* Portfolio Grid/List */}
@@ -354,7 +549,11 @@ const PortfolioLayout = () => {
               ) : datas.length > 0 ? (
                 <motion.div
                   className={`grid gap-6 md:gap-8 lg:gap-10 ${
-                    viewMode === "grid"
+                    viewMode === VIEW_MODES.GRID_1
+                      ? "grid-cols-1"
+                      : viewMode === VIEW_MODES.GRID_2
+                      ? "grid-cols-1 md:grid-cols-2"
+                      : viewMode === VIEW_MODES.GRID_3
                       ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
                       : "grid-cols-1"
                   }`}
@@ -362,136 +561,158 @@ const PortfolioLayout = () => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {datas.map(project => (
-                    <motion.div
-                      key={project.name}
-                      className={`bg-[var(--background-paper)] rounded-xl shadow-lg overflow-hidden transition-all duration-300 border border-[var(--border-color)] ${
-                        viewMode === "list" ? "flex flex-col md:flex-row" : ""
-                      }`}
-                      variants={cardVariants}
-                      whileHover={{
-                        y: viewMode === "grid" ? -5 : 0,
-                        boxShadow: isDarkMode
-                          ? "0 10px 15px -3px rgba(0 0 0 / 0.4)"
-                          : "0 10px 15px -3px rgba(0 0 0 / 0.1)",
-                      }}
-                    >
-                      <div
-                        className={`${
-                          viewMode === "list" ? "md:w-1/3 lg:w-1/4" : "aspect-video"
-                        } relative overflow-hidden`}
+                  {datas.map(project => {
+                    const styleClasses = getStyleClasses(currentStyle);
+                    return (
+                      <motion.div
+                        key={project.name}
+                        className={`rounded-xl overflow-hidden transition-all duration-300 ${styleClasses.card}`}
+                        variants={cardVariants}
+                        whileHover={{
+                          y:
+                            viewMode === VIEW_MODES.GRID_1
+                              ? -5
+                              : viewMode === VIEW_MODES.GRID_2
+                              ? -5
+                              : viewMode === VIEW_MODES.GRID_3
+                              ? -5
+                              : 0,
+                          boxShadow: isDarkMode
+                            ? "0 10px 15px -3px rgba(0 0 0 / 0.4)"
+                            : "0 10px 15px -3px rgba(0 0 0 / 0.1)",
+                        }}
                       >
-                        <PhotoProvider>
-                          <PhotoView src={`/images/${project.image[0]}`}>
-                            <motion.img
-                              src={`/images/${project.image[0]}`}
-                              alt={project.name}
-                              className="w-full h-full object-cover transition-all duration-300"
-                              whileHover={{ scale: 1.1 }}
-                              transition={{ duration: 0.3 }}
-                            />
-                          </PhotoView>
-                        </PhotoProvider>
-                        {viewMode === "grid" && (
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        )}
-                      </div>
-                      <div className={`p-5 md:p-6 lg:p-7 ${viewMode === "list" ? "flex-1" : ""}`}>
-                        <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-3">
-                          {project.name}
-                        </h3>
-                        <p className="text-sm md:text-base text-[var(--primary-main)] mb-3">
-                          {project.category}
-                        </p>
-                        <p className="text-[var(--text-secondary)] text-sm md:text-base line-clamp-3 mb-4">
-                          {project.overview[0]}
-                        </p>
-                        {viewMode === "list" && (
-                          <PortfolioOverview
-                            overview={project.overview}
-                            showMore={showMore}
-                            setShowMore={setShowMore}
-                          />
-                        )}
-
-                        {/* Project Links */}
-                        <div className="flex flex-wrap gap-3 mt-4">
-                          {project.liveWebsite && (
-                            <motion.a
-                              href={project.liveWebsite}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
-                              whileHover={{ scale: 1.05, y: -2 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <FaExternalLinkAlt className="text-sm md:text-base" />
-                              <span>Live</span>
-                            </motion.a>
+                        <div
+                          className={`${
+                            viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4" : "aspect-video"
+                          } relative overflow-hidden`}
+                        >
+                          <PhotoProvider>
+                            {project.image.map((img, index) => (
+                              <PhotoView key={index} src={`/images/${img}`}>
+                                {index === 0 && (
+                                  <motion.img
+                                    src={`/images/${img}`}
+                                    alt={`${project.name} image ${index + 1}`}
+                                    className="w-full h-full object-cover transition-all duration-300"
+                                    whileHover={{ scale: 1.1 }}
+                                    transition={{ duration: 0.3 }}
+                                  />
+                                )}
+                              </PhotoView>
+                            ))}
+                          </PhotoProvider>
+                          {viewMode === VIEW_MODES.GRID_1 && (
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           )}
-                          {project.liveWebsiteRepo && (
-                            <motion.a
-                              href={project.liveWebsiteRepo}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
-                              whileHover={{ scale: 1.05, y: -2 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <FaGithub className="text-sm md:text-base" />
-                              <span>Code</span>
-                            </motion.a>
+                          {viewMode === VIEW_MODES.GRID_2 && (
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           )}
-                          {project.liveServersite && (
-                            <motion.a
-                              href={project.liveServersite}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--success-main)] text-white rounded-lg hover:bg-[var(--success-dark)] transition-colors duration-300"
-                              whileHover={{ scale: 1.05, y: -2 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <FaServer className="text-sm md:text-base" />
-                              <span>Server</span>
-                            </motion.a>
-                          )}
-                          {project.liveServersiteRepo && (
-                            <motion.a
-                              href={project.liveServersiteRepo}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
-                              whileHover={{ scale: 1.05, y: -2 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <FaGithub className="text-sm md:text-base" />
-                              <span>Server Code</span>
-                            </motion.a>
+                          {viewMode === VIEW_MODES.GRID_3 && (
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           )}
                         </div>
-                        {viewMode === "grid" && (
-                          <div className="mt-4">
-                            {/* Render only a few technologies for grid view */}
-                            <div className="flex flex-wrap gap-2">
-                              {project.technology.slice(0, 4).map((tech, techIndex) => (
-                                <span
-                                  key={techIndex}
-                                  className="px-2 py-1 bg-[var(--background-elevated)] text-[var(--text-secondary)] text-xs rounded-md"
+                        <div
+                          className={`p-5 md:p-6 lg:p-7 ${
+                            viewMode === VIEW_MODES.LIST ? "flex-1" : ""
+                          }`}
+                        >
+                          <h3
+                            className={`text-xl md:text-2xl font-semibold mb-3 ${styleClasses.title}`}
+                          >
+                            {project.name}
+                          </h3>
+                          <p className={`text-sm md:text-base mb-3 ${styleClasses.category}`}>
+                            {project.category}
+                          </p>
+                          <p
+                            className={`text-sm md:text-base line-clamp-3 mb-4 ${styleClasses.description}`}
+                          >
+                            {project.overview[0]}
+                          </p>
+                          {viewMode === VIEW_MODES.LIST && (
+                            <PortfolioOverview
+                              overview={project.overview}
+                              showMore={showMore}
+                              setShowMore={setShowMore}
+                            />
+                          )}
+
+                          {/* Project Links with Tooltips */}
+                          <div className="flex flex-wrap gap-3 mt-4">
+                            {project.liveWebsite && (
+                              <Tooltip text="Visit the live website">
+                                <motion.a
+                                  href={project.liveWebsite}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
+                                  variants={buttonVariants}
+                                  initial="initial"
+                                  whileHover="hover"
+                                  whileTap="tap"
                                 >
-                                  {tech}
-                                </span>
-                              ))}
-                              {project.technology.length > 4 && (
-                                <span className="px-2 py-1 bg-[var(--background-elevated)] text-[var(--text-secondary)] text-xs rounded-md">
-                                  + {project.technology.length - 4}
-                                </span>
-                              )}
-                            </div>
+                                  <FaExternalLinkAlt className="text-sm md:text-base" />
+                                  <span>Live</span>
+                                </motion.a>
+                              </Tooltip>
+                            )}
+                            {project.liveWebsiteRepo && (
+                              <Tooltip text="View the source code on GitHub">
+                                <motion.a
+                                  href={project.liveWebsiteRepo}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
+                                  variants={buttonVariants}
+                                  initial="initial"
+                                  whileHover="hover"
+                                  whileTap="tap"
+                                >
+                                  <FaGithub className="text-sm md:text-base" />
+                                  <span>Code</span>
+                                </motion.a>
+                              </Tooltip>
+                            )}
+                            {project.liveServersite && (
+                              <Tooltip text="Visit the server deployment">
+                                <motion.a
+                                  href={project.liveServersite}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
+                                  variants={buttonVariants}
+                                  initial="initial"
+                                  whileHover="hover"
+                                  whileTap="tap"
+                                >
+                                  <FaServer className="text-sm md:text-base" />
+                                  <span>Server</span>
+                                </motion.a>
+                              </Tooltip>
+                            )}
+                            {project.liveServersiteRepo && (
+                              <Tooltip text="View the server code on GitHub">
+                                <motion.a
+                                  href={project.liveServersiteRepo}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
+                                  variants={buttonVariants}
+                                  initial="initial"
+                                  whileHover="hover"
+                                  whileTap="tap"
+                                >
+                                  <FaGithub className="text-sm md:text-base" />
+                                  <span>Server Code</span>
+                                </motion.a>
+                              </Tooltip>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </motion.div>
               ) : (
                 // No projects found
