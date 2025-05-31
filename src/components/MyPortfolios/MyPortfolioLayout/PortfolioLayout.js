@@ -563,10 +563,17 @@ const PortfolioLayout = () => {
                 >
                   {datas.map(project => {
                     const styleClasses = getStyleClasses(currentStyle);
+                    const photoProviderImages = project.image.map((img, idx) => ({
+                      src: `/images/${img}`,
+                      key: idx, // Unique key for each image in the provider
+                    }));
+
                     return (
                       <motion.div
                         key={project.name}
-                        className={`rounded-xl overflow-hidden transition-all duration-300 ${styleClasses.card}`}
+                        className={`rounded-xl overflow-hidden transition-all duration-300 ${
+                          styleClasses.card
+                        } ${viewMode === VIEW_MODES.LIST ? "md:flex md:flex-row items-start" : ""}`}
                         variants={cardVariants}
                         whileHover={{
                           y:
@@ -584,32 +591,53 @@ const PortfolioLayout = () => {
                       >
                         <div
                           className={`${
-                            viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4" : "aspect-video"
+                            viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4 p-2" : "aspect-video"
                           } relative overflow-hidden`}
                         >
-                          <PhotoProvider>
-                            {project.image.map((img, index) => (
-                              <PhotoView key={index} src={`/images/${img}`}>
-                                {index === 0 && (
+                          <PhotoProvider images={photoProviderImages}>
+                            {viewMode === VIEW_MODES.LIST ? (
+                              // LIST MODE: Render all images as clickable PhotoViews
+                              <div className="flex flex-wrap gap-2 justify-start items-start h-full overflow-y-auto">
+                                {project.image.map((img, index) => (
+                                  <PhotoView key={`${project.name}-img-${index}`} index={index}>
+                                    <motion.img
+                                      src={`/images/${img}`}
+                                      alt={`${project.name} image ${index + 1}`}
+                                      className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer hover:opacity-80 transition-opacity duration-300"
+                                      whileHover={{ opacity: 0.8 }}
+                                      transition={{ duration: 0.3 }}
+                                    />
+                                  </PhotoView>
+                                ))}
+                              </div>
+                            ) : (
+                              // GRID MODES: Render only the first image as a clickable PhotoView
+                              project.image.length > 0 && (
+                                <PhotoView index={0}>
                                   <motion.img
-                                    src={`/images/${img}`}
-                                    alt={`${project.name} image ${index + 1}`}
+                                    src={`/images/${project.image[0]}`}
+                                    alt={`${project.name} image 1`}
                                     className="w-full h-full object-cover transition-all duration-300"
-                                    whileHover={{ scale: 1.1 }}
+                                    whileHover={{ scale: 1.05 }}
                                     transition={{ duration: 0.3 }}
                                   />
-                                )}
-                              </PhotoView>
-                            ))}
+                                </PhotoView>
+                              )
+                            )}
                           </PhotoProvider>
-                          {viewMode === VIEW_MODES.GRID_1 && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          )}
-                          {viewMode === VIEW_MODES.GRID_2 && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          )}
-                          {viewMode === VIEW_MODES.GRID_3 && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          {/* Conditional overlays for GRID modes only */}
+                          {viewMode !== VIEW_MODES.LIST && project.image.length > 0 && (
+                            <>
+                              {viewMode === VIEW_MODES.GRID_1 && (
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              )}
+                              {viewMode === VIEW_MODES.GRID_2 && (
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              )}
+                              {viewMode === VIEW_MODES.GRID_3 && (
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              )}
+                            </>
                           )}
                         </div>
                         <div
