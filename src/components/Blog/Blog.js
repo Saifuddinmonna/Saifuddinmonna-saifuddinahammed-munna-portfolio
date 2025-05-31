@@ -1,10 +1,12 @@
-import { useState, useMemo } from "react"; // Added useMemo for optimization
+import { useState, useMemo, useContext } from "react";
 import { motion } from "framer-motion";
+import { ThemeContext } from "../../App";
 import blogPostsData from "../../data/blogData.json";
 
 const ARTICLES_PER_PAGE = 10;
 
 const Blog = () => {
+  const { isDarkMode } = useContext(ThemeContext);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,84 +94,70 @@ const Blog = () => {
   };
 
   return (
-    <div className="min-h-screen  bg-gray-50 dark:bg-gray-900 bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl">
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] sm:text-5xl md:text-6xl">
             <span className="block">Web Development</span>
-            <span className="block text-blue-600">Blog & Insights</span>
+            <span className="block text-[var(--primary-main)]">Blog & Insights</span>
           </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+          <p className="mt-3 max-w-md mx-auto text-base text-[var(--text-secondary)] sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
             Stay updated with the latest trends, tips, and insights in web development
           </p>
         </div>
 
         {/* Blog Grid */}
-        <div className="grid grid-cols-1  bg-gray-50 dark:bg-gray-900 gap-8 md:grid-cols-2 lg:grid-cols-2">
-          {currentArticles.map(
-            (
-              post // Map over currentArticles for the current page
-            ) => (
-              <motion.article
-                key={post.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                whileHover={{ y: -5 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  relative h-48">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover  bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 "
-                  />
-                  <div className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  absolute top-4 left-4">
-                    <span className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                      {post.category}
-                    </span>
-                  </div>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
+          {currentArticles.map(post => (
+            <motion.article
+              key={post.id}
+              className="bg-[var(--background-paper)] rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              whileHover={{ y: -5 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="relative h-48">
+                <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                <div className="absolute top-4 left-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--background-paper)] text-[var(--primary-main)]">
+                    {post.category}
+                  </span>
                 </div>
-                <div className="p-6  bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 ">
-                  <div className="flex items-center  bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  text-sm text-gray-500 mb-2">
-                    <span className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-                      {post.date}
-                    </span>
-                    <span className="mx-2">•</span>
-                    <span>{post.readTime}</span>
-                  </div>
-                  <h2 className="text-xl font-semibold bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-600  mb-2">
-                    {post.title}
-                  </h2>
-                  <p className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  mb-4 line-clamp-3">
-                    {" "}
-                    {/* Added line-clamp for consistent excerpt height */}
-                    {post.excerpt}
-                  </p>
-                  <button
-                    onClick={() => handleReadMore(post)}
-                    className="inline-flex items-center text-blue-600 hover:text-blue-800"
+              </div>
+              <div className="p-6">
+                <div className="flex items-center text-sm text-[var(--text-secondary)] mb-2">
+                  <span>{post.date}</span>
+                  <span className="mx-2">•</span>
+                  <span>{post.readTime}</span>
+                </div>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                  {post.title}
+                </h2>
+                <p className="text-[var(--text-secondary)] mb-4 line-clamp-3">{post.excerpt}</p>
+                <button
+                  onClick={() => handleReadMore(post)}
+                  className="inline-flex items-center text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                >
+                  Read More
+                  <svg
+                    className="ml-2 w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    Read More
-                    <svg
-                      className="ml-2 w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </motion.article>
-            )
-          )}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </motion.article>
+          ))}
         </div>
 
         {/* Pagination Controls */}
@@ -178,7 +166,7 @@ const Blog = () => {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               Previous
             </button>
@@ -188,16 +176,19 @@ const Blog = () => {
                 <button
                   key={index}
                   onClick={() => handlePageClick(page)}
-                  className={`px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md text-sm sm:text-base ${
+                  className={`px-3 py-2 sm:px-4 sm:py-2 border border-[var(--border-main)] rounded-md text-sm sm:text-base ${
                     currentPage === page
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white text-gray-700 hover:bg-gray-50"
+                      ? "bg-[var(--primary-main)] text-[var(--text-primary)] border-[var(--primary-main)]"
+                      : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
                   }`}
                 >
                   {page}
                 </button>
               ) : (
-                <span key={index} className="px-1 sm:px-2 py-2 text-gray-500 text-sm sm:text-base">
+                <span
+                  key={index}
+                  className="px-1 sm:px-2 py-2 text-[var(--text-secondary)] text-sm sm:text-base"
+                >
                   {page}
                 </span>
               )
@@ -206,7 +197,7 @@ const Blog = () => {
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               Next
             </button>
@@ -214,28 +205,30 @@ const Blog = () => {
         )}
 
         {/* Newsletter Section */}
-        <div className="mt-16 bg-blue-600 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Subscribe to Our Newsletter</h2>
-          <p className="text-blue-100 mb-6">
+        <div className="mt-16 bg-[var(--primary-main)] rounded-2xl p-8 text-center">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+            Subscribe to Our Newsletter
+          </h2>
+          <p className="text-[var(--text-secondary)] mb-6">
             Get the latest articles and insights delivered straight to your inbox
           </p>
           <div className="max-w-md mx-auto flex gap-4">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] bg-[var(--background-paper)] text-[var(--text-primary)]"
             />
-            <button className="px-6 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors duration-300">
+            <button className="px-6 py-2 bg-[var(--background-paper)] text-[var(--primary-main)] rounded-lg font-semibold hover:bg-[var(--background-elevated)] transition-colors duration-300">
               Subscribe
             </button>
           </div>
         </div>
       </div>
 
-      {/* Article Modal (remains the same) */}
+      {/* Article Modal */}
       {showModal && selectedArticle && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--background-paper)] rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="relative">
               <img
                 src={selectedArticle.image}
@@ -244,7 +237,7 @@ const Blog = () => {
               />
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75"
+                className="absolute top-4 right-4 text-[var(--text-primary)] bg-[var(--background-paper)] bg-opacity-50 rounded-full p-2 hover:bg-opacity-75"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -257,18 +250,18 @@ const Blog = () => {
               </button>
             </div>
             <div className="p-6">
-              <div className="flex items-center text-sm text-gray-500 mb-4">
+              <div className="flex items-center text-sm text-[var(--text-secondary)] mb-4">
                 <span>{selectedArticle.date}</span>
                 <span className="mx-2">•</span>
                 <span>{selectedArticle.readTime}</span>
                 <span className="mx-2">•</span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  {selectedArticle.category}
-                </span>
+                <span className="text-[var(--primary-main)]">{selectedArticle.category}</span>
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">{selectedArticle.title}</h2>
-              <div className="prose max-w-none">
-                <p className="text-gray-600 whitespace-pre-line">{selectedArticle.content}</p>
+              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+                {selectedArticle.title}
+              </h2>
+              <div className="prose prose-lg max-w-none text-[var(--text-primary)]">
+                {selectedArticle.content}
               </div>
             </div>
           </div>
