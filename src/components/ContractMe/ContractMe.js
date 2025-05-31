@@ -18,33 +18,35 @@ const ContractMe = () => {
       }
     );
   };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   return (
-    <div className="">
-      <div className=" p-5 shadow-lg border rounded-lgtransition ease-in-out delay-150  hover:-translate-y-1 hover:scale-104 hover:bg-indigo-100 duration-300  m-6 border  bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  rounded-xl">
-        <div className="border rounded-2xl m-2 ">
-          <h1 class="text-3xl font-semibold text-center  bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  lg:text-4xl black:text-white white:text-dark">
+    <div className="transition-colors duration-200">
+      <div className="p-5 shadow-lg border rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-104 hover:bg-opacity-10 hover:bg-primary-light m-6 border bg-background-default text-text-primary rounded-xl">
+        <div className="border rounded-2xl m-2">
+          <h1 className="text-3xl font-semibold text-center bg-background-default text-text-primary lg:text-4xl">
             Contract
-            <span class="text-blue-500"> Me...</span>
+            <span className="text-primary-main"> Me...</span>
           </h1>
         </div>
 
         <form
-          className="flex flex-col bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+          className="flex flex-col bg-background-default text-text-primary"
           ref={form}
           onSubmit={sendEmail}
         >
           <div className="flex m-2 flex-col">
             <label
-              className="block text-sm mb-1 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+              className="block text-sm mb-1 bg-background-default text-text-primary"
               htmlFor="name"
             >
               Your Name
             </label>
             <input
-              className="rounded-xl p-2 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700"
+              className="rounded-xl p-2 bg-background-default text-text-primary border border-border-main focus:border-primary-main focus:ring-1 focus:ring-primary-main transition-colors duration-200"
               placeholder="Type Your Name"
               id="name"
               name="user_name"
@@ -53,13 +55,13 @@ const ContractMe = () => {
 
           <div className="flex m-2 flex-col">
             <label
-              className="block text-sm mb-1 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+              className="block text-sm mb-1 bg-background-default text-text-primary"
               htmlFor="phone"
             >
               Phone Number
             </label>
             <input
-              className="rounded-xl p-2 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700"
+              className="rounded-xl p-2 bg-background-default text-text-primary border border-border-main focus:border-primary-main focus:ring-1 focus:ring-primary-main transition-colors duration-200"
               type="number"
               placeholder="Type Your Phone Number"
               id="phone"
@@ -69,13 +71,13 @@ const ContractMe = () => {
 
           <div className="flex m-2 flex-col">
             <label
-              className="block text-sm mb-1 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+              className="block text-sm mb-1 bg-background-default text-text-primary"
               htmlFor="email"
             >
               Your Email
             </label>
             <input
-              className="rounded-xl p-2 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700"
+              className="rounded-xl p-2 bg-background-default text-text-primary border border-border-main focus:border-primary-main focus:ring-1 focus:ring-primary-main transition-colors duration-200"
               type="email"
               name="user_email"
               placeholder="Type Your Email"
@@ -85,13 +87,13 @@ const ContractMe = () => {
 
           <div className="flex m-2 flex-col">
             <label
-              className="block text-sm mb-1 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+              className="block text-sm mb-1 bg-background-default text-text-primary"
               htmlFor="message"
             >
               Your Message
             </label>
             <textarea
-              className="rounded-2xl p-2 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700"
+              className="rounded-2xl p-2 bg-background-default text-text-primary border border-border-main focus:border-primary-main focus:ring-1 focus:ring-primary-main transition-colors duration-200"
               name="message"
               id="message"
               placeholder="Type Your Message"
@@ -101,7 +103,7 @@ const ContractMe = () => {
 
           <div className="block text-sm mb-1">
             <input
-              className="block my-3 p-2 rounded bg-gradient-to-r from-cyan-500 to-blue-500 w-full text-white font-medium hover:from-cyan-600 hover:to-blue-600 transition-all duration-200"
+              className="block my-3 p-2 rounded bg-gradient-to-r from-secondary-main to-primary-main w-full text-white font-medium hover:from-secondary-dark hover:to-primary-dark transition-all duration-200"
               type="submit"
               value="Send"
             />

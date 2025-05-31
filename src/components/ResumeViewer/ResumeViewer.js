@@ -15,11 +15,21 @@ const ResumeViewer = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1.0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
     }
+    // Check system dark mode preference
+    const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setIsDarkMode(darkModeMediaQuery.matches);
+
+    // Listen for changes in system dark mode preference
+    const handleDarkModeChange = e => setIsDarkMode(e.matches);
+    darkModeMediaQuery.addEventListener("change", handleDarkModeChange);
+
+    return () => darkModeMediaQuery.removeEventListener("change", handleDarkModeChange);
   }, [location.state]);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -116,6 +126,14 @@ const ResumeViewer = () => {
     },
   };
 
+  const getHtmlUrl = url => {
+    // Add theme parameter to HTML files
+    if (url.endsWith(".html")) {
+      return `${url}?theme=${isDarkMode ? "dark" : "light"}`;
+    }
+    return url;
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "html":
@@ -123,15 +141,15 @@ const ResumeViewer = () => {
       case "singlePage":
         return (
           <div className="relative">
-            <div className="-mt-[10%] absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-3 rounded-t-lg z-50">
+            <div className="-mt-[10%] absolute top-0 left-0 right-0 bg-gradient-to-r from-primary-main to-secondary-main p-3 rounded-t-lg z-50">
               <p className="text-sm text-white/80 font-medium flex items-center">
                 {resumeData[activeTab].icon}
                 <span className="ml-2">Viewing: {resumeData[activeTab].title}</span>
               </p>
             </div>
             <iframe
-              src={resumeData[activeTab].url}
-              className="w-full h-[800px] rounded-lg shadow-xl mt-12"
+              src={getHtmlUrl(resumeData[activeTab].url)}
+              className="w-full h-[800px] rounded-lg shadow-xl mt-12 bg-background-default"
               title={`${resumeData[activeTab].title}`}
             />
           </div>
@@ -140,7 +158,7 @@ const ResumeViewer = () => {
       case "cvPdf":
         return (
           <div className="flex flex-col items-center">
-            <div className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-2 rounded-t-lg">
+            <div className="w-full bg-gradient-to-r from-primary-main to-secondary-main p-2 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-white font-medium flex items-center">
                   {resumeData[activeTab].icon}
@@ -174,7 +192,7 @@ const ResumeViewer = () => {
                           onClick={() => setScale(level)}
                           className={`px-1.5 py-0.5 text-xs rounded transition-colors ${
                             scale === level
-                              ? "bg-white text-blue-600"
+                              ? "bg-white text-primary-main"
                               : "text-white hover:bg-white/20"
                           }`}
                         >
@@ -207,38 +225,51 @@ const ResumeViewer = () => {
             </div>
             {isLoading && (
               <div className="flex items-center justify-center h-20">
-                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary-main"></div>
               </div>
             )}
-            <Document
-              file={resumeData[activeTab].url}
-              onLoadSuccess={onDocumentLoadSuccess}
-              className="flex justify-center mt-2"
-              loading={null}
-            >
-              <Page
-                pageNumber={pageNumber}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                className="shadow-xl"
-                scale={scale}
-              />
-            </Document>
+            <div className="relative w-full flex justify-center mt-2">
+              <Document
+                file={resumeData[activeTab].url}
+                onLoadSuccess={onDocumentLoadSuccess}
+                className="relative"
+                loading={null}
+              >
+                <div className="relative">
+                  {isDarkMode && (
+                    <div
+                      className="absolute inset-0 bg-black/40 pointer-events-none z-20 rounded-lg"
+                      style={{
+                        backdropFilter: "brightness(0.7) contrast(1.2)",
+                        WebkitBackdropFilter: "brightness(0.7) contrast(1.2)",
+                      }}
+                    />
+                  )}
+                  <Page
+                    pageNumber={pageNumber}
+                    renderTextLayer={true}
+                    renderAnnotationLayer={true}
+                    className="shadow-xl relative z-10"
+                    scale={scale}
+                  />
+                </div>
+              </Document>
+            </div>
             <div className="flex items-center gap-3 mt-2">
               <button
                 onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
                 disabled={pageNumber <= 1}
-                className="px-3 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg disabled:opacity-50 hover:from-blue-700 hover:to-cyan-600 transition-all duration-300"
+                className="px-3 py-1.5 text-sm bg-gradient-to-r from-primary-main to-secondary-main text-white rounded-lg disabled:opacity-50 hover:from-primary-dark hover:to-secondary-dark transition-all duration-300"
               >
                 Previous
               </button>
-              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+              <p className="text-sm text-text-primary font-medium">
                 Page {pageNumber} of {numPages}
               </p>
               <button
                 onClick={() => setPageNumber(prev => Math.min(prev + 1, numPages))}
                 disabled={pageNumber >= numPages}
-                className="px-3 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg disabled:opacity-50 hover:from-blue-700 hover:to-cyan-600 transition-all duration-300"
+                className="px-3 py-1.5 text-sm bg-gradient-to-r from-primary-main to-secondary-main text-white rounded-lg disabled:opacity-50 hover:from-primary-dark hover:to-secondary-dark transition-all duration-300"
               >
                 Next
               </button>
@@ -248,19 +279,17 @@ const ResumeViewer = () => {
       case "video":
         return (
           <div className="relative">
-            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 p-3 rounded-t-lg">
+            <div className="w-full bg-gradient-to-r from-primary-main to-secondary-main p-2 rounded-t-lg">
               <p className="text-sm text-white font-medium flex items-center">
-                {resumeData.video.icon}
-                <span className="ml-2">Viewing: {resumeData.video.title}</span>
+                {resumeData[activeTab].icon}
+                <span className="ml-2">Viewing: {resumeData[activeTab].title}</span>
               </p>
             </div>
             <video
+              src={resumeData[activeTab].url}
               controls
-              className="w-full max-w-4xl rounded-lg shadow-xl mt-12"
-              src={resumeData.video.url}
-            >
-              Your browser does not support the video tag.
-            </video>
+              className="w-full rounded-b-lg shadow-xl"
+            />
           </div>
         );
       default:
@@ -269,329 +298,296 @@ const ResumeViewer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Top Navigation Bar */}
-      <div className="bg-white dark:bg-gray-800 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center pt-3 h-16">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Resume Collections:
-            </h1>
-            <div className="flex space-x-4">
-              {Object.keys(resumeData).map(tab => (
-                <motion.button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    activeTab === tab
-                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  {resumeData[tab].icon}
-                  <span className="ml-2">{resumeData[tab].title}</span>
-                </motion.button>
-              ))}
-            </div>
-          </div>
-        </div>
+    <div className="container mx-auto px-4 py-8 transition-colors duration-200">
+      <div className="flex flex-wrap gap-2 mb-6">
+        {Object.entries(resumeData).map(([key, value]) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+              activeTab === key
+                ? "bg-gradient-to-r from-primary-main to-secondary-main text-white"
+                : "bg-background-paper text-text-primary hover:bg-background-elevated"
+            }`}
+          >
+            {value.icon}
+            <span>{value.title}</span>
+          </button>
+        ))}
       </div>
+      <div className="flex gap-8">
+        {/* Main Content */}
+        <div className="flex-1">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-background-default rounded-xl shadow-xl overflow-hidden"
+          >
+            {renderContent()}
+          </motion.div>
+        </div>
 
-      {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          {/* Main Content */}
-          <div className="flex-1">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
-            >
-              {renderContent()}
-            </motion.div>
-          </div>
+        {/* Right Sidebar */}
+        <div className="w-64 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="bg-background-default rounded-xl shadow-xl overflow-hidden"
+          >
+            <div className="bg-gradient-to-r from-primary-main to-secondary-main p-2">
+              <h2 className="text-lg font-semibold text-white/80">Quick Actions</h2>
+            </div>
+            <div className="p-2 space-y-1.5">
+              <a
+                href={resumeData.html.url}
+                download
+                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+              >
+                <svg
+                  className="w-3.5 h-3.5 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                <span className="relative z-10">Download HTML Resume</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              </a>
+              <a
+                href={resumeData.cv.url}
+                download
+                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+              >
+                <svg
+                  className="w-3.5 h-3.5 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                <span className="relative z-10">Download HTML CV</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              </a>
+              <a
+                href={resumeData.singlePage.url}
+                download
+                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+              >
+                <svg
+                  className="w-3.5 h-3.5 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                <span className="relative z-10">Download Single Page Resume</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              </a>
+              <a
+                href={resumeData.pdf.url}
+                download
+                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+              >
+                <svg
+                  className="w-3.5 h-3.5 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                <span className="relative z-10">Download PDF Resume</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              </a>
+              <a
+                href={resumeData.cvPdf.url}
+                download
+                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+              >
+                <svg
+                  className="w-3.5 h-3.5 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                <span className="relative z-10">Download PDF CV</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              </a>
+            </div>
+          </motion.div>
 
-          {/* Right Sidebar */}
-          <div className="w-64 space-y-4">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
-            >
-              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-2">
-                <h2 className="text-lg font-semibold text-white/80">Quick Actions</h2>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-background-default rounded-xl shadow-xl overflow-hidden"
+          >
+            <div className="bg-gradient-to-r from-primary-main to-secondary-main p-2">
+              <h2 className="text-lg font-semibold text-white/80">Resume Info</h2>
+            </div>
+            <div className="p-2 space-y-1.5 text-sm text-text-primary">
+              <p className="flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Last Updated: March 2024
+              </p>
+              <p className="flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                Available Formats: HTML, PDF, Video
+              </p>
+              <p className="flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+                  />
+                </svg>
+                Total Files: 6 Documents
+              </p>
+              <div className="pt-2 border-t border-border-main">
+                <p className="font-medium mb-2">File Details:</p>
+                <ul className="space-y-1">
+                  <li className="flex justify-between">
+                    <span>Resume:</span>
+                    <span>23KB</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>HTML CV:</span>
+                    <span>43KB</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Single Page Resume:</span>
+                    <span>15KB</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>PDF Resume:</span>
+                    <span>144KB</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>PDF CV:</span>
+                    <span>329KB</span>
+                  </li>
+                </ul>
               </div>
-              <div className="p-2 space-y-1.5">
-                <a
-                  href={resumeData.html.url}
-                  download
-                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-blue-700 to-cyan-600 text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-blue-500/20 hover:border-blue-400/30"
-                >
-                  <svg
-                    className="w-3.5 h-3.5 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  <span className="relative z-10 font-['Poppins']">Download HTML Resume</span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </a>
-                <a
-                  href={resumeData.cv.url}
-                  download
-                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-green-700 to-deep-orange-800     text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(16,185,129,0.4)] border border-green-500/20 hover:border-green-400/30"
-                >
-                  <svg
-                    className="w-3.5 h-3.5 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  <span className="relative z-10 font-['Poppins']">Download HTML CV</span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </a>
-                <a
-                  href={resumeData.singlePage.url}
-                  download
-                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-purple-700 to-indigo-600 text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(124,58,237,0.4)] border border-purple-500/20 hover:border-purple-400/30"
-                >
-                  <svg
-                    className="w-3.5 h-3.5 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  <span className="relative z-10 font-['Poppins']">
-                    Download Single Page Resume
-                  </span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </a>
-                <a
-                  href={resumeData.pdf.url}
-                  download
-                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-red-700 to-pink-600 text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(239,68,68,0.4)] border border-red-500/20 hover:border-red-400/30"
-                >
-                  <svg
-                    className="w-3.5 h-3.5 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  <span className="relative z-10 font-['Poppins']">Download PDF Resume</span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </a>
-                <a
-                  href={resumeData.cvPdf.url}
-                  download
-                  className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-orange-700 to-yellow-600 text-white/80 rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(249,115,22,0.4)] border border-orange-500/20 hover:border-orange-400/30"
-                >
-                  <svg
-                    className="w-3.5 h-3.5 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  <span className="relative z-10 font-['Poppins']">Download PDF CV</span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                </a>
+              <div className="pt-2 border-t border-border-main">
+                <p className="font-medium mb-2">Features:</p>
+                <ul className="space-y-1">
+                  <li className="flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-2 text-primary-main"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Interactive PDF Viewer
+                  </li>
+                  <li className="flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-2 text-primary-main"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Zoom Controls
+                  </li>
+                  <li className="flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-2 text-primary-main"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Multiple Formats
+                  </li>
+                  <li className="flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-2 text-primary-main"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Direct Downloads
+                  </li>
+                </ul>
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
-            >
-              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-2">
-                <h2 className="text-lg font-semibold text-white/80">Resume Info</h2>
-              </div>
-              <div className="p-2 space-y-1.5 text-sm text-gray-600 dark:text-gray-300">
-                <p className="flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Last Updated: March 2024
-                </p>
-                <p className="flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Available Formats: HTML, PDF, Video
-                </p>
-                <p className="flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
-                    />
-                  </svg>
-                  Total Files: 6 Documents
-                </p>
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <p className="font-medium mb-2">File Details:</p>
-                  <ul className="space-y-1">
-                    <li className="flex justify-between">
-                      <span> Resume:</span>
-                      <span>23KB</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>HTML CV:</span>
-                      <span>43KB</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Single Page Resume:</span>
-                      <span>15KB</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>PDF Resume:</span>
-                      <span>144KB</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>PDF CV:</span>
-                      <span>329KB</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <p className="font-medium mb-2">Features:</p>
-                  <ul className="space-y-1">
-                    <li className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      Interactive PDF Viewer
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      Zoom Controls
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      Multiple Formats
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      Direct Downloads
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

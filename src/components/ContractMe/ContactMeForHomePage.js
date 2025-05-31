@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { ThemeContext } from "../../App";
 
 const ContactMeForHomePage = () => {
+  const { isDarkMode } = useContext(ThemeContext);
+
   const contactInfo = [
     {
       icon: FaEnvelope,
@@ -27,7 +30,7 @@ const ContactMeForHomePage = () => {
   return (
     <section
       id="contact"
-      className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[var(--background-default)] to-[var(--background-paper)] dark:from-[var(--background-default)] dark:to-[var(--background-elevated)]"
+      className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[var(--background-default)] to-[var(--background-paper)] dark:from-[var(--background-default)] dark:to-[var(--background-elevated)] transition-colors duration-300"
     >
       <div className="container mx-auto px-4">
         <motion.div
@@ -37,13 +40,13 @@ const ContactMeForHomePage = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--text-primary)] dark:text-[var(--text-primary)] capitalize mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--text-primary)] capitalize mb-6 transition-colors duration-300">
             Get in{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)] transition-all duration-300">
               Touch
             </span>
           </h1>
-          <p className="mt-4 text-lg text-[var(--text-secondary)] dark:text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed transition-colors duration-300">
             Feel free to reach out to me for any questions or opportunities
           </p>
         </motion.div>
@@ -61,17 +64,32 @@ const ContactMeForHomePage = () => {
               href={info.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-6 rounded-xl border border-[var(--border-light)] dark:border-[var(--border-main)] transition-all duration-300 ease-in-out bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] backdrop-blur-sm hover:-translate-y-2 hover:scale-[1.02] hover:border-[var(--primary-main)]/50 dark:hover:border-[var(--primary-light)]/50 hover:shadow-[var(--shadow-lg)] dark:hover:shadow-[var(--shadow-lg)] text-center group"
+              className={`p-6 rounded-xl border transition-all duration-300 ease-in-out backdrop-blur-sm hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[var(--shadow-lg)] text-center group
+                ${
+                  isDarkMode
+                    ? "border-[var(--border-main)] bg-[var(--background-elevated)] hover:border-[var(--primary-light)]/50"
+                    : "border-[var(--border-light)] bg-[var(--background-paper)] hover:border-[var(--primary-main)]/50"
+                }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-[var(--background-elevated)] dark:to-[var(--background-paper)] rounded-2xl mb-6 shadow-lg shadow-[var(--primary-main)]/10 dark:shadow-[var(--primary-light)]/5 group-hover:scale-110 transition-transform duration-300">
-                <info.icon className="w-8 h-8 text-[var(--primary-main)] dark:text-[var(--primary-light)] group-hover:scale-110 transition-transform duration-300" />
+              <div
+                className={`inline-flex items-center justify-center p-4 rounded-2xl mb-6 shadow-lg transition-all duration-300 group-hover:scale-110
+                ${
+                  isDarkMode
+                    ? "bg-gradient-to-br from-[var(--background-elevated)] to-[var(--background-paper)] shadow-[var(--primary-light)]/5"
+                    : "bg-gradient-to-br from-indigo-50 to-blue-50 shadow-[var(--primary-main)]/10"
+                }`}
+              >
+                <info.icon
+                  className={`w-8 h-8 transition-colors duration-300 group-hover:scale-110
+                  ${isDarkMode ? "text-[var(--primary-light)]" : "text-[var(--primary-main)]"}`}
+                />
               </div>
-              <h3 className="mb-4 text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] capitalize">
+              <h3 className="mb-4 text-xl font-semibold text-[var(--text-primary)] capitalize transition-colors duration-300">
                 {info.title}
               </h3>
-              <p className="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)] leading-relaxed">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed transition-colors duration-300">
                 {info.content}
               </p>
             </motion.a>
