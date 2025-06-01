@@ -1,19 +1,19 @@
-const withMT = require("@material-tailwind/react/utils/withMT");
-
 /** @type {import('tailwindcss').Config} */
-module.exports = withMT({
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "var(--primary-default)",
+        secondary: "var(--secondary-default)",
+        background: "var(--background-default)",
+        text: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+        },
+      },
+    },
   },
-  daisyui: {
-    themes: ["garden", "cupcake", "dark", "cmyk"],
-  },
-  plugins: [
-    require("@tailwindcss/aspect-ratio"),
-    require("kutty"),
-    require("flowbite/plugin"),
-    require("daisyui"),
-  ],
-});
+  plugins: [],
+};

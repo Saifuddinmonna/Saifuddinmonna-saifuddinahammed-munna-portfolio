@@ -4,8 +4,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { SocketProvider } from "./context/SocketContext";
+import { ChatProvider } from "./context/ChatContext";
+import NotificationBell from "./components/Notifications/NotificationBell";
+import LiveChat from "./components/Chat/LiveChat";
 import router from "./components/Router/router";
-import TestimonialsPage from "./pages/TestimonialsPage";
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -78,14 +83,23 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-          {confettiStart && <ReactConfetti />}
-          <RouterProvider router={router} />
-        </div>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <SocketProvider>
+      <ChatProvider>
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
+              {confettiStart && <ReactConfetti />}
+              <RouterProvider router={router} />
+              <div className="fixed top-4 right-4 z-50">
+                <NotificationBell />
+              </div>
+              <LiveChat />
+              <ToastContainer />
+            </div>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </ChatProvider>
+    </SocketProvider>
   );
 }
 

@@ -62,6 +62,7 @@ import {
 // Corrected import for VS Code icon
 import { VscVscode } from "react-icons/vsc";
 import { Router } from "react-router-dom";
+import { useChat } from "../../context/ChatContext";
 
 // Helper: Section Component for consistent styling and animation
 const Section = ({ children, className = "", delay = 0 }) => (
@@ -94,6 +95,7 @@ const About = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const [confettiActive, setConfettiActive] = useState(true);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const { openChat } = useChat();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -328,7 +330,7 @@ const About = () => {
   const projects = [
     {
       name: "Personal Portfolio (This Site)",
-      image: "images/project-portfolio.png", // Replace with actual image path
+      image: "/images/portfolio.png",
       tech: ["React", "Framer Motion", "Tailwind CSS", "Firebase"],
       description:
         "A dynamic and animated showcase of my skills, projects, and journey into web development, designed to be engaging and informative.",
@@ -337,7 +339,7 @@ const About = () => {
     },
     {
       name: "UsedPhone - E-commerce Resale",
-      image: "images/project-usedphone.png", // Replace
+      image: "/images/usedphone.png",
       tech: [
         "React",
         "NodeJS",
@@ -357,7 +359,7 @@ const About = () => {
     },
     {
       name: "RepairService - Service Platform",
-      image: "images/project-repairservice.png", // Replace
+      image: "/images/repairservice.png",
       tech: ["React", "NodeJS", "ExpressJS", "MongoDB", "Firebase", "Tailwind CSS", "Vercel"],
       description:
         "A platform for individual service providers, featuring Google login, service management, and client review system.",
@@ -367,13 +369,13 @@ const About = () => {
     },
     {
       name: "EnglishLearning - EdTech Platform",
-      image: "images/project-englishlearning.png", // Replace
+      image: "/images/englishlearning.png",
       tech: ["React", "NodeJS", "ExpressJS", "MongoDB", "Firebase", "Tailwind CSS", "Vercel"],
       description:
         "An online learning platform offering courses with premium access upon registration, built with the MERN stack.",
-      liveLink: "https://englishlearning-3609b.web.app/", // Replace with actual link if available
-      clientGithub: "https://github.com/Saifuddinmonna/englishlearning-client", // Replace
-      serverGithub: "https://github.com/Saifuddinmonna/englishlearning-server", // Replace
+      liveLink: "https://englishlearning-3609b.web.app/",
+      clientGithub: "https://github.com/Saifuddinmonna/englishlearning-client",
+      serverGithub: "https://github.com/Saifuddinmonna/englishlearning-server",
     },
   ];
 
@@ -447,15 +449,14 @@ const About = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <Link
-                  to="/contact"
-                  className=" no-underline inline-flex items-center bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-main)] hover:from-[var(--primary-main)] hover:to-[var(--primary-main)] text-[var(--text-primary)] font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
+                <button
+                  onClick={openChat}
+                  className="no-underline inline-flex items-center bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-main)] hover:from-[var(--primary-main)] hover:to-[var(--primary-main)] text-[var(--text-primary)] font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
                 >
                   <FaEnvelope className="mr-2" /> Get In Touch
-                </Link>
+                </button>
                 <Link
                   to="/resume"
-                  // Link to your PDF resume
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center bg-[var(--background-paper)] hover:bg-[var(--background-paper)] text-[var(--text-primary)] font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
@@ -607,14 +608,15 @@ const About = () => {
                 >
                   <div className="relative h-56 sm:h-64 w-full overflow-hidden">
                     <img
-                      src={
-                        project.image ||
-                        `https://via.placeholder.com/400x250/CCCCCC/FFFFFF?text=${encodeURIComponent(
-                          project.name
-                        )}`
-                      } // Placeholder if no image
+                      src={project.image}
                       alt={project.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={e => {
+                        e.target.onerror = null;
+                        e.target.src = `https://via.placeholder.com/400x250/CCCCCC/FFFFFF?text=${encodeURIComponent(
+                          project.name
+                        )}`;
+                      }}
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-0 transition-opacity duration-300"></div>
                   </div>

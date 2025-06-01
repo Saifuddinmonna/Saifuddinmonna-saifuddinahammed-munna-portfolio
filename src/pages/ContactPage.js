@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaFacebookF, FaLinkedinIn, FaTwitter, FaGithub } from "react-icons/fa";
+import { FaFacebookF, FaLinkedinIn, FaTwitter, FaGithub, FaComments } from "react-icons/fa";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../App";
+import { useChat } from "../context/ChatContext";
 
 // Icons (replace with your preferred icon library like react-icons)
 const MapPinIcon = () => (
@@ -76,6 +77,7 @@ const ClockIcon = () => (
 
 const ContactPage = () => {
   const { isDarkMode } = useContext(ThemeContext);
+  const { openChat } = useChat();
   const form = useRef();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -164,9 +166,17 @@ const ContactPage = () => {
 
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4 transition-colors duration-300">
-            Get in Touch
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl font-bold text-[var(--text-primary)] transition-colors duration-300">
+              Get in Touch
+            </h1>
+            <button
+              onClick={openChat}
+              className="inline-flex items-center bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white py-2 px-4 rounded-lg font-medium hover:from-[var(--primary-dark)] hover:to-[var(--secondary-dark)] transition-all duration-300 text-sm"
+            >
+              <FaComments className="mr-2" /> Live Chat
+            </button>
+          </div>
           <p className="text-lg text-[var(--text-secondary)] transition-colors duration-300">
             Have a question or want to work together?
           </p>
