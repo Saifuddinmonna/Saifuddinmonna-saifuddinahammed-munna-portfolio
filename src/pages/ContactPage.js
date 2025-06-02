@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaFacebookF, FaLinkedinIn, FaTwitter, FaGithub, FaComments } from "react-icons/fa";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 import { useChat } from "../context/ChatContext";
 
 // Icons (replace with your preferred icon library like react-icons)

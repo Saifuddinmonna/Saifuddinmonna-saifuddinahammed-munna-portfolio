@@ -4,24 +4,10 @@ import { motion } from "framer-motion";
 import HomePageHero from "../CommonComponents/HomePageHero";
 import SkillDetails from "../CommonComponents/SkillProgressbar";
 import SkillChart from "../CommonComponents/SkillChart";
-import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfoliosForHomePage";
 import MyServicesv2 from "../Myservices/MyServicesv2";
 import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
 import ContactMeForHomePage from "../ContractMe/ContactMeForHomePage";
-
-/**
- * Animation variants for section transitions
- * Controls how sections animate when they come into view
- */
-const sectionVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-};
 
 /**
  * HomeLayout Component
@@ -75,10 +61,9 @@ const HomeLayout = () => {
       <div className="space-y-16 md:space-y-20">
         {/* Hero Section */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <HomePageHero />
         </motion.div>
@@ -88,49 +73,44 @@ const HomeLayout = () => {
 
         {/* Skills Chart Section */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <SkillChart />
         </motion.div>
 
         {/* Services Section */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <MyServicesv2 />
         </motion.div>
 
         {/* Skills Details Section */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <SkillDetails />
         </motion.div>
 
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <MyPortfolios />
         </motion.div>
 
         {/* Contact Section */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <ContactMeForHomePage />
         </motion.div>
@@ -140,12 +120,12 @@ const HomeLayout = () => {
       {showBackToTop && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 bg-indigo-600 text-white p-2.5 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors duration-300"
+          className="fixed bottom-6 right-6 bg-[var(--primary-main)] text-white p-2.5 rounded-full shadow-lg hover:bg-[var(--primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:ring-opacity-50 transition-colors duration-300"
           aria-label="Back to top"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          whileHover={{ scale: 1.1, rotate: -5 }}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
           <svg

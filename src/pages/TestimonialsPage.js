@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 import {
   FaQuoteLeft,
   FaStar,
@@ -14,501 +14,14 @@ import {
   FaTools,
   FaUserPlus,
 } from "react-icons/fa";
-
-const testimonials = [
-  // Original 4 for context (can be removed if not needed in final output)
-  {
-    id: 1,
-    name: "John Doe",
-    role: "Senior Developer",
-    company: "Tech Solutions Inc.",
-    image: "/images/testimonials/person1.jpg",
-    rating: 5,
-    text: "Working with Saifuddin was an absolute pleasure. His attention to detail and problem-solving skills are exceptional. He delivered the project on time and exceeded our expectations.",
-    date: "March 2024",
-    services: "Custom Web Application Development", // Added service for original
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    role: "Project Manager",
-    company: "Digital Innovations",
-    image: "/images/testimonials/person2.jpg",
-    rating: 5,
-    text: "Saifuddin's technical expertise and communication skills made our collaboration smooth and efficient. He consistently delivered high-quality work and was always available to help.",
-    date: "February 2024",
-    services: "E-commerce Platform Integration", // Added service for original
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    role: "CEO",
-    company: "StartupX",
-    image: "/images/testimonials/person3.jpg",
-    rating: 5,
-    text: "We hired Saifuddin for our web development project, and he did an outstanding job. His ability to understand requirements and implement them perfectly is remarkable.",
-    date: "January 2024",
-    services: "MVP Development for Startup", // Added service for original
-  },
-  {
-    id: 4,
-    name: "Emily Brown",
-    role: "Marketing Director",
-    company: "Growth Marketing",
-    image: "/images/testimonials/person4.jpg",
-    rating: 5,
-    text: "Saifuddin's work on our website redesign was exceptional. He not only met all our requirements but also provided valuable suggestions that improved the overall user experience.",
-    date: "December 2023",
-    services: "Corporate Website Redesign", // Added service for original
-  },
-
-  // --- 20 Testimonials from Bangladesh ---
-  {
-    id: 5,
-    name: "Fatima Ahmed",
-    role: "Founder",
-    company: "Sheba Digital Services",
-    image: "/images/testimonials/bd-person1.jpg",
-    rating: 5,
-    text: "Saifuddin built our entire service booking platform from scratch. His dedication and problem-solving skills are top-notch. Our customers love the new site!",
-    date: "April 2024",
-    services: "Service Booking Platform Development",
-  },
-  {
-    id: 6,
-    name: "Rahman Khan",
-    role: "Managing Director",
-    company: "BD Exports Ltd.",
-    image: "/images/testimonials/bd-person2.jpg",
-    rating: 4,
-    text: "The e-commerce solution Saifuddin developed has significantly boosted our online sales. Very professional and delivered on time.",
-    date: "March 2024",
-    services: "B2B E-commerce Portal",
-  },
-  {
-    id: 7,
-    name: "Aisha Islam",
-    role: "Project Coordinator",
-    company: "Educate Bangladesh Foundation",
-    image: "/images/testimonials/bd-person3.jpg",
-    rating: 5,
-    text: "Saifuddin developed an outstanding educational portal for us. He was patient with our changing requirements and delivered a fantastic product.",
-    date: "May 2024",
-    services: "Educational Web Portal",
-  },
-  {
-    id: 8,
-    name: "Kamal Hossain",
-    role: "Owner",
-    company: "Dhaka Fresh Produce",
-    image: "/images/testimonials/bd-person4.jpg",
-    rating: 5,
-    text: "Our online grocery delivery website, built by Saifuddin, is intuitive and fast. He understood our local market needs perfectly.",
-    date: "February 2024",
-    services: "Online Grocery Store Development",
-  },
-  {
-    id: 9,
-    name: "Nadia Chowdhury",
-    role: "Marketing Head",
-    company: "Chittagong Crafts",
-    image: "/images/testimonials/bd-person5.jpg",
-    rating: 5,
-    text: "Saifuddin's design for our artisan marketplace website is beautiful and user-friendly. He brought our vision to life!",
-    date: "January 2024",
-    services: "Artisan E-commerce Marketplace",
-  },
-  {
-    id: 10,
-    name: "Salim Reza",
-    role: "CEO",
-    company: "BD Tech Innovators",
-    image: "/images/testimonials/bd-person6.jpg",
-    rating: 5,
-    text: "For our custom software solution, Saifuddin's technical skills were invaluable. He developed a robust and scalable internal tool for us.",
-    date: "April 2024",
-    services: "Custom Internal Software Development",
-  },
-  {
-    id: 11,
-    name: "Sumaiya Akter",
-    role: "Operations Manager",
-    company: "Sylhet Tours & Travels",
-    image: "/images/testimonials/bd-person7.jpg",
-    rating: 4,
-    text: "The tour booking website Saifuddin created has streamlined our operations significantly. Good communication throughout the project.",
-    date: "December 2023",
-    services: "Tour Booking Website",
-  },
-  {
-    id: 12,
-    name: "Tariqul Islam",
-    role: "Freelance Consultant",
-    company: "Self-Employed",
-    image: "/images/testimonials/bd-person8.jpg",
-    rating: 5,
-    text: "Saifuddin designed and developed my professional portfolio website. It looks amazing and has helped me attract more clients.",
-    date: "November 2023",
-    services: "Personal Portfolio Website",
-  },
-  {
-    id: 13,
-    name: "Farhana Yasmin",
-    role: "Director",
-    company: "Agrani Mohila Somobay Samity",
-    image: "/images/testimonials/bd-person9.jpg",
-    rating: 5,
-    text: "He developed a micro-finance management system for our cooperative. It's very user-friendly and has improved our efficiency.",
-    date: "March 2024",
-    services: "Micro-finance Management System",
-  },
-  {
-    id: 14,
-    name: "Abdullah Al Mamun",
-    role: "IT Head",
-    company: "National Garments Ltd.",
-    image: "/images/testimonials/bd-person10.jpg",
-    rating: 5,
-    text: "Saifuddin helped us develop an internal inventory management system. His solutions are always well-thought-out and effective.",
-    date: "May 2024",
-    services: "Inventory Management System",
-  },
-  {
-    id: 15,
-    name: "Jannatul Ferdous",
-    role: "Blogger & Influencer",
-    company: "Deshi Food Tales",
-    image: "/images/testimonials/bd-person11.jpg",
-    rating: 5,
-    text: "My food blog, designed by Saifuddin, is stunning! He perfectly captured the aesthetic I wanted and made it very easy to manage.",
-    date: "February 2024",
-    services: "Food Blog Design and Development",
-  },
-  {
-    id: 16,
-    name: "Mustafa Kamal",
-    role: "Pharmacist & Owner",
-    company: "Arogga Pharmacy Online",
-    image: "/images/testimonials/bd-person12.jpg",
-    rating: 5,
-    text: "Saifuddin developed our online pharmacy platform. It's secure, compliant, and user-friendly. A true professional.",
-    date: "January 2024",
-    services: "Online Pharmacy Platform",
-  },
-  {
-    id: 17,
-    name: "Roksana Begum",
-    role: "Social Entrepreneur",
-    company: "Gram Unnayan Kendra",
-    image: "/images/testimonials/bd-person13.jpg",
-    rating: 5,
-    text: "The website Saifuddin built for our NGO has helped us reach more donors and volunteers. His work is impactful.",
-    date: "April 2024",
-    services: "NGO Information and Donation Website",
-  },
-  {
-    id: 18,
-    name: "Anwar Parvez",
-    role: "Real Estate Agent",
-    company: "Dhaka Properties",
-    image: "/images/testimonials/bd-person14.jpg",
-    rating: 4,
-    text: "Our property listing website developed by Saifuddin is quite comprehensive. It has all the features we asked for.",
-    date: "December 2023",
-    services: "Real Estate Listing Website",
-  },
-  {
-    id: 19,
-    name: "Ishrat Jahan",
-    role: "Event Manager",
-    company: "Celebrations BD",
-    image: "/images/testimonials/bd-person15.jpg",
-    rating: 5,
-    text: "Saifuddin created a fantastic event management and ticketing website for us. It's made organizing events much smoother.",
-    date: "November 2023",
-    services: "Event Management & Ticketing Website",
-  },
-  {
-    id: 20,
-    name: "Zakir Hossain",
-    role: "Academic Researcher",
-    company: "University Research Group",
-    image: "/images/testimonials/bd-person16.jpg",
-    rating: 5,
-    text: "He developed a custom data visualization tool for our research project. His ability to translate complex requirements into a working solution is commendable.",
-    date: "March 2024",
-    services: "Custom Data Visualization Tool",
-  },
-  {
-    id: 21,
-    name: "Tanvir Ahmed",
-    role: "Owner",
-    company: "BD Auto Parts",
-    image: "/images/testimonials/bd-person17.jpg",
-    rating: 5,
-    text: "Saifuddin built an e-commerce site for our auto parts business. It's easy to navigate and manage inventory. Sales have increased!",
-    date: "May 2024",
-    services: "Auto Parts E-commerce Website",
-  },
-  {
-    id: 22,
-    name: "Sabina Yesmin",
-    role: "Fashion Designer",
-    company: "Deshi Trends Boutique",
-    image: "/images/testimonials/bd-person18.jpg",
-    rating: 5,
-    text: "My online boutique website, created by Saifuddin, is elegant and perfectly showcases my designs. I'm thrilled with the result!",
-    date: "February 2024",
-    services: "Fashion Boutique E-commerce Site",
-  },
-  {
-    id: 23,
-    name: "Mahmudul Hasan",
-    role: "Restaurant Owner",
-    company: "Kacchi Bhai Restaurant",
-    image: "/images/testimonials/bd-person19.jpg",
-    rating: 4,
-    text: "Saifuddin developed our restaurant's website with an online ordering system. It's helped us manage takeaways more efficiently.",
-    date: "January 2024",
-    services: "Restaurant Website with Online Ordering",
-  },
-  {
-    id: 24,
-    name: "Afroza Khatun",
-    role: "Principal",
-    company: "Sunshine Model School",
-    image: "/images/testimonials/bd-person20.jpg",
-    rating: 5,
-    text: "The new school website Saifuddin developed is informative and easy for parents and students to use. Excellent work!",
-    date: "April 2024",
-    services: "School Information Website",
-  },
-
-  // --- 20 Testimonials from Other Countries ---
-  {
-    id: 25,
-    name: "Alex Müller",
-    role: "Product Manager",
-    company: "Innovatech GmbH (Germany)",
-    image: "/images/testimonials/intl-person1.jpg",
-    rating: 5,
-    text: "Saifuddin's contribution to our SaaS platform's UI overhaul was significant. His eye for detail and modern design sense are impressive.",
-    date: "May 2024",
-    services: "SaaS Platform UI/UX Redesign",
-  },
-  {
-    id: 26,
-    name: "Priya Sharma",
-    role: "Founder",
-    company: "YogiWellness App (India)",
-    image: "/images/testimonials/intl-person2.jpg",
-    rating: 5,
-    text: "He developed the backend for our wellness mobile application. Robust, scalable, and delivered within the agreed timeline. Highly skilled.",
-    date: "March 2024",
-    services: "Mobile App Backend Development",
-  },
-  {
-    id: 27,
-    name: "Kenji Tanaka",
-    role: "E-commerce Manager",
-    company: "Tokyo Gadgets Online (Japan)",
-    image: "/images/testimonials/intl-person3.jpg",
-    rating: 5,
-    text: "Saifuddin helped us optimize our e-commerce checkout process, leading to a noticeable increase in conversion rates. Excellent work!",
-    date: "April 2024",
-    services: "E-commerce Checkout Optimization",
-  },
-  {
-    id: 28,
-    name: "Maria Rodriguez",
-    role: "Artist & Gallery Owner",
-    company: "Arte Creativo Gallery (Spain)",
-    image: "/images/testimonials/intl-person4.jpg",
-    rating: 5,
-    text: "The online gallery website Saifuddin created for me is simply beautiful. It showcases my art perfectly and is easy for me to update.",
-    date: "February 2024",
-    services: "Online Art Gallery Website",
-  },
-  {
-    id: 29,
-    name: "David Lee",
-    role: "Consultant",
-    company: "Strategic Solutions Co. (USA)",
-    image: "/images/testimonials/intl-person5.jpg",
-    rating: 4,
-    text: "Saifuddin developed a custom client portal for our consultancy. It's functional and meets our needs, good communication.",
-    date: "January 2024",
-    services: "Custom Client Portal Development",
-  },
-  {
-    id: 30,
-    name: "Aisha Ibrahim",
-    role: "Non-Profit Director",
-    company: "Global Aid Foundation (Kenya)",
-    image: "/images/testimonials/intl-person6.jpg",
-    rating: 5,
-    text: "The donation platform Saifuddin built for our foundation is secure and user-friendly. We've seen an increase in online contributions.",
-    date: "May 2024",
-    services: "Non-Profit Donation Platform",
-  },
-  {
-    id: 31,
-    name: "Liam Wilson",
-    role: "Travel Blogger",
-    company: "Wanderlust Adventures (Australia)",
-    image: "/images/testimonials/intl-person7.jpg",
-    rating: 5,
-    text: "Saifuddin revamped my travel blog with a fresh design and improved performance. My readers love it, and so do I!",
-    date: "December 2023",
-    services: "Travel Blog Redesign & Optimization",
-  },
-  {
-    id: 32,
-    name: "Sofia Petrova",
-    role: "Small Business Owner",
-    company: "EcoFriendly Goods (Canada)",
-    image: "/images/testimonials/intl-person8.jpg",
-    rating: 5,
-    text: "Our new e-commerce store for sustainable products, built by Saifuddin, is fantastic. He really understood our brand ethos.",
-    date: "November 2023",
-    services: "Sustainable Products E-commerce Site",
-  },
-  {
-    id: 33,
-    name: "Omar Hassan",
-    role: "Tech Lead",
-    company: "Innovate ME Solutions (UAE)",
-    image: "/images/testimonials/intl-person9.jpg",
-    rating: 5,
-    text: "Saifuddin's expertise in developing a complex API for our project was crucial. He is a reliable and skilled developer.",
-    date: "March 2024",
-    services: "Custom API Development",
-  },
-  {
-    id: 34,
-    name: "Isabelle Dubois",
-    role: "Chef & Restaurateur",
-    company: "Le Petit Bistro (France)",
-    image: "/images/testimonials/intl-person10.jpg",
-    rating: 5,
-    text: "He created a charming website for my bistro, complete with online reservations. It perfectly captures the ambiance of my restaurant.",
-    date: "April 2024",
-    services: "Restaurant Website with Online Reservations",
-  },
-  {
-    id: 35,
-    name: "Ricardo Silva",
-    role: "Educational Coordinator",
-    company: "Learn Online Institute (Brazil)",
-    image: "/images/testimonials/intl-person11.jpg",
-    rating: 5,
-    text: "The learning management system (LMS) module Saifuddin developed for us is intuitive for both students and instructors.",
-    date: "February 2024",
-    services: "Learning Management System Module",
-  },
-  {
-    id: 36,
-    name: "Chloe Williams",
-    role: "Marketing Manager",
-    company: "UK Property Finders (UK)",
-    image: "/images/testimonials/intl-person12.jpg",
-    rating: 4,
-    text: "Saifuddin built a comprehensive property search portal for us. It's feature-rich and generally performs well.",
-    date: "January 2024",
-    services: "Property Search Portal Development",
-  },
-  {
-    id: 37,
-    name: "Chen Wei",
-    role: "Startup Founder",
-    company: "ConnectAsia Tech (Singapore)",
-    image: "/images/testimonials/intl-person13.jpg",
-    rating: 5,
-    text: "For our networking platform MVP, Saifuddin delivered quality code quickly. His ability to adapt to new requirements was impressive.",
-    date: "May 2024",
-    services: "Social Networking Platform MVP",
-  },
-  {
-    id: 38,
-    name: "Fatima Al-Sayed",
-    role: "Community Organizer",
-    company: "Local Events Hub (Egypt)",
-    image: "/images/testimonials/intl-person14.jpg",
-    rating: 5,
-    text: "The community event listing website Saifuddin developed has become a central resource for our town. Great work!",
-    date: "December 2023",
-    services: "Community Event Listing Website",
-  },
-  {
-    id: 39,
-    name: "Marcus Johnson",
-    role: "Fitness Coach",
-    company: "FitLife Coaching (USA)",
-    image: "/images/testimonials/intl-person15.jpg",
-    rating: 5,
-    text: "Saifuddin built my coaching website with a booking system for sessions. It's professional and makes managing clients easy.",
-    date: "November 2023",
-    services: "Coaching Website with Booking System",
-  },
-  {
-    id: 40,
-    name: "Olga Ivanova",
-    role: "Scientific Researcher",
-    company: "BioData Research Group (Russia)",
-    image: "/images/testimonials/intl-person16.jpg",
-    rating: 5,
-    text: "He developed a specialized data entry and analysis tool for our research. Saifuddin's attention to detail was crucial for this project.",
-    date: "March 2024",
-    services: "Scientific Data Entry & Analysis Tool",
-  },
-  {
-    id: 41,
-    name: "Juan Pérez",
-    role: "Musician",
-    company: "Self-Employed (Mexico)",
-    image: "/images/testimonials/intl-person17.jpg",
-    rating: 5,
-    text: "Saifuddin created a fantastic website for my band, including music streaming and tour dates. It really captures our vibe!",
-    date: "April 2024",
-    services: "Musician/Band Website with Streaming",
-  },
-  {
-    id: 42,
-    name: "Grace O'Connell",
-    role: "Book Author",
-    company: "Self-Published (Ireland)",
-    image: "/images/testimonials/intl-person18.jpg",
-    rating: 5,
-    text: "My author website, designed by Saifuddin, is elegant and effectively promotes my books. He was a pleasure to work with.",
-    date: "February 2024",
-    services: "Author Website and Blog",
-  },
-  {
-    id: 43,
-    name: "Khaled Al-Fahim",
-    role: "CEO",
-    company: "Desert Logistics Solutions (Saudi Arabia)",
-    image: "/images/testimonials/intl-person19.jpg",
-    rating: 4,
-    text: "Saifuddin developed a logistics tracking portal for us. It's a complex system, and he managed to deliver a working solution.",
-    date: "January 2024",
-    services: "Logistics Tracking Portal",
-  },
-  {
-    id: 44,
-    name: "Sun Hee Park",
-    role: "Online Language Tutor",
-    company: "Global Lingua (South Korea)",
-    image: "/images/testimonials/intl-person20.jpg",
-    rating: 5,
-    text: "The platform Saifuddin built for my online tutoring services, with video call integration, is excellent. My students find it very easy to use.",
-    date: "May 2024",
-    services: "Online Tutoring Platform with Video",
-  },
-];
+import { toast } from "react-toastify";
+import api from "../services/api";
 
 const TestimonialsPage = () => {
   const { isDarkMode } = useContext(ThemeContext);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [showCommentForm, setShowCommentForm] = useState(false);
@@ -523,6 +36,31 @@ const TestimonialsPage = () => {
     date: new Date().toISOString().split("T")[0],
   });
   const [imagePreview, setImagePreview] = useState(null);
+
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("http://localhost:5000/api/testimonials");
+      setTestimonials(response.data);
+      console.log(response.data);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching testimonials:", error);
+      setError("Failed to load testimonials");
+      toast.error("Failed to load testimonials");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = dateString => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  };
 
   const nextTestimonial = () => {
     setDirection(1);
@@ -606,14 +144,27 @@ const TestimonialsPage = () => {
     }
   };
 
-  const serviceIcons = {
-    "Web Development": <FaCode className="w-6 h-6" />,
-    "UI/UX Design": <FaLaptop className="w-6 h-6" />,
-    "Mobile Development": <FaMobile className="w-6 h-6" />,
-    "Backend Development": <FaServer className="w-6 h-6" />,
-    "Custom Solutions": <FaTools className="w-6 h-6" />,
-    Consulting: <FaUserPlus className="w-6 h-6" />,
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 py-8">
+        <p>{error}</p>
+        <button
+          onClick={fetchTestimonials}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -730,7 +281,7 @@ const TestimonialsPage = () => {
                                 isDarkMode ? "text-gray-500" : "text-gray-400"
                               }`}
                             >
-                              {testimonials[currentIndex].date}
+                              {formatDate(testimonials[currentIndex].date)}
                             </p>
                           </div>
                           <div className="mt-4">
@@ -784,7 +335,7 @@ const TestimonialsPage = () => {
             <div className="space-y-4">
               {testimonials.slice(0, 4).map(testimonial => (
                 <motion.div
-                  key={testimonial.id}
+                  key={testimonial._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`p-4 rounded-xl ${isDarkMode ? "bg-gray-800" : "bg-white"} shadow-lg`}

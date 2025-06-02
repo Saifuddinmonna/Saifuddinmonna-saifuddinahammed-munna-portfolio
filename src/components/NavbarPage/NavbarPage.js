@@ -1,36 +1,56 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSun, FaMoon } from "react-icons/fa";
-import { ThemeContext } from "../../App";
+import {
+  FaSun,
+  FaMoon,
+  FaUser,
+  FaUserPlus,
+  FaBars,
+  FaTimes,
+  FaSignOutAlt,
+  FaUserCircle,
+} from "react-icons/fa";
+import { ThemeContext } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const NavbarPage = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
+      setIsScrolled(window.scrollY > 0);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrolled]);
+  }, []);
 
   const handleNavigation = path => {
     navigate(path);
     setIsOpen(false);
   };
 
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      toast.success("Successfully signed out");
+      setIsProfileOpen(false);
+    } catch (error) {
+      toast.error("Error signing out");
+    }
+  };
+
   const isActive = path => {
     if (
-      path === "/PortfolioLayout" &&
-      (location.pathname === "/PortfolioLayout" || location.pathname.startsWith("/portfoliolayout"))
+      path === "/portfolio" &&
+      (location.pathname === "/portfolio" || location.pathname.startsWith("/portfolio"))
     ) {
       return true;
     }
@@ -39,12 +59,13 @@ const NavbarPage = () => {
 
   const navItems = [
     { path: "/", label: "Home" },
-    { path: "/PortfolioLayout", label: "My Work" },
+    { path: "/portfolio", label: "My Work" },
     { path: "/gallery", label: "Gallery" },
     { path: "/testimonials", label: "Testimonials" },
     { path: "/about", label: "About" },
     { path: "/blog", label: "Blog" },
     { path: "/resume", label: "Resume" },
+    { path: "/chat", label: "Chat" },
   ];
 
   const mobileMenuVariants = {
@@ -56,9 +77,7 @@ const NavbarPage = () => {
     <div className="relative">
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[var(--background-paper)] bg-opacity-95 backdrop-blur-sm shadow-lg"
-            : "bg-[var(--background-paper)]"
+          isScrolled ? "bg-white shadow-md dark:bg-gray-900" : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,7 +92,7 @@ const NavbarPage = () => {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-4">
               {navItems.map(item => (
                 <Link
                   key={item.label}
@@ -175,6 +194,21 @@ const NavbarPage = () => {
                         />
                       </svg>
                     )}
+                    {item.label === "Chat" && (
+                      <svg
+                        className="w-4 h-4 mr-1.5 text-inherit"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                      </svg>
+                    )}
                     {item.label}
                   </span>
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
@@ -187,32 +221,119 @@ const NavbarPage = () => {
                   )}
                 </Link>
               ))}
-              <button
-                onClick={() => handleNavigation("/contact")}
-                className="ml-2 px-3 py-1.5 bg-[var(--primary-main)] text-white text-sm font-medium flex items-center rounded-md overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.0)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-white hover:border-[var(--primary-light)]"
-              >
-                <span className="relative z-10 flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-1.5 text-inherit"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Contact Me
-                </span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-              </button>
+
+              {/* Desktop Auth Buttons */}
+              <div className="hidden md:flex items-center space-x-4">
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsProfileOpen(!isProfileOpen)}
+                      className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium bg-[var(--primary-light)] hover:bg-[var(--primary-main)] text-[var(--text-primary)] hover:text-white transition-all duration-200"
+                    >
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName}
+                          className="w-8 h-8 rounded-full object-cover border-2 border-[var(--primary-main)]"
+                        />
+                      ) : (
+                        <FaUserCircle className="w-8 h-8 text-[var(--primary-main)]" />
+                      )}
+                      <span className="text-sm font-medium">{user.displayName || user.email}</span>
+                      <svg
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isProfileOpen ? "transform rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+
+                    {/* Profile Dropdown */}
+                    {isProfileOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-[var(--border-color)]">
+                        <div className="px-4 py-2 border-b border-[var(--border-color)]">
+                          <p className="text-sm font-medium text-[var(--text-primary)]">
+                            {user.displayName || user.email}
+                          </p>
+                          <p className="text-xs text-[var(--text-secondary)]">{user.email}</p>
+                        </div>
+                        <Link
+                          to="/profile"
+                          className="block px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--background-default)] dark:hover:bg-gray-700"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <FaUser className="inline-block mr-2" />
+                          Profile
+                        </Link>
+                        <Link
+                          to="/settings"
+                          className="block px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--background-default)] dark:hover:bg-gray-700"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <svg
+                            className="w-4 h-4 inline-block mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          Settings
+                        </Link>
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-[var(--background-default)] dark:hover:bg-gray-700"
+                        >
+                          <FaSignOutAlt className="inline-block mr-2" />
+                          Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <Link
+                      to="/signin"
+                      className="flex items-center px-4 py-2 rounded-md text-sm font-medium text-[var(--text-primary)] hover:text-[var(--primary-main)] transition-colors duration-200"
+                    >
+                      <FaUser className="mr-2" />
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)] transition-colors duration-200"
+                    >
+                      <FaUserPlus className="mr-2" />
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
+
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="ml-2 p-1.5 rounded-md bg-[var(--background-default)] hover:bg-[var(--primary-light)] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-[var(--border-color)] hover:border-[var(--primary-light)] transform hover:scale-[1.02] hover:-translate-y-0.5"
+                className="ml-2 p-1.5 rounded-md bg-[var(--background-default)] hover:bg-[var(--primary-light)] transition-all duration-200"
                 aria-label="Toggle theme"
               >
                 {isDarkMode ? (
@@ -237,6 +358,7 @@ const NavbarPage = () => {
                   <FaMoon className="w-5 h-5 text-[var(--text-primary)]" />
                 )}
               </button>
+
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 type="button"
@@ -245,14 +367,7 @@ const NavbarPage = () => {
                 aria-expanded={isOpen}
               >
                 <span className="sr-only">Open main menu</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-                  />
-                </svg>
+                {isOpen ? <FaTimes className="h-6 w-6" /> : <FaBars className="h-6 w-6" />}
               </button>
             </div>
           </div>
@@ -282,12 +397,92 @@ const NavbarPage = () => {
                     {item.label}
                   </button>
                 ))}
-                <button
-                  onClick={() => handleNavigation("/contact")}
-                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
-                >
-                  Contact Me
-                </button>
+
+                {/* Mobile Auth Buttons */}
+                {user ? (
+                  <>
+                    <div className="px-3 py-2 flex items-center space-x-2 border-b border-[var(--border-color)]">
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName}
+                          className="w-8 h-8 rounded-full object-cover border-2 border-[var(--primary-main)]"
+                        />
+                      ) : (
+                        <FaUserCircle className="w-8 h-8 text-[var(--primary-main)]" />
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">
+                          {user.displayName || user.email}
+                        </p>
+                        <p className="text-xs text-[var(--text-secondary)]">{user.email}</p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/profile"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-[var(--text-primary)] hover:bg-[var(--background-default)]"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FaUser className="inline-block mr-2" />
+                      Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-[var(--text-primary)] hover:bg-[var(--background-default)]"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <svg
+                        className="w-4 h-4 inline-block mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      Settings
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        setIsOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 dark:text-red-400 hover:bg-[var(--background-default)]"
+                    >
+                      <FaSignOutAlt className="inline-block mr-2" />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/signin"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-[var(--text-primary)] hover:bg-[var(--background-default)]"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FaUser className="inline-block mr-2" />
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="block px-3 py-2 rounded-md text-base font-medium bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FaUserPlus className="inline-block mr-2" />
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </div>
             </motion.div>
           )}

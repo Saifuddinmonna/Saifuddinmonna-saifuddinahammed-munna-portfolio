@@ -2,124 +2,211 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import LiveChat from "../components/Chat/LiveChat";
+import { useAuth } from "./AuthContext";
 
 const SocketContext = createContext();
 
 export const useSocket = () => {
-  return useContext(SocketContext);
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocket must be used within a SocketProvider");
+  }
+  return context;
 };
 
 export const SocketProvider = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+  const maxReconnectAttempts = 5;
   const [messages, setMessages] = useState([]);
-  const [users, setUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState(new Set());
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
-    // Connect to your Socket.IO server
-    const socketInstance = io(process.env.REACT_APP_SOCKET_URL || "http://localhost:5000", {
-      transports: ["websocket"],
-      autoConnect: true,
-      withCredentials: true,
-    });
+    let socketInstance = null;
 
-    socketInstance.on("connect", () => {
-      setIsConnected(true);
-      console.log("Socket connected");
-    });
+    const initializeSocket = () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
+      }
 
-    socketInstance.on("disconnect", () => {
-      setIsConnected(false);
-      console.log("Socket disconnected");
-    });
+      const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
 
-    // Handle incoming messages
-    socketInstance.on("message", message => {
-      setMessages(prev => [...prev, message]);
-      setUnreadCount(prev => prev + 1);
-    });
-
-    // Handle user joined
-    socketInstance.on("userJoined", data => {
-      setUsers(prev => [...prev, data.user]);
-      toast.info(data.message, {
-        position: "top-right",
-        autoClose: 3000,
+      socketInstance = io(SOCKET_URL, {
+        reconnection: true,
+        reconnectionAttempts: maxReconnectAttempts,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
+        autoConnect: false,
+        transports: ["websocket", "polling"],
       });
-    });
 
-    // Handle user left
-    socketInstance.on("userLeft", data => {
-      setUsers(prev => prev.filter(user => user.id !== data.user.id));
-      toast.info(data.message, {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    });
+      // Connection event handlers
+      socketInstance.on("connect", () => {
+        console.log("Socket connected");
+        setIsConnected(true);
+        setIsConnecting(false);
+        setReconnectAttempts(0);
 
-    // Handle users list
-    socketInstance.on("usersList", usersList => {
-      setUsers(usersList);
-    });
-
-    // Handle typing status
-    socketInstance.on("userTyping", ({ userId, userName, isTyping }) => {
-      setTypingUsers(prev => {
-        const newSet = new Set(prev);
-        if (isTyping) {
-          newSet.add(userName);
+        // If user is authenticated, emit auth event
+        if (isAuthenticated && user) {
+          socketInstance.emit("authenticate", {
+            token: localStorage.getItem("token"),
+            user: {
+              id: user.uid,
+              name: user.displayName || "Guest",
+              email: user.email,
+              photoURL: user.photoURL,
+            },
+          });
         } else {
-          newSet.delete(userName);
+          // If not authenticated, connect as guest
+          socketInstance.emit("authenticate", {
+            user: {
+              id: `guest_${Date.now()}`,
+              name: "Guest",
+              isGuest: true,
+            },
+          });
         }
-        return newSet;
       });
-    });
 
-    setSocket(socketInstance);
+      socketInstance.on("connect_error", error => {
+        console.error("Socket connection error:", error);
+        setIsConnected(false);
+        setIsConnecting(false);
 
-    return () => {
-      socketInstance.disconnect();
+        if (reconnectAttempts < maxReconnectAttempts) {
+          setReconnectAttempts(prev => prev + 1);
+          setTimeout(() => {
+            initializeSocket();
+          }, 2000);
+        } else {
+          toast.error("Failed to connect to chat server. Please refresh the page.");
+        }
+      });
+
+      socketInstance.on("disconnect", reason => {
+        console.log("Socket disconnected:", reason);
+        setIsConnected(false);
+
+        if (reason === "io server disconnect") {
+          // Server initiated disconnect, try to reconnect
+          socketInstance.connect();
+        }
+      });
+
+      socketInstance.on("auth_error", error => {
+        console.error("Authentication error:", error);
+        toast.error("Authentication failed. Please try again.");
+        setIsConnected(false);
+      });
+
+      socketInstance.on("auth_success", () => {
+        console.log("Authentication successful");
+        setIsConnected(true);
+      });
+
+      socketInstance.on("message", message => {
+        setMessages(prev => [...prev, message]);
+      });
+
+      socketInstance.on("userTyping", ({ userId, name, isTyping }) => {
+        setTypingUsers(prev => {
+          const newSet = new Set(prev);
+          if (isTyping) {
+            newSet.add(name);
+          } else {
+            newSet.delete(name);
+          }
+          return newSet;
+        });
+      });
+
+      socketInstance.on("userJoined", ({ user, message }) => {
+        toast.info(message);
+        setOnlineUsers(prev => [...prev, user]);
+      });
+
+      socketInstance.on("userLeft", ({ user, message }) => {
+        toast.info(message);
+        setOnlineUsers(prev => prev.filter(u => u.id !== user.id));
+      });
+
+      socketInstance.on("usersList", users => {
+        setOnlineUsers(users);
+      });
+
+      socketInstance.on("error", error => {
+        toast.error(error.message);
+      });
+
+      setSocket(socketInstance);
     };
-  }, []);
+
+    // Initialize socket connection
+    if (!socket && !isConnecting) {
+      setIsConnecting(true);
+      initializeSocket();
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
+      }
+    };
+  }, [user, isAuthenticated]);
+
+  // Reconnect when user authentication state changes
+  useEffect(() => {
+    if (socket && isAuthenticated && user) {
+      socket.emit("authenticate", {
+        token: localStorage.getItem("token"),
+        user: {
+          id: user.uid,
+          name: user.displayName || "Guest",
+          email: user.email,
+          photoURL: user.photoURL,
+        },
+      });
+    }
+  }, [isAuthenticated, user, socket]);
 
   const sendMessage = text => {
-    if (socket && text.trim()) {
-      socket.emit("sendMessage", { text });
+    if (!socket || !isConnected) {
+      toast.error("Not connected to chat server");
+      return;
     }
-  };
 
-  const joinChat = userData => {
-    if (socket) {
-      socket.emit("userJoin", userData);
-    }
+    socket.emit("sendMessage", { text }, response => {
+      if (!response.success) {
+        toast.error(response.message);
+      }
+    });
   };
 
   const setTyping = isTyping => {
-    if (socket) {
-      socket.emit("typing", isTyping);
+    if (socket && isConnected) {
+      socket.emit("typing", { isTyping });
     }
-  };
-
-  const markAsRead = () => {
-    setUnreadCount(0);
   };
 
   const value = {
     socket,
     isConnected,
     messages,
-    users,
     typingUsers,
-    notifications,
-    unreadCount,
+    onlineUsers,
     sendMessage,
-    joinChat,
     setTyping,
-    markAsRead,
   };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 };
+
+export default SocketContext;

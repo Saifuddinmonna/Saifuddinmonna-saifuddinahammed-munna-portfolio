@@ -1,105 +1,62 @@
-import { createContext, useContext } from "react";
+import React, { Suspense } from "react";
 import { RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import ReactConfetti from "react-confetti";
-import { theme } from "./theme/theme";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
 import { ChatProvider } from "./context/ChatContext";
-import NotificationBell from "./components/Notifications/NotificationBell";
-import LiveChat from "./components/Chat/LiveChat";
+import { ThemeProvider } from "./context/ThemeContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import router from "./components/Router/router";
 
-// Create Theme Context
-export const ThemeContext = createContext();
-
-// Theme Provider Component
-const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      return savedTheme === "dark";
-    }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(isDarkMode ? "dark" : "light");
-
-    // Update localStorage
-    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-
-    // Update CSS variables
-    const currentTheme = isDarkMode ? theme.dark : theme.light;
-    Object.entries(currentTheme).forEach(([category, values]) => {
-      Object.entries(values).forEach(([key, value]) => {
-        if (typeof value === "object") {
-          Object.entries(value).forEach(([subKey, subValue]) => {
-            document.documentElement.style.setProperty(`--${category}-${key}-${subKey}`, subValue);
-          });
-        } else {
-          document.documentElement.style.setProperty(`--${category}-${key}`, value);
-        }
-      });
-    });
-
-    // Update meta theme-color
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute("content", isDarkMode ? "#1f2937" : "#ffffff");
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => {
-    setIsDarkMode(prev => !prev);
-  };
-
-  return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>{children}</ThemeContext.Provider>
-  );
-};
-
+// Create a client with better error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 10 * 60 * 1000, // 10 minutes
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
     },
   },
 });
 
+// Loading Spinner Component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
+  </div>
+);
+
 function App() {
-  const [confettiStart, setConfettiStart] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setConfettiStart(false);
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <SocketProvider>
-      <ChatProvider>
-        <ThemeProvider>
-          <QueryClientProvider client={queryClient}>
-            <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-              {confettiStart && <ReactConfetti />}
-              <RouterProvider router={router} />
-              <div className="fixed top-4 right-4 z-50">
-                <NotificationBell />
-              </div>
-              <LiveChat />
-              <ToastContainer />
-            </div>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </ChatProvider>
-    </SocketProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          <SocketProvider>
+            <ChatProvider>
+              <Suspense fallback={<LoadingSpinner />}>
+                <RouterProvider router={router} />
+              </Suspense>
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
+            </ChatProvider>
+          </SocketProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

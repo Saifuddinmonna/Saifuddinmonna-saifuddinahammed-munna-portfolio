@@ -3,7 +3,7 @@ import router from "react-router-dom";
 import ReactConfetti from "react-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ThemeContext } from "../../App";
+import { ThemeContext } from "../../context/ThemeContext";
 import {
   FaUserGraduate,
   FaCode,

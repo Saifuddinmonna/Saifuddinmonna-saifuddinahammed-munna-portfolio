@@ -19,14 +19,14 @@ exports.isAuthenticated = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    console.error("Authentication error:", error);
     res.status(401).json({ message: "Invalid token" });
   }
 };
 
 exports.isAdmin = (req, res, next) => {
-  if (req.user && req.user.role === "admin") {
-    next();
-  } else {
-    res.status(403).json({ message: "Admin access required" });
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admin access required" });
   }
+  next();
 };

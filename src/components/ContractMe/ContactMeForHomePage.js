@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
-import { ThemeContext } from "../../App";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const ContactMeForHomePage = () => {
   const { isDarkMode } = useContext(ThemeContext);
