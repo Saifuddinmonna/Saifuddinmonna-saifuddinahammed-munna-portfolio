@@ -21,6 +21,8 @@ const MyportfolioImage = lazy(() => import("../MyPortfolios/MyportfolioImage"));
 const GalleryPage = lazy(() => import("../../pages/GalleryPage"));
 const ResumeViewer = lazy(() => import("../ResumeViewer/ResumeViewer"));
 const TestimonialsPage = lazy(() => import("../../pages/TestimonialsPage"));
+const SignIn = lazy(() => import("../../auth/components/SignIn"));
+const SignUp = lazy(() => import("../../auth/components/SignUp"));
 
 // Create router configuration
 const router = createBrowserRouter([
@@ -109,6 +111,22 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <TestimonialsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/signin",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SignIn />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/signup",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SignUp />
           </Suspense>
         ),
       },

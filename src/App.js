@@ -6,6 +6,9 @@ import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
 import router from "./components/Router/router";
 import TestimonialsPage from "./pages/TestimonialsPage";
+import { AuthProvider } from "./auth/context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -78,14 +81,28 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-          {confettiStart && <ReactConfetti />}
-          <RouterProvider router={router} />
-        </div>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
+            {confettiStart && <ReactConfetti />}
+            <RouterProvider router={router} />
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
+            />
+          </div>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

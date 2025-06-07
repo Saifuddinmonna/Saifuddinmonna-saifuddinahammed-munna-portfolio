@@ -7,7 +7,7 @@ import { motion, useScroll } from "framer-motion";
 import ContactPage from "../../pages/ContactPage";
 import aboutPageForHome from "../About/aboutPageForHome"; // Assuming this is a component you want to include
 
-const Main = () => {
+const MainLayout = () => {
   const { scrollYProgress } = useScroll();
   // ... other states and effects ...
 
@@ -28,16 +28,13 @@ const Main = () => {
         }}
       />
       {/* Main content area with padding for fixed navbar */}
-      <main className="flex-grow pt-14 bg-[var(--background-default)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* ... confetti if you have it here ... */}
-          <Outlet />
-        </div>
-
-        <Footer />
+      <main className="flex-grow pt-16">
+        <Outlet />
       </main>
+
+      <Footer />
     </div>
   );
 };
 
-export default Main;
+export default MainLayout;

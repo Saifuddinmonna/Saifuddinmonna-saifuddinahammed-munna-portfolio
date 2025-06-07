@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { ThemeContext } from "../../App";
+import AuthNav from "../../auth/components/AuthNav";
 
 const NavbarPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -205,60 +206,64 @@ const NavbarPage = () => {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  Contact Me
+                  Contact
                 </span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               </button>
-              {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="ml-2 p-1.5 rounded-md bg-[var(--background-default)] hover:bg-[var(--primary-light)] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border-x border-[var(--border-color)] hover:border-[var(--primary-light)] transform hover:scale-[1.02] hover:-translate-y-0.5"
-                aria-label="Toggle theme"
+                className="ml-2 p-2 rounded-md text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white transition-colors duration-200"
               >
-                {isDarkMode ? (
-                  <FaSun className="w-4 h-4 text-[var(--warning-main)]" />
-                ) : (
-                  <FaMoon className="w-4 h-4 text-[var(--text-primary)]" />
-                )}
+                {isDarkMode ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
               </button>
+              <AuthNav />
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center space-x-2">
-              {/* Theme Toggle Button for Mobile */}
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg bg-[var(--background-default)] hover:bg-[var(--background-paper)] transition-colors duration-200"
-                aria-label="Toggle theme"
-              >
-                {isDarkMode ? (
-                  <FaSun className="w-5 h-5 text-[var(--warning-main)]" />
-                ) : (
-                  <FaMoon className="w-5 h-5 text-[var(--text-primary)]" />
-                )}
-              </button>
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                type="button"
-                className="inline-flex items-center justify-center p-2 rounded-md text-[var(--text-primary)] hover:text-[var(--primary-main)] focus:outline-none transition-colors duration-300"
-                aria-controls="mobile-menu"
-                aria-expanded={isOpen}
+                className="inline-flex items-center justify-center p-2 rounded-md text-[var(--text-primary)] hover:text-white hover:bg-[var(--primary-main)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               >
                 <span className="sr-only">Open main menu</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-                  />
-                </svg>
+                {!isOpen ? (
+                  <svg
+                    className="block h-6 w-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="block h-6 w-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile menu */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -266,17 +271,17 @@ const NavbarPage = () => {
               animate="open"
               exit="closed"
               variants={mobileMenuVariants}
-              className="md:hidden bg-[var(--background-paper)] border-t border-[var(--border-color)]"
+              className="md:hidden"
             >
-              <div className="px-2 pt-2 pb-3 space-y-1">
+              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 {navItems.map(item => (
                   <button
                     key={item.label}
                     onClick={() => handleNavigation(item.path)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
+                    className={`w-full text-left px-3 py-2 rounded-md text-base font-medium ${
                       isActive(item.path)
                         ? "bg-[var(--primary-main)] text-white"
-                        : "text-[var(--text-primary)] hover:bg-[var(--background-default)]"
+                        : "text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white"
                     }`}
                   >
                     {item.label}
@@ -284,10 +289,13 @@ const NavbarPage = () => {
                 ))}
                 <button
                   onClick={() => handleNavigation("/contact")}
-                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
                 >
-                  Contact Me
+                  Contact
                 </button>
+                <div className="px-3 py-2">
+                  <AuthNav />
+                </div>
               </div>
             </motion.div>
           )}

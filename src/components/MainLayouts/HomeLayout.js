@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import HomePageHero from "../CommonComponents/HomePageHero";
 import SkillDetails from "../CommonComponents/SkillProgressbar";
 import SkillChart from "../CommonComponents/SkillChart";
-import ContractMe from "../ContractMe/ContractMe";
 import MyPortfolios from "../MyPortfolios/MyPortfoliosForHomePage";
 import MyServicesv2 from "../Myservices/MyServicesv2";
 import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
@@ -67,24 +66,32 @@ const HomeLayout = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[var(--background-default)]">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Confetti animation on initial load */}
       {confettiStart && <ReactConfetti />}
 
       {/* Main content sections */}
-      <div className="space-y-16 md:space-y-20">
+      <div className="space-y-16 md:space-y-24 py-8">
         {/* Hero Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
+          className="w-full"
         >
           <HomePageHero />
         </motion.div>
 
         {/* Professional Profile Section */}
-        <HomeLayoutComponents />
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <HomeLayoutComponents />
+        </motion.div>
 
         {/* Skills Chart Section */}
         <motion.div
@@ -116,6 +123,7 @@ const HomeLayout = () => {
           <SkillDetails />
         </motion.div>
 
+        {/* Portfolio Section */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -140,7 +148,7 @@ const HomeLayout = () => {
       {showBackToTop && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 bg-indigo-600 text-white p-2.5 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors duration-300"
+          className="fixed bottom-6 right-6 bg-[var(--primary-main)] text-white p-2.5 rounded-full shadow-lg hover:bg-[var(--primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:ring-opacity-50 transition-colors duration-300"
           aria-label="Back to top"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
