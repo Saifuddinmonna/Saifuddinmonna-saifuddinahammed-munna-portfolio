@@ -54,7 +54,7 @@ import ReactConfetti from "react-confetti";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useParams } from "react-router-dom";
-import { ThemeContext } from "../../../context/ThemeContext";
+import { ThemeContext } from "../../../App";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";

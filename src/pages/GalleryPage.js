@@ -10,7 +10,7 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/plugins/counter.css";
 import { galleryData, categories } from "../data/galleryData";
-import { ThemeContext } from "../context/ThemeContext";
+import { ThemeContext } from "../App";
 import {
   FaExternalLinkAlt,
   FaGithub,

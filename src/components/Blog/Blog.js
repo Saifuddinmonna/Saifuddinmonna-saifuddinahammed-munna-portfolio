@@ -1,6 +1,6 @@
 import { useState, useMemo, useContext } from "react";
 import { motion } from "framer-motion";
-import { ThemeContext } from "../../context/ThemeContext";
+import { ThemeContext } from "../../App";
 import blogPostsData from "../../data/blogData.json";
 
 const ARTICLES_PER_PAGE = 10;

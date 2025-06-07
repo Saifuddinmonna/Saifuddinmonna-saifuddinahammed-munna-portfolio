@@ -4,17 +4,27 @@ const testimonialController = require("../controllers/testimonialController");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 // Public routes
-router.get("/", testimonialController.getTestimonials);
-router.post("/", testimonialController.createTestimonial);
+router.get("/testimonials", testimonialController.getTestimonials);
+router.post("/testimonials", testimonialController.submitTestimonial);
 
 // Admin routes
-router.get("/pending", isAuthenticated, isAdmin, testimonialController.getPendingTestimonials);
+router.get(
+  "/admin/testimonials",
+  isAuthenticated,
+  isAdmin,
+  testimonialController.getAllTestimonials
+);
 router.patch(
-  "/:id/status",
+  "/admin/testimonials/:id",
   isAuthenticated,
   isAdmin,
   testimonialController.updateTestimonialStatus
 );
-router.delete("/:id", isAuthenticated, isAdmin, testimonialController.deleteTestimonial);
+router.delete(
+  "/admin/testimonials/:id",
+  isAuthenticated,
+  isAdmin,
+  testimonialController.deleteTestimonial
+);
 
 module.exports = router;

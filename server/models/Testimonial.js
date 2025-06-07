@@ -19,7 +19,7 @@ const testimonialSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      trim: true,
+      required: true,
     },
     rating: {
       type: Number,
@@ -30,16 +30,14 @@ const testimonialSchema = new mongoose.Schema(
     text: {
       type: String,
       required: true,
-      trim: true,
     },
     date: {
-      type: Date,
-      default: Date.now,
+      type: String,
+      required: true,
     },
     services: {
       type: String,
       required: true,
-      trim: true,
     },
     status: {
       type: String,
@@ -47,7 +45,9 @@ const testimonialSchema = new mongoose.Schema(
       default: "pending",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model("Testimonial", testimonialSchema);

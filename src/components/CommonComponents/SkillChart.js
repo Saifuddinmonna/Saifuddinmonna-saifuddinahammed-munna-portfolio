@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ThemeContext } from "../../context/ThemeContext";
+import { ThemeContext } from "../../App"; // Adjust path if App.js is elsewhere
 import { theme } from "../../theme/theme"; // Adjust path if theme.js is elsewhere
 import {
   BarChart,

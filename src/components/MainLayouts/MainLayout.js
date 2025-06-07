@@ -1,32 +1,15 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React from "react";
 // ... other imports
 import NavbarPage2 from "../NavbarPage/NavbarPage";
 import Footer from "../CommonComponents/Footer";
 import { Outlet } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
-import ChatButton from "../Chat/ChatButton";
+import ContactPage from "../../pages/ContactPage";
+import aboutPageForHome from "../About/aboutPageForHome"; // Assuming this is a component you want to include
 
-// Lazy load Confetti
-const ReactConfetti = React.lazy(() => import("react-confetti"));
-
-const MainLayout = () => {
+const Main = () => {
   const { scrollYProgress } = useScroll();
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // ... other states and effects ...
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background-default)]">
@@ -45,28 +28,16 @@ const MainLayout = () => {
         }}
       />
       {/* Main content area with padding for fixed navbar */}
-      <main className="flex-grow pt-20 bg-[var(--background-default)]">
+      <main className="flex-grow pt-14 bg-[var(--background-default)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {typeof window !== "undefined" && (
-            <Suspense fallback={null}>
-              <ReactConfetti
-                width={windowSize.width}
-                height={windowSize.height}
-                recycle={false}
-                numberOfPieces={200}
-                gravity={0.2}
-              />
-            </Suspense>
-          )}
+          {/* ... confetti if you have it here ... */}
           <Outlet />
         </div>
-      </main>
 
-      {/* Footer */}
-      <Footer />
-      <ChatButton />
+        <Footer />
+      </main>
     </div>
   );
 };
 
-export default MainLayout;
+export default Main;
