@@ -4,6 +4,47 @@ const User = require('../models/User');
 const { verifyToken } = require('../middleware/auth');
 const admin = require('firebase-admin');
 
+// Get single user by ID
+router.get('/:userId', verifyToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Get user from database
+    const dbUser = await User.findOne({ firebaseUid: userId });
+    if (!dbUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found in database'
+      });
+    }
+
+    // Get user from Firebase
+    const firebaseUser = await admin.auth().getUser(userId);
+
+    res.json({
+      success: true,
+      data: {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoURL: firebaseUser.photoURL,
+        phone: dbUser.phone,
+        bio: dbUser.bio,
+        role: dbUser.role,
+        createdAt: dbUser.createdAt,
+        updatedAt: dbUser.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user',
+      error: error.message
+    });
+  }
+});
+
 // Get user profile (requires token)
 router.get('/profile', verifyToken, async (req, res) => {
   try {
@@ -28,7 +69,9 @@ router.get('/profile', verifyToken, async (req, res) => {
         photoURL: firebaseUser.photoURL,
         phone: dbUser.phone,
         bio: dbUser.bio,
-        role: dbUser.role
+        role: dbUser.role,
+        createdAt: dbUser.createdAt,
+        updatedAt: dbUser.updatedAt
       }
     });
   } catch (error) {
@@ -75,7 +118,9 @@ router.put('/profile', verifyToken, async (req, res) => {
         photoURL: user.photoURL,
         phone: user.phone,
         bio: user.bio,
-        role: user.role
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
       }
     });
   } catch (error) {
