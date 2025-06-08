@@ -42,7 +42,14 @@ export const verifyToken = async () => {
 
 // New function to get the current logged-in user's profile from /api/auth/me
 export const getCurrentUserProfile = async () => {
-  return apiRequest("/auth/me");
+  try {
+    const profile = await apiRequest("/auth/me");
+    console.log("getCurrentUserProfile response:", profile);
+    return profile;
+  } catch (error) {
+    console.error("Error fetching current user profile:", error);
+    throw error;
+  }
 };
 
 console.log("db user from heere", getCurrentUserProfile);

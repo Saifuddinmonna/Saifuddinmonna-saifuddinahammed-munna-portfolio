@@ -43,8 +43,6 @@ export const AuthProvider = ({ children }) => {
       console.log("Firebase signUp success, userCredential:", userCredential);
       const firebaseUser = userCredential.user;
       await getAndStoreToken(firebaseUser);
-      const profile = await getCurrentUserProfile();
-      setDbUser(profile);
       toast.success("Account created successfully!");
       return userCredential;
     } catch (error) {
@@ -78,8 +76,6 @@ export const AuthProvider = ({ children }) => {
       console.log("Firebase signInWithGoogle success, result:", result);
       const firebaseUser = result.user;
       await getAndStoreToken(firebaseUser);
-      const profile = await getCurrentUserProfile();
-      setDbUser(profile);
       toast.success("Signed in with Google successfully!");
       return result;
     } catch (error) {
@@ -125,7 +121,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const value = {
     user,
@@ -136,6 +132,7 @@ export const AuthProvider = ({ children }) => {
     signInWithGoogle,
     logOut,
     loading,
+    setDbUser,
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

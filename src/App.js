@@ -9,6 +9,7 @@ import TestimonialsPage from "./pages/TestimonialsPage";
 import { AuthProvider } from "./auth/context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 
 import { SocketProvider } from "./socketIo/SocketProvider";
 import ChatBubble from "./socketIo/components/ChatBubble";
@@ -93,6 +94,7 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
+          <Toaster position="top-right" />
           <SocketProvider>
             <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
               {confettiStart && <ReactConfetti />}

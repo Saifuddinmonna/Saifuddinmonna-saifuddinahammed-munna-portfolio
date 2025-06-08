@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaGoogle } from "react-icons/fa";
 import { apiRequest } from "../utils/api";
+import { getCurrentUserProfile } from "../utils/api";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +17,7 @@ const SignUp = () => {
     photoURL: "",
   });
   const [loading, setLoading] = useState(false);
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle, setDbUser } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -49,6 +50,12 @@ const SignUp = () => {
       }
       const { user } = userCredential;
 
+      // Wait for token to be available
+      const token = await user.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
       // Then create user in your database
       const userData = {
         firebaseUid: user.uid,
@@ -62,10 +69,16 @@ const SignUp = () => {
         role: "user",
       };
 
+      console.log("Sending registration data to server:", userData);
+
       await apiRequest("/auth/register", {
         method: "POST",
         body: JSON.stringify(userData),
       });
+
+      // Fetch and set dbUser after successful registration
+      const profile = await getCurrentUserProfile();
+      setDbUser(profile);
 
       toast.success("Account created successfully!");
       // Reset form fields after successful registration
@@ -80,6 +93,7 @@ const SignUp = () => {
       });
       navigate("/");
     } catch (error) {
+      console.error("Registration error:", error);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -111,6 +125,11 @@ const SignUp = () => {
         body: JSON.stringify(userData),
       });
 
+      // Fetch and set dbUser after successful Google registration
+      const profile = await getCurrentUserProfile();
+      setDbUser(profile);
+
+      console.log("Sending registration data to server:", userData);
       toast.success("Signed in with Google successfully!");
       // Reset form fields after successful Google sign-in
       setFormData({
