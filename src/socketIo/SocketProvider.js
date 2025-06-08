@@ -13,6 +13,8 @@ export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [users, setUsers] = useState([]); // State to store list of active users
   const [typingUsers, setTypingUsers] = useState(new Set()); // State to store users who are typing
+  const [messages, setMessages] = useState([]); // State to store all chat messages
+  const [currentRoom, setCurrentRoom] = useState("general"); // Default to 'general' for public chat
 
   useEffect(() => {
     if (loading) return; // Wait for auth loading to complete
@@ -83,6 +85,22 @@ export const SocketProvider = ({ children }) => {
       });
     };
 
+    const onMessage = msg => {
+      setMessages(prev => [...prev, { ...msg, type: "public" }]);
+    };
+
+    const onPrivateMessage = msg => {
+      setMessages(prev => [...prev, { ...msg, type: "private" }]);
+    };
+
+    const onRoomMessage = msg => {
+      setMessages(prev => [...prev, { ...msg, type: "room" }]);
+    };
+
+    const onBroadcastMessage = msg => {
+      setMessages(prev => [...prev, { ...msg, type: "broadcast" }]);
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("connect_error", onConnectError);
@@ -90,6 +108,10 @@ export const SocketProvider = ({ children }) => {
     socket.on("userJoined", onUserJoined);
     socket.on("userLeft", onUserLeft);
     socket.on("userTyping", onUserTyping);
+    socket.on("message", onMessage);
+    socket.on("privateMessage", onPrivateMessage);
+    socket.on("roomMessage", onRoomMessage);
+    socket.on("broadcastMessage", onBroadcastMessage);
 
     return () => {
       socket.off("connect", onConnect);
@@ -99,6 +121,10 @@ export const SocketProvider = ({ children }) => {
       socket.off("userJoined", onUserJoined);
       socket.off("userLeft", onUserLeft);
       socket.off("userTyping", onUserTyping);
+      socket.off("message", onMessage);
+      socket.off("privateMessage", onPrivateMessage);
+      socket.off("roomMessage", onRoomMessage);
+      socket.off("broadcastMessage", onBroadcastMessage);
       socket.disconnect(); // Disconnect when component unmounts
     };
   }, [token, dbUser, loading]); // Added dbUser to dependencies
@@ -117,6 +143,8 @@ export const SocketProvider = ({ children }) => {
     dbUser, // Provide dbUser from AuthContext for role-based UI
     users,
     typingUsers,
+    messages, // Expose messages state
+    currentRoom, // Expose currentRoom state
     joinAsGuest,
   };
 

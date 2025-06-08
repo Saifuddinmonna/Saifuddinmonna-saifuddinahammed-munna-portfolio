@@ -7,12 +7,19 @@ import EmojiPicker from "emoji-picker-react"; // Import EmojiPicker
 import { toast } from "react-hot-toast";
 
 const ChatWindow = ({ isChatOpen, onCloseChat }) => {
-  const { socket, isConnected, dbUser, users, typingUsers, joinAsGuest } = useSocket();
+  const {
+    socket,
+    isConnected,
+    dbUser,
+    users,
+    typingUsers,
+    joinAsGuest,
+    messages: allMessages,
+  } = useSocket();
   const { user: firebaseUser } = useAuth(); // Firebase user for displayName/email
-  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [activeChatTab, setActiveChatTab] = useState("public"); // 'public', 'private', 'room', 'admin_panel'
+  const [activeChatTab, setActiveChatTab] = useState("public"); // 'public', 'private', 'admin_panel'
   const [selectedPrivateChatUser, setSelectedPrivateChatUser] = useState(null); // For private chat
   const messagesEndRef = useRef(null);
 
@@ -34,42 +41,46 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     if (isChatOpen) {
       scrollToBottom();
     }
-  }, [messages, isChatOpen]);
+  }, [allMessages, isChatOpen]);
 
   useEffect(() => {
     if (!socket) return;
 
     const handleReceiveMessage = message => {
-      console.log("New message received:", message);
-      setMessages(prevMessages => [...prevMessages, message]);
-    };
-
-    const handleMessageHistory = history => {
-      console.log("Message history received:", history);
-      setMessages(history);
+      // Messages are now handled by SocketProvider and stored in `allMessages`
+      // No need to set them here, but we might want to trigger scroll
+      // setMessages(prevMessages => [...prevMessages, message]); // This is now done in SocketProvider
       scrollToBottom();
     };
 
-    socket.on("message", handleReceiveMessage);
-    socket.on("messageHistory", handleMessageHistory);
+    const handleMessageHistory = history => {
+      // Message history is now handled by SocketProvider
+      // We will rely on `allMessages` from context, so no need to set here
+      // setMessages(history); // This is now done in SocketProvider
+      scrollToBottom();
+    };
+
+    // Only listen for generic 'message' for public, others are handled by SocketProvider
+    socket.on("message", handleReceiveMessage); // Still listen for public messages for scroll effect
 
     // Request message history when chat opens or socket connects
+    // The request type (public/private/room) is now managed by activeChatTab
     if (isChatOpen && isConnected) {
       socket.emit("requestMessageHistory", {
         type: activeChatTab,
         targetId: selectedPrivateChatUser?.id,
-      }); // Request history based on tab
+        // Add currentRoom if you implement specific rooms beyond private/public
+      });
     }
 
     return () => {
       socket.off("message", handleReceiveMessage);
-      socket.off("messageHistory", handleMessageHistory);
     };
-  }, [socket, isChatOpen, isConnected, activeChatTab, selectedPrivateChatUser]); // Depend on chat tab and selected user
+  }, [socket, isChatOpen, isConnected, activeChatTab, selectedPrivateChatUser, allMessages]); // Add allMessages to dependencies
 
   // Determine if user is registered or guest
   const isUserRegistered = !!dbUser;
-  const isAdmin = dbUser?.role === "admin";
+  const isAdmin = dbUser?.data?.role === "admin"; // Access role from dbUser.data
 
   // Set guest registered status based on dbUser presence, or if guest details were submitted
   useEffect(() => {
@@ -98,20 +109,26 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     if (inputValue.trim() === "") return;
 
     const messageText = inputValue.trim();
-    const messagePayload = { text: messageText };
 
     if (activeChatTab === "private" && selectedPrivateChatUser) {
-      messagePayload.receiverId = selectedPrivateChatUser.id; // Assuming user.id is the target ID
-      socket.emit("sendMessage", messagePayload);
+      socket.emit("privateMessage", {
+        receiverId: selectedPrivateChatUser.id,
+        text: messageText,
+      });
+      toast.success(`Private message sent to ${selectedPrivateChatUser.name}`);
     } else if (activeChatTab === "room") {
-      // For now, assume a general room or logic to select room
-      messagePayload.roomId = "general_room"; // Placeholder, replace with actual room ID
-      socket.emit("sendMessage", messagePayload);
-    } else if (activeChatTab === "admin_broadcast") {
-      socket.emit("adminBroadcast", { text: messageText }); // New event for admin broadcast
+      // This needs a way to select or enter a room
+      const roomId = "general_room"; // Placeholder, you'll need UI for room selection
+      socket.emit("roomMessage", { roomId, text: messageText });
+      toast.success(`Message sent to room: ${roomId}`);
+    } else if (activeChatTab === "admin_panel" && isAdmin) {
+      // Admin panel actions
+      // This is for broadcast, not a regular sendMessage
+      socket.emit("adminBroadcast", { text: messageText });
+      toast.success("Broadcast message sent!");
     } else {
       // Public chat
-      socket.emit("sendMessage", messagePayload);
+      socket.emit("sendMessage", { text: messageText });
     }
 
     setInputValue("");
@@ -158,33 +175,56 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // URL parsing for messages, robustly checks for content property
   const renderMessageContent = msg => {
-    console.log("renderMessageContent received msg:", msg); // Added for debugging
-    let text = msg.text || msg.message || msg.content; // Prioritize 'text', then 'message', then 'content'
-    console.log("renderMessageContent derived text:", text); // Added for debugging
-    if (typeof text !== "string") {
-      console.warn(
-        "renderMessageContent received non-string or missing text/message/content:",
-        msg
-      );
-      return String(text || ""); // Coerce to string, fallback to empty string if still null/undefined
-    }
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.split(urlRegex).map((part, index) => {
-      if (part.match(urlRegex)) {
-        return (
-          <a
-            key={index}
-            href={part}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
-          >
-            {part}
-          </a>
+    // Messages are now received with a 'type' property from SocketProvider
+    // We need to decide what to render based on the current activeChatTab
+
+    const isPrivate = msg.type === "private";
+    const isRoom = msg.type === "room";
+    const isBroadcast = msg.type === "broadcast";
+    const isPublic = msg.type === "public";
+
+    // Only render messages relevant to the current active tab
+    if (
+      (activeChatTab === "public" && isPublic) || // Only public messages for public tab
+      (activeChatTab === "private" &&
+        isPrivate &&
+        ((msg.senderId === (dbUser?.firebaseUid || firebaseUser?.uid) &&
+          msg.receiverId === selectedPrivateChatUser?.id) ||
+          (msg.senderId === selectedPrivateChatUser?.id &&
+            msg.receiverId === (dbUser?.firebaseUid || firebaseUser?.uid)))) ||
+      (activeChatTab === "room" && isRoom) || // Further refinement needed for specific rooms
+      (isAdmin && isBroadcast) // Admins can see broadcast messages
+    ) {
+      console.log("renderMessageContent received msg:", msg); // Added for debugging
+      let text = msg.text || msg.message || msg.content; // Prioritize 'text', then 'message', then 'content'
+      console.log("renderMessageContent derived text:", text); // Added for debugging
+      if (typeof text !== "string") {
+        console.warn(
+          "renderMessageContent received non-string or missing text/message/content:",
+          msg
         );
+        return String(text || ""); // Coerce to string, fallback to empty string if still null/undefined
       }
-      return part;
-    });
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.split(urlRegex).map((part, index) => {
+        if (part.match(urlRegex)) {
+          return (
+            <a
+              key={index}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline"
+            >
+              {part}
+            </a>
+          );
+        }
+        return part;
+      });
+    } else {
+      return null; // Don't render messages not relevant to the current tab
+    }
   };
 
   // Determine sender display name and role for messages
@@ -250,246 +290,338 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
             </div>
           </div>
 
-          {!isUserRegistered && !isGuestRegistered ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-4">
-              <h4 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
-                Chat as Guest
-              </h4>
-              <form onSubmit={handleGuestJoin} className="w-full max-w-xs space-y-4">
-                <input
-                  type="text"
-                  value={guestName}
-                  onChange={e => setGuestName(e.target.value)}
-                  placeholder="Your Name (required)"
-                  className="w-full px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--background-default)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  required
-                />
-                <input
-                  type="tel"
-                  value={guestPhone}
-                  onChange={e => setGuestPhone(e.target.value)}
-                  placeholder="Your Phone / WhatsApp (optional)"
-                  className="w-full px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--background-default)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                />
+          {/* Tab Navigation */}
+          <div className="flex justify-around bg-[var(--background-default)] border-b border-[var(--border-color)] p-2">
+            <button
+              className={`px-3 py-1 rounded-md text-sm font-medium ${
+                activeChatTab === "public"
+                  ? "bg-[var(--primary-main)] text-white"
+                  : "text-[var(--text-primary)] hover:bg-[var(--background-hover)]"
+              }`}
+              onClick={() => {
+                setActiveChatTab("public");
+                setSelectedPrivateChatUser(null);
+              }}
+            >
+              Public Chat
+            </button>
+            <button
+              className={`px-3 py-1 rounded-md text-sm font-medium ${
+                activeChatTab === "private"
+                  ? "bg-[var(--primary-main)] text-white"
+                  : "text-[var(--text-primary)] hover:bg-[var(--background-hover)]"
+              }`}
+              onClick={() => {
+                setActiveChatTab("private");
+              }}
+            >
+              Private Chat
+            </button>
+            {isAdmin && (
+              <button
+                className={`px-3 py-1 rounded-md text-sm font-medium ${
+                  activeChatTab === "admin_panel"
+                    ? "bg-[var(--primary-main)] text-white"
+                    : "text-[var(--text-primary)] hover:bg-[var(--background-hover)]"
+                }`}
+                onClick={() => {
+                  setActiveChatTab("admin_panel");
+                  setSelectedPrivateChatUser(null);
+                }}
+              >
+                Admin Panel
+              </button>
+            )}
+          </div>
+
+          {/* Chat Body */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            {!isUserRegistered && !isGuestRegistered ? (
+              // Guest Registration Form
+              <form
+                onSubmit={handleGuestJoin}
+                className="space-y-4 p-4 bg-[var(--background-paper)] rounded-lg shadow"
+              >
+                <p className="text-center text-[var(--text-secondary)]">Join as a guest to chat</p>
+                <div>
+                  <label htmlFor="guestName" className="sr-only">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="guestName"
+                    value={guestName}
+                    onChange={e => setGuestName(e.target.value)}
+                    placeholder="Your Name"
+                    className="w-full px-3 py-2 border rounded-md bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="guestPhone" className="sr-only">
+                    Phone (optional)
+                  </label>
+                  <input
+                    type="tel"
+                    id="guestPhone"
+                    value={guestPhone}
+                    onChange={e => setGuestPhone(e.target.value)}
+                    placeholder="Phone (optional)"
+                    className="w-full px-3 py-2 border rounded-md bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                  />
+                </div>
                 <button
                   type="submit"
-                  className="w-full p-2 bg-[var(--primary-main)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors"
+                  className="w-full bg-[var(--primary-main)] text-white py-2 rounded-md hover:bg-[var(--primary-dark)] transition-colors"
                 >
-                  Start Chat
+                  Join Chat
                 </button>
               </form>
-            </div>
-          ) : (
-            <>
-              {/* Chat Tabs / Admin Panel Toggle */}
-              {isAdmin && (
-                <div className="flex justify-around bg-[var(--background-elevated)] p-2 border-b border-[var(--border-color)]">
-                  <button
-                    onClick={() => setActiveChatTab("public")}
-                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                      activeChatTab === "public"
-                        ? "bg-[var(--primary-main)] text-white"
-                        : "text-[var(--text-secondary)] hover:bg-[var(--background-hover)]"
-                    }`}
-                  >
-                    Public Chat
-                  </button>
-                  <button
-                    onClick={() => setActiveChatTab("private")}
-                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                      activeChatTab === "private"
-                        ? "bg-[var(--primary-main)] text-white"
-                        : "text-[var(--text-secondary)] hover:bg-[var(--background-hover)]"
-                    }`}
-                  >
-                    Private Chat
-                  </button>
-                  <button
-                    onClick={() => setActiveChatTab("admin_panel")}
-                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                      activeChatTab === "admin_panel"
-                        ? "bg-[var(--primary-main)] text-white"
-                        : "text-[var(--text-secondary)] hover:bg-[var(--background-hover)]"
-                    }`}
-                  >
-                    Admin Panel
-                  </button>
-                </div>
-              )}
-
-              {/* Chat Content based on activeChatTab */}
-              {activeChatTab === "admin_panel" && isAdmin ? (
-                <div className="flex-1 p-4 overflow-y-auto bg-[var(--background-default)] flex flex-col space-y-4">
-                  <h4 className="text-lg font-semibold text-[var(--text-primary)]">
-                    Admin Actions
-                  </h4>
-                  {/* Broadcast Message */}
-                  <div className="bg-[var(--background-paper)] p-4 rounded-lg shadow">
-                    <h5 className="font-semibold text-[var(--text-primary)] mb-2">
-                      Send Broadcast Message
-                    </h5>
-                    <form
-                      onSubmit={e => {
-                        e.preventDefault();
-                        const text = e.target.broadcastMessage.value;
-                        if (text.trim()) {
-                          socket.emit("adminBroadcast", { text });
-                          e.target.broadcastMessage.value = "";
-                          toast.success("Broadcast message sent!");
-                        }
-                      }}
-                      className="flex space-x-2"
-                    >
-                      <input
-                        type="text"
-                        name="broadcastMessage"
-                        placeholder="Message to all users"
-                        className="flex-1 px-3 py-2 rounded-full border border-[var(--border-color)] bg-[var(--background-default)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                      />
-                      <button
-                        type="submit"
-                        className="p-2 bg-[var(--primary-main)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors"
-                      >
-                        <FaPaperPlane className="w-5 h-5" />
-                      </button>
-                    </form>
-                  </div>
-
-                  {/* Online Users for Private Chat */}
-                  <div className="bg-[var(--background-paper)] p-4 rounded-lg shadow">
-                    <h5 className="font-semibold text-[var(--text-primary)] mb-2">
-                      Online Users ({users.length})
-                    </h5>
-                    {users.length === 0 && (
-                      <p className="text-sm text-[var(--text-secondary)]">No users online.</p>
-                    )}
-                    <div className="space-y-2 max-h-40 overflow-y-auto">
-                      {users.map(userItem => (
-                        <button
-                          key={userItem.id}
-                          onClick={() => {
-                            setSelectedPrivateChatUser(userItem);
-                            setActiveChatTab("private");
-                            toast.info(`Private chat with ${userItem.name} selected.`);
-                          }}
-                          className="w-full text-left p-2 rounded-md bg-[var(--background-default)] hover:bg-[var(--background-hover)] text-[var(--text-primary)] flex items-center space-x-2"
-                        >
-                          <FaUser className="w-4 h-4" />
-                          <span>
-                            {userItem.name} {userItem.role && `(${userItem.role})`}
-                          </span>
-                          {selectedPrivateChatUser?.id === userItem.id && (
-                            <span className="ml-auto text-xs text-[var(--primary-main)]">
-                              (Selected)
-                            </span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {/* Private Chat Header for Admin */}
-                  {isAdmin && activeChatTab === "private" && selectedPrivateChatUser && (
-                    <div className="p-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border-b border-[var(--border-color)] flex items-center justify-between">
-                      <span className="text-sm font-medium">
-                        Private chat with {selectedPrivateChatUser.name}
-                      </span>
-                      <button
-                        onClick={() => setSelectedPrivateChatUser(null)}
-                        className="p-1 rounded-full text-[var(--text-secondary)] hover:bg-[var(--background-hover)]"
-                      >
-                        <FaTimes className="w-3 h-3" />
-                      </button>
-                    </div>
-                  )}
-                  {/* Messages Area */}
-                  <div className="flex-1 p-4 overflow-y-auto space-y-4 text-[var(--text-primary)]">
-                    {messages.length === 0 && (
-                      <p className="text-center text-[var(--text-secondary)]">
-                        {isConnected
-                          ? "No messages yet. Say hello!"
-                          : "Connecting... Messages will appear here."}
-                      </p>
-                    )}
-                    {messages.map((msg, index) => (
-                      <div
-                        key={index}
-                        className={`flex ${
-                          getSenderDisplay(msg).includes("Me") ? "justify-end" : "justify-start"
-                        }`}
-                      >
+            ) : (
+              // Main Chat Area or Admin Panel
+              <>
+                {activeChatTab === "public" && (
+                  <div>
+                    {allMessages
+                      .filter(msg => msg.type === "public")
+                      .map((msg, index) => (
                         <div
-                          className={`max-w-[70%] p-3 rounded-lg shadow-sm
-                                     ${
-                                       getSenderDisplay(msg).includes("Me")
-                                         ? "bg-[var(--primary-light)] text-[var(--text-primary)]"
-                                         : "bg-[var(--background-elevated)] text-[var(--text-primary)]"
-                                     }
-                                    `}
+                          key={index}
+                          className={`flex items-start mb-4 ${
+                            msg.senderId === (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                              ? "justify-end"
+                              : "justify-start"
+                          }`}
                         >
-                          <p className="text-xs text-[var(--text-secondary)] font-medium mb-1">
-                            {getSenderDisplay(msg)}
-                          </p>
-                          <p className="text-sm break-words">{renderMessageContent(msg)}</p>
-                          <p className="text-right text-xs text-[var(--text-tertiary)] mt-1">
-                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </p>
+                          <div
+                            className={`rounded-lg p-3 max-w-[70%] ${
+                              msg.senderId ===
+                              (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                ? "bg-[var(--primary-main)] text-white"
+                                : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
+                            }`}
+                          >
+                            <div className="font-semibold text-sm mb-1">
+                              {getSenderDisplay(msg)}
+                            </div>
+                            <p className="text-sm whitespace-pre-wrap">
+                              {renderMessageContent(msg)}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                     <div ref={messagesEndRef} />
                   </div>
+                )}
 
-                  {/* Typing Indicator */}
-                  {typingUsers.size > 0 && (
-                    <div className="px-4 text-xs text-[var(--text-secondary)]">
-                      {Array.from(typingUsers).join(", ")} {typingUsers.size > 1 ? "are" : "is"}
-                      typing...
+                {activeChatTab === "private" && (
+                  <div className="h-full flex flex-col">
+                    {!selectedPrivateChatUser ? (
+                      <div className="p-4 text-center text-[var(--text-secondary)]">
+                        <h4 className="text-lg font-semibold mb-4">
+                          Select a user for private chat:
+                        </h4>
+                        <ul className="space-y-2">
+                          {users
+                            .filter(
+                              u =>
+                                u.id !== (dbUser?.firebaseUid || firebaseUser?.uid || socket.id) &&
+                                u.id !== "guest_placeholder_id"
+                            )
+                            .map(user => (
+                              <li key={user.id}>
+                                <button
+                                  onClick={() => {
+                                    setSelectedPrivateChatUser(user);
+                                    toast.success(
+                                      `Started private chat with ${user.name || user.displayName}`
+                                    );
+                                  }}
+                                  className="w-full text-left px-4 py-2 rounded-md bg-[var(--background-default)] hover:bg-[var(--background-hover)] text-[var(--text-primary)] transition-colors duration-200 flex items-center"
+                                >
+                                  <FaUser className="mr-2" />
+                                  {user.name || user.displayName || user.id}{" "}
+                                  {user.role ? `(${user.role})` : ""}
+                                </button>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      // Private chat window with selected user
+                      <>
+                        <div className="flex items-center justify-between p-3 bg-[var(--background-default)] border-b border-[var(--border-color)] rounded-t-lg">
+                          <button
+                            onClick={() => setSelectedPrivateChatUser(null)}
+                            className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                          >
+                            <FaBars className="w-5 h-5" />
+                          </button>
+                          <h4 className="font-semibold text-[var(--text-primary)]">
+                            Private Chat with{" "}
+                            {selectedPrivateChatUser.name || selectedPrivateChatUser.displayName}
+                          </h4>
+                          <div></div> {/* Placeholder for alignment */}
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                          {allMessages
+                            .filter(
+                              msg =>
+                                msg.type === "private" &&
+                                ((msg.senderId ===
+                                  (dbUser?.firebaseUid || firebaseUser?.uid || socket.id) &&
+                                  msg.receiverId === selectedPrivateChatUser?.id) ||
+                                  (msg.senderId === selectedPrivateChatUser?.id &&
+                                    msg.receiverId ===
+                                      (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)))
+                            )
+                            .map((msg, index) => (
+                              <div
+                                key={index}
+                                className={`flex items-start mb-4 ${
+                                  msg.senderId ===
+                                  (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                    ? "justify-end"
+                                    : "justify-start"
+                                }`}
+                              >
+                                <div
+                                  className={`rounded-lg p-3 max-w-[70%] ${
+                                    msg.senderId ===
+                                    (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                      ? "bg-[var(--primary-main)] text-white"
+                                      : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
+                                  }`}
+                                >
+                                  <div className="font-semibold text-sm mb-1">
+                                    {getSenderDisplay(msg)}
+                                  </div>
+                                  <p className="text-sm whitespace-pre-wrap">
+                                    {renderMessageContent(msg)}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          <div ref={messagesEndRef} />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {isAdmin && activeChatTab === "admin_panel" && (
+                  <div className="p-4">
+                    <h4 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+                      Admin Panel
+                    </h4>
+                    <div className="mb-6">
+                      <h5 className="text-md font-semibold text-[var(--text-primary)] mb-2">
+                        Active Users:
+                      </h5>
+                      <ul className="space-y-2">
+                        {users.map(user => (
+                          <li
+                            key={user.id}
+                            className="flex items-center justify-between bg-[var(--background-default)] p-2 rounded-md border border-[var(--border-color)]"
+                          >
+                            <span className="text-[var(--text-primary)]">
+                              {user.name || user.displayName || "Guest"}{" "}
+                              {user.role ? `(${user.role})` : ""}
+                            </span>
+                            <button
+                              onClick={() => {
+                                setActiveChatTab("private");
+                                setSelectedPrivateChatUser(user);
+                                toast.success(
+                                  `Initiated private chat with ${user.name || user.displayName}`
+                                );
+                              }}
+                              className="ml-2 px-3 py-1 text-xs bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
+                            >
+                              Private Chat
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  )}
 
-                  {/* Input Area */}
+                    {/* Admin Broadcast Feature */}
+                    <div className="mb-6">
+                      <h5 className="text-md font-semibold text-[var(--text-primary)] mb-2">
+                        Broadcast Message:
+                      </h5>
+                      <form onSubmit={sendMessage} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          placeholder="Type broadcast message..."
+                          className="flex-1 px-3 py-2 border rounded-md bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                        />
+                        <button
+                          type="submit"
+                          className="p-2 bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
+                          onClick={() => setActiveChatTab("admin_panel")} // Ensure sendMessage knows it's a broadcast
+                        >
+                          <FaPaperPlane />
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* Other admin features can go here (e.g., room management) */}
+                  </div>
+                )}
+
+                {/* Typing indicators */}
+                {typingUsers.size > 0 && (
+                  <div className="text-sm text-[var(--text-secondary)] mb-2 px-4 italic">
+                    {Array.from(typingUsers).join(", ")} is typing...
+                  </div>
+                )}
+
+                {/* Message Input (hidden for admin panel broadcast, shown for other tabs) */}
+                {activeChatTab !== "admin_panel" && (
                   <form
                     onSubmit={sendMessage}
-                    className="p-4 border-t border-[var(--border-color)] bg-[var(--background-paper)] relative"
+                    className="flex items-center p-4 border-t border-[var(--border-color)] bg-[var(--background-paper)]"
                   >
-                    {showEmojiPicker && (
-                      <div className="absolute bottom-full left-0 mb-2 z-50">
-                        <EmojiPicker onEmojiClick={handleEmojiSelect} width={300} height={400} />
-                      </div>
-                    )}
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="p-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors"
-                      >
-                        <FaSmile className="w-5 h-5" />
-                      </button>
-                      <input
-                        type="text"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--background-default)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                      />
-                      <button
-                        type="submit"
-                        className="p-2 bg-[var(--primary-main)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors"
-                      >
-                        <FaPaperPlane className="w-5 h-5" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className="p-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors"
+                    >
+                      <FaSmile className="w-5 h-5" />
+                    </button>
+                    <input
+                      type="text"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      placeholder={
+                        selectedPrivateChatUser
+                          ? `Message ${
+                              selectedPrivateChatUser.name || selectedPrivateChatUser.displayName
+                            }`
+                          : "Type your message..."
+                      }
+                      className="flex-1 mx-2 px-3 py-2 border rounded-md bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                    />
+                    <button
+                      type="submit"
+                      className="p-2 bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
+                    >
+                      <FaPaperPlane />
+                    </button>
                   </form>
-                </>
-              )}
-            </>
-          )}
+                )}
+
+                {showEmojiPicker && (
+                  <div className="absolute bottom-16 right-4 z-10">
+                    <EmojiPicker onEmojiClick={handleEmojiSelect} />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
