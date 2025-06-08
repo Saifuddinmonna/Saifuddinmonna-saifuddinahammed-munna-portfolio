@@ -342,16 +342,13 @@ const ResumeViewer = () => {
             </div>
             <div className="p-2 space-y-1.5">
               <a
-                href={resumeData.html.url}
-                download
-                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+                href="/documents/myCv/resume of Saifuddin Ahammed.html"
+                download="resume of Saifuddin Ahammed.html"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
+                         bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
+                         dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
               >
-                <svg
-                  className="w-3.5 h-3.5 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -359,20 +356,16 @@ const ResumeViewer = () => {
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                <span className="relative z-10">Download HTML Resume</span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                Download HTML Resume
               </a>
               <a
-                href={resumeData.cv.url}
-                download
-                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+                href="/documents/myCv/cv for saifuddin ahmmed monna.html"
+                download="cv for saifuddin ahmmed monna.html"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
+                         bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
+                         dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
               >
-                <svg
-                  className="w-3.5 h-3.5 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -380,20 +373,16 @@ const ResumeViewer = () => {
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                <span className="relative z-10">Download HTML CV</span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                Download HTML CV
               </a>
               <a
-                href={resumeData.singlePage.url}
-                download
-                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+                href="/documents/myCv/singlePage resume of Saifuddin Ahammed Monna.html"
+                download="singlePage resume of Saifuddin Ahammed Monna.html"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
+                         bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
+                         dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
               >
-                <svg
-                  className="w-3.5 h-3.5 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -401,20 +390,16 @@ const ResumeViewer = () => {
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                <span className="relative z-10">Download Single Page Resume</span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                Download Single Page Resume
               </a>
               <a
-                href={resumeData.pdf.url}
-                download
-                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+                href="/documents/myCv/_resume of Saifuddin Ahammed Monna.pdf"
+                download="_resume of Saifuddin Ahammed Monna.pdf"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
+                         bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
+                         dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
               >
-                <svg
-                  className="w-3.5 h-3.5 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -422,20 +407,16 @@ const ResumeViewer = () => {
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                <span className="relative z-10">Download PDF Resume</span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                Download PDF Resume
               </a>
               <a
-                href={resumeData.cvPdf.url}
-                download
-                className="flex items-center px-3 py-1.5 text-xs font-semibold tracking-wide bg-gradient-to-r from-primary-dark to-secondary-dark text-white rounded-md overflow-hidden group transform hover:scale-[1.02] transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(59,130,246,0.4)] border border-primary-main/20 hover:border-primary-main/30"
+                href="/documents/myCv/cv for saifuddin ahmmed monna.pdf"
+                download="cv for saifuddin ahmmed monna.pdf"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
+                         bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
+                         dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
               >
-                <svg
-                  className="w-3.5 h-3.5 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -443,8 +424,7 @@ const ResumeViewer = () => {
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                <span className="relative z-10">Download PDF CV</span>
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                Download PDF CV
               </a>
             </div>
           </motion.div>
