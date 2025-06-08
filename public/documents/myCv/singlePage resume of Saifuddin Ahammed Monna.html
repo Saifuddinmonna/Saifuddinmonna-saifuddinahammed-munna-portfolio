@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saifuddin Ahammed Monna - Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol", "Noto Color Emoji";
+        color: #1f2937; /* Tailwind gray-800 */
+      }
+      .resume-page-container {
+        padding: 2rem; /* Outer margin for the page */
+      }
+      .resume-page {
+        border: 1px solid #cbd5e1; /* Tailwind gray-300 for page border */
+        background-color: #ffffff;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+      }
+      .section-tag {
+        background-color: #e5e7eb; /* Tailwind gray-200 */
+        padding: 0.25rem 0.75rem; /* py-1 px-3 */
+        border-radius: 0.25rem; /* rounded-md */
+        display: inline-block;
+        font-weight: 600; /* semibold */
+        color: #1f2937; /* gray-800 */
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+      }
+      .sub-section-title {
+        font-weight: 600; /* semibold */
+        color: #111827; /* gray-900 */
+      }
+      .symbol-diamond,
+      .symbol-checkmark {
+        color: #1f2937; /* gray-800 / black */
+        margin-right: 0.5rem; /* mr-2 */
+        font-size: 0.9em;
+      }
+      .symbol-checkmark {
+        font-weight: bold;
+      }
+      .contact-link {
+        color: #2563eb; /* blue-600 */
+        text-decoration: none;
+      }
+      .contact-link:hover {
+        text-decoration: underline;
+      }
+      .header-social-link {
+        color: #2563eb; /* blue-600 */
+        font-weight: 500; /* medium */
+      }
+      .header-social-link:hover {
+        text-decoration: underline;
+      }
+
+      @media print {
+        body {
+          background-color: #fff !important;
+          -webkit-print-color-adjust: exact;
+          color-adjust: exact;
+          margin: 0;
+          padding: 0;
+        }
+        .resume-page-container {
+          padding: 0 !important;
+        }
+        .resume-page {
+          box-shadow: none !important;
+          border: 1px solid #d1d5db !important; /* gray-300 */
+          margin: 0 !important;
+          max-width: 100% !important;
+          border-radius: 0 !important;
+          padding: 20px !important;
+        }
+        .section-tag {
+          background-color: #f3f4f6 !important; /* gray-100 for print */
+          -webkit-print-color-adjust: exact;
+          color-adjust: exact;
+        }
+        a {
+          color: #0000ee !important; /* Standard print blue for links */
+          text-decoration: underline !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="resume-page-container min-h-screen flex items-start justify-center">
+      <div class="resume-page max-w-4xl w-full p-8 sm:p-10 text-gray-800">
+        <!-- Header Section -->
+        <header class="mb-6 pb-4 border-b border-gray-300">
+          <div class="text-center mb-4">
+            <h1 class="text-3xl font-bold text-gray-900">Saifuddin Ahammed Monna</h1>
+            <p class="text-xl text-gray-700">Full Stack Web Developer (MERN STACK)</p>
+            <p class="text-md text-gray-600">Mymensingh, Bangladesh.</p>
+          </div>
+          <div
+            class="flex flex-col sm:flex-row justify-between items-center text-sm space-y-2 sm:space-y-0"
+          >
+            <div class="flex items-center space-x-4">
+              <a href="tel:+880-1623361191" class="contact-link font-medium">+880-1623361191</a>
+              <a href="mailto:saifuddinmonna@email.com" class="contact-link font-medium"
+                >saifuddinmonna@email.com</a
+              >
+            </div>
+            <div class="flex items-center space-x-1 sm:space-x-2">
+              <a href="#" class="header-social-link">Facebook</a>
+              <span class="text-gray-400 mx-1">|</span>
+              <a href="#" class="header-social-link">LinkedIn</a>
+              <span class="text-gray-400 mx-1">|</span>
+              <a href="#" class="header-social-link">GitHub</a>
+              <span class="text-gray-400 mx-1">|</span>
+              <a href="#" class="header-social-link">Portfolio</a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Summary Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3"><span class="section-tag">Summary</span></h2>
+          <p class="text-gray-700 leading-relaxed text-sm">
+            I want to be an experienced and skilful Web Developer to build up a career as a Full
+            Stack Web Developer. I also have a special interest to develop NPM packages to build
+            more efficient and effective user experience both front end and back-end.
+          </p>
+        </section>
+
+        <!-- Professional Skills Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3">
+            <span class="section-tag">Professional Skills</span>
+          </h2>
+          <div class="text-sm space-y-2 ml-1">
+            <div>
+              <h3 class="sub-section-title">Expertise:</h3>
+              <p class="text-gray-600 ml-4">
+                JavaScript, ReactJS, Node.js, MongoDB, Mongoose, Express.js, Redux, Rest API, Html5,
+                CSS3, Bootstrap-5, tailwind CSS
+              </p>
+            </div>
+            <div>
+              <h3 class="sub-section-title">Comfortable:</h3>
+              <p class="text-gray-600 ml-4">
+                SQL, PostgreSQL, Firebase, Prisma, Material UI, Next. Js, SSL-COMMERCE and Stripe,
+                GitHub, claude.ai
+              </p>
+            </div>
+            <div>
+              <h3 class="sub-section-title">Familiar:</h3>
+              <p class="text-gray-600 ml-4">
+                ES6, React Router, React Hook, NPM Packages, react-testify, Typewriter JS and
+                Prticle.js. Node Mailer, (Daisyui and familiar with Headless)
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3"><span class="section-tag">Tools</span></h2>
+          <p class="text-sm text-gray-600 ml-1">
+            GitHub, VS Code, Windsurf, ChatGPT, aiStudio, recharts, Photopea, Chrome Dev Tools,
+            Netlify, Postman, Photoshop, Figma, and Illustrator.
+          </p>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3"><span class="section-tag">Projects</span></h2>
+          <div class="space-y-5 text-sm ml-1">
+            <!-- Project 1 -->
+            <div>
+              <h3 class="text-md font-semibold text-gray-800 mb-1">
+                1. Portfolio Website Project: saifuddinahammed-monna
+              </h3>
+              <p class="text-gray-700 mb-1">
+                <span class="section-tag text-xs mr-1 py-0.5 px-2">Used-technologies:</span>
+                React, Firebase, Tailwind, API, JavaScript
+              </p>
+              <p class="text-gray-700 mb-1">
+                <span class="font-semibold">Project link:</span>
+                <a href="#" class="contact-link">Live Client-Side</a>
+                <a href="#" class="contact-link ml-2">GitHub</a>
+              </p>
+              <p class="font-bold text-gray-700 mt-2 mb-1">Overview</p>
+              <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> This is a simple portfolio website to show
+                  portfolio
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> JSON file is used to load data dynamically.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> A list of the owner's technical and
+                  non-technical skills, highlighting their areas of expertise.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> A showcase of the owner's past and current
+                  projects, with descriptions and images/media.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> A form or information for how to reach the
+                  owner, such as an email address or phone number.
+                </li>
+              </ul>
+            </div>
+            <!-- Project 2 -->
+            <div>
+              <h3 class="text-md font-semibold text-gray-800 mb-1">
+                2. Used Product Selling and Buying Project: UsedPhone
+              </h3>
+              <p class="text-gray-700 mb-1">
+                <span class="section-tag text-xs mr-1 py-0.5 px-2">Used-technologies:</span>
+                React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind, DaisyUI, Dotenv.
+              </p>
+              <p class="text-gray-700 mb-1">
+                <span class="font-semibold">Project link:</span>
+                <a href="#" class="contact-link">Live Client-Side</a>
+                <a href="#" class="contact-link ml-2">Client-Site GitHub</a>
+                <a href="#" class="contact-link ml-2">Live Server-Side</a>
+                <a href="#" class="contact-link ml-2">Server-Side GitHub</a>
+              </p>
+              <p class="font-bold text-gray-700 mt-2 mb-1">Overview:</p>
+              <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> UsedPhone website where users can buy or
+                  sell used products.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Buyer can buy products and can pay through
+                  Stripe payment gateway after booking.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Seller can Add Product, See all his buyers,
+                  all his products.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> There have 3 different dashboard panel
+                  (Buyer/ Seller / Admin).
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Admin can see all sellers, all buyers,
+                  reported items, delete and verify buyer and seller.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Admin Access (user: munna@gmail.com
+                  password: 123456Use#)
+                </li>
+              </ul>
+            </div>
+            <!-- Project 3 -->
+            <div>
+              <h3 class="text-md font-semibold text-gray-800 mb-1">
+                3. Service Selling Project: RepairService
+              </h3>
+              <p class="text-gray-700 mb-1">
+                <span class="section-tag text-xs mr-1 py-0.5 px-2">Used-technologies:</span>
+                React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind.
+              </p>
+              <p class="text-gray-700 mb-1">
+                <span class="font-semibold">Project link:</span>
+                <a href="#" class="contact-link">Live Client-Side</a>
+                <a href="#" class="contact-link ml-2">Client-Side GitHub</a>
+                <a href="#" class="contact-link ml-2">Live Server-Side</a>
+                <a href="#" class="contact-link ml-2">Server-Side GitHub</a>
+              </p>
+              <p class="font-bold text-gray-700 mt-2 mb-1">Overview</p>
+              <ul class="list-none pl-0 text-gray-600 space-y-0.5">
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Individual RepairService Provider with
+                  Google Login.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Including Login/Register to Add service or
+                  Leave review for clients.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Users can see their review on My reviews
+                  page or can add more services.
+                </li>
+                <li class="flex items-start">
+                  <span class="symbol-diamond">❖</span> Users can comment on receiving their
+                  services.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Education Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3"><span class="section-tag">Education</span></h2>
+          <div class="text-sm text-gray-700 ml-1">
+            <p>Master of Public Administration</p>
+            <p class="text-gray-600">University of JKKNIU, Mymensingh, Bangladesh</p>
+          </div>
+        </section>
+
+        <!-- Relevant Coursework Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3">
+            <span class="section-tag">Relevant Coursework</span>
+          </h2>
+          <ul class="list-none pl-1 text-sm text-gray-700 space-y-1">
+            <li class="flex items-center">
+              <span class="symbol-checkmark">✓</span> Computer Technology
+            </li>
+            <li class="flex items-center">
+              <span class="symbol-checkmark">✓</span> Web Development in MERN Stack from Programming
+              Hero, Bangladesh.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Languages Section -->
+        <section class="mb-6">
+          <h2 class="text-lg font-bold mb-3"><span class="section-tag">Languages</span></h2>
+          <ul class="list-none pl-1 text-sm text-gray-700 space-y-1">
+            <li class="flex items-start">
+              <span class="symbol-diamond">❖</span> Bangla: Native; English: Professional English.
+            </li>
+          </ul>
+        </section>
+
+        <footer class="text-center text-gray-500 mt-10 pt-4 border-t border-gray-300">
+          <p> </p>
+          <!-- Placeholder if a footer like _***_ is needed, or can be removed -->
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

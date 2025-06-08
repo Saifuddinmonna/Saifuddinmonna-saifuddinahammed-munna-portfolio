@@ -1,0 +1,267 @@
+[
+	{
+		"id": 1,
+		"category": "E-commerce website",
+		"name": "UsedPhone",
+		"liveWebsite": "https://bdusedphone.web.app/ ",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/usedPhones-client-site",
+		"liveServersite": "https://usedphonesserver-saifuddinmonna.vercel.app/",
+		"liveServersiteRepo": "https://github.com/Saifuddinmonna/usedPhones-server-site",
+		"technology": [
+			"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS,Tailwind, DaisyUI, Dotenv"
+		],
+		"overview": [
+			"❖ By using UsedPhone website, users can buy or sell used products payment gateway",
+			"❖ After booking, buyer can buy products and can pay through Stripe.",
+			"❖ Seller can Add Product, See all his buyers, all his products.",
+			"❖ There have 3 different dashboard panel (Buyer/ Seller / Admin). ",
+			"❖ Admin can see all sellers, all buyers, reported items, delete and verify buyer and seller. ",
+			"❖ Admin Access (user: munna@gmail.com password: 123456Use#)",
+			"❖ Seller Access (seller: seller4@gmail.com password: 123456Use#)",
+			"❖ Buyer Access (Buyer : buyer4@gmail.com password: 123456Use#)"
+		],
+		"image": ["1.JPG", "2.JPG", "3.JPG"]
+	},
+	{
+		"id": 2,
+		"category": "Service Selling Project",
+		"name": "RepairService",
+		"liveWebsite": "https://repairservice-ed4d3.web.app/services ",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/repair-service-client-side",
+		"liveServersite": "https://server-for-assignment-10.vercel.app/",
+		"liveServersiteRepo": "https://github.com/Saifuddinmonna/repair-service-client-side",
+		"technology": [
+			"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind."
+		],
+		"overview": [
+			"❖ Individual RepairService Provider with Google Login.",
+			"❖ Including ./Register to add service or leave review for clients.",
+			"❖ Users can see their review on  page or can add more services.",
+			"❖ Users can comment on receiving their services."
+		],
+		"image": ["r1.JPG", "r12.JPG", "r123.JPG", "r1234.JPG"]
+	},
+	{
+		"id": 3,
+		"category": "Educational Project",
+		"name": "EnglishLearning",
+		"liveWebsite": "https://english-learning-bdbb2.firebaseapp.com/ ",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/english-learning-client-side",
+		"liveServersite": "https://server-for-assignment-10.vercel.app/",
+		"liveServersiteRepo": "https://github.com/Saifuddinmonna/EnglishLearning-server-side",
+		"technology": [
+			"React, Firebase, MongoDB, Vercel, NodeJS, ExpressJS, Tailwind."
+		],
+		"overview": [
+			"❖ EnglishLearning an online based learning platform",
+			"❖ To get Premium Access of Courses you have to register in EnglishLearning"
+		],
+		"image": [
+			"EnglishLearning.JPG",
+			"EnglishLearning1.JPG",
+			"EnglishLearning2.JPG",
+			"EnglishLearning3.JPG"
+		]
+	},
+	{
+		"id": 4,
+		"category": "Quiz App Project",
+		"name": "GoExam",
+		"liveWebsite": "https://goexam.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/GoExam",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["React, Vercel, Tailwind."],
+		"overview": [
+			" ❖ GoExam is an online based learning platform for taking MCQ examination.",
+			" ❖ One can take MCQ test here.",
+			" ❖ It is a pure JavaScript website."
+		],
+		"image": ["goexam.JPG", "goexam1.JPG", "goexam2.JPG", "goexam3.JPG"]
+	},
+	{
+		"id": 5,
+		"category": "Portfolio Website Project",
+		"name": "saifuddinahammed-monna",
+		"liveWebsite": "https://saifuddinahammed-monna.web.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/Saifuddinmonna-saifuddinahammed-munna-portfolio",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": [
+			"HTML, CSS, Bootstrap,React, Firebase,  Vercel, NodeJS, ExpressJS, Tailwind"
+		],
+		"overview": [
+			"❖ Homepage: A welcoming introduction to the portfolio and its owner, showcasing their skills and expertise.",
+			"❖ About: A section that provides a brief biography of the portfolio owner, including their work history, education, and any relevant accomplishments.",
+			"❖ Skills: A list of the owner's technical and non-technical skills, highlighting their areas of expertise.",
+			"❖ Projects: A showcase of the owner's past and current projects, with descriptions and images/media.",
+			"❖ Contact: A form or information for how to reach the owner, such as an email address or phone number.",
+			"❖ Blog (optional): A section for the owner to write about their thoughts and experiences, and to provide insights into their work and industry.",
+			"❖ Footer: A section that includes links to social media profiles, as well as any relevant disclaimer or copyright information."
+		],
+		"image": [
+			"saifuddinahammed-monna.JPG",
+			"saifuddinahammed-monna1.JPG",
+			"saifuddinahammed-monna2.JPG",
+			"saifuddinahammed-monna3.JPG"
+		]
+	},
+	{
+		"id": 6,
+		"category": "To-do App",
+		"name": "myactivityservice",
+		"liveWebsite": "https://myactivityservice.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/myactivityservice",
+		"technology": ["HTML", "CSS", "Bootstrap", "Javacipt ", "Reat"],
+		"overview": [
+			" ❖‘munnatype’ an online based learning platform for type speedy and correctly.",
+			"I work with ‘munnatype’ projects for error fixing  and debugging on various issues.",
+			" ❖‘munnatype’ is used for free  purposes built with HTML, CSS and Bootstrap-5 and pure Javascript."
+		],
+		"image": ["activityservice.JPG", "activityservice.JPG"]
+	},
+	{
+		"id": 7,
+		"category": "Our App",
+		"name": "munnatype",
+		"liveWebsite": "https://munnatype.netlify.app/index.html",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/typespeedtester",
+		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"overview": [
+			" ❖ ‘munnatype’ an online based learning platform for type speedy and correctly",
+			"I work with ‘munnatype’ projects for error fixing  and debugging on various issues",
+			" ❖‘munnatype’ is used for free learning purposes built with HTML, CSS and Bootstrap-5 and pure Javascrip"
+		],
+		"image": ["munnatype.JPG", "munnatype1.JPG"]
+	},
+	{
+		"id": 8,
+		"category": "Cost Calculation  websites",
+		"name": "my-team-selection",
+		"liveWebsite": "https://my-team-selection.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/my-team-selection",
+		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"overview": [
+			" ❖ ‘my-team-selection’ an online based team management app",
+			"  ❖my-team-selection’ can be  used for calculating cost of players, coaches and manegers"
+		],
+		"image": [
+			"my-team-selection.JPG",
+			"my-team-selection1.JPG",
+			"my-team-selection2.JPG"
+		]
+	},
+	{
+		"id": 9,
+		"category": "News Portal Project",
+		"name": "thenewsportal",
+		"liveWebsite": "https://thenewsportal.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/munnanews",
+		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"overview": [
+			"❖‘thenewsportal’ an online based news  platform",
+			"❖ ‘ thenewsportal  ’ is used for reading news  purposes built with HTML, CSS and Bootstrap-5  and pure JavaScript",
+			" ❖News content is divided into various categories"
+		],
+		"image": [
+			"thenewsportal.JPG",
+			"thenewsportal1.JPG",
+			"thenewsportal2.JPG",
+			"thenewsportal3.JPG",
+			"thenewsportal4.JPG"
+		]
+	},
+	{
+		"id": 10,
+		"category": "Educational Project",
+		"name": "englishclub",
+		"liveWebsite": "https://englishclub.netlify.app/",
+		"liveWebsiteRepo": "",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS, Bootstrap"],
+		"overview": [
+			"❖ 'englishclub’ an online based learning platform",
+			"❖ ‘englishclub’ is used for free learning purposes built with HTML, CSS and Bootstrap-5"
+		],
+		"image": [
+			"englishclub.JPG",
+			"englishclub1.JPG",
+			"englishclub2.JPG",
+			"englishclub3.JPG",
+			"englishclub4.JPG",
+			"englishclub5.JPG"
+		]
+	},
+	{
+		"id": 11,
+		"category": "Figma Copy  Project",
+		"name": "donate-today",
+		"liveWebsite": "https://saifuddinmonna.github.io/donate-today/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/donate-today",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS"],
+		"overview": [
+			"❖ ‘donate-today ’ is simple website built from figma Jpg.",
+			"❖ ‘donate-today ’ is built for free learning purposes built with HTML, CSS."
+		],
+		"image": [
+			"donate-today.JPG",
+			"donate-today1.JPG",
+			"donate-today2.JPG",
+			"donate-today3.JPG"
+		]
+	},
+	{
+		"id": 12,
+		"category": "Basic Website  Project",
+		"name": "world-cup",
+		"liveWebsite": "https://saifuddinmonna.github.io/world-cup/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/world-cup",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS"],
+		"overview": [
+			"❖‘world-cup’ is simple website built with html CSS ",
+			"❖  ‘world-cup’  is fully responsive website with pure CSS"
+		],
+		"image": [
+			"world-cup.JPG",
+			"world-cup1.JPG",
+			"world-cup2.JPG",
+			"world-cup3.JPG"
+		]
+	},
+	{
+		"id": 13,
+		"category": "Weather App Project",
+		"name": "munnatemperature",
+		"liveWebsite": "https://munnatemperature.netlify.app/",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/Temperaturecounter",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS, Bootstrap , JavaScript"],
+		"overview": [
+			"❖ ‘munnatemperature”  is an online based weather app.",
+			"❖‘munnatemperature” is used for knowing update temperature humidity  and rain with HTML, CSS and Bootstrap-5 and pure JavaScript."
+		],
+		"image": ["munnatemperature.JPG", "munnatemperature1.JPG"]
+	},
+	{
+		"id": 14,
+		"category": "Mini E-commerce",
+		"name": "rim-shoping",
+		"liveWebsite": "https://rim-shoping.vercel.app/Shop",
+		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/rim-shoping",
+		"liveServersite": "",
+		"liveServersiteRepo": "",
+		"technology": ["HTML, CSS, Bootstrap , JavaScript, React"],
+		"overview": [
+			"❖  ‘rim-shoping’ is simple e-commerce projects built with html CSS ,HTML, Bootstrap,JavaScript, React",
+			"❖ ‘rim-shoping’  is fully responsive website.",
+			"❖It very simple design and less code"
+		],
+		"image": ["rim-shoping.JPG", "rim-shoping1.JPG", "rim-shoping2.JPG"]
+	}
+]
