@@ -131,8 +131,9 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // URL parsing for messages
   const renderMessageContent = text => {
-    if (typeof text !== "string" || text === null || text === undefined) {
-      return ""; // Return empty string if text is not a valid string
+    if (typeof text !== "string") {
+      console.warn("renderMessageContent received non-string text:", text);
+      return text; // Return text as is if not a string, or an empty string
     }
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.split(urlRegex).map((part, index) => {
@@ -155,47 +156,14 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Determine sender display name and role for messages
   const getSenderDisplay = msg => {
-    // Determine the current user's most reliable ID for comparison
-    const currentUserId = dbUser?.firebaseUid || firebaseUser?.uid || socket.id; // Also consider `_id` from GuestUser model if present
+    const isMe = msg.senderId === (dbUser?.firebaseUid || firebaseUser?.uid || socket.id);
+    let name = msg.senderName || "Unknown";
+    let role = msg.senderRole || "";
 
-    // Check if the message was sent by the current user
-    // Handle cases where senderId is direct, or nested in a 'sender' object
-    const isMe =
-      (msg.senderId && msg.senderId === currentUserId) ||
-      (msg.sender && (msg.sender.id === currentUserId || msg.sender.uid === currentUserId));
-
-    let name = "Unknown";
-    let role = "";
-
-    // --- Determine Sender Name ---
     if (isMe) {
       name = dbUser?.name || firebaseUser?.displayName || "Me";
-    } else if (msg.senderName) {
-      // Prioritize flattened senderName
-      name = msg.senderName;
-    } else if (msg.sender && msg.sender.name) {
-      // Then look in nested sender object
-      name = msg.sender.name;
-    } else if (msg.sender && msg.sender.email) {
-      // Fallback to email part
-      name = msg.sender.email.split("@")[0];
-    } else if (msg.senderId) {
-      // Fallback to senderId (e.g., for guests without name in msgData)
-      name = `User-${msg.senderId.substring(0, 5)}`;
-    } else if (msg.sender && msg.sender.id) {
-      // Fallback for nested sender.id
-      name = `User-${msg.sender.id.substring(0, 5)}`;
+      role = dbUser?.role || "user";
     }
-
-    // --- Determine Sender Role ---
-    if (msg.senderRole) {
-      role = msg.senderRole;
-    } else if (msg.sender && msg.sender.role) {
-      role = msg.sender.role;
-    } else if (isMe && dbUser?.role) {
-      role = dbUser.role;
-    }
-
     return `${name} ${role ? `(${role})` : ""}`;
   };
 
@@ -288,9 +256,8 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                       <p className="text-xs text-[var(--text-secondary)] font-medium mb-1">
                         {getSenderDisplay(msg)}
                       </p>
-                      <p className="text-sm break-words">
-                        {renderMessageContent(msg.text || msg.content || msg.message)}
-                      </p>
+                      {console.log("Message object in ChatWindow:", msg)}
+                      <p className="text-sm break-words">{renderMessageContent(msg.text)}</p>
                       <p className="text-right text-xs text-[var(--text-tertiary)] mt-1">
                         {new Date(msg.timestamp).toLocaleTimeString([], {
                           hour: "2-digit",
@@ -300,7 +267,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     </div>
                   </div>
                 ))}
-                <div ref={messagesEndRef} /> {/* Scroll target */}
+                <div ref={messagesEndRef} />
               </div>
 
               {/* Typing Indicator */}
@@ -316,12 +283,6 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                 onSubmit={sendMessage}
                 className="p-4 border-t border-[var(--border-color)] bg-[var(--background-paper)]"
               >
-                {/* Emoji Picker (Placeholder) */}
-                {/* {showEmojiPicker && (
-                  <div className="absolute bottom-full left-0 mb-2">
-                     <EmojiPicker onEmojiClick={handleEmojiSelect} />
-                  </div>
-                )} */}
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
