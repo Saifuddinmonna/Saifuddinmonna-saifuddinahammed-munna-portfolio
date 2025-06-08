@@ -4,7 +4,7 @@ const User = require('../models/User');
 const { verifyToken } = require('../middleware/auth');
 const admin = require('firebase-admin');
 
-// Get user profile
+// Get user profile (requires token)
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const [firebaseUser, dbUser] = await Promise.all([
@@ -22,10 +22,13 @@ router.get('/profile', verifyToken, async (req, res) => {
     res.json({
       success: true,
       data: {
-        ...dbUser.toJSON(),
+        uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: firebaseUser.displayName,
-        photoURL: firebaseUser.photoURL
+        photoURL: firebaseUser.photoURL,
+        phone: dbUser.phone,
+        bio: dbUser.bio,
+        role: dbUser.role
       }
     });
   } catch (error) {
@@ -38,7 +41,7 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Update user profile
+// Update user profile (requires token)
 router.put('/profile', verifyToken, async (req, res) => {
   try {
     const { name, email, phone, photoURL, bio } = req.body;
@@ -65,85 +68,21 @@ router.put('/profile', verifyToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: user
+      data: {
+        uid: req.user.uid,
+        email: user.email,
+        displayName: user.name,
+        photoURL: user.photoURL,
+        phone: user.phone,
+        bio: user.bio,
+        role: user.role
+      }
     });
   } catch (error) {
     console.error('Error updating user profile:', error);
     res.status(500).json({ 
       success: false,
       message: 'Error updating user profile',
-      error: error.message 
-    });
-  }
-});
-
-// Create or update user
-router.post('/', verifyToken, async (req, res) => {
-  try {
-    const { name, email, phone, photoURL, bio } = req.body;
-    
-    // Update Firebase user
-    await admin.auth().updateUser(req.user.uid, {
-      displayName: name,
-      photoURL
-    });
-    
-    // Update or create database user
-    const user = await User.findOneAndUpdate(
-      { firebaseUid: req.user.uid },
-      { 
-        name,
-        email,
-        phone,
-        photoURL,
-        bio
-      },
-      { 
-        new: true, 
-        upsert: true, 
-        runValidators: true 
-      }
-    );
-    
-    res.status(201).json({
-      success: true,
-      data: user
-    });
-  } catch (error) {
-    console.error('Error creating/updating user:', error);
-    res.status(500).json({ 
-      success: false,
-      message: 'Error creating/updating user',
-      error: error.message 
-    });
-  }
-});
-
-// Delete user
-router.delete('/', verifyToken, async (req, res) => {
-  try {
-    // Delete from Firebase
-    await admin.auth().deleteUser(req.user.uid);
-    
-    // Delete from database
-    const user = await User.findOneAndDelete({ firebaseUid: req.user.uid });
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false,
-        message: 'User not found' 
-      });
-    }
-
-    res.json({ 
-      success: true,
-      message: 'User deleted successfully' 
-    });
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ 
-      success: false,
-      message: 'Error deleting user',
       error: error.message 
     });
   }

@@ -68,24 +68,24 @@ io.on("connection", socket => {
       const decodedToken = await admin.auth().verifyIdToken(userData.token);
       
       // Store user data
-      connectedUsers.set(socket.id, {
-        id: socket.id,
+    connectedUsers.set(socket.id, {
+      id: socket.id,
         uid: decodedToken.uid,
         name: decodedToken.name || "Anonymous",
         email: decodedToken.email,
-        avatar: userData.avatar || null,
-        joinedAt: new Date(),
-      });
+      avatar: userData.avatar || null,
+      joinedAt: new Date(),
+    });
 
-      // Notify others about new user
-      socket.broadcast.emit("userJoined", {
-        user: connectedUsers.get(socket.id),
-        usersCount: connectedUsers.size,
+    // Notify others about new user
+    socket.broadcast.emit("userJoined", {
+      user: connectedUsers.get(socket.id),
+      usersCount: connectedUsers.size,
         message: `${decodedToken.name || "Anonymous"} joined the chat`,
-      });
+    });
 
-      // Send current users list to the new user
-      socket.emit("usersList", Array.from(connectedUsers.values()));
+    // Send current users list to the new user
+    socket.emit("usersList", Array.from(connectedUsers.values()));
     } catch (error) {
       console.error("Token verification failed:", error);
       socket.emit("error", { 
@@ -131,14 +131,14 @@ io.on("connection", socket => {
   socket.on("disconnect", () => {
     const user = connectedUsers.get(socket.id);
     if (user) {
-      console.log("Client disconnected:", socket.id);
-      connectedUsers.delete(socket.id);
+    console.log("Client disconnected:", socket.id);
+    connectedUsers.delete(socket.id);
 
-      socket.broadcast.emit("userLeft", {
-        user: user,
-        usersCount: connectedUsers.size,
+    socket.broadcast.emit("userLeft", {
+      user: user,
+      usersCount: connectedUsers.size,
         message: `${user.name || "Someone"} left the chat`,
-      });
+    });
     }
   });
 });
