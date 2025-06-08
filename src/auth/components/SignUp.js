@@ -3,30 +3,81 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaGoogle } from "react-icons/fa";
+import { apiRequest } from "../utils/api";
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    bio: "",
+    photoURL: "",
+  });
   const [loading, setLoading] = useState(false);
   const { signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       return toast.error("Passwords do not match!");
     }
 
-    if (password.length < 6) {
+    if (formData.password.length < 6) {
       return toast.error("Password must be at least 6 characters long!");
     }
 
     setLoading(true);
     try {
-      await signUp(email, password);
+      // First create Firebase auth user
+      const userCredential = await signUp(formData.email, formData.password);
+      // Ensure user exists before proceeding
+      if (!userCredential || !userCredential.user) {
+        // Error was already handled by toast in AuthContext.js
+        return;
+      }
+      const { user } = userCredential;
+
+      // Then create user in your database
+      const userData = {
+        firebaseUid: user.uid,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        phone: formData.phone || undefined,
+        photoURL: formData.photoURL || undefined,
+        bio: formData.bio || undefined,
+        role: "user",
+      };
+
+      await apiRequest("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(userData),
+      });
+
       toast.success("Account created successfully!");
+      // Reset form fields after successful registration
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        phone: "",
+        bio: "",
+        photoURL: "",
+      });
       navigate("/");
     } catch (error) {
       toast.error(error.message);
@@ -38,8 +89,39 @@ const SignUp = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      // Ensure user exists before proceeding
+      if (!result || !result.user) {
+        // Error was already handled by toast in AuthContext.js
+        return;
+      }
+      const { user } = result;
+
+      // Create user in your database after Google sign in
+      const userData = {
+        firebaseUid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: "user",
+      };
+
+      await apiRequest("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(userData),
+      });
+
       toast.success("Signed in with Google successfully!");
+      // Reset form fields after successful Google sign-in
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        phone: "",
+        bio: "",
+        photoURL: "",
+      });
       navigate("/");
     } catch (error) {
       toast.error(error.message);
@@ -66,7 +148,22 @@ const SignUp = () => {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md shadow-sm space-y-4">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Full Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                placeholder="Full Name"
+              />
+            </div>
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email address
@@ -77,10 +174,52 @@ const SignUp = () => {
                 type="email"
                 autoComplete="email"
                 required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] rounded-t-md focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                value={formData.email}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
                 placeholder="Email address"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="sr-only">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                placeholder="Phone Number (optional)"
+              />
+            </div>
+            <div>
+              <label htmlFor="bio" className="sr-only">
+                Bio
+              </label>
+              <textarea
+                id="bio"
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                placeholder="Bio (optional)"
+                rows="3"
+              />
+            </div>
+            <div>
+              <label htmlFor="photoURL" className="sr-only">
+                Photo URL
+              </label>
+              <input
+                id="photoURL"
+                name="photoURL"
+                type="url"
+                value={formData.photoURL}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                placeholder="Photo URL (optional)"
               />
             </div>
             <div>
@@ -93,25 +232,25 @@ const SignUp = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                value={formData.password}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
                 placeholder="Password"
               />
             </div>
             <div>
-              <label htmlFor="confirm-password" className="sr-only">
+              <label htmlFor="confirmPassword" className="sr-only">
                 Confirm Password
               </label>
               <input
-                id="confirm-password"
-                name="confirm-password"
+                id="confirmPassword"
+                name="confirmPassword"
                 type="password"
                 autoComplete="new-password"
                 required
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] rounded-b-md focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[var(--border-color)] placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-[var(--primary-main)] focus:border-[var(--primary-main)] focus:z-10 sm:text-sm bg-[var(--background-default)]"
                 placeholder="Confirm Password"
               />
             </div>

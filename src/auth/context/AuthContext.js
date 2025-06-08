@@ -38,11 +38,13 @@ export const AuthProvider = ({ children }) => {
   const signUp = async (email, password) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("Firebase signUp success, userCredential:", userCredential);
       const user = userCredential.user;
       await getAndStoreToken(user);
       toast.success("Account created successfully!");
-      return user;
+      return userCredential;
     } catch (error) {
+      console.error("Firebase signUp error:", error);
       toast.error(error.message);
       throw error;
     }
@@ -55,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       const user = userCredential.user;
       await getAndStoreToken(user);
       toast.success("Signed in successfully!");
-      return user;
+      return userCredential;
     } catch (error) {
       toast.error(error.message);
       throw error;
@@ -67,11 +69,13 @@ export const AuthProvider = ({ children }) => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
+      console.log("Firebase signInWithGoogle success, result:", result);
       const user = result.user;
       await getAndStoreToken(user);
       toast.success("Signed in with Google successfully!");
-      return user;
+      return result;
     } catch (error) {
+      console.error("Firebase signInWithGoogle error:", error);
       toast.error(error.message);
       throw error;
     }
