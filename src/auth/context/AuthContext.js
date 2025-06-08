@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase/firebase.config";
 import { toast } from "react-toastify";
+import { getCurrentUserProfile } from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -18,6 +19,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
 
@@ -39,8 +41,10 @@ export const AuthProvider = ({ children }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("Firebase signUp success, userCredential:", userCredential);
-      const user = userCredential.user;
-      await getAndStoreToken(user);
+      const firebaseUser = userCredential.user;
+      await getAndStoreToken(firebaseUser);
+      const profile = await getCurrentUserProfile();
+      setDbUser(profile);
       toast.success("Account created successfully!");
       return userCredential;
     } catch (error) {
@@ -54,8 +58,10 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      await getAndStoreToken(user);
+      const firebaseUser = userCredential.user;
+      await getAndStoreToken(firebaseUser);
+      const profile = await getCurrentUserProfile();
+      setDbUser(profile);
       toast.success("Signed in successfully!");
       return userCredential;
     } catch (error) {
@@ -70,8 +76,10 @@ export const AuthProvider = ({ children }) => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       console.log("Firebase signInWithGoogle success, result:", result);
-      const user = result.user;
-      await getAndStoreToken(user);
+      const firebaseUser = result.user;
+      await getAndStoreToken(firebaseUser);
+      const profile = await getCurrentUserProfile();
+      setDbUser(profile);
       toast.success("Signed in with Google successfully!");
       return result;
     } catch (error) {
@@ -87,21 +95,30 @@ export const AuthProvider = ({ children }) => {
       await signOut(auth);
       setToken(null);
       localStorage.removeItem("authToken");
+      setDbUser(null);
       toast.success("Signed out successfully!");
     } catch (error) {
       toast.error(error.message);
       throw error;
     }
   };
-
+  console.log("dbuser from aucontex ", dbUser);
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async currentUser => {
       if (currentUser) {
         await getAndStoreToken(currentUser);
+        try {
+          const profile = await getCurrentUserProfile();
+          setDbUser(profile);
+        } catch (dbError) {
+          console.error("Error fetching DB user profile:", dbError);
+          setDbUser(null);
+        }
       } else {
         setToken(null);
         localStorage.removeItem("authToken");
+        setDbUser(null);
       }
       setUser(currentUser);
       setLoading(false);
@@ -112,6 +129,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    dbUser,
     token,
     signUp,
     signIn,

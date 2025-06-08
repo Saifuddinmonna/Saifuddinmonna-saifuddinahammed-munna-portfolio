@@ -34,10 +34,18 @@ export const verifyToken = async () => {
   return apiRequest("/auth/verify-token");
 };
 
-export const getUserProfile = async () => {
-  return apiRequest("/user/profile");
+// Fetches a single user's profile from the database (e.g., /api/users/profile)
+// This should be updated if /api/users/profile is for all users
+// export const getUserProfile = async () => {
+//   return apiRequest("/user/profile");
+// };
+
+// New function to get the current logged-in user's profile from /api/auth/me
+export const getCurrentUserProfile = async () => {
+  return apiRequest("/auth/me");
 };
 
+console.log("db user from heere", getCurrentUserProfile);
 export const updateUserProfile = async data => {
   return apiRequest("/user/profile", {
     method: "PUT",

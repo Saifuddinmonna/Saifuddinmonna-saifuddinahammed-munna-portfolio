@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useState, useRef, useEffect } from "react";
 
 const AuthNav = () => {
-  const { user, logOut } = useAuth();
+  const { user, dbUser, logOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -76,6 +76,11 @@ const AuthNav = () => {
             <p className="text-sm font-medium text-[var(--text-primary)] truncate">
               {user.displayName || user.email}
             </p>
+            {dbUser && dbUser.data && dbUser.data.role && (
+              <p className="text-xs text-[var(--text-secondary)] mt-1">
+                Role: <span className="font-semibold capitalize">{dbUser.data.role}</span>
+              </p>
+            )}
           </div>
           <button
             onClick={handleLogout}
