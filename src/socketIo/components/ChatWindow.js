@@ -15,11 +15,19 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     typingUsers,
     joinAsGuest,
     messages: allMessages,
+    hasUnreadPrivateMessages,
+    setHasUnreadPrivateMessages,
+    groups,
+    selectedGroup,
+    setSelectedGroup,
+    createGroup,
+    joinGroup,
+    leaveGroup,
   } = useSocket();
   const { user: firebaseUser } = useAuth(); // Firebase user for displayName/email
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [activeChatTab, setActiveChatTab] = useState("public"); // 'public', 'private', 'admin_panel'
+  const [activeChatTab, setActiveChatTab] = useState("public"); // 'public', 'private', 'admin_panel', 'group'
   const [selectedPrivateChatUser, setSelectedPrivateChatUser] = useState(null); // For private chat
   const messagesEndRef = useRef(null);
 
@@ -69,14 +77,22 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       socket.emit("requestMessageHistory", {
         type: activeChatTab,
         targetId: selectedPrivateChatUser?.id,
-        // Add currentRoom if you implement specific rooms beyond private/public
+        groupId: selectedGroup?.id,
       });
     }
 
     return () => {
       socket.off("message", handleReceiveMessage);
     };
-  }, [socket, isChatOpen, isConnected, activeChatTab, selectedPrivateChatUser, allMessages]); // Add allMessages to dependencies
+  }, [
+    socket,
+    isChatOpen,
+    isConnected,
+    activeChatTab,
+    selectedPrivateChatUser,
+    allMessages,
+    selectedGroup,
+  ]); // Add selectedGroup to dependencies
 
   // Determine if user is registered or guest
   const isUserRegistered = !!dbUser;
@@ -116,11 +132,12 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
         text: messageText,
       });
       toast.success(`Private message sent to ${selectedPrivateChatUser.name}`);
-    } else if (activeChatTab === "room") {
-      // This needs a way to select or enter a room
-      const roomId = "general_room"; // Placeholder, you'll need UI for room selection
-      socket.emit("roomMessage", { roomId, text: messageText });
-      toast.success(`Message sent to room: ${roomId}`);
+    } else if (activeChatTab === "group" && selectedGroup) {
+      socket.emit("groupMessage", {
+        groupId: selectedGroup.id,
+        text: messageText,
+      });
+      toast.success(`Message sent to group: ${selectedGroup.name}`);
     } else if (activeChatTab === "admin_panel" && isAdmin) {
       // Admin panel actions
       // This is for broadcast, not a regular sendMessage
@@ -182,17 +199,18 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     const isRoom = msg.type === "room";
     const isBroadcast = msg.type === "broadcast";
     const isPublic = msg.type === "public";
+    const isGroup = msg.type === "group";
 
     // Only render messages relevant to the current active tab
     if (
-      (activeChatTab === "public" && isPublic) || // Only public messages for public tab
+      (activeChatTab === "public" && isPublic) ||
       (activeChatTab === "private" &&
         isPrivate &&
         ((msg.senderId === (dbUser?.firebaseUid || firebaseUser?.uid) &&
           msg.receiverId === selectedPrivateChatUser?.id) ||
           (msg.senderId === selectedPrivateChatUser?.id &&
             msg.receiverId === (dbUser?.firebaseUid || firebaseUser?.uid)))) ||
-      (activeChatTab === "room" && isRoom) || // Further refinement needed for specific rooms
+      (activeChatTab === "group" && isGroup && msg.groupId === selectedGroup?.id) ||
       (isAdmin && isBroadcast) // Admins can see broadcast messages
     ) {
       console.log("renderMessageContent received msg:", msg); // Added for debugging
@@ -313,9 +331,26 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
               }`}
               onClick={() => {
                 setActiveChatTab("private");
+                setHasUnreadPrivateMessages(false); // Clear unread flag when private chat is opened
               }}
             >
               Private Chat
+              {hasUnreadPrivateMessages && activeChatTab !== "private" && (
+                <span className="ml-1 inline-flex items-center justify-center h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+              )}
+            </button>
+            <button
+              className={`px-3 py-1 rounded-md text-sm font-medium ${
+                activeChatTab === "group"
+                  ? "bg-[var(--primary-main)] text-white"
+                  : "text-[var(--text-primary)] hover:bg-[var(--background-hover)]"
+              }`}
+              onClick={() => {
+                setActiveChatTab("group");
+                setSelectedPrivateChatUser(null);
+              }}
+            >
+              Group Chat
             </button>
             {isAdmin && (
               <button
@@ -474,6 +509,153 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                                   (msg.senderId === selectedPrivateChatUser?.id &&
                                     msg.receiverId ===
                                       (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)))
+                            )
+                            .map((msg, index) => (
+                              <div
+                                key={index}
+                                className={`flex items-start mb-4 ${
+                                  msg.senderId ===
+                                  (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                    ? "justify-end"
+                                    : "justify-start"
+                                }`}
+                              >
+                                <div
+                                  className={`rounded-lg p-3 max-w-[70%] ${
+                                    msg.senderId ===
+                                    (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                      ? "bg-[var(--primary-main)] text-white"
+                                      : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
+                                  }`}
+                                >
+                                  <div className="font-semibold text-sm mb-1">
+                                    {getSenderDisplay(msg)}
+                                  </div>
+                                  <p className="text-sm whitespace-pre-wrap">
+                                    {renderMessageContent(msg)}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          <div ref={messagesEndRef} />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {activeChatTab === "group" && (
+                  <div className="h-full flex flex-col">
+                    {!selectedGroup ? (
+                      <div className="p-4 text-center text-[var(--text-secondary)]">
+                        <h4 className="text-lg font-semibold mb-4">Select or Create a Group:</h4>
+                        <div className="space-y-4 mb-6">
+                          <h5 className="font-semibold">Your Groups:</h5>
+                          {groups.length === 0 ? (
+                            <p className="text-sm">No groups available. Create one!</p>
+                          ) : (
+                            <ul className="space-y-2">
+                              {groups.map(group => (
+                                <li
+                                  key={group.id}
+                                  className="flex items-center justify-between bg-[var(--background-default)] p-2 rounded-md border border-[var(--border-color)]"
+                                >
+                                  <span className="text-[var(--text-primary)]">{group.name}</span>
+                                  <div className="space-x-2">
+                                    {group.members.some(
+                                      m =>
+                                        m.id ===
+                                        (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                    ) ? (
+                                      <button
+                                        onClick={() => {
+                                          setSelectedGroup(group);
+                                          toast.success(`Joined group: ${group.name}`);
+                                        }}
+                                        className="px-3 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                                      >
+                                        Open Chat
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => joinGroup(group.id)}
+                                        className="px-3 py-1 text-xs bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
+                                      >
+                                        Join
+                                      </button>
+                                    )}
+                                    {group.members.some(
+                                      m =>
+                                        m.id ===
+                                        (dbUser?.firebaseUid || firebaseUser?.uid || socket.id)
+                                    ) && (
+                                      <button
+                                        onClick={() => {
+                                          leaveGroup(group.id);
+                                          setSelectedGroup(null);
+                                          toast.info(`Left group: ${group.name}`);
+                                        }}
+                                        className="px-3 py-1 text-xs bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                                      >
+                                        Leave
+                                      </button>
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                        <div className="space-y-4">
+                          <h5 className="font-semibold">Create New Group:</h5>
+                          <form
+                            onSubmit={e => {
+                              e.preventDefault();
+                              const groupName = e.target.newGroupName.value.trim();
+                              if (groupName) {
+                                createGroup(groupName);
+                                e.target.newGroupName.value = "";
+                              } else {
+                                toast.error("Group name cannot be empty.");
+                              }
+                            }}
+                            className="flex space-x-2"
+                          >
+                            <input
+                              type="text"
+                              name="newGroupName"
+                              placeholder="New Group Name"
+                              className="flex-1 px-3 py-2 border rounded-md bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                              required
+                            />
+                            <button
+                              type="submit"
+                              className="p-2 bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
+                            >
+                              Create
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    ) : (
+                      // Group Chat Window with selected group
+                      <>
+                        <div className="flex items-center justify-between p-3 bg-[var(--background-default)] border-b border-[var(--border-color)] rounded-t-lg">
+                          <button
+                            onClick={() => setSelectedGroup(null)}
+                            className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                          >
+                            <FaBars className="w-5 h-5" />
+                          </button>
+                          <h4 className="font-semibold text-[var(--text-primary)]">
+                            Group Chat: {selectedGroup.name}
+                          </h4>
+                          <div></div> {/* Placeholder for alignment */}
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                          {allMessages
+                            .filter(
+                              msg => msg.type === "group" && msg.groupId === selectedGroup?.id
                             )
                             .map((msg, index) => (
                               <div

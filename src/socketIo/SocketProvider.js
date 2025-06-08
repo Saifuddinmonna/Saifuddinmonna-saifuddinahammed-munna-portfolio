@@ -15,6 +15,9 @@ export const SocketProvider = ({ children }) => {
   const [typingUsers, setTypingUsers] = useState(new Set()); // State to store users who are typing
   const [messages, setMessages] = useState([]); // State to store all chat messages
   const [currentRoom, setCurrentRoom] = useState("general"); // Default to 'general' for public chat
+  const [hasUnreadPrivateMessages, setHasUnreadPrivateMessages] = useState(false); // New state for unread private messages
+  const [groups, setGroups] = useState([]); // State to store chat groups
+  const [selectedGroup, setSelectedGroup] = useState(null); // State to store the currently selected group
 
   useEffect(() => {
     if (loading) return; // Wait for auth loading to complete
@@ -91,6 +94,9 @@ export const SocketProvider = ({ children }) => {
 
     const onPrivateMessage = msg => {
       setMessages(prev => [...prev, { ...msg, type: "private" }]);
+      // Set unread flag if the message is for the current user
+      // (Simplified: always set for now, ChatWindow will clear it when tab is active)
+      setHasUnreadPrivateMessages(true);
     };
 
     const onRoomMessage = msg => {
@@ -99,6 +105,26 @@ export const SocketProvider = ({ children }) => {
 
     const onBroadcastMessage = msg => {
       setMessages(prev => [...prev, { ...msg, type: "broadcast" }]);
+    };
+
+    const onGroupList = groupList => {
+      console.log("Received group list:", groupList);
+      setGroups(groupList);
+    };
+
+    const onGroupCreated = group => {
+      console.log("Group created:", group);
+      setGroups(prev => [...prev, group]);
+    };
+
+    const onGroupJoined = ({ groupId, userId }) => {
+      console.log(`${userId} joined group ${groupId}`);
+      // Server should send updated group list or message, for now, just log
+    };
+
+    const onGroupLeft = ({ groupId, userId }) => {
+      console.log(`${userId} left group ${groupId}`);
+      // Server should send updated group list or message, for now, just log
     };
 
     socket.on("connect", onConnect);
@@ -112,6 +138,10 @@ export const SocketProvider = ({ children }) => {
     socket.on("privateMessage", onPrivateMessage);
     socket.on("roomMessage", onRoomMessage);
     socket.on("broadcastMessage", onBroadcastMessage);
+    socket.on("groupList", onGroupList);
+    socket.on("groupCreated", onGroupCreated);
+    socket.on("groupJoined", onGroupJoined);
+    socket.on("groupLeft", onGroupLeft);
 
     return () => {
       socket.off("connect", onConnect);
@@ -125,6 +155,10 @@ export const SocketProvider = ({ children }) => {
       socket.off("privateMessage", onPrivateMessage);
       socket.off("roomMessage", onRoomMessage);
       socket.off("broadcastMessage", onBroadcastMessage);
+      socket.off("groupList", onGroupList);
+      socket.off("groupCreated", onGroupCreated);
+      socket.off("groupJoined", onGroupJoined);
+      socket.off("groupLeft", onGroupLeft);
       socket.disconnect(); // Disconnect when component unmounts
     };
   }, [token, dbUser, loading]); // Added dbUser to dependencies
@@ -137,6 +171,19 @@ export const SocketProvider = ({ children }) => {
     });
   };
 
+  // New functions for group management
+  const createGroup = groupName => {
+    socket.emit("createGroup", { name: groupName });
+  };
+
+  const joinGroup = groupId => {
+    socket.emit("joinGroup", { groupId });
+  };
+
+  const leaveGroup = groupId => {
+    socket.emit("leaveGroup", { groupId });
+  };
+
   const value = {
     socket,
     isConnected,
@@ -146,6 +193,14 @@ export const SocketProvider = ({ children }) => {
     messages, // Expose messages state
     currentRoom, // Expose currentRoom state
     joinAsGuest,
+    hasUnreadPrivateMessages, // Expose unread private messages flag
+    setHasUnreadPrivateMessages, // Expose setter to clear flag
+    groups, // Expose groups state
+    selectedGroup, // Expose selectedGroup state
+    setSelectedGroup, // Expose setter for selectedGroup
+    createGroup, // Expose createGroup function
+    joinGroup, // Expose joinGroup function
+    leaveGroup, // Expose leaveGroup function
   };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
