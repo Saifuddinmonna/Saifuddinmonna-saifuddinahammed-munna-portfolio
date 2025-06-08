@@ -10,6 +10,10 @@ import { AuthProvider } from "./auth/context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { SocketProvider } from "./socketIo/SocketProvider";
+import ChatBubble from "./socketIo/components/ChatBubble";
+import ChatWindow from "./socketIo/components/ChatWindow";
+
 // Create Theme Context
 export const ThemeContext = createContext();
 
@@ -72,6 +76,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const [confettiStart, setConfettiStart] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -80,26 +85,34 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  const toggleChat = () => {
+    setIsChatOpen(prev => !prev);
+  };
+
   return (
     <AuthProvider>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-            {confettiStart && <ReactConfetti />}
-            <RouterProvider router={router} />
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
-            />
-          </div>
+          <SocketProvider>
+            <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
+              {confettiStart && <ReactConfetti />}
+              <RouterProvider router={router} />
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
+              />
+              <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} />
+              <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} />
+            </div>
+          </SocketProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </AuthProvider>
