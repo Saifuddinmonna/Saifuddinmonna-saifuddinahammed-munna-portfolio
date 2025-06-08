@@ -20,16 +20,26 @@ if (!admin.apps.length) {
     "universe_domain": "googleapis.com"
   };
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("Firebase Admin initialized successfully");
+  } catch (error) {
+    console.error("Error initializing Firebase Admin:", error);
+    process.exit(1);
+  }
 }
 
+// Middleware to verify Firebase token
 const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ message: "No token provided" });
+      return res.status(401).json({ 
+        success: false,
+        message: "No token provided" 
+      });
     }
 
     const decodedToken = await admin.auth().verifyIdToken(token);
@@ -37,7 +47,11 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Token verification failed:", error);
-    res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({ 
+      success: false,
+      message: "Invalid token",
+      error: error.message 
+    });
   }
 };
 
@@ -70,20 +84,32 @@ const isAuthenticated = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ message: 'Not authenticated' });
+      return res.status(401).json({ 
+        success: false,
+        message: "Not authenticated" 
+      });
     }
 
-    // Check if user has admin role in Firebase custom claims
     const user = await admin.auth().getUser(req.user.uid);
-    if (user.customClaims && user.customClaims.admin === true) {
+    if (user.customClaims?.admin === true) {
       next();
     } else {
-      return res.status(403).json({ message: 'Not authorized as admin' });
+      return res.status(403).json({ 
+        success: false,
+        message: "Not authorized as admin" 
+      });
     }
   } catch (error) {
-    console.error('Admin check error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Admin check error:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Internal server error",
+      error: error.message 
+    });
   }
 };
 
-module.exports = verifyToken;
+module.exports = {
+  verifyToken,
+  isAdmin
+};
