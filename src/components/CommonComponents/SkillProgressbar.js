@@ -4,22 +4,45 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import { IconName, GrUserExpert } from "react-icons/gr";
 import SkillTag from "../SkillTag"; // Using the imported SkillTag component
 
-const SkillSection = ({ title, skills }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5 }}
-    className="mb-6"
-  >
-    <h4 className="text-lg font-semibold text-[var(--primary-main)] p-2 m-3">{title}</h4>
-    <div className="p-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-      {skills.split(",").map((skill, idx) => (
-        <SkillTag key={idx} name={skill} />
-      ))}
-    </div>
-  </motion.div>
-);
+const SkillSection = ({ title, skills }) => {
+  // Define skill levels for different categories
+  const getSkillLevel = (category, skill) => {
+    const levels = {
+      Expertise: 90,
+      Comfortable: 75,
+      Familiar: 60,
+      Frontend: 85,
+      Backend: 80,
+      DevOps: 70,
+    };
+    return levels[category] || 50;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      className="mb-6"
+    >
+      <h4 className="text-lg font-semibold text-[var(--primary-main)] p-2 m-3">{title}</h4>
+      <div className="p-2 space-y-4">
+        {skills.split(",").map((skill, idx) => (
+          <div key={idx} className="space-y-1">
+            <div className="flex justify-between items-center">
+              <span className="text-[var(--text-primary)]">{skill.trim()}</span>
+              <span className="text-[var(--text-secondary)] text-sm">
+                {getSkillLevel(title, skill)}%
+              </span>
+            </div>
+            <ProgressBar now={getSkillLevel(title, skill)} className="h-2" variant="success" />
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
 
 const SkillDetails = () => {
   const containerVariants = {

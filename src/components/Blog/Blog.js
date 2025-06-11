@@ -4,7 +4,6 @@ import { ThemeContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { blogService } from "./blogService";
 import { toast } from "react-hot-toast";
-import blogPostsData from "../../data/blogData.json"; // Import static data
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -24,13 +23,9 @@ const Blog = () => {
   const fetchPosts = async () => {
     try {
       const data = await blogService.getAllPosts();
-      // Combine static and dynamic posts
-      const combinedPosts = [...blogPostsData, ...data];
-      setPosts(combinedPosts);
+      setPosts(data);
     } catch (error) {
-      // If API fails, still show static posts
-      setPosts(blogPostsData);
-      toast.error("Failed to fetch dynamic blog posts");
+      toast.error("Failed to fetch blog posts");
       console.error("Error fetching posts:", error);
     } finally {
       setIsLoading(false);

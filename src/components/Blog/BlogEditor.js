@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import React, { useState, useEffect } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -10,88 +9,10 @@ const BlogEditor = ({ post, onSave }) => {
   const [category, setCategory] = useState(post?.category || "");
   const [image, setImage] = useState(post?.image || "");
   const [isSaving, setIsSaving] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
   const navigate = useNavigate();
-  const quillRef = useRef(null);
 
-  const modules = {
-    toolbar: {
-      container: [
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        [{ font: [] }],
-        [{ size: ["small", false, "large", "huge"] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ color: [] }, { background: [] }],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ align: [] }],
-        ["link", "image", "code-block"],
-        ["clean"],
-        ["copy", "paste"],
-      ],
-      handlers: {
-        copy: function () {
-          const range = this.quill.getSelection();
-          if (range) {
-            const text = this.quill.getText(range.index, range.length);
-            navigator.clipboard.writeText(text);
-            toast.success("Text copied to clipboard!");
-          }
-        },
-        paste: function () {
-          navigator.clipboard.readText().then(text => {
-            const range = this.quill.getSelection();
-            if (range) {
-              this.quill.insertText(range.index, text);
-            }
-          });
-        },
-      },
-    },
-    clipboard: {
-      matchVisual: false,
-    },
-  };
-
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "color",
-    "background",
-    "list",
-    "bullet",
-    "align",
-    "link",
-    "image",
-    "code-block",
-  ];
-
-  const categories = [
-    "Web Development",
-    "JavaScript",
-    "React",
-    "Node.js",
-    "Database",
-    "UI/UX Design",
-    "Mobile Development",
-    "DevOps",
-    "Cloud Computing",
-    "Artificial Intelligence",
-  ];
-
-  const handleAddCategory = () => {
-    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
-      categories.push(newCategory.trim());
-      setCategory(newCategory.trim());
-      setNewCategory("");
-      toast.success("New category added!");
-    } else {
-      toast.error("Category already exists or is invalid");
-    }
+  const handleEditorChange = content => {
+    setContent(content);
   };
 
   const handleSave = async () => {
@@ -143,35 +64,18 @@ const BlogEditor = ({ post, onSave }) => {
       </div>
 
       <div className="mb-6">
-        <div className="flex gap-4">
-          <select
-            value={category}
-            onChange={e => setCategory(e.target.value)}
-            className="flex-1 px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-          >
-            <option value="">Select Category</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newCategory}
-              onChange={e => setNewCategory(e.target.value)}
-              placeholder="Add new category"
-              className="px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-            />
-            <button
-              onClick={handleAddCategory}
-              className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
-            >
-              Add
-            </button>
-          </div>
-        </div>
+        <select
+          value={category}
+          onChange={e => setCategory(e.target.value)}
+          className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+        >
+          <option value="">Select Category</option>
+          <option value="Web Development">Web Development</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="React">React</option>
+          <option value="Node.js">Node.js</option>
+          <option value="Database">Database</option>
+        </select>
       </div>
 
       <div className="mb-6">
@@ -185,13 +89,71 @@ const BlogEditor = ({ post, onSave }) => {
       </div>
 
       <div className="mb-6">
-        <ReactQuill
-          ref={quillRef}
+        <Editor
+          apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
+          initialValue={content}
           value={content}
-          onChange={setContent}
-          modules={modules}
-          formats={formats}
-          className="h-96 mb-12 bg-[var(--background-default)] text-[var(--text-primary)]"
+          onEditorChange={handleEditorChange}
+          init={{
+            height: 500,
+            menubar: true,
+            plugins: [
+              // Core editing features
+              "anchor",
+              "autolink",
+              "charmap",
+              "codesample",
+              "emoticons",
+              "image",
+              "link",
+              "lists",
+              "media",
+              "searchreplace",
+              "table",
+              "visualblocks",
+              "wordcount",
+              // Premium features
+              "checklist",
+              "mediaembed",
+              "casechange",
+              "formatpainter",
+              "pageembed",
+              "a11ychecker",
+              "tinymcespellchecker",
+              "permanentpen",
+              "powerpaste",
+              "advtable",
+              "advcode",
+              "editimage",
+              "advtemplate",
+              "ai",
+              "mentions",
+              "tinycomments",
+              "tableofcontents",
+              "footnotes",
+              "mergetags",
+              "autocorrect",
+              "typography",
+              "inlinecss",
+              "markdown",
+              "importword",
+              "exportword",
+              "exportpdf",
+            ],
+            toolbar:
+              "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+            tinycomments_mode: "embedded",
+            tinycomments_author: "Author name",
+            mergetags_list: [
+              { value: "First.Name", title: "First Name" },
+              { value: "Email", title: "Email" },
+            ],
+            ai_request: (request, respondWith) =>
+              respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+            content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+            skin: "oxide",
+            content_css: "default",
+          }}
         />
       </div>
 
