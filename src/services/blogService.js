@@ -22,46 +22,73 @@ api.interceptors.request.use(config => {
 export const blogService = {
   // Create new blog post
   createBlog: async blogData => {
-    const response = await api.post("/blogs", blogData);
-    console.log("Responsefrom creaate data", response.data);
-    return response.data;
+    try {
+      const response = await api.post("/blogs", blogData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   // Get all blogs with pagination and search
   getBlogs: async ({ page = 1, limit = 10, search = "", category = "" }) => {
-    const response = await api.get("/blogs", {
-      params: { page, limit, search, category },
-    });
-    return response.data;
+    try {
+      const response = await api.get("/blogs", {
+        params: { page, limit, search, category },
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   // Get single blog by ID
-  getBlogById: async id => {
-    const response = await api.get(`/blogs/${id}`);
-    return response.data;
+  getBlog: async id => {
+    try {
+      const response = await api.get(`/blogs/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   // Update blog post
   updateBlog: async (id, blogData) => {
-    const response = await api.put(`/blogs/${id}`, blogData);
-    return response.data;
+    try {
+      const response = await api.put(`/blogs/${id}`, blogData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   // Delete blog post
   deleteBlog: async id => {
-    const response = await api.delete(`/blogs/${id}`);
-    return response.data;
+    try {
+      const response = await api.delete(`/blogs/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   // Add comment to blog
   addComment: async (blogId, comment) => {
-    const response = await api.post(`/blogs/${blogId}/comments`, comment);
-    return response.data;
+    try {
+      const response = await api.post(`/blogs/${blogId}/comments`, comment);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   // Like/Unlike blog
-  toggleLike: async blogId => {
-    const response = await api.post(`/blogs/${blogId}/like`);
-    return response.data;
+  likeBlog: async blogId => {
+    try {
+      const response = await api.post(`/blogs/${blogId}/like`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 };

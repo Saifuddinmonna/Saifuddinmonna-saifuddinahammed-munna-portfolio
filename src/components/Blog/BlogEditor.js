@@ -31,10 +31,10 @@ const BlogEditor = () => {
       const fetchPost = async () => {
         try {
           const data = await blogService.getBlogById(id);
-          console.log("Fetched blog data:", data); // Debug log
+          console.log("Fetched blog data:", data);
           setFormData({
             title: data.title,
-            content: data.content || "", // Ensure content is not null
+            content: data.content || "",
             category: data.category,
             image: data.image,
             author: {
@@ -241,7 +241,7 @@ const BlogEditor = () => {
                 apiKey="dlfn3zegy6zpe1fznqli3y0i6rkf4mlhpntqfq5vcqetdl5v"
                 value={formData.content}
                 onEditorChange={content => {
-                  console.log("Editor content changed:", content); // Debug log
+                  console.log("Editor content changed:", content);
                   setFormData(prev => ({
                     ...prev,
                     content: content,
@@ -294,10 +294,10 @@ const BlogEditor = () => {
                   paste_remove_styles: false,
                   paste_remove_styles_if_webkit: false,
                   paste_preprocess: function (plugin, args) {
-                    console.log("Paste preprocess:", args.content); // Debug log
+                    console.log("Paste preprocess:", args.content);
                   },
                   paste_postprocess: function (plugin, args) {
-                    console.log("Paste postprocess:", args.node); // Debug log
+                    console.log("Paste postprocess:", args.node);
                   },
                 }}
               />

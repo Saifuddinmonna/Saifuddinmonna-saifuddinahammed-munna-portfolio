@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
 import { motion } from "framer-motion";
-import { FaHeart, FaRegHeart, FaEdit, FaTrash } from "react-icons/fa";
+import { FaRegHeart, FaHeart, FaEdit, FaTrash, FaArrowLeft } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { toast } from "react-hot-toast";
 
 const BlogPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const [comment, setComment] = useState("");
 
   const {
     data: post,
@@ -18,144 +20,194 @@ const BlogPost = () => {
     error,
   } = useQuery({
     queryKey: ["blog", id],
-    queryFn: () => blogService.getBlogById(id),
+    queryFn: () => blogService.getBlog(id),
   });
 
-  const handleLike = async () => {
-    try {
-      await blogService.toggleLike(id);
-      toast.success("Like updated successfully");
-    } catch (error) {
-      toast.error("Failed to update like");
+  const likeMutation = useMutation({
+    mutationFn: () => blogService.likeBlog(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blog", id]);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => blogService.deleteBlog(id),
+    onSuccess: () => {
+      toast.success("Post deleted successfully");
+      navigate("/blog");
+    },
+    onError: () => {
+      toast.error("Failed to delete post");
+    },
+  });
+
+  const commentMutation = useMutation({
+    mutationFn: commentData => blogService.addComment(id, commentData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blog", id]);
+      setComment("");
+      toast.success("Comment added successfully!");
+    },
+  });
+
+  const handleLike = () => {
+    if (!user) {
+      toast.error("Please sign in to like posts");
+      return;
+    }
+    likeMutation.mutate();
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      deleteMutation.mutate();
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      try {
-        await blogService.deleteBlog(id);
-        toast.success("Post deleted successfully");
-        navigate("/blog");
-      } catch (error) {
-        toast.error("Failed to delete post");
-      }
+  const handleComment = e => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("Please sign in to comment");
+      return;
     }
+    if (!comment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    commentMutation.mutate({ content: comment });
+  };
+
+  // Function to safely render HTML content
+  const renderHTML = html => {
+    return { __html: html };
+  };
+
+  // Function to format date
+  const formatDate = dateString => {
+    if (!dateString) return "";
+    const date = new Date(dateString.$date || dateString);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
+      <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-500">Error loading blog post: {error.message}</div>
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading blog post. Please try again later.</p>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-[var(--text-secondary)]">Post not found</div>
+      <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
+        <div className="text-[var(--text-primary)]">Post not found</div>
       </div>
     );
   }
 
-  const isAuthor = currentUser?.uid === post.author?.id;
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">{post.title}</h1>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <span className="text-[var(--text-secondary)]">
-                {new Date(post.date).toLocaleDateString()}
-              </span>
-              <span className="text-[var(--primary-main)]">{post.category}</span>
-              <span className="text-[var(--text-secondary)]">{post.readTime}</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={handleLike}
-                className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
-              >
-                {post.likes?.includes(currentUser?.uid) ? (
-                  <FaHeart className="text-red-500" />
-                ) : (
-                  <FaRegHeart />
-                )}
-                <span className="ml-1">{post.likes?.length || 0}</span>
-              </button>
-              {isAuthor && (
-                <>
-                  <button
-                    onClick={() => navigate(`/blog/edit/${post._id}`)}
-                    className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="text-red-500 hover:text-red-700 transition-colors duration-300"
-                  >
-                    <FaTrash />
-                  </button>
-                </>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)] mb-8"
+        >
+          <FaArrowLeft />
+          Back to Blog
+        </button>
+
+        <article className="bg-[var(--background-paper)] rounded-xl p-8 shadow-lg">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-4">{post.title}</h1>
+
+          <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)] mb-6">
+            <span>By {post.author?.name || "Anonymous"}</span>
+            <span>•</span>
+            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+            <span>•</span>
+            <span>{post.readTime}</span>
+          </div>
+
+          {post.image && (
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-64 object-cover rounded-lg mb-8"
+            />
+          )}
+
+          <div
+            className="prose prose-lg dark:prose-invert max-w-none mb-8"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
+
+          <div className="flex items-center gap-4 mb-8">
+            <button
+              onClick={handleLike}
+              className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+            >
+              {post.likes?.includes(user?.uid) ? (
+                <FaHeart className="text-red-500" />
+              ) : (
+                <FaRegHeart />
               )}
+              <span>{post.likes?.length || 0} Likes</span>
+            </button>
+          </div>
+
+          {/* Comments Section */}
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">
+              Comments ({post.comments?.length || 0})
+            </h2>
+
+            {user && (
+              <form onSubmit={handleComment} className="mb-8">
+                <textarea
+                  value={comment}
+                  onChange={e => setComment(e.target.value)}
+                  placeholder="Write a comment..."
+                  className="w-full p-4 rounded-lg bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                  rows="4"
+                />
+                <button
+                  type="submit"
+                  className="mt-4 px-6 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
+                >
+                  Post Comment
+                </button>
+              </form>
+            )}
+
+            <div className="space-y-6">
+              {post.comments?.map(comment => (
+                <div key={comment._id} className="bg-[var(--background-default)] p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-semibold text-[var(--text-primary)]">
+                      {comment.author?.name || "Anonymous"}
+                    </span>
+                    <span className="text-sm text-[var(--text-secondary)]">
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-[var(--text-primary)]">{comment.content}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-
-        {/* Featured Image */}
-        {post.image && (
-          <div className="mb-8 rounded-xl overflow-hidden">
-            <img src={post.image} alt={post.title} className="w-full h-[400px] object-cover" />
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="prose prose-lg dark:prose-invert max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
-        </div>
-
-        {/* Author Info */}
-        {!post.author?.isHidden && (
-          <div className="mt-12 p-6 bg-[var(--background-paper)] rounded-xl">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
-              About the Author
-            </h3>
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
-                <p className="text-[var(--text-primary)] font-medium">{post.author?.name}</p>
-                {post.author?.email && (
-                  <p className="text-[var(--text-secondary)]">{post.author.email}</p>
-                )}
-                {post.author?.phone && (
-                  <p className="text-[var(--text-secondary)]">{post.author.phone}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Comments Section */}
-        <div className="mt-12">
-          <h3 className="text-2xl font-semibold text-[var(--text-primary)] mb-6">Comments</h3>
-          {/* Add comments section here */}
-        </div>
+        </article>
       </div>
     </motion.div>
   );

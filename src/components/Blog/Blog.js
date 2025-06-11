@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../App";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { blogService } from "../../services/blogService";
 import { toast } from "react-hot-toast";
 import { useBlogs } from "../../hooks/useBlogs";
 import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -20,42 +21,22 @@ const Blog = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const { user } = useAuth();
 
-  // Fetch blogs with search and category filters
   const {
-    blogs,
+    data: blogs = [],
     isLoading: useBlogsLoading,
     error,
-    deleteBlog,
-    toggleLike,
-  } = useBlogs(currentPage, ARTICLES_PER_PAGE, searchQuery, selectedCategory);
+    refetch,
+  } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: () => blogService.getBlogs({ page: 1, limit: 10 }),
+  });
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      const data = await blogService.getBlogs({ page: 1, limit: 10 });
-      setPosts(data.data);
-    } catch (error) {
-      toast.error("Failed to fetch blog posts");
-      console.error("Error fetching posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Memoize calculations for current articles and total pages
-  const { currentArticles, totalPages } = useMemo(() => {
-    const indexOfLastArticle = currentPage * ARTICLES_PER_PAGE;
-    const indexOfFirstArticle = indexOfLastArticle - ARTICLES_PER_PAGE;
-    const articles = posts.slice(indexOfFirstArticle, indexOfLastArticle);
-    const pages = Math.ceil(posts.length / ARTICLES_PER_PAGE);
-    return { currentArticles: articles, totalPages: pages };
-  }, [currentPage, posts]);
+    refetch();
+  }, [refetch]);
 
   const handleReadMore = article => {
     setSelectedArticle(article);
@@ -86,21 +67,22 @@ const Blog = () => {
   const handleDelete = async postId => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        await deleteBlog.mutateAsync(postId);
+        await blogService.deleteBlog(postId);
+        refetch();
         toast.success("Post deleted successfully");
-        fetchPosts(); // Refresh the posts list
       } catch (error) {
         toast.error("Failed to delete post");
-        console.error("Error deleting post:", error);
       }
     }
   };
 
-  const handleLike = async id => {
+  const handleLike = async postId => {
     try {
-      await toggleLike.mutateAsync(id);
+      await blogService.toggleLike(postId);
+      refetch();
+      toast.success("Like updated successfully");
     } catch (error) {
-      console.error("Like error:", error);
+      toast.error("Failed to update like");
     }
   };
 
@@ -117,55 +99,37 @@ const Blog = () => {
 
   const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
 
-  // Function to generate page numbers for pagination control
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxPagesToShow = 5; // Max page numbers to show directly (e.g., 1 2 3 ... 7 8)
-    const halfPagesToShow = Math.floor(maxPagesToShow / 2);
+  // Ensure we have an array to work with
+  const postsArray = blogs?.data || [];
 
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Always show first page
-      pageNumbers.push(1);
-      if (currentPage > halfPagesToShow + 1) {
-        pageNumbers.push("..."); // Ellipsis if current page is far from start
-      }
+  const filteredPosts = postsArray.filter(post => {
+    const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-      let startPage = Math.max(
-        2,
-        currentPage -
-          halfPagesToShow +
-          (currentPage > totalPages - halfPagesToShow ? totalPages - maxPagesToShow + 1 : 1)
-      );
-      let endPage = Math.min(
-        totalPages - 1,
-        currentPage +
-          halfPagesToShow -
-          (currentPage < halfPagesToShow + 1 ? maxPagesToShow - totalPages : 1)
-      );
+  // Memoize calculations for current articles and total pages
+  const { currentArticles, totalPages } = useMemo(() => {
+    const indexOfLastArticle = currentPage * ARTICLES_PER_PAGE;
+    const indexOfFirstArticle = indexOfLastArticle - ARTICLES_PER_PAGE;
+    const articles = filteredPosts.slice(indexOfFirstArticle, indexOfLastArticle);
+    const pages = Math.ceil(filteredPosts.length / ARTICLES_PER_PAGE);
+    return { currentArticles: articles, totalPages: pages };
+  }, [currentPage, filteredPosts]);
 
-      // Adjust start and end if near beginning or end
-      if (currentPage <= halfPagesToShow) {
-        endPage = Math.min(totalPages - 1, maxPagesToShow - 1);
-      }
-      if (currentPage > totalPages - halfPagesToShow) {
-        startPage = Math.max(2, totalPages - maxPagesToShow + 2);
-      }
+  // Function to format date
+  const formatDate = dateString => {
+    if (!dateString) return "";
+    const date = new Date(dateString.$date || dateString);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+  };
 
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (currentPage < totalPages - halfPagesToShow) {
-        pageNumbers.push("..."); // Ellipsis if current page is far from end
-      }
-      // Always show last page
-      pageNumbers.push(totalPages);
-    }
-    return pageNumbers;
+  // Function to safely render HTML content
+  const renderHTML = html => {
+    return { __html: html };
   };
 
   if (useBlogsLoading) {
@@ -196,12 +160,14 @@ const Blog = () => {
           <p className="mt-3 max-w-md mx-auto text-base text-[var(--text-secondary)] sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
             Stay updated with the latest trends, tips, and insights in web development
           </p>
-          <button
-            onClick={() => navigate("/blog/new")}
-            className="mt-6 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
-          >
-            Write New Post
-          </button>
+          {user && (
+            <Link
+              to="/blog/editor"
+              className="mt-6 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
+            >
+              Write New Post
+            </Link>
+          )}
         </div>
 
         {/* Tabs and Search Section */}
@@ -210,7 +176,7 @@ const Blog = () => {
             <button
               onClick={() => {
                 setActiveTab("all");
-                setSelectedCategory("");
+                setSelectedCategory("All");
                 setSearchQuery("");
               }}
               className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
@@ -281,61 +247,72 @@ const Blog = () => {
 
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs?.data?.map(post => (
-            <motion.article
-              key={post._id}
+          {filteredPosts.map(post => (
+            <motion.div
+              key={post._id.$oid || post._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+              transition={{ duration: 0.3 }}
+              className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg"
             >
-              <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
+              {post.image && (
+                <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
+              )}
               <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-[var(--text-secondary)]">
-                    {new Date(post.date).toLocaleDateString()}
-                  </span>
-                  <span className="text-sm text-[var(--primary-main)]">{post.category}</span>
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">{post.title}</h2>
+                  {user && post.author?.email === user.email && (
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/blog/editor/${post._id.$oid || post._id}`}
+                        className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                      >
+                        <FaEdit />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(post._id.$oid || post._id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">{post.title}</h2>
-                <p className="text-[var(--text-secondary)] mb-4">
-                  {post.excerpt || post.content.substring(0, 150) + "..."}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => handleLike(post._id)}
-                      className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
-                    >
-                      {post.likes?.includes(user?.uid) ? (
-                        <FaHeart className="text-red-500" />
-                      ) : (
-                        <FaRegHeart />
-                      )}
-                      <span className="ml-1">{post.likes?.length || 0}</span>
-                    </button>
-                    <button
-                      onClick={() => navigate(`/blog/edit/${post._id}`)}
-                      className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(post._id)}
-                      className="text-red-500 hover:text-red-700 transition-colors duration-300"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                  <span className="text-sm text-[var(--text-secondary)]">{post.readTime}</span>
+                <div className="text-sm text-[var(--text-secondary)] mb-4">
+                  <p>By {post.author?.name || "Anonymous"}</p>
+                  <p>{formatDate(post.createdAt)}</p>
+                  <p>{post.readTime}</p>
+                </div>
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none mb-4 line-clamp-3"
+                  dangerouslySetInnerHTML={renderHTML(post.content)}
+                />
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={() => handleLike(post._id.$oid || post._id)}
+                    className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+                  >
+                    {post.likes?.includes(user?.uid) ? (
+                      <FaHeart className="text-red-500" />
+                    ) : (
+                      <FaRegHeart />
+                    )}
+                    <span>{post.likes?.length || 0}</span>
+                  </button>
+                  <Link
+                    to={`/blog/${post._id.$oid || post._id}`}
+                    className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                  >
+                    Read More
+                  </Link>
                 </div>
               </div>
-            </motion.article>
+            </motion.div>
           ))}
         </div>
 
         {/* Pagination */}
-        {blogs?.totalPages > 1 && (
+        {totalPages > 1 && (
           <div className="flex justify-center mt-8 space-x-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -345,11 +322,11 @@ const Blog = () => {
               Previous
             </button>
             <span className="px-3 py-2 text-[var(--text-primary)]">
-              Page {currentPage} of {blogs.totalPages}
+              Page {currentPage} of {totalPages}
             </span>
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, blogs.totalPages))}
-              disabled={currentPage === blogs.totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
               className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
@@ -358,7 +335,7 @@ const Blog = () => {
         )}
 
         {/* No Results Message */}
-        {blogs?.data?.length === 0 && (
+        {filteredPosts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-[var(--text-secondary)] text-lg">
               {activeTab === "search"
@@ -420,7 +397,7 @@ const Blog = () => {
                 {selectedArticle.title}
               </h2>
               <div className="flex items-center text-sm text-[var(--text-secondary)] mb-6">
-                <span>{new Date(selectedArticle.date).toLocaleDateString()}</span>
+                <span>{formatDate(selectedArticle.createdAt)}</span>
                 <span className="mx-2">•</span>
                 <span>{selectedArticle.readTime}</span>
                 <span className="mx-2">•</span>
@@ -428,7 +405,7 @@ const Blog = () => {
               </div>
               <div
                 className="prose prose-lg max-w-none text-[var(--text-primary)]"
-                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                dangerouslySetInnerHTML={renderHTML(selectedArticle.content)}
               />
             </div>
           </div>
