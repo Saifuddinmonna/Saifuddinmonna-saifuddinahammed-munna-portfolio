@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
 import { motion } from "framer-motion";
-import { FaRegHeart, FaHeart, FaEdit, FaTrash, FaArrowLeft } from "react-icons/fa";
+import {
+  FaRegHeart,
+  FaHeart,
+  FaEdit,
+  FaTrash,
+  FaArrowLeft,
+  FaUser,
+  FaCalendar,
+  FaClock,
+  FaEye,
+  FaTag,
+  FaEnvelope,
+  FaPhone,
+} from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { toast } from "react-hot-toast";
 
@@ -14,19 +27,33 @@ const BlogPost = () => {
   const { user } = useAuth();
   const [comment, setComment] = useState("");
 
+  console.log("BlogPost Component - Post ID:", id);
+
   const {
-    data: post,
+    data: response,
     isLoading,
     error,
   } = useQuery({
     queryKey: ["blog", id],
-    queryFn: () => blogService.getBlog(id),
+    queryFn: async () => {
+      const response = await blogService.getBlog(id);
+      return response;
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
   });
+
+  const post = response?.data;
+
+  useEffect(() => {
+    console.log("Post data updated:", post);
+  }, [post]);
 
   const likeMutation = useMutation({
     mutationFn: () => blogService.likeBlog(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["blog", id]);
+      toast.success("Like updated successfully");
     },
   });
 
@@ -44,9 +71,14 @@ const BlogPost = () => {
   const commentMutation = useMutation({
     mutationFn: commentData => blogService.addComment(id, commentData),
     onSuccess: () => {
+      console.log("Comment added successfully");
       queryClient.invalidateQueries(["blog", id]);
       setComment("");
       toast.success("Comment added successfully!");
+    },
+    onError: error => {
+      console.error("Error adding comment:", error);
+      toast.error(error.message || "Failed to add comment");
     },
   });
 
@@ -55,6 +87,7 @@ const BlogPost = () => {
       toast.error("Please sign in to like posts");
       return;
     }
+    console.log("Handling like for post:", id);
     likeMutation.mutate();
   };
 
@@ -74,6 +107,7 @@ const BlogPost = () => {
       toast.error("Comment cannot be empty");
       return;
     }
+    console.log("Submitting comment:", comment);
     commentMutation.mutate({ content: comment });
   };
 
@@ -90,7 +124,19 @@ const BlogPost = () => {
     return date.toLocaleDateString(undefined, options);
   };
 
+  // Update page title when post loads
+  useEffect(() => {
+    if (post?.title) {
+      console.log("Updating page title to:", post.title);
+      document.title = `${post.title} | Blog`;
+    }
+    return () => {
+      document.title = "Blog";
+    };
+  }, [post?.title]);
+
   if (isLoading) {
+    console.log("Loading blog post...");
     return (
       <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
@@ -99,14 +145,18 @@ const BlogPost = () => {
   }
 
   if (error) {
+    console.error("Error state:", error);
     return (
-      <div className="text-center py-12">
-        <p className="text-red-500">Error loading blog post. Please try again later.</p>
+      <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
+        <div className="text-[var(--text-primary)]">
+          {error.message || "Failed to load blog post"}
+        </div>
       </div>
     );
   }
 
   if (!post) {
+    console.log("No post data available");
     return (
       <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
         <div className="text-[var(--text-primary)]">Post not found</div>
@@ -114,45 +164,106 @@ const BlogPost = () => {
     );
   }
 
+  console.log("Rendering blog post with data:", post);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-[var(--background-default)]"
     >
-      <div className="max-w-4xl mx-auto">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)] mb-8"
-        >
-          <FaArrowLeft />
-          Back to Blog
-        </button>
+      {/* Post Header Section */}
+      <div className="bg-[var(--background-paper)] border-b border-[var(--border-color)]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)] mb-8"
+          >
+            <FaArrowLeft />
+            Back to Blog
+          </button>
 
-        <article className="bg-[var(--background-paper)] rounded-xl p-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-4">{post.title}</h1>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-6">{post.title}</h1>
 
-          <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)] mb-6">
-            <span>By {post.author?.name || "Anonymous"}</span>
-            <span>•</span>
-            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-            <span>•</span>
-            <span>{post.readTime}</span>
+          {/* Author Information */}
+          <div className="bg-[var(--background-default)] p-4 rounded-lg mb-8">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+              Author Information
+            </h3>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <FaUser className="text-[var(--primary-main)]" />
+                <span className="text-[var(--text-primary)]">
+                  Name: {post.author?.name || "Anonymous"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaEnvelope className="text-[var(--primary-main)]" />
+                <span className="text-[var(--text-primary)]">
+                  Email: {post.author?.email || "Not provided"}
+                </span>
+              </div>
+              {post.author?.phone && (
+                <div className="flex items-center gap-2">
+                  <FaPhone className="text-[var(--primary-main)]" />
+                  <span className="text-[var(--text-primary)]">Phone: {post.author.phone}</span>
+                </div>
+              )}
+            </div>
           </div>
 
+          {/* Post Metadata */}
+          <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-secondary)] mb-8">
+            <div className="flex items-center gap-2">
+              <FaCalendar className="text-[var(--primary-main)]" />
+              <span>Created: {new Date(post.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaClock className="text-[var(--primary-main)]" />
+              <span>{post.readTime}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaEye className="text-[var(--primary-main)]" />
+              <span>{post.views || 0} views</span>
+            </div>
+          </div>
+
+          {/* Tags */}
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="flex items-center gap-1 px-3 py-1 bg-[var(--primary-light)] text-[var(--primary-main)] rounded-full text-sm"
+                >
+                  <FaTag className="text-xs" />
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Featured Image */}
           {post.image && (
             <img
               src={post.image}
               alt={post.title}
-              className="w-full h-64 object-cover rounded-lg mb-8"
+              className="w-full h-[400px] object-cover rounded-xl mb-8"
             />
           )}
+        </div>
+      </div>
 
+      {/* Post Content Section */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <article className="bg-[var(--background-paper)] rounded-xl p-8 shadow-lg">
+          {/* Post Content with TinyMCE Formatting */}
           <div
             className="prose prose-lg dark:prose-invert max-w-none mb-8"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 
+          {/* Like Button */}
           <div className="flex items-center gap-4 mb-8">
             <button
               onClick={handleLike}

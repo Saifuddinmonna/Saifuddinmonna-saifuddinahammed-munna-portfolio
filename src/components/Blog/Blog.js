@@ -8,6 +8,7 @@ import { useBlogs } from "../../hooks/useBlogs";
 import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -23,6 +24,7 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const {
     data: blogs = [],
@@ -285,7 +287,7 @@ const Blog = () => {
                 </div>
                 <div
                   className="prose prose-sm dark:prose-invert max-w-none mb-4 line-clamp-3"
-                  dangerouslySetInnerHTML={renderHTML(post.content)}
+                  dangerouslySetInnerHTML={{ __html: post.content }}
                 />
                 <div className="flex justify-between items-center">
                   <button
@@ -301,7 +303,14 @@ const Blog = () => {
                   </button>
                   <Link
                     to={`/blog/${post._id.$oid || post._id}`}
-                    className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                    className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] font-medium"
+                    onClick={() => {
+                      // Prefetch the blog post data
+                      queryClient.prefetchQuery({
+                        queryKey: ["blog", post._id.$oid || post._id],
+                        queryFn: () => blogService.getBlog(post._id.$oid || post._id),
+                      });
+                    }}
                   >
                     Read More
                   </Link>
