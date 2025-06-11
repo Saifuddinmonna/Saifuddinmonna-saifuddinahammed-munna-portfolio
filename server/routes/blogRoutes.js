@@ -9,17 +9,14 @@ const {
   addComment,
   toggleLike
 } = require('../controllers/blogController');
-const { verifyToken } = require('../middleware/auth');
 
-// Public routes
+// All routes are public
 router.get('/', getAllBlogs);
 router.get('/:id', getBlog);
-
-// Protected routes
-router.post('/', verifyToken, createBlog);
-router.put('/:id', verifyToken, updateBlog);
-router.delete('/:id', verifyToken, deleteBlog);
-router.post('/:id/comments', verifyToken, addComment);
-router.post('/:id/like', verifyToken, toggleLike);
+router.post('/', createBlog);
+router.put('/:id', updateBlog);
+router.delete('/:id', deleteBlog);
+router.post('/:id/comments', addComment);
+router.post('/:id/like', toggleLike);
 
 module.exports = router; 

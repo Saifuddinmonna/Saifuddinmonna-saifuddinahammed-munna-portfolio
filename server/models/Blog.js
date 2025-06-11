@@ -11,9 +11,18 @@ const blogSchema = new mongoose.Schema({
     required: true
   },
   author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    name: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true
+    },
+    phone: {
+      type: String,
+      required: false
+    }
   },
   tags: [{
     type: String,
@@ -26,20 +35,24 @@ const blogSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['draft', 'published'],
-    default: 'draft'
+    default: 'published'
+  },
+  readTime: {
+    type: String,
+    required: true
   },
   likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    name: String,
+    email: String
   }],
   comments: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
     text: {
       type: String,
       required: true
+    },
+    author: {
+      name: String,
+      email: String
     },
     createdAt: {
       type: Date,
