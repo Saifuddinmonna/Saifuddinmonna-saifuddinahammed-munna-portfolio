@@ -1,5 +1,9 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
+import ChatWindow from "../../socketIo/components/ChatWindow.js";
+import Blog from "../Blog/Blog";
+import BlogEditor from "../Blog/BlogEditor";
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -14,7 +18,6 @@ const HomeLayout = lazy(() => import("../MainLayouts/HomeLayout"));
 const About = lazy(() => import("../About/About.js"));
 const ContactPage = lazy(() => import("../../pages/ContactPage"));
 const MyPortfolios = lazy(() => import("../MyPortfolios/MyPortfoliosForHomePage.js"));
-const Blog = lazy(() => import("../Blog/Blog"));
 const ProjectPage = lazy(() => import("../../pages/ProjectPage"));
 const PortfolioLayout = lazy(() => import("../MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
 const MyportfolioImage = lazy(() => import("../MyPortfolios/MyportfolioImage"));
@@ -28,12 +31,19 @@ const SignUp = lazy(() => import("../../auth/components/SignUp"));
 const router = createBrowserRouter([
   {
     path: "/projects/:projectName",
+    element: <Suspense fallback={<LoadingSpinner />}></Suspense>,
+  },
+  {
+    path: "/*",
     element: (
       <Suspense fallback={<LoadingSpinner />}>
-        <ProjectPage />
+        <PrivateRoute>
+          <ChatWindow />
+        </PrivateRoute>
       </Suspense>
     ),
   },
+
   {
     path: "/",
     element: (
@@ -92,11 +102,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/blog",
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <Blog />
-          </Suspense>
-        ),
+        element: <Blog />,
+      },
+      {
+        path: "/blog/new",
+        element: <BlogEditor />,
+      },
+      {
+        path: "/blog/edit/:id",
+        element: <BlogEditor />,
       },
       {
         path: "/resume",

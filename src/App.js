@@ -111,8 +111,8 @@ function App() {
                 pauseOnHover
                 theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
               />
-              <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} />
-              <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} />
+              {/* <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} />
+              <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} /> */}
             </div>
           </SocketProvider>
         </QueryClientProvider>

@@ -18,6 +18,7 @@ export const SocketProvider = ({ children }) => {
   const [hasUnreadPrivateMessages, setHasUnreadPrivateMessages] = useState(false); // New state for unread private messages
   const [groups, setGroups] = useState([]); // State to store chat groups
   const [selectedGroup, setSelectedGroup] = useState(null); // State to store the currently selected group
+  const [privateChats, setPrivateChats] = useState({}); // New state for private chat history
 
   useEffect(() => {
     if (loading) return; // Wait for auth loading to complete
@@ -44,6 +45,9 @@ export const SocketProvider = ({ children }) => {
           token: token,
           avatar: dbUser.photoURL || null, // Assuming dbUser has photoURL
         });
+        socket.emit("requestGroupList"); // Request initial group list on connect
+        // Request private message history for all chats
+        socket.emit("requestAllPrivateHistory");
       }
       // For guest users, the `userJoin` will be emitted from ChatWindow after they input details
     };
@@ -88,22 +92,42 @@ export const SocketProvider = ({ children }) => {
       });
     };
 
-    const onMessage = msg => {
+    const onPublicMessage = msg => {
+      console.log("Received public message:", msg);
       setMessages(prev => [...prev, { ...msg, type: "public" }]);
     };
 
     const onPrivateMessage = msg => {
-      setMessages(prev => [...prev, { ...msg, type: "private" }]);
+      console.log("Received private message:", msg);
+      const messageWithType = { ...msg, type: "private", messageType: "private" };
+
+      // Update messages state
+      setMessages(prev => [...prev, messageWithType]);
+
+      // Update private chats state
+      setPrivateChats(prev => {
+        const chatId =
+          msg.senderId === (dbUser?.firebaseUid || socket.id) ? msg.receiverId : msg.senderId;
+
+        return {
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), messageWithType],
+        };
+      });
+
       // Set unread flag if the message is for the current user
-      // (Simplified: always set for now, ChatWindow will clear it when tab is active)
-      setHasUnreadPrivateMessages(true);
+      if (msg.receiverId === (dbUser?.firebaseUid || socket.id)) {
+        setHasUnreadPrivateMessages(true);
+      }
     };
 
     const onRoomMessage = msg => {
+      console.log("Received room message:", msg);
       setMessages(prev => [...prev, { ...msg, type: "room" }]);
     };
 
     const onBroadcastMessage = msg => {
+      console.log("Received broadcast message:", msg);
       setMessages(prev => [...prev, { ...msg, type: "broadcast" }]);
     };
 
@@ -127,6 +151,63 @@ export const SocketProvider = ({ children }) => {
       // Server should send updated group list or message, for now, just log
     };
 
+    const onPublicMessageHistory = history => {
+      console.log("Received public message history:", history);
+      setMessages(prev => {
+        const newMessages = history.map(msg => ({ ...msg, type: "public" }));
+        const existingIds = new Set(prev.map(m => m.id));
+        const uniqueNewMessages = newMessages.filter(m => !existingIds.has(m.id));
+        return [...prev, ...uniqueNewMessages]; // Append history as it's typically fetched when the tab opens
+      });
+    };
+
+    const onPrivateMessageHistory = history => {
+      console.log("Received private message history:", history);
+
+      // Group messages by chat
+      const groupedMessages = history.reduce((acc, msg) => {
+        const chatId =
+          msg.senderId === (dbUser?.firebaseUid || socket.id) ? msg.receiverId : msg.senderId;
+
+        if (!acc[chatId]) {
+          acc[chatId] = [];
+        }
+        acc[chatId].push({ ...msg, type: "private", messageType: "private" });
+        return acc;
+      }, {});
+
+      // Update private chats state
+      setPrivateChats(prev => {
+        const newChats = { ...prev };
+        Object.entries(groupedMessages).forEach(([chatId, messages]) => {
+          newChats[chatId] = [...(prev[chatId] || []), ...messages];
+        });
+        return newChats;
+      });
+
+      // Update messages state
+      setMessages(prev => {
+        const newMessages = history.map(msg => ({
+          ...msg,
+          type: "private",
+          messageType: "private",
+        }));
+        const existingIds = new Set(prev.map(m => m._id || m.id));
+        const uniqueNewMessages = newMessages.filter(m => !existingIds.has(m._id || m.id));
+        return [...prev, ...uniqueNewMessages];
+      });
+    };
+
+    const onRoomMessageHistory = history => {
+      console.log("Received room message history:", history);
+      setMessages(prev => {
+        const newMessages = history.map(msg => ({ ...msg, type: "room" }));
+        const existingIds = new Set(prev.map(m => m.id));
+        const uniqueNewMessages = newMessages.filter(m => !existingIds.has(m.id));
+        return [...prev, ...uniqueNewMessages];
+      });
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("connect_error", onConnectError);
@@ -134,7 +215,7 @@ export const SocketProvider = ({ children }) => {
     socket.on("userJoined", onUserJoined);
     socket.on("userLeft", onUserLeft);
     socket.on("userTyping", onUserTyping);
-    socket.on("message", onMessage);
+    socket.on("publicMessage", onPublicMessage);
     socket.on("privateMessage", onPrivateMessage);
     socket.on("roomMessage", onRoomMessage);
     socket.on("broadcastMessage", onBroadcastMessage);
@@ -142,6 +223,9 @@ export const SocketProvider = ({ children }) => {
     socket.on("groupCreated", onGroupCreated);
     socket.on("groupJoined", onGroupJoined);
     socket.on("groupLeft", onGroupLeft);
+    socket.on("publicMessageHistory", onPublicMessageHistory);
+    socket.on("privateMessageHistory", onPrivateMessageHistory);
+    socket.on("roomMessageHistory", onRoomMessageHistory);
 
     return () => {
       socket.off("connect", onConnect);
@@ -151,7 +235,7 @@ export const SocketProvider = ({ children }) => {
       socket.off("userJoined", onUserJoined);
       socket.off("userLeft", onUserLeft);
       socket.off("userTyping", onUserTyping);
-      socket.off("message", onMessage);
+      socket.off("publicMessage", onPublicMessage);
       socket.off("privateMessage", onPrivateMessage);
       socket.off("roomMessage", onRoomMessage);
       socket.off("broadcastMessage", onBroadcastMessage);
@@ -159,6 +243,9 @@ export const SocketProvider = ({ children }) => {
       socket.off("groupCreated", onGroupCreated);
       socket.off("groupJoined", onGroupJoined);
       socket.off("groupLeft", onGroupLeft);
+      socket.off("publicMessageHistory", onPublicMessageHistory);
+      socket.off("privateMessageHistory", onPrivateMessageHistory);
+      socket.off("roomMessageHistory", onRoomMessageHistory);
       socket.disconnect(); // Disconnect when component unmounts
     };
   }, [token, dbUser, loading]); // Added dbUser to dependencies
@@ -201,6 +288,7 @@ export const SocketProvider = ({ children }) => {
     createGroup, // Expose createGroup function
     joinGroup, // Expose joinGroup function
     leaveGroup, // Expose leaveGroup function
+    privateChats, // Expose private chats state
   };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;

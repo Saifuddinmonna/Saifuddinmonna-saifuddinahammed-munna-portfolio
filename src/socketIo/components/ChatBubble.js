@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { FaComments, FaTimes } from "react-icons/fa";
+import { useAuth } from "../../auth/context/AuthContext"; // Import useAuth
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ChatBubble = ({ onToggleChat, isChatOpen }) => {
   const [position, setPosition] = useState({
@@ -8,6 +10,8 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
     y: window.innerHeight - 80, // Initial Y position (bottom side)
   });
   const bubbleRef = useRef(null);
+  const { user: firebaseUser } = useAuth(); // Get Firebase user
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Handle window resize to keep bubble on screen
   useEffect(() => {
@@ -21,6 +25,14 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const handleBubbleClick = () => {
+    if (firebaseUser) {
+      onToggleChat();
+    } else {
+      navigate('/login'); // <<< --- CONFIRM THIS ROUTE
+    }
+  };
 
   return (
     <motion.div
@@ -44,7 +56,7 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
       onDragEnd={(event, info) => {
         setPosition({ x: info.point.x, y: info.point.y });
       }}
-      onClick={onToggleChat}
+      onClick={handleBubbleClick} // Updated onClick handler
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}

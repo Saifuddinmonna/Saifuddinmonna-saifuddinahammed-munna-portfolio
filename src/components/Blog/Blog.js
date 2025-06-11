@@ -1,7 +1,10 @@
-import { useState, useMemo, useContext } from "react";
+import { useState, useMemo, useContext, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../App";
-import blogPostsData from "../../data/blogData.json";
+import { useNavigate } from "react-router-dom";
+import { blogService } from "./blogService";
+import { toast } from "react-hot-toast";
+import blogPostsData from "../../data/blogData.json"; // Import static data
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -10,15 +13,38 @@ const Blog = () => {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const data = await blogService.getAllPosts();
+      // Combine static and dynamic posts
+      const combinedPosts = [...blogPostsData, ...data];
+      setPosts(combinedPosts);
+    } catch (error) {
+      // If API fails, still show static posts
+      setPosts(blogPostsData);
+      toast.error("Failed to fetch dynamic blog posts");
+      console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Memoize calculations for current articles and total pages
   const { currentArticles, totalPages } = useMemo(() => {
     const indexOfLastArticle = currentPage * ARTICLES_PER_PAGE;
     const indexOfFirstArticle = indexOfLastArticle - ARTICLES_PER_PAGE;
-    const articles = blogPostsData.slice(indexOfFirstArticle, indexOfLastArticle);
-    const pages = Math.ceil(blogPostsData.length / ARTICLES_PER_PAGE);
+    const articles = posts.slice(indexOfFirstArticle, indexOfLastArticle);
+    const pages = Math.ceil(posts.length / ARTICLES_PER_PAGE);
     return { currentArticles: articles, totalPages: pages };
-  }, [currentPage]); // Recalculate only when currentPage changes
+  }, [currentPage, posts]);
 
   const handleReadMore = article => {
     setSelectedArticle(article);
@@ -40,6 +66,23 @@ const Blog = () => {
 
   const handlePageClick = pageNumber => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleEdit = post => {
+    navigate(`/blog/edit/${post.id}`);
+  };
+
+  const handleDelete = async postId => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await blogService.deletePost(postId);
+        toast.success("Post deleted successfully");
+        fetchPosts(); // Refresh the posts list
+      } catch (error) {
+        toast.error("Failed to delete post");
+        console.error("Error deleting post:", error);
+      }
+    }
   };
 
   // Function to generate page numbers for pagination control
@@ -105,103 +148,134 @@ const Blog = () => {
           <p className="mt-3 max-w-md mx-auto text-base text-[var(--text-secondary)] sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
             Stay updated with the latest trends, tips, and insights in web development
           </p>
+          <button
+            onClick={() => navigate("/blog/new")}
+            className="mt-6 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
+          >
+            Write New Post
+          </button>
         </div>
 
-        {/* Blog Grid */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
-          {currentArticles.map(post => (
-            <motion.article
-              key={post.id}
-              className="bg-[var(--background-paper)] rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-              whileHover={{ y: -5 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="relative h-48">
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
-                <div className="absolute top-4 left-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--background-paper)] text-[var(--primary-main)]">
-                    {post.category}
-                  </span>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center text-sm text-[var(--text-secondary)] mb-2">
-                  <span>{post.date}</span>
-                  <span className="mx-2">•</span>
-                  <span>{post.readTime}</span>
-                </div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                  {post.title}
-                </h2>
-                <p className="text-[var(--text-secondary)] mb-4 line-clamp-3">{post.excerpt}</p>
-                <button
-                  onClick={() => handleReadMore(post)}
-                  className="inline-flex items-center text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
-                >
-                  Read More
-                  <svg
-                    className="ml-2 w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="mt-12 flex justify-center items-center space-x-2 sm:space-x-4">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-            >
-              Previous
-            </button>
-
-            {getPageNumbers().map((page, index) =>
-              typeof page === "number" ? (
-                <button
-                  key={index}
-                  onClick={() => handlePageClick(page)}
-                  className={`px-3 py-2 sm:px-4 sm:py-2 border border-[var(--border-main)] rounded-md text-sm sm:text-base ${
-                    currentPage === page
-                      ? "bg-[var(--primary-main)] text-[var(--text-primary)] border-[var(--primary-main)]"
-                      : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                  }`}
-                >
-                  {page}
-                </button>
-              ) : (
-                <span
-                  key={index}
-                  className="px-1 sm:px-2 py-2 text-[var(--text-secondary)] text-sm sm:text-base"
-                >
-                  {page}
-                </span>
-              )
-            )}
-
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-            >
-              Next
-            </button>
+        {isLoading ? (
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-main)] mx-auto"></div>
+            <p className="mt-4 text-[var(--text-secondary)]">Loading posts...</p>
           </div>
+        ) : (
+          <>
+            {/* Blog Grid */}
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
+              {currentArticles.map(post => (
+                <motion.article
+                  key={post.id}
+                  className="bg-[var(--background-paper)] rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                  whileHover={{ y: -5 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="relative h-48">
+                    <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--background-paper)] text-[var(--primary-main)]">
+                        {post.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center text-sm text-[var(--text-secondary)] mb-2">
+                      <span>{new Date(post.date).toLocaleDateString()}</span>
+                      <span className="mx-2">•</span>
+                      <span>{post.readTime}</span>
+                    </div>
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                      {post.title}
+                    </h2>
+                    <p className="text-[var(--text-secondary)] mb-4 line-clamp-3">{post.excerpt}</p>
+                    <div className="flex justify-between items-center">
+                      <button
+                        onClick={() => handleReadMore(post)}
+                        className="inline-flex items-center text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                      >
+                        Read More
+                        <svg
+                          className="ml-2 w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEdit(post)}
+                          className="text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(post.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-12 flex justify-center items-center space-x-2 sm:space-x-4">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                >
+                  Previous
+                </button>
+
+                {getPageNumbers().map((page, index) =>
+                  typeof page === "number" ? (
+                    <button
+                      key={index}
+                      onClick={() => handlePageClick(page)}
+                      className={`px-3 py-2 sm:px-4 sm:py-2 border border-[var(--border-main)] rounded-md text-sm sm:text-base ${
+                        currentPage === page
+                          ? "bg-[var(--primary-main)] text-[var(--text-primary)] border-[var(--primary-main)]"
+                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ) : (
+                    <span
+                      key={index}
+                      className="px-1 sm:px-2 py-2 text-[var(--text-secondary)] text-sm sm:text-base"
+                    >
+                      {page}
+                    </span>
+                  )
+                )}
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Newsletter Section */}
@@ -250,19 +324,20 @@ const Blog = () => {
               </button>
             </div>
             <div className="p-6">
-              <div className="flex items-center text-sm text-[var(--text-secondary)] mb-4">
-                <span>{selectedArticle.date}</span>
+              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+                {selectedArticle.title}
+              </h2>
+              <div className="flex items-center text-sm text-[var(--text-secondary)] mb-6">
+                <span>{new Date(selectedArticle.date).toLocaleDateString()}</span>
                 <span className="mx-2">•</span>
                 <span>{selectedArticle.readTime}</span>
                 <span className="mx-2">•</span>
                 <span className="text-[var(--primary-main)]">{selectedArticle.category}</span>
               </div>
-              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
-                {selectedArticle.title}
-              </h2>
-              <div className="prose prose-lg max-w-none text-[var(--text-primary)]">
-                {selectedArticle.content}
-              </div>
+              <div
+                className="prose prose-lg max-w-none text-[var(--text-primary)]"
+                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+              />
             </div>
           </div>
         </div>
