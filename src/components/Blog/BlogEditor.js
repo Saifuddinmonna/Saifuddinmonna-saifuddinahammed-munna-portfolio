@@ -10,49 +10,51 @@ const BlogEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { currentUser } = useAuth();
-  const [showAuthorInfo, setShowAuthorInfo] = useState(false);
+  const { user } = useAuth();
+  const [showAuthorInfo, setShowAuthorInfo] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     category: "",
     image: "",
     author: {
-      name: currentUser?.displayName || "",
-      email: currentUser?.email || "",
+      name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
+      email: user?.email || "",
       phone: "",
       isHidden: false,
     },
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch blog data if editing
   useEffect(() => {
     if (id) {
-      const fetchBlog = async () => {
+      const fetchPost = async () => {
         try {
           const data = await blogService.getBlogById(id);
+          console.log("Fetched blog data:", data); // Debug log
           setFormData({
             title: data.title,
-            content: data.content,
+            content: data.content || "", // Ensure content is not null
             category: data.category,
             image: data.image,
             author: {
-              name: data.author.name,
-              email: data.author.email || "",
+              name:
+                data.author.name || user?.displayName || user?.email?.split("@")[0] || "Anonymous",
+              email: data.author.email || user?.email || "",
               phone: data.author.phone || "",
               isHidden: data.author.isHidden || false,
             },
           });
           setShowAuthorInfo(!data.author.isHidden);
         } catch (error) {
-          toast.error("Failed to fetch blog post");
+          console.error("Error fetching post:", error);
+          toast.error("Failed to load post");
           navigate("/blog");
         }
       };
-      fetchBlog();
+      fetchPost();
     }
-  }, [id, navigate]);
+  }, [id, navigate, user]);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -71,13 +73,6 @@ const BlogEditor = () => {
         [name]: value,
       }));
     }
-  };
-
-  const handleEditorChange = content => {
-    setFormData(prev => ({
-      ...prev,
-      content,
-    }));
   };
 
   // Create mutation
@@ -106,7 +101,9 @@ const BlogEditor = () => {
     },
   });
 
-  const handleSave = async () => {
+  const handleSave = async e => {
+    e.preventDefault(); // Prevent default form submission
+
     if (!formData.title.trim()) {
       toast.error("Please enter a title");
       return;
@@ -136,6 +133,8 @@ const BlogEditor = () => {
         },
       };
 
+      console.log("Sending data to server:", postData); // Debug log
+
       if (id) {
         await updateMutation.mutateAsync({ id, data: postData });
       } else {
@@ -143,177 +142,178 @@ const BlogEditor = () => {
       }
     } catch (error) {
       console.error("Save error:", error);
+      toast.error(error.response?.data?.message || "Failed to save blog post");
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[var(--background-paper)] rounded-xl shadow-lg">
-      <div className="mb-6">
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleInputChange}
-          placeholder="Enter blog title"
-          className="w-full px-4 py-2 text-2xl font-bold bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-        />
-      </div>
-
-      <div className="mb-6">
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleInputChange}
-          className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-        >
-          <option value="">Select Category</option>
-          <option value="Web Development">Web Development</option>
-          <option value="JavaScript">JavaScript</option>
-          <option value="React">React</option>
-          <option value="Node.js">Node.js</option>
-          <option value="Database">Database</option>
-        </select>
-      </div>
-
-      <div className="mb-6">
-        <input
-          type="text"
-          name="image"
-          value={formData.image}
-          onChange={handleInputChange}
-          placeholder="Enter image URL"
-          className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-        />
-      </div>
-
-      {/* Author Information */}
-      <div className="mb-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--text-primary)]">Author Information</h3>
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showAuthorInfo}
-              onChange={e => setShowAuthorInfo(e.target.checked)}
-              className="form-checkbox h-5 w-5 text-[var(--primary-main)]"
-            />
-            <span className="text-[var(--text-primary)]">Show Author Information</span>
-          </label>
-        </div>
-
-        {showAuthorInfo && (
-          <div className="space-y-4">
+    <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <form onSubmit={handleSave} className="space-y-6">
+          <div className="mb-6">
             <input
               type="text"
-              name="author.name"
-              value={formData.author.name}
+              name="title"
+              value={formData.title}
               onChange={handleInputChange}
-              placeholder="Author Name (Required)"
-              className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-            />
-            <input
-              type="email"
-              name="author.email"
-              value={formData.author.email}
-              onChange={handleInputChange}
-              placeholder="Author Email (Optional)"
-              className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-            />
-            <input
-              type="tel"
-              name="author.phone"
-              value={formData.author.phone}
-              onChange={handleInputChange}
-              placeholder="Author Phone (Optional)"
-              className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+              placeholder="Enter blog title"
+              className="w-full px-4 py-2 text-2xl font-bold bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
             />
           </div>
-        )}
-      </div>
 
-      <div className="mb-6">
-        <Editor
-          apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
-          initialValue={formData.content}
-          value={formData.content}
-          onEditorChange={handleEditorChange}
-          init={{
-            height: 500,
-            menubar: true,
-            plugins: [
-              "anchor",
-              "autolink",
-              "charmap",
-              "codesample",
-              "emoticons",
-              "image",
-              "link",
-              "lists",
-              "media",
-              "searchreplace",
-              "table",
-              "visualblocks",
-              "wordcount",
-              "checklist",
-              "mediaembed",
-              "casechange",
-              "formatpainter",
-              "pageembed",
-              "a11ychecker",
-              "tinymcespellchecker",
-              "permanentpen",
-              "powerpaste",
-              "advtable",
-              "advcode",
-              "editimage",
-              "advtemplate",
-              "ai",
-              "mentions",
-              "tinycomments",
-              "tableofcontents",
-              "footnotes",
-              "mergetags",
-              "autocorrect",
-              "typography",
-              "inlinecss",
-              "markdown",
-              "importword",
-              "exportword",
-              "exportpdf",
-            ],
-            toolbar:
-              "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-            tinycomments_mode: "embedded",
-            tinycomments_author: "Author name",
-            mergetags_list: [
-              { value: "First.Name", title: "First Name" },
-              { value: "Email", title: "Email" },
-            ],
-            ai_request: (request, respondWith) =>
-              respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
-            content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-            skin: "oxide",
-            content_css: "default",
-          }}
-        />
-      </div>
+          <div className="mb-6">
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+            >
+              <option value="">Select Category</option>
+              <option value="Web Development">Web Development</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="React">React</option>
+              <option value="Node.js">Node.js</option>
+              <option value="Database">Database</option>
+            </select>
+          </div>
 
-      <div className="flex justify-end space-x-4">
-        <button
-          onClick={() => navigate("/blog")}
-          className="px-6 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-hover)] transition-colors duration-300"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-6 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300 disabled:opacity-50"
-        >
-          {isSaving ? "Saving..." : id ? "Update Post" : "Save Post"}
-        </button>
+          <div className="mb-6">
+            <input
+              type="text"
+              name="image"
+              value={formData.image}
+              onChange={handleInputChange}
+              placeholder="Enter image URL"
+              className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+            />
+          </div>
+
+          <div className="mb-6">
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="showAuthorInfo"
+                checked={showAuthorInfo}
+                onChange={e => setShowAuthorInfo(e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor="showAuthorInfo" className="text-[var(--text-primary)]">
+                Show Author Information
+              </label>
+            </div>
+
+            {showAuthorInfo && (
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  name="author.name"
+                  value={formData.author.name}
+                  onChange={handleInputChange}
+                  placeholder="Author Name (Required)"
+                  className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                />
+                <input
+                  type="email"
+                  name="author.email"
+                  value={formData.author.email}
+                  onChange={handleInputChange}
+                  placeholder="Author Email (Optional)"
+                  className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                />
+                <input
+                  type="tel"
+                  name="author.phone"
+                  value={formData.author.phone}
+                  onChange={handleInputChange}
+                  placeholder="Author Phone (Optional)"
+                  className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="bg-[var(--background-paper)] rounded-xl p-6 shadow-lg">
+            <div>
+              <label className="block text-[var(--text-primary)] mb-2">Content</label>
+              <Editor
+                apiKey="dlfn3zegy6zpe1fznqli3y0i6rkf4mlhpntqfq5vcqetdl5v"
+                value={formData.content}
+                onEditorChange={content => {
+                  console.log("Editor content changed:", content); // Debug log
+                  setFormData(prev => ({
+                    ...prev,
+                    content: content,
+                  }));
+                }}
+                init={{
+                  height: 500,
+                  menubar: true,
+                  plugins: [
+                    "advlist",
+                    "autolink",
+                    "lists",
+                    "link",
+                    "image",
+                    "charmap",
+                    "preview",
+                    "anchor",
+                    "searchreplace",
+                    "visualblocks",
+                    "code",
+                    "fullscreen",
+                    "insertdatetime",
+                    "media",
+                    "table",
+                    "help",
+                    "wordcount",
+                  ],
+                  toolbar:
+                    "undo redo | blocks | " +
+                    "bold italic forecolor | alignleft aligncenter " +
+                    "alignright alignjustify | bullist numlist outdent indent | " +
+                    "removeformat | help",
+                  content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                  branding: false,
+                  promotion: false,
+                  skin: localStorage.getItem("theme") === "dark" ? "oxide-dark" : "oxide",
+                  content_css: localStorage.getItem("theme") === "dark" ? "dark" : "default",
+                  entity_encoding: "raw",
+                  encoding: "xml",
+                  convert_urls: false,
+                  relative_urls: false,
+                  remove_script_host: false,
+                  preserve_caret_position: true,
+                  paste_data_images: true,
+                  paste_as_text: false,
+                  paste_word_valid_elements:
+                    "b,strong,i,em,h1,h2,h3,h4,h5,h6,p,br,ul,ol,li,a[href],span",
+                  paste_retain_style_properties: "all",
+                  paste_strip_class_attributes: false,
+                  paste_remove_styles: false,
+                  paste_remove_styles_if_webkit: false,
+                  paste_preprocess: function (plugin, args) {
+                    console.log("Paste preprocess:", args.content); // Debug log
+                  },
+                  paste_postprocess: function (plugin, args) {
+                    console.log("Paste postprocess:", args.node); // Debug log
+                  },
+                }}
+              />
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="px-6 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300 disabled:opacity-50"
+              >
+                {isSaving ? "Saving..." : id ? "Update Post" : "Save Post"}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

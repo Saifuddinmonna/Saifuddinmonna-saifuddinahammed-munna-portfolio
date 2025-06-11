@@ -2,7 +2,7 @@ import React, { useState, useMemo, useContext, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../App";
 import { useNavigate } from "react-router-dom";
-import { blogService } from "./blogService";
+import { blogService } from "../../services/blogService";
 import { toast } from "react-hot-toast";
 import { useBlogs } from "../../hooks/useBlogs";
 import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
@@ -21,7 +21,7 @@ const Blog = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
 
   // Fetch blogs with search and category filters
   const {
@@ -38,8 +38,8 @@ const Blog = () => {
 
   const fetchPosts = async () => {
     try {
-      const data = await blogService.getAllPosts();
-      setPosts(data);
+      const data = await blogService.getBlogs({ page: 1, limit: 10 });
+      setPosts(data.data);
     } catch (error) {
       toast.error("Failed to fetch blog posts");
       console.error("Error fetching posts:", error);
@@ -307,7 +307,7 @@ const Blog = () => {
                       onClick={() => handleLike(post._id)}
                       className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
                     >
-                      {post.likes?.includes(currentUser?.uid) ? (
+                      {post.likes?.includes(user?.uid) ? (
                         <FaHeart className="text-red-500" />
                       ) : (
                         <FaRegHeart />

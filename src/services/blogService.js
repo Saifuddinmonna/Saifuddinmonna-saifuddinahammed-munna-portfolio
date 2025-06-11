@@ -23,6 +23,7 @@ export const blogService = {
   // Create new blog post
   createBlog: async blogData => {
     const response = await api.post("/blogs", blogData);
+    console.log("Responsefrom creaate data", response.data);
     return response.data;
   },
 
