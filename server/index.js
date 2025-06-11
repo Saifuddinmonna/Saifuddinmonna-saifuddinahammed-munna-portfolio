@@ -55,6 +55,7 @@ mongoose
 app.use("/api/testimonials", require("./routes/testimonialRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/blogs", require("./routes/blogRoutes"));
 
 // Store connected users with their details
 const connectedUsers = new Map();
