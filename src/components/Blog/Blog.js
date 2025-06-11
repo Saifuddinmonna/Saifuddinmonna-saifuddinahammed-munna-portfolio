@@ -1,9 +1,12 @@
-import { useState, useMemo, useContext, useEffect } from "react";
+import React, { useState, useMemo, useContext, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { blogService } from "./blogService";
 import { toast } from "react-hot-toast";
+import { useBlogs } from "../../hooks/useBlogs";
+import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
+import { useAuth } from "../../auth/context/AuthContext";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -15,6 +18,19 @@ const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const { currentUser } = useAuth();
+
+  // Fetch blogs with search and category filters
+  const {
+    blogs,
+    isLoading: useBlogsLoading,
+    error,
+    deleteBlog,
+    toggleLike,
+  } = useBlogs(currentPage, ARTICLES_PER_PAGE, searchQuery, selectedCategory);
 
   useEffect(() => {
     fetchPosts();
@@ -70,7 +86,7 @@ const Blog = () => {
   const handleDelete = async postId => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        await blogService.deletePost(postId);
+        await deleteBlog.mutateAsync(postId);
         toast.success("Post deleted successfully");
         fetchPosts(); // Refresh the posts list
       } catch (error) {
@@ -79,6 +95,27 @@ const Blog = () => {
       }
     }
   };
+
+  const handleLike = async id => {
+    try {
+      await toggleLike.mutateAsync(id);
+    } catch (error) {
+      console.error("Like error:", error);
+    }
+  };
+
+  const handleSearch = e => {
+    e.preventDefault();
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = category => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+    setActiveTab("category");
+  };
+
+  const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
 
   // Function to generate page numbers for pagination control
   const getPageNumbers = () => {
@@ -131,6 +168,22 @@ const Blog = () => {
     return pageNumbers;
   };
 
+  if (useBlogsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">Error loading blog posts: {error.message}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -151,126 +204,170 @@ const Blog = () => {
           </button>
         </div>
 
-        {isLoading ? (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-main)] mx-auto"></div>
-            <p className="mt-4 text-[var(--text-secondary)]">Loading posts...</p>
+        {/* Tabs and Search Section */}
+        <div className="mb-8">
+          <div className="flex flex-wrap justify-center gap-4 mb-6">
+            <button
+              onClick={() => {
+                setActiveTab("all");
+                setSelectedCategory("");
+                setSearchQuery("");
+              }}
+              className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                activeTab === "all"
+                  ? "bg-[var(--primary-main)] text-white"
+                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+              }`}
+            >
+              All Posts
+            </button>
+            <button
+              onClick={() => setActiveTab("category")}
+              className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                activeTab === "category"
+                  ? "bg-[var(--primary-main)] text-white"
+                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+              }`}
+            >
+              Categories
+            </button>
+            <button
+              onClick={() => setActiveTab("search")}
+              className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                activeTab === "search"
+                  ? "bg-[var(--primary-main)] text-white"
+                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+              }`}
+            >
+              Search
+            </button>
           </div>
-        ) : (
-          <>
-            {/* Blog Grid */}
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
-              {currentArticles.map(post => (
-                <motion.article
-                  key={post.id}
-                  className="bg-[var(--background-paper)] rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                  whileHover={{ y: -5 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
+
+          {/* Search Form */}
+          {activeTab === "search" && (
+            <form onSubmit={handleSearch} className="max-w-md mx-auto">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search blog posts..."
+                  className="w-full px-4 py-2 pl-10 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                />
+                <FaSearch className="absolute left-3 top-3 text-[var(--text-secondary)]" />
+              </div>
+            </form>
+          )}
+
+          {/* Categories */}
+          {activeTab === "category" && (
+            <div className="flex flex-wrap justify-center gap-2 mt-4">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category === "All" ? "" : category)}
+                  className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                    selectedCategory === (category === "All" ? "" : category)
+                      ? "bg-[var(--primary-main)] text-white"
+                      : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                  }`}
                 >
-                  <div className="relative h-48">
-                    <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--background-paper)] text-[var(--primary-main)]">
-                        {post.category}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center text-sm text-[var(--text-secondary)] mb-2">
-                      <span>{new Date(post.date).toLocaleDateString()}</span>
-                      <span className="mx-2">•</span>
-                      <span>{post.readTime}</span>
-                    </div>
-                    <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                      {post.title}
-                    </h2>
-                    <p className="text-[var(--text-secondary)] mb-4 line-clamp-3">{post.excerpt}</p>
-                    <div className="flex justify-between items-center">
-                      <button
-                        onClick={() => handleReadMore(post)}
-                        className="inline-flex items-center text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
-                      >
-                        Read More
-                        <svg
-                          className="ml-2 w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </button>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEdit(post)}
-                          className="text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(post.id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </motion.article>
+                  {category}
+                </button>
               ))}
             </div>
+          )}
+        </div>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex justify-center items-center space-x-2 sm:space-x-4">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-                >
-                  Previous
-                </button>
-
-                {getPageNumbers().map((page, index) =>
-                  typeof page === "number" ? (
+        {/* Blog Posts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogs?.data?.map(post => (
+            <motion.article
+              key={post._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {new Date(post.date).toLocaleDateString()}
+                  </span>
+                  <span className="text-sm text-[var(--primary-main)]">{post.category}</span>
+                </div>
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">{post.title}</h2>
+                <p className="text-[var(--text-secondary)] mb-4">
+                  {post.excerpt || post.content.substring(0, 150) + "..."}
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
                     <button
-                      key={index}
-                      onClick={() => handlePageClick(page)}
-                      className={`px-3 py-2 sm:px-4 sm:py-2 border border-[var(--border-main)] rounded-md text-sm sm:text-base ${
-                        currentPage === page
-                          ? "bg-[var(--primary-main)] text-[var(--text-primary)] border-[var(--primary-main)]"
-                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                      }`}
+                      onClick={() => handleLike(post._id)}
+                      className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
                     >
-                      {page}
+                      {post.likes?.includes(currentUser?.uid) ? (
+                        <FaHeart className="text-red-500" />
+                      ) : (
+                        <FaRegHeart />
+                      )}
+                      <span className="ml-1">{post.likes?.length || 0}</span>
                     </button>
-                  ) : (
-                    <span
-                      key={index}
-                      className="px-1 sm:px-2 py-2 text-[var(--text-secondary)] text-sm sm:text-base"
+                    <button
+                      onClick={() => navigate(`/blog/edit/${post._id}`)}
+                      className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors duration-300"
                     >
-                      {page}
-                    </span>
-                  )
-                )}
-
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 sm:px-4 sm:py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-                >
-                  Next
-                </button>
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(post._id)}
+                      className="text-red-500 hover:text-red-700 transition-colors duration-300"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                  <span className="text-sm text-[var(--text-secondary)]">{post.readTime}</span>
+                </div>
               </div>
-            )}
-          </>
+            </motion.article>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        {blogs?.totalPages > 1 && (
+          <div className="flex justify-center mt-8 space-x-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <span className="px-3 py-2 text-[var(--text-primary)]">
+              Page {currentPage} of {blogs.totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, blogs.totalPages))}
+              disabled={currentPage === blogs.totalPages}
+              className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        )}
+
+        {/* No Results Message */}
+        {blogs?.data?.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-[var(--text-secondary)] text-lg">
+              {activeTab === "search"
+                ? "No posts found matching your search."
+                : activeTab === "category"
+                ? "No posts found in this category."
+                : "No blog posts available."}
+            </p>
+          </div>
         )}
 
         {/* Newsletter Section */}

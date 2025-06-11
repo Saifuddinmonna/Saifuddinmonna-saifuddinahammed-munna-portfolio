@@ -4,6 +4,8 @@ import PrivateRoute from "./PrivateRoute";
 import ChatWindow from "../../socketIo/components/ChatWindow.js";
 import Blog from "../Blog/Blog";
 import BlogEditor from "../Blog/BlogEditor";
+import BlogPost from "../Blog/BlogPost";
+import ProtectedRoute from "./ProtectedRoute";
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -101,16 +103,28 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/blog",
+        path: "blog",
         element: <Blog />,
       },
       {
-        path: "/blog/new",
-        element: <BlogEditor />,
+        path: "blog/new",
+        element: (
+          <ProtectedRoute>
+            <BlogEditor />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/blog/edit/:id",
-        element: <BlogEditor />,
+        path: "blog/edit/:id",
+        element: (
+          <ProtectedRoute>
+            <BlogEditor />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "blog/:id",
+        element: <BlogPost />,
       },
       {
         path: "/resume",
