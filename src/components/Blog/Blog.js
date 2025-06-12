@@ -164,7 +164,7 @@ const Blog = () => {
           </p>
           {user && (
             <Link
-              to="/blog/editor"
+              to="/blog/new"
               className="mt-6 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
             >
               Write New Post
