@@ -319,7 +319,7 @@ exports.toggleLike = async (req, res) => {
     console.log('Blog ID:', req.params.id);
     console.log('Like Data:', req.body);
 
-    const { author } = req.body;
+    const { user } = req.body;
     const blog = await Blog.findById(req.params.id);
 
     if (!blog) {
@@ -331,13 +331,13 @@ exports.toggleLike = async (req, res) => {
     }
 
     const likeIndex = blog.likes.findIndex(
-      like => like.email === author.email
+      like => like.email === user.email
     );
 
     if (likeIndex === -1) {
       blog.likes.push({
-        name: author.name,
-        email: author.email
+        name: user.name,
+        email: user.email
       });
       console.log('Blog liked by user');
     } else {
