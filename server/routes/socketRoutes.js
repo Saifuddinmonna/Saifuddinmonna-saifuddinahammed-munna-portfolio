@@ -283,20 +283,33 @@ const initializeSocketIo = (io) => {
         };
 
         if (userData.token) {
-          const decodedToken = await admin.auth().verifyIdToken(userData.token);
-          const dbUser = await User.findOne({ firebaseUid: decodedToken.uid });
-          
-          if (dbUser) {
-            userRole = dbUser.role;
-            userDetails = {
-              id: socket.id,
-              uid: decodedToken.uid,
-              name: dbUser.name,
-              email: dbUser.email,
-              avatar: userData.avatar || null,
-              joinedAt: new Date(),
-            };
-            userSocketMap.set(decodedToken.uid, socket.id);
+          try {
+            const decodedToken = await admin.auth().verifyIdToken(userData.token);
+            const dbUser = await User.findOne({ firebaseUid: decodedToken.uid });
+            
+            if (dbUser) {
+              userRole = dbUser.role;
+              userDetails = {
+                id: socket.id,
+                uid: decodedToken.uid,
+                name: dbUser.name,
+                email: dbUser.email,
+                avatar: userData.avatar || null,
+                joinedAt: new Date(),
+              };
+              userSocketMap.set(decodedToken.uid, socket.id);
+            }
+          } catch (tokenError) {
+            console.log('Token verification error:', tokenError);
+            // If token is expired, emit an event to client to refresh token
+            if (tokenError.code === 'auth/id-token-expired') {
+              socket.emit('tokenExpired', {
+                message: 'Token expired. Please refresh your token.'
+              });
+              return;
+            }
+            // For other token errors, continue as guest
+            console.log('Continuing as guest due to token error');
           }
         } else if (userData.guestName) {
           try {
@@ -362,6 +375,42 @@ const initializeSocketIo = (io) => {
           success: false,
           message: "Authentication failed",
           error: error.message 
+        });
+      }
+    });
+
+    // Add token refresh handler
+    socket.on("refreshToken", async (newToken) => {
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(newToken);
+        const dbUser = await User.findOne({ firebaseUid: decodedToken.uid });
+        
+        if (dbUser) {
+          // Update user details with new token
+          const userDetails = {
+            id: socket.id,
+            uid: decodedToken.uid,
+            name: dbUser.name,
+            email: dbUser.email,
+            avatar: null,
+            joinedAt: new Date(),
+            role: dbUser.role
+          };
+          
+          connectedUsers.set(socket.id, userDetails);
+          userSocketMap.set(decodedToken.uid, socket.id);
+          
+          socket.emit("tokenRefreshed", {
+            success: true,
+            message: "Token refreshed successfully"
+          });
+        }
+      } catch (error) {
+        console.error("Token refresh error:", error);
+        socket.emit("error", {
+          success: false,
+          message: "Token refresh failed",
+          error: error.message
         });
       }
     });

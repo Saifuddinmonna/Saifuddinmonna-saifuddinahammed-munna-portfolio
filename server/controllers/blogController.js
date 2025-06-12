@@ -104,6 +104,48 @@ exports.getAllBlogs = async (req, res) => {
   }
 };
 
+// Get all blog posts without pagination
+exports.getAllBlogsWithoutPagination = async (req, res) => {
+  try {
+    console.log('=== Get All Blogs Without Pagination Request ===');
+    console.log('Query Parameters:', req.query);
+
+    const status = req.query.status || 'published';
+    const search = req.query.search || '';
+    const category = req.query.category || '';
+
+    console.log('Filters:', { status, search, category });
+
+    const query = {
+      status,
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } }
+      ]
+    };
+
+    if (category) {
+      query.tags = category;
+    }
+
+    const blogs = await Blog.find(query)
+      .sort({ createdAt: -1 });
+
+    console.log('Found Blogs:', blogs.length);
+
+    res.status(200).json({
+      success: true,
+      data: blogs
+    });
+  } catch (error) {
+    console.error('Get All Blogs Without Pagination Error:', error);
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
 // Get single blog post
 exports.getBlog = async (req, res) => {
   try {
@@ -234,7 +276,6 @@ exports.addComment = async (req, res) => {
     console.log('Blog ID:', req.params.id);
     console.log('Comment Data:', req.body);
 
-    const { text, author } = req.body;
     const blog = await Blog.findById(req.params.id);
 
     if (!blog) {
@@ -245,15 +286,16 @@ exports.addComment = async (req, res) => {
       });
     }
 
-    blog.comments.push({
-      text,
+    const newComment = {
+      text: req.body.content,
       author: {
-        name: author.name,
-        email: author.email
+        name: req.body.author.name,
+        email: req.body.author.email
       },
       createdAt: new Date()
-    });
+    };
 
+    blog.comments.push(newComment);
     await blog.save();
     console.log('Comment added successfully');
 
@@ -312,6 +354,126 @@ exports.toggleLike = async (req, res) => {
     });
   } catch (error) {
     console.error('Toggle Like Error:', error);
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// Delete comment from blog
+exports.deleteComment = async (req, res) => {
+  try {
+    console.log('=== Delete Comment Request ===');
+    console.log('Blog ID:', req.params.id);
+    console.log('Comment ID:', req.params.commentId);
+    console.log('User Data:', req.body);
+
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      console.log('Blog not found for ID:', req.params.id);
+      return res.status(404).json({
+        success: false,
+        error: 'Blog not found'
+      });
+    }
+
+    const commentIndex = blog.comments.findIndex(
+      comment => comment._id.toString() === req.params.commentId
+    );
+
+    if (commentIndex === -1) {
+      console.log('Comment not found for ID:', req.params.commentId);
+      return res.status(404).json({
+        success: false,
+        error: 'Comment not found'
+      });
+    }
+
+    // Extract user data from nested structure
+    const { userData } = req.body;
+    const isAdmin = userData.role === 'admin';
+    const isCommentAuthor = blog.comments[commentIndex].author.email === userData.email;
+
+    if (!isAdmin && !isCommentAuthor) {
+      return res.status(403).json({
+        success: false,
+        error: 'You are not authorized to delete this comment'
+      });
+    }
+
+    blog.comments.splice(commentIndex, 1);
+    await blog.save();
+    console.log('Comment deleted successfully');
+
+    res.status(200).json({
+      success: true,
+      data: blog
+    });
+  } catch (error) {
+    console.error('Delete Comment Error:', error);
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// Update comment in blog
+exports.updateComment = async (req, res) => {
+  try {
+    console.log('=== Update Comment Request ===');
+    console.log('Blog ID:', req.params.id);
+    console.log('Comment ID:', req.params.commentId);
+    console.log('Update Data:', req.body);
+
+    const { content, userData } = req.body;
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      console.log('Blog not found for ID:', req.params.id);
+      return res.status(404).json({
+        success: false,
+        error: 'Blog not found'
+      });
+    }
+
+    const commentIndex = blog.comments.findIndex(
+      comment => comment._id.toString() === req.params.commentId
+    );
+
+    if (commentIndex === -1) {
+      console.log('Comment not found for ID:', req.params.commentId);
+      return res.status(404).json({
+        success: false,
+        error: 'Comment not found'
+      });
+    }
+
+    // Check if user is admin or comment author
+    const isAdmin = userData.role === 'admin';
+    const isCommentAuthor = blog.comments[commentIndex].author.email === userData.email;
+
+    if (!isAdmin && !isCommentAuthor) {
+      return res.status(403).json({
+        success: false,
+        error: 'You are not authorized to update this comment'
+      });
+    }
+
+    // Update the comment
+    blog.comments[commentIndex].text = content;
+    blog.comments[commentIndex].updatedAt = new Date();
+    await blog.save();
+    console.log('Comment updated successfully');
+
+    res.status(200).json({
+      success: true,
+      data: blog
+    });
+  } catch (error) {
+    console.error('Update Comment Error:', error);
     res.status(400).json({
       success: false,
       error: error.message

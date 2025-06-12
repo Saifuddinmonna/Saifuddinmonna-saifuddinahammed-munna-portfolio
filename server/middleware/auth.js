@@ -75,7 +75,14 @@ const verifyToken = async (req, res, next) => {
         console.log('New user created:', user);
       }
 
-      req.user = user;
+      // Attach user info to request
+      req.user = {
+        uid: decodedToken.uid,
+        email: decodedToken.email,
+        name: user.name,
+        role: user.role
+      };
+      
       next();
     } catch (firebaseError) {
       console.log('Firebase token verification failed, trying JWT');
@@ -93,7 +100,13 @@ const verifyToken = async (req, res, next) => {
           });
         }
 
-        req.user = user;
+        req.user = {
+          uid: user._id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        };
+        
         next();
       } catch (jwtError) {
         console.error('JWT verification failed:', jwtError);
