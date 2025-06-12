@@ -111,6 +111,39 @@ export const blogService = {
     }
   },
 
+  updateComment: async (blogId, commentId, commentData, userData) => {
+    try {
+      const response = await api.put(`/blogs/${blogId}/comments/${commentId}`, {
+        ...commentData,
+        userData: {
+          email: userData.email,
+          role: userData.role || "user",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      throw new Error(error.response?.data?.message || "Failed to update comment");
+    }
+  },
+
+  deleteComment: async (blogId, commentId, userData) => {
+    try {
+      const response = await api.delete(`/blogs/${blogId}/comments/${commentId}`, {
+        data: {
+          userData: {
+            email: userData.email,
+            role: userData.role || "user",
+          },
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      throw new Error(error.response?.data?.message || "Failed to delete comment");
+    }
+  },
+
   // Like/Unlike blog
   toggleLike: async (blogId, user) => {
     try {

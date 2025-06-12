@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
 import { useAuth } from "../../auth/context/AuthContext";
 import { toast } from "react-hot-toast";
-import { FaHeart, FaRegHeart, FaEdit, FaTrash } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -12,6 +12,8 @@ const BlogPost = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [comment, setComment] = useState("");
+  const [editingComment, setEditingComment] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
 
   const {
     data: response,
@@ -61,6 +63,43 @@ const BlogPost = () => {
     },
   });
 
+  const updateCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }) =>
+      blogService.updateComment(
+        id,
+        commentId,
+        { content },
+        {
+          email: user?.email,
+          role: user?.role || "user",
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blog", id]);
+      setEditingComment(null);
+      setEditCommentText("");
+      toast.success("Comment updated successfully");
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to update comment");
+    },
+  });
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: commentId =>
+      blogService.deleteComment(id, commentId, {
+        email: user?.email,
+        role: user?.role || "user",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blog", id]);
+      toast.success("Comment deleted successfully");
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to delete comment");
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: () => blogService.deleteBlog(id),
     onSuccess: () => {
@@ -91,6 +130,37 @@ const BlogPost = () => {
       return;
     }
     commentMutation.mutate({ content: comment });
+  };
+
+  const handleEditComment = comment => {
+    setEditingComment(comment._id);
+    setEditCommentText(comment.text);
+  };
+
+  const handleUpdateComment = e => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("Please login to edit comments");
+      return;
+    }
+    if (!editCommentText.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    updateCommentMutation.mutate({
+      commentId: editingComment,
+      content: editCommentText,
+    });
+  };
+
+  const handleDeleteComment = commentId => {
+    if (!user) {
+      toast.error("Please login to delete comments");
+      return;
+    }
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      deleteCommentMutation.mutate(commentId);
+    }
   };
 
   const handleDelete = () => {
@@ -202,15 +272,71 @@ const BlogPost = () => {
               <div className="space-y-6">
                 {post.comments?.map(comment => (
                   <div key={comment._id} className="bg-[var(--background-default)] rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-[var(--text-primary)]">
-                        {comment.author?.name || "Anonymous"}
-                      </span>
-                      <span className="text-sm text-[var(--text-secondary)]">
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-[var(--text-primary)]">{comment.content}</p>
+                    {editingComment === comment._id ? (
+                      <form onSubmit={handleUpdateComment} className="space-y-4">
+                        <textarea
+                          value={editCommentText}
+                          onChange={e => setEditCommentText(e.target.value)}
+                          className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                          rows="3"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
+                          >
+                            <FaCheck />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingComment(null);
+                              setEditCommentText("");
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-300"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <>
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex flex-col gap-1 w-full">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-[var(--text-primary)]">
+                                {comment.author?.name || "Anonymous"}
+                              </span>
+                              <span className="text-sm text-[var(--text-secondary)]">
+                                {new Date(comment.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <div className="text-sm text-[var(--text-secondary)] bg-[var(--background-paper)] p-2 rounded">
+                              <p>{comment.text || "No content"}</p>
+                            </div>
+                          </div>
+                          {user &&
+                            (comment.author?.email === user.email || user.role === "admin") && (
+                              <div className="flex gap-2 ml-2">
+                                <button
+                                  onClick={() => handleEditComment(comment)}
+                                  className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                                  title="Edit comment"
+                                >
+                                  <FaEdit size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(comment._id)}
+                                  className="text-red-500 hover:text-red-700"
+                                  title="Delete comment"
+                                >
+                                  <FaTrash size={16} />
+                                </button>
+                              </div>
+                            )}
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
