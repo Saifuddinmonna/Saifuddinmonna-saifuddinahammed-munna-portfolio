@@ -1,24 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
-import { motion } from "framer-motion";
-import {
-  FaRegHeart,
-  FaHeart,
-  FaEdit,
-  FaTrash,
-  FaArrowLeft,
-  FaUser,
-  FaCalendar,
-  FaClock,
-  FaEye,
-  FaTag,
-  FaEnvelope,
-  FaPhone,
-} from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { toast } from "react-hot-toast";
+import { FaHeart, FaRegHeart, FaEdit, FaTrash } from "react-icons/fa";
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -27,10 +13,8 @@ const BlogPost = () => {
   const { user } = useAuth();
   const [comment, setComment] = useState("");
 
-  console.log("BlogPost Component - Post ID:", id);
-
   const {
-    data: post,
+    data: response,
     isLoading,
     error,
   } = useQuery({
@@ -40,6 +24,8 @@ const BlogPost = () => {
       return response;
     },
   });
+
+  const post = response?.data;
 
   const likeMutation = useMutation({
     mutationFn: () =>
@@ -113,215 +99,126 @@ const BlogPost = () => {
     }
   };
 
-  // Function to safely render HTML content
-  const renderHTML = html => {
-    return { __html: html };
-  };
-
-  // Function to format date
-  const formatDate = dateString => {
-    if (!dateString) return "";
-    const date = new Date(dateString.$date || dateString);
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  // Update page title when post loads
-  useEffect(() => {
-    if (post?.title) {
-      console.log("Updating page title to:", post.title);
-      document.title = `${post.title} | Blog`;
-    }
-    return () => {
-      document.title = "Blog";
-    };
-  }, [post?.title]);
-
   if (isLoading) {
-    console.log("Loading blog post...");
     return (
-      <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
       </div>
     );
   }
 
   if (error) {
-    console.error("Error state:", error);
     return (
-      <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
-        <div className="text-[var(--text-primary)]">
-          {error.message || "Failed to load blog post"}
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">Error loading blog post: {error.message}</div>
       </div>
     );
   }
 
   if (!post) {
-    console.log("No post data available");
     return (
-      <div className="min-h-screen bg-[var(--background-default)] flex items-center justify-center">
-        <div className="text-[var(--text-primary)]">Post not found</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-[var(--text-primary)]">Blog post not found</div>
       </div>
     );
   }
-
-  console.log("Rendering blog post with data:", post);
 
   const isAuthor = user && post.author?.email === user.email;
   const hasLiked = post.likes?.some(like => like.email === user?.email);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-[var(--background-default)]"
-    >
-      {/* Post Header Section */}
-      <div className="bg-[var(--background-paper)] border-b border-[var(--border-color)]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)] mb-8"
-          >
-            <FaArrowLeft />
-            Back to Blog
-          </button>
-
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-6">{post.title}</h1>
-
-          {/* Author Information */}
-          <div className="bg-[var(--background-default)] p-4 rounded-lg mb-8">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
-              Author Information
-            </h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <FaUser className="text-[var(--primary-main)]" />
-                <span className="text-[var(--text-primary)]">
-                  Name: {post.author?.name || "Anonymous"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaEnvelope className="text-[var(--primary-main)]" />
-                <span className="text-[var(--text-primary)]">
-                  Email: {post.author?.email || "Not provided"}
-                </span>
-              </div>
-              {post.author?.phone && (
-                <div className="flex items-center gap-2">
-                  <FaPhone className="text-[var(--primary-main)]" />
-                  <span className="text-[var(--text-primary)]">Phone: {post.author.phone}</span>
+    <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <article className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg">
+          {post.image && (
+            <img src={post.image} alt={post.title} className="w-full h-96 object-cover" />
+          )}
+          <div className="p-8">
+            <div className="flex justify-between items-start mb-6">
+              <h1 className="text-4xl font-bold text-[var(--text-primary)]">{post.title}</h1>
+              {isAuthor && (
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => navigate(`/blog/editor/${post._id}`)}
+                    className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
+                  >
+                    <FaEdit size={20} />
+                  </button>
+                  <button onClick={handleDelete} className="text-red-500 hover:text-red-700">
+                    <FaTrash size={20} />
+                  </button>
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Post Metadata */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-secondary)] mb-8">
-            <div className="flex items-center gap-2">
-              <FaCalendar className="text-[var(--primary-main)]" />
-              <span>Created: {new Date(post.createdAt).toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaClock className="text-[var(--primary-main)]" />
+            <div className="flex items-center text-sm text-[var(--text-secondary)] mb-8">
+              <span>By {post.author?.name || "Anonymous"}</span>
+              <span className="mx-2">•</span>
+              <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+              <span className="mx-2">•</span>
               <span>{post.readTime}</span>
+              {post.tags && post.tags.length > 0 && (
+                <>
+                  <span className="mx-2">•</span>
+                  <span className="text-[var(--primary-main)]">{post.tags[0]}</span>
+                </>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <FaEye className="text-[var(--primary-main)]" />
-              <span>{post.views || 0} views</span>
-            </div>
-          </div>
 
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
-              {post.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="flex items-center gap-1 px-3 py-1 bg-[var(--primary-light)] text-[var(--primary-main)] rounded-full text-sm"
-                >
-                  <FaTag className="text-xs" />
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Featured Image */}
-          {post.image && (
-            <img
-              src={post.image}
-              alt={post.title}
-              className="w-full h-[400px] object-cover rounded-xl mb-8"
+            <div
+              className="prose prose-lg max-w-none text-[var(--text-primary)] mb-8"
+              dangerouslySetInnerHTML={{ __html: post.content }}
             />
-          )}
-        </div>
-      </div>
 
-      {/* Post Content Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <article className="bg-[var(--background-paper)] rounded-xl p-8 shadow-lg">
-          {/* Post Content with TinyMCE Formatting */}
-          <div
-            className="prose prose-lg dark:prose-invert max-w-none mb-8"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+            <div className="flex items-center gap-4 mb-8">
+              <button
+                onClick={handleLike}
+                className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+              >
+                {hasLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+                <span>{post.likes?.length || 0} likes</span>
+              </button>
+            </div>
 
-          {/* Like Button */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={handleLike}
-              className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
-            >
-              {hasLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
-              <span>{post.likes?.length || 0} Likes</span>
-            </button>
-          </div>
-
-          {/* Comments Section */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">
-              Comments ({post.comments?.length || 0})
-            </h2>
-
-            {user && (
+            {/* Comments Section */}
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Comments</h2>
               <form onSubmit={handleComment} className="mb-8">
                 <textarea
                   value={comment}
                   onChange={e => setComment(e.target.value)}
                   placeholder="Write a comment..."
-                  className="w-full p-4 rounded-lg bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                  className="w-full px-4 py-2 bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
                   rows="4"
                 />
                 <button
                   type="submit"
-                  className="mt-4 px-6 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
+                  className="mt-4 px-6 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
                 >
                   Post Comment
                 </button>
               </form>
-            )}
 
-            <div className="space-y-6">
-              {post.comments?.map(comment => (
-                <div key={comment._id} className="bg-[var(--background-default)] p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-[var(--text-primary)]">
-                      {comment.author?.name || "Anonymous"}
-                    </span>
-                    <span className="text-sm text-[var(--text-secondary)]">
-                      {new Date(comment.createdAt).toLocaleDateString()}
-                    </span>
+              <div className="space-y-6">
+                {post.comments?.map(comment => (
+                  <div key={comment._id} className="bg-[var(--background-default)] rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-semibold text-[var(--text-primary)]">
+                        {comment.author?.name || "Anonymous"}
+                      </span>
+                      <span className="text-sm text-[var(--text-secondary)]">
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-[var(--text-primary)]">{comment.content}</p>
                   </div>
-                  <p className="text-[var(--text-primary)]">{comment.content}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </article>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
