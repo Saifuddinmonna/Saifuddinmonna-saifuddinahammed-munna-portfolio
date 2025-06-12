@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../../firebase/firebase.config";
 import { toast } from "react-toastify";
@@ -35,6 +36,26 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   };
+
+  // Function to refresh token
+  const refreshToken = async () => {
+    try {
+      if (user) {
+        const token = await user.getIdToken(true);
+        localStorage.setItem("token", token);
+      }
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+    }
+  };
+
+  // Set up token refresh interval (every 6 days)
+  useEffect(() => {
+    if (user) {
+      const refreshInterval = setInterval(refreshToken, 6 * 24 * 60 * 60 * 1000);
+      return () => clearInterval(refreshInterval);
+    }
+  }, [user]);
 
   // Sign up with email and password
   const signUp = async (email, password) => {
@@ -98,7 +119,7 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
-  console.log("dbuser from aucontex ", dbUser);
+
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async currentUser => {
