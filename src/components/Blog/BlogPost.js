@@ -30,7 +30,7 @@ const BlogPost = () => {
   console.log("BlogPost Component - Post ID:", id);
 
   const {
-    data: response,
+    data: post,
     isLoading,
     error,
   } = useQuery({
@@ -39,76 +39,78 @@ const BlogPost = () => {
       const response = await blogService.getBlog(id);
       return response;
     },
-    retry: 1,
-    staleTime: 5 * 60 * 1000,
   });
 
-  const post = response?.data;
-
-  useEffect(() => {
-    console.log("Post data updated:", post);
-  }, [post]);
-
   const likeMutation = useMutation({
-    mutationFn: () => blogService.likeBlog(id),
+    mutationFn: () =>
+      blogService.toggleLike(id, {
+        name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
+        email: user?.email || "",
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries(["blog", id]);
       toast.success("Like updated successfully");
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to update like");
+    },
+  });
+
+  const commentMutation = useMutation({
+    mutationFn: commentData =>
+      blogService.addComment(id, {
+        ...commentData,
+        author: {
+          name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
+          email: user?.email || "",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blog", id]);
+      setComment("");
+      toast.success("Comment added successfully");
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to add comment");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: () => blogService.deleteBlog(id),
     onSuccess: () => {
-      toast.success("Post deleted successfully");
+      toast.success("Blog post deleted successfully");
       navigate("/blog");
     },
-    onError: () => {
-      toast.error("Failed to delete post");
-    },
-  });
-
-  const commentMutation = useMutation({
-    mutationFn: commentData => blogService.addComment(id, commentData),
-    onSuccess: () => {
-      console.log("Comment added successfully");
-      queryClient.invalidateQueries(["blog", id]);
-      setComment("");
-      toast.success("Comment added successfully!");
-    },
     onError: error => {
-      console.error("Error adding comment:", error);
-      toast.error(error.message || "Failed to add comment");
+      toast.error(error.message || "Failed to delete blog post");
     },
   });
 
   const handleLike = () => {
     if (!user) {
-      toast.error("Please sign in to like posts");
+      toast.error("Please login to like posts");
       return;
     }
-    console.log("Handling like for post:", id);
     likeMutation.mutate();
+  };
+
+  const handleComment = e => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("Please login to comment");
+      return;
+    }
+    if (!comment.trim()) {
+      toast.error("Please enter a comment");
+      return;
+    }
+    commentMutation.mutate({ content: comment });
   };
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       deleteMutation.mutate();
     }
-  };
-
-  const handleComment = e => {
-    e.preventDefault();
-    if (!user) {
-      toast.error("Please sign in to comment");
-      return;
-    }
-    if (!comment.trim()) {
-      toast.error("Comment cannot be empty");
-      return;
-    }
-    console.log("Submitting comment:", comment);
-    commentMutation.mutate({ content: comment });
   };
 
   // Function to safely render HTML content
@@ -165,6 +167,9 @@ const BlogPost = () => {
   }
 
   console.log("Rendering blog post with data:", post);
+
+  const isAuthor = user && post.author?.email === user.email;
+  const hasLiked = post.likes?.some(like => like.email === user?.email);
 
   return (
     <motion.div
@@ -269,11 +274,7 @@ const BlogPost = () => {
               onClick={handleLike}
               className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
             >
-              {post.likes?.includes(user?.uid) ? (
-                <FaHeart className="text-red-500" />
-              ) : (
-                <FaRegHeart />
-              )}
+              {hasLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
               <span>{post.likes?.length || 0} Likes</span>
             </button>
           </div>

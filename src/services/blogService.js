@@ -11,64 +11,92 @@ const api = axios.create({
 });
 
 // Add auth token to requests
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem("firebaseToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
+
+// Add response interceptor for logging
+api.interceptors.response.use(
+  response => {
+    console.log("API Response:", response.data);
+    return response;
+  },
+  error => {
+    console.error("API Error:", error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 export const blogService = {
-  // Create new blog post
-  createBlog: async blogData => {
+  // Get all blogs with pagination and filters
+  getAllBlogs: async ({ page = 1, limit = 10, search = "", category = "" }) => {
     try {
-      const response = await api.post("/blogs", blogData);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  },
-
-  // Get all blogs with pagination and search
-  getBlogs: async ({ page = 1, limit = 10, search = "", category = "" }) => {
-    try {
-      const response = await api.get("/blogs", {
-        params: { page, limit, search, category },
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
       });
+
+      if (search) params.append("search", search);
+      if (category) params.append("category", category);
+
+      const response = await api.get(`/blogs?${params.toString()}`);
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error("Error fetching blogs:", error);
+      throw new Error(error.response?.data?.message || "Failed to fetch blogs");
     }
   },
 
-  // Get single blog by ID
+  // Get single blog post by ID
   getBlog: async id => {
     try {
       const response = await api.get(`/blogs/${id}`);
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error("Error fetching blog:", error);
+      throw new Error(error.response?.data?.message || "Failed to fetch blog");
     }
   },
 
-  // Update blog post
+  // Create new blog
+  createBlog: async blogData => {
+    try {
+      const response = await api.post("/blogs", blogData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating blog:", error);
+      throw new Error(error.response?.data?.message || "Failed to create blog");
+    }
+  },
+
+  // Update blog
   updateBlog: async (id, blogData) => {
     try {
       const response = await api.put(`/blogs/${id}`, blogData);
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error("Error updating blog:", error);
+      throw new Error(error.response?.data?.message || "Failed to update blog");
     }
   },
 
-  // Delete blog post
+  // Delete blog
   deleteBlog: async id => {
     try {
       const response = await api.delete(`/blogs/${id}`);
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error("Error deleting blog:", error);
+      throw new Error(error.response?.data?.message || "Failed to delete blog");
     }
   },
 
@@ -78,17 +106,19 @@ export const blogService = {
       const response = await api.post(`/blogs/${blogId}/comments`, comment);
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error("Error adding comment:", error);
+      throw new Error(error.response?.data?.message || "Failed to add comment");
     }
   },
 
   // Like/Unlike blog
-  likeBlog: async blogId => {
+  toggleLike: async (blogId, user) => {
     try {
-      const response = await api.post(`/blogs/${blogId}/like`);
+      const response = await api.post(`/blogs/${blogId}/like`, { user });
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error("Error toggling like:", error);
+      throw new Error(error.response?.data?.message || "Failed to toggle like");
     }
   },
 };

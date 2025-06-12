@@ -4,7 +4,6 @@ import { ThemeContext } from "../../App";
 import { useNavigate, Link } from "react-router-dom";
 import { blogService } from "../../services/blogService";
 import { toast } from "react-hot-toast";
-import { useBlogs } from "../../hooks/useBlogs";
 import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -17,8 +16,6 @@ const Blog = () => {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,18 +24,24 @@ const Blog = () => {
   const queryClient = useQueryClient();
 
   const {
-    data: blogs = [],
-    isLoading: useBlogsLoading,
+    data: blogs = {},
+    isLoading,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["blogs"],
-    queryFn: () => blogService.getBlogs({ page: 1, limit: 10 }),
+    queryKey: ["blogs", currentPage, searchQuery, selectedCategory],
+    queryFn: () =>
+      blogService.getAllBlogs({
+        page: currentPage,
+        limit: ARTICLES_PER_PAGE,
+        search: searchQuery,
+        category: selectedCategory === "All" ? "" : selectedCategory,
+      }),
   });
 
   useEffect(() => {
     refetch();
-  }, [refetch]);
+  }, [refetch, currentPage, searchQuery, selectedCategory]);
 
   const handleReadMore = article => {
     setSelectedArticle(article);
@@ -80,7 +83,10 @@ const Blog = () => {
 
   const handleLike = async postId => {
     try {
-      await blogService.toggleLike(postId);
+      await blogService.toggleLike(postId, {
+        name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
+        email: user?.email || "",
+      });
       refetch();
       toast.success("Like updated successfully");
     } catch (error) {
@@ -101,40 +107,11 @@ const Blog = () => {
 
   const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
 
-  // Ensure we have an array to work with
+  // Get data from response
   const postsArray = blogs?.data || [];
+  const totalPages = blogs?.pagination?.pages || 1;
 
-  const filteredPosts = postsArray.filter(post => {
-    const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  // Memoize calculations for current articles and total pages
-  const { currentArticles, totalPages } = useMemo(() => {
-    const indexOfLastArticle = currentPage * ARTICLES_PER_PAGE;
-    const indexOfFirstArticle = indexOfLastArticle - ARTICLES_PER_PAGE;
-    const articles = filteredPosts.slice(indexOfFirstArticle, indexOfLastArticle);
-    const pages = Math.ceil(filteredPosts.length / ARTICLES_PER_PAGE);
-    return { currentArticles: articles, totalPages: pages };
-  }, [currentPage, filteredPosts]);
-
-  // Function to format date
-  const formatDate = dateString => {
-    if (!dateString) return "";
-    const date = new Date(dateString.$date || dateString);
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  // Function to safely render HTML content
-  const renderHTML = html => {
-    return { __html: html };
-  };
-
-  if (useBlogsLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
@@ -233,9 +210,9 @@ const Blog = () => {
               {categories.map(category => (
                 <button
                   key={category}
-                  onClick={() => handleCategoryChange(category === "All" ? "" : category)}
+                  onClick={() => handleCategoryChange(category)}
                   className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
-                    selectedCategory === (category === "All" ? "" : category)
+                    selectedCategory === category
                       ? "bg-[var(--primary-main)] text-white"
                       : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
                   }`}
@@ -249,9 +226,9 @@ const Blog = () => {
 
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map(post => (
+          {postsArray.map(post => (
             <motion.div
-              key={post._id.$oid || post._id}
+              key={post._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -266,13 +243,13 @@ const Blog = () => {
                   {user && post.author?.email === user.email && (
                     <div className="flex gap-2">
                       <Link
-                        to={`/blog/editor/${post._id.$oid || post._id}`}
+                        to={`/blog/editor/${post._id}`}
                         className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
                       >
                         <FaEdit />
                       </Link>
                       <button
-                        onClick={() => handleDelete(post._id.$oid || post._id)}
+                        onClick={() => handleDelete(post._id)}
                         className="text-red-500 hover:text-red-700"
                       >
                         <FaTrash />
@@ -282,7 +259,7 @@ const Blog = () => {
                 </div>
                 <div className="text-sm text-[var(--text-secondary)] mb-4">
                   <p>By {post.author?.name || "Anonymous"}</p>
-                  <p>{formatDate(post.createdAt)}</p>
+                  <p>{new Date(post.createdAt).toLocaleDateString()}</p>
                   <p>{post.readTime}</p>
                 </div>
                 <div
@@ -291,10 +268,10 @@ const Blog = () => {
                 />
                 <div className="flex justify-between items-center">
                   <button
-                    onClick={() => handleLike(post._id.$oid || post._id)}
+                    onClick={() => handleLike(post._id)}
                     className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
                   >
-                    {post.likes?.includes(user?.uid) ? (
+                    {post.likes?.some(like => like.email === user?.email) ? (
                       <FaHeart className="text-red-500" />
                     ) : (
                       <FaRegHeart />
@@ -302,15 +279,8 @@ const Blog = () => {
                     <span>{post.likes?.length || 0}</span>
                   </button>
                   <Link
-                    to={`/blog/${post._id.$oid || post._id}`}
+                    to={`/blog/${post._id}`}
                     className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] font-medium"
-                    onClick={() => {
-                      // Prefetch the blog post data
-                      queryClient.prefetchQuery({
-                        queryKey: ["blog", post._id.$oid || post._id],
-                        queryFn: () => blogService.getBlog(post._id.$oid || post._id),
-                      });
-                    }}
                   >
                     Read More
                   </Link>
@@ -324,7 +294,7 @@ const Blog = () => {
         {totalPages > 1 && (
           <div className="flex justify-center mt-8 space-x-2">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={handlePrevPage}
               disabled={currentPage === 1}
               className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -334,7 +304,7 @@ const Blog = () => {
               Page {currentPage} of {totalPages}
             </span>
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={handleNextPage}
               disabled={currentPage === totalPages}
               className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -344,7 +314,7 @@ const Blog = () => {
         )}
 
         {/* No Results Message */}
-        {filteredPosts.length === 0 && (
+        {postsArray.length === 0 && (
           <div className="text-center py-12">
             <p className="text-[var(--text-secondary)] text-lg">
               {activeTab === "search"
@@ -406,15 +376,15 @@ const Blog = () => {
                 {selectedArticle.title}
               </h2>
               <div className="flex items-center text-sm text-[var(--text-secondary)] mb-6">
-                <span>{formatDate(selectedArticle.createdAt)}</span>
+                <span>{new Date(selectedArticle.createdAt).toLocaleDateString()}</span>
                 <span className="mx-2">•</span>
                 <span>{selectedArticle.readTime}</span>
                 <span className="mx-2">•</span>
-                <span className="text-[var(--primary-main)]">{selectedArticle.category}</span>
+                <span className="text-[var(--primary-main)]">{selectedArticle.tags[0]}</span>
               </div>
               <div
                 className="prose prose-lg max-w-none text-[var(--text-primary)]"
-                dangerouslySetInnerHTML={renderHTML(selectedArticle.content)}
+                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
               />
             </div>
           </div>
