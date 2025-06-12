@@ -71,7 +71,7 @@ const BlogPost = () => {
         { content },
         {
           email: user?.email,
-          role: user?.role || "user",
+          role: user?.role === "admin" ? "admin" : "user",
         }
       ),
     onSuccess: () => {
@@ -89,7 +89,7 @@ const BlogPost = () => {
     mutationFn: commentId =>
       blogService.deleteComment(id, commentId, {
         email: user?.email,
-        role: user?.role || "user",
+        role: user?.role === "admin" ? "admin" : "user",
       }),
     onSuccess: () => {
       queryClient.invalidateQueries(["blog", id]);
