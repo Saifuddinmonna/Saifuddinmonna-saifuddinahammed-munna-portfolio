@@ -4,19 +4,33 @@ const { uploadToImageBB } = require("../utils/imageUploader");
 // Get all approved testimonials
 exports.getTestimonials = async (req, res) => {
   try {
-    console.log('=== GET /testimonials - Fetching all approved testimonials ===');
-    const testimonials = await testimonials.find({ status: "approved" })
-      .sort({ createdAt: -1 });
+    console.log('Fetching approved testimonials...');
+    
+    const testimonials = await Testimonial.find({ status: "approved" })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    console.log('Found testimonials:', testimonials.length);
+
+    if (!testimonials || testimonials.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+        message: "No approved testimonials found"
+      });
+    }
+
     res.status(200).json({
       success: true,
       data: testimonials,
-      // console.log(`Found ${testimonials.length} approved testimonials`)
+      message: "Testimonials fetched successfully"
     });
   } catch (error) {
+    console.error('Error in getTestimonials:', error);
     res.status(500).json({ 
       success: false,
-      message: error.message 
-      
+      message: "Error fetching testimonials",
+      error: error.message 
     });
   }
 };
@@ -24,6 +38,10 @@ exports.getTestimonials = async (req, res) => {
 // Submit a new testimonial
 exports.submitTestimonial = async (req, res) => {
   try {
+    console.log('Submitting new testimonial...');
+    console.log('Request body:', req.body);
+    console.log('File:', req.file);
+
     let finalImageUrl = req.body.clientImageUrlInput || null;
 
     if (req.file) {
@@ -33,7 +51,10 @@ exports.submitTestimonial = async (req, res) => {
     const testimonial = await Testimonial.create({
       ...req.body,
       clientImageURL: finalImageUrl,
+      status: "pending" // Set initial status as pending
     });
+
+    console.log('Created testimonial:', testimonial);
 
     res.status(201).json({
       success: true,
@@ -41,9 +62,11 @@ exports.submitTestimonial = async (req, res) => {
       data: testimonial
     });
   } catch (error) {
+    console.error('Error in submitTestimonial:', error);
     res.status(500).json({ 
       success: false,
-      message: error.message 
+      message: "Error submitting testimonial",
+      error: error.message 
     });
   }
 };
@@ -51,16 +74,25 @@ exports.submitTestimonial = async (req, res) => {
 // Admin: Get all testimonials (including pending)
 exports.getAllTestimonials = async (req, res) => {
   try {
+    console.log('Fetching all testimonials...');
+    
     const testimonials = await Testimonial.find()
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+
+    console.log('Found testimonials:', testimonials.length);
+
     res.status(200).json({
       success: true,
-      data: testimonials
+      data: testimonials,
+      message: "All testimonials fetched successfully"
     });
   } catch (error) {
+    console.error('Error in getAllTestimonials:', error);
     res.status(500).json({ 
       success: false,
-      message: error.message 
+      message: "Error fetching all testimonials",
+      error: error.message 
     });
   }
 };
@@ -70,6 +102,8 @@ exports.updateTestimonialStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+
+    console.log(`Updating testimonial ${id} status to ${status}`);
 
     const testimonial = await Testimonial.findByIdAndUpdate(
       id, 
@@ -86,12 +120,15 @@ exports.updateTestimonialStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: testimonial
+      data: testimonial,
+      message: "Testimonial status updated successfully"
     });
   } catch (error) {
+    console.error('Error in updateTestimonialStatus:', error);
     res.status(400).json({ 
       success: false,
-      message: error.message 
+      message: "Error updating testimonial status",
+      error: error.message 
     });
   }
 };
@@ -100,6 +137,8 @@ exports.updateTestimonialStatus = async (req, res) => {
 exports.deleteTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(`Deleting testimonial ${id}`);
+
     const testimonial = await Testimonial.findByIdAndDelete(id);
 
     if (!testimonial) {
@@ -114,9 +153,11 @@ exports.deleteTestimonial = async (req, res) => {
       message: "Testimonial deleted successfully" 
     });
   } catch (error) {
+    console.error('Error in deleteTestimonial:', error);
     res.status(400).json({ 
       success: false,
-      message: error.message 
+      message: "Error deleting testimonial",
+      error: error.message 
     });
   }
 };
