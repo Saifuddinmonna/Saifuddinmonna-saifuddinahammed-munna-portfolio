@@ -32,12 +32,13 @@ const BlogPost = () => {
   const likeMutation = useMutation({
     mutationFn: () =>
       blogService.toggleLike(id, {
-        name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
-        email: user?.email || "",
+        email: user?.email,
+        role: user?.role === "admin" ? "admin" : "user",
       }),
     onSuccess: () => {
       queryClient.invalidateQueries(["blog", id]);
-      toast.success("Like updated successfully");
+      const hasLiked = post.likes?.some(like => like.email === user?.email);
+      toast.success(hasLiked ? "Post unliked successfully" : "Post liked successfully");
     },
     onError: error => {
       toast.error(error.message || "Failed to update like");
@@ -243,9 +244,14 @@ const BlogPost = () => {
             <div className="flex items-center gap-4 mb-8">
               <button
                 onClick={handleLike}
-                className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+                className={`flex items-center gap-2 ${
+                  hasLiked
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+                } transition-colors duration-300`}
+                title={hasLiked ? "Unlike this post" : "Like this post"}
               >
-                {hasLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+                {hasLiked ? <FaHeart /> : <FaRegHeart />}
                 <span>{post.likes?.length || 0} likes</span>
               </button>
             </div>
