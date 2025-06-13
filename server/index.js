@@ -3,7 +3,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { verifyToken, isAdmin } = require("./middleware/auth");
+const { verifyToken, isAdmin } = require("./middlewares/auth");
 const admin = require("firebase-admin");
 const User = require("./models/User");
 const Message = require("./models/Message");
@@ -29,6 +29,7 @@ app.use(
 );
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.static('public')); // Serve files from public folder
 
 // Error handling middleware
 app.use((err, req, res, next) => {

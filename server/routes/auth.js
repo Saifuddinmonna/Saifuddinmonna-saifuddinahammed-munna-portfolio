@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const admin = require("firebase-admin");
-const { verifyToken } = require("../middleware/auth");
+const { verifyToken } = require("../middlewares/auth");
 const User = require('../models/User');
 
 // Register new user (no token required)

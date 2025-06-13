@@ -12,7 +12,7 @@ const {
   updateComment,
   toggleLike
 } = require('../controllers/blogController');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken } = require('../middlewares/auth');
 
 // All routes are public
 router.get('/', getAllBlogs);
