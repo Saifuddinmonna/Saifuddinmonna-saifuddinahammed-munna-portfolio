@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { testimonialService } from "../../services/testimonialService";
 import { toast } from "react-hot-toast";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaImage } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 
 const TestimonialForm = () => {
@@ -16,9 +16,11 @@ const TestimonialForm = () => {
     position: "",
     rating: 5,
     projectLink: "",
+    clientImageUrlInput: "",
   });
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Set default email and name when user is available
   useEffect(() => {
@@ -53,8 +55,23 @@ const TestimonialForm = () => {
     if (!formData.position) newErrors.position = "Position is required";
     if (formData.rating < 1 || formData.rating > 5)
       newErrors.rating = "Rating must be between 1 and 5";
+
+    // Validate image URL if provided
+    if (formData.clientImageUrlInput && !isValidImageUrl(formData.clientImageUrlInput)) {
+      newErrors.clientImageUrlInput = "Please enter a valid image URL";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const isValidImageUrl = url => {
+    try {
+      new URL(url);
+      return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+    } catch {
+      return false;
+    }
   };
 
   const handleSubmit = async e => {
@@ -77,16 +94,17 @@ const TestimonialForm = () => {
   };
 
   const resetForm = () => {
-    setFormData({
-      clientName: "",
-      email: "",
+    setFormData(prev => ({
+      ...prev,
       testimonialText: "",
       companyName: "",
       position: "",
       rating: 5,
       projectLink: "",
-    });
+      clientImageUrlInput: "",
+    }));
     setImage(null);
+    setImagePreview(null);
     setErrors({});
   };
 
@@ -96,11 +114,32 @@ const TestimonialForm = () => {
       ...prev,
       [name]: value,
     }));
+
+    // Update image preview when URL changes
+    if (name === "clientImageUrlInput" && value) {
+      if (isValidImageUrl(value)) {
+        setImagePreview(value);
+      } else {
+        setImagePreview(null);
+      }
+    }
   };
 
   const handleImageChange = e => {
     if (e.target.files[0]) {
-      setImage(e.target.files[0]);
+      const file = e.target.files[0];
+      setImage(file);
+      // Create preview for uploaded image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      // Clear URL input when file is selected
+      setFormData(prev => ({
+        ...prev,
+        clientImageUrlInput: "",
+      }));
     }
   };
 
@@ -211,14 +250,62 @@ const TestimonialForm = () => {
           />
         </div>
 
-        <div>
-          <label className="block text-[var(--text-primary)] mb-2">Your Photo (Optional)</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--background-default)] text-[var(--text-primary)]"
-          />
+        {/* Image Section */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-[var(--text-primary)] mb-2">Your Photo</label>
+            <div className="flex flex-col gap-4">
+              {/* Image URL Input */}
+              <div>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">
+                  Or provide an image URL
+                </label>
+                <input
+                  type="url"
+                  name="clientImageUrlInput"
+                  value={formData.clientImageUrlInput}
+                  onChange={handleInputChange}
+                  placeholder="https://example.com/your-image.jpg"
+                  className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--background-default)] text-[var(--text-primary)]"
+                />
+                {errors.clientImageUrlInput && (
+                  <p className="text-red-500 text-sm mt-1">{errors.clientImageUrlInput}</p>
+                )}
+              </div>
+
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">
+                  Or upload an image
+                </label>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg cursor-pointer hover:bg-[var(--primary-dark)] transition-colors duration-300">
+                    <FaImage />
+                    <span>Choose Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                  {image && <span className="text-[var(--text-secondary)]">{image.name}</span>}
+                </div>
+              </div>
+
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="mt-4">
+                  <p className="text-sm text-[var(--text-secondary)] mb-2">Preview:</p>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-32 h-32 object-cover rounded-lg border border-[var(--border-main)]"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <button
