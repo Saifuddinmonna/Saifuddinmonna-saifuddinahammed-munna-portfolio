@@ -1,4 +1,6 @@
 import { toast } from "react-toastify";
+import axios from "axios";
+import { API_URL } from "../../config";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
@@ -59,3 +61,45 @@ export const updateUserProfile = async data => {
     body: JSON.stringify(data),
   });
 };
+
+// Auth utility functions
+export const getAuthToken = () => {
+  const token = localStorage.getItem("token");
+  return token ? `Bearer ${token}` : null;
+};
+
+export const handleAuthError = error => {
+  if (error.response?.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  }
+  throw error;
+};
+
+// API instance with auth interceptor
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+api.interceptors.request.use(
+  config => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = token;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  response => response,
+  error => {
+    handleAuthError(error);
+    return Promise.reject(error);
+  }
+);
+
+export default api;

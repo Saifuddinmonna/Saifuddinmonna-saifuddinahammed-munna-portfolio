@@ -1,57 +1,129 @@
 import axios from "axios";
+import { API_URL } from "../config";
+import { getAuthToken, handleAuthError } from "../auth/utils/api";
 
-// Update this URL to match your backend server URL
-const API_URL = "http://localhost:5000/api/testimonials"; // Assuming your backend runs on port 5000
-
-export const testimonialService = {
-  // Get all approved testimonials (public)
-  getAllTestimonials: async () => {
-    const response = await axios.get(API_URL);
-    console.log("testomonial page thkeke ata exicute hosse :", response.data);
-    return response.data;
+const testimonialService = {
+  // Get public testimonials (no auth required)
+  getPublicTestimonials: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/testimonials/public`);
+      console.log("akhane public testomonial test korsi ", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching public testimonials:", error);
+      throw error;
+    }
   },
 
-  // Submit new testimonial (public)
-  submitTestimonial: async formData => {
-    const response = await axios.post(API_URL, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  },
-
-  // Get all testimonials (admin)
-  getAllTestimonialsAdmin: async token => {
-    const response = await axios.get(`${API_URL}/admin/all`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  },
-
-  // Update testimonial status (admin)
-  updateTestimonialStatus: async (id, status, token) => {
-    const response = await axios.patch(
-      `${API_URL}/admin/${id}/status`,
-      { status },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  // Get user's testimonials (auth required)
+  getUserTestimonials: async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
       }
-    );
-    return response.data;
+      const response = await axios.get(`${API_URL}/testimonials/user`, {
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
   },
 
-  // Delete testimonial (admin)
-  deleteTestimonial: async (id, token) => {
-    const response = await axios.delete(`${API_URL}/admin/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
+  // Get all testimonials (admin only)
+  getAllTestimonials: async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+      const response = await axios.get(`${API_URL}/testimonials/admin/all`, {
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
+  },
+
+  // Submit new testimonial (auth required)
+  submitTestimonial: async formData => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+      const response = await axios.post(`${API_URL}/testimonials`, formData, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
+  },
+
+  // Update testimonial (auth required)
+  updateTestimonial: async (id, formData) => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+      const response = await axios.patch(`${API_URL}/testimonials/${id}`, formData, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
+  },
+
+  // Delete testimonial (auth required)
+  deleteTestimonial: async id => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+      const response = await axios.delete(`${API_URL}/testimonials/${id}`, {
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
+  },
+
+  // Update testimonial status (admin only)
+  updateTestimonialStatus: async (id, status) => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+      const response = await axios.patch(
+        `${API_URL}/testimonials/admin/${id}/status`,
+        { status },
+        { headers: { Authorization: token } }
+      );
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
   },
 };
+
+export default testimonialService;

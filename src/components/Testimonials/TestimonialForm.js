@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { testimonialService } from "../../services/testimonialService";
+import testimonialService from "../../services/testimonialService";
 import { toast } from "react-hot-toast";
 import { FaStar, FaImage } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";

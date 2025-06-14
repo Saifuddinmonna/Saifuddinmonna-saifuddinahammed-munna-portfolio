@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     try {
       if (user) {
         const token = await user.getIdToken(true);
-        localStorage.setItem("token", token);
+        localStorage.setItem("authToken", token);
       }
     } catch (error) {
       console.error("Error refreshing token:", error);

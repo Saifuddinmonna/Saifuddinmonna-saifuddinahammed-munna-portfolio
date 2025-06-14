@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
-import { testimonialService } from "../services/testimonialService";
+import testimonialService from "../services/testimonialService";
 import TestimonialForm from "../components/Testimonials/TestimonialForm";
 import TestimonialCard from "../components/Testimonials/TestimonialCard";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
