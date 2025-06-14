@@ -6,6 +6,7 @@ import { FaStar, FaImage } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 
 const TestimonialForm = () => {
+  console.log("testimonial form load hoyese");
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
@@ -18,12 +19,13 @@ const TestimonialForm = () => {
     projectLink: "",
     clientImageUrlInput: "",
   });
+
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
-
+  //notebooklm.google.com/notebook/
   // Set default email and name when user is available
-  useEffect(() => {
+  https: useEffect(() => {
     if (user) {
       setFormData(prev => ({
         ...prev,
@@ -35,6 +37,7 @@ const TestimonialForm = () => {
 
   const submitMutation = useMutation({
     mutationFn: data => testimonialService.submitTestimonial(data),
+
     onSuccess: () => {
       queryClient.invalidateQueries(["testimonials"]);
       toast.success("Testimonial submitted successfully! It will be visible after approval.");
@@ -64,6 +67,8 @@ const TestimonialForm = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  console.log("form data ", formData);
+  console.log("form data image", image);
 
   const isValidImageUrl = url => {
     try {

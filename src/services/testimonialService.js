@@ -53,6 +53,8 @@ const testimonialService = {
   submitTestimonial: async formData => {
     try {
       const token = getAuthToken();
+      console.log("token from submittestimonial", token);
+
       if (!token) {
         throw new Error("Authentication required");
       }

@@ -64,7 +64,7 @@ export const updateUserProfile = async data => {
 
 // Auth utility functions
 export const getAuthToken = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
   return token ? `Bearer ${token}` : null;
 };
 
