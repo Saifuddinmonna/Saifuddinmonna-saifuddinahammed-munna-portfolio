@@ -30,9 +30,9 @@ router.delete('/admin/:id', verifyToken, isAdmin, async (req, res) => {
   try {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) {
-      return res.status(404).json({
+      return res.status(404).json({ 
         success: false,
-        message: "Testimonial not found"
+        message: "Testimonial not found" 
       });
     }
     await testimonial.deleteOne();
@@ -42,10 +42,10 @@ router.delete('/admin/:id', verifyToken, isAdmin, async (req, res) => {
     });
   } catch (error) {
     console.error('Error in admin delete testimonial:', error);
-    res.status(500).json({
+    res.status(500).json({ 
       success: false,
       message: "Error deleting testimonial",
-      error: error.message
+      error: error.message 
     });
   }
 });
@@ -105,11 +105,11 @@ router.delete('/:id', verifyToken, async (req, res) => {
 // Error handling middleware for this router
 router.use((err, req, res, next) => {
   console.error('Testimonial route error:', err);
-  res.status(500).json({
-    success: false,
+    res.status(500).json({ 
+      success: false,
     message: 'Error in testimonial route',
     error: err.message
-  });
+    });
 });
 
 module.exports = router;

@@ -73,6 +73,7 @@ const verifyToken = async (req, res, next) => {
       let user = await User.findOne({ firebaseUid: decodedToken.uid });
       
       if (!user) {
+        try {
         // Create new user if doesn't exist
         user = new User({
           firebaseUid: decodedToken.uid,
@@ -80,8 +81,24 @@ const verifyToken = async (req, res, next) => {
           email: decodedToken.email,
           role: 'user'
         });
+          
+          // Validate the user before saving
+          const validationError = user.validateSync();
+          if (validationError) {
+            console.error('User validation error:', validationError);
+            throw validationError;
+          }
+          
         await user.save();
-        console.log('New user created:', user);
+          console.log('New user created successfully:', user);
+        } catch (createError) {
+          console.error('Error creating user:', createError);
+          return res.status(400).json({
+            success: false,
+            message: "Error creating user",
+            error: createError.message
+          });
+        }
       }
 
       // Attach user info to request

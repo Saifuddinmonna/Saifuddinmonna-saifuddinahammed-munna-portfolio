@@ -7,7 +7,7 @@ const User = require('../models/User');
 // Register new user (no token required)
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, name, phone, photoURL, bio } = req.body;
+    const { email, password, name, phone, photoURL, bio, firebaseUid } = req.body;
 
     // Log the request body
     console.log('Registration Request Body:', {
@@ -16,7 +16,8 @@ router.post("/register", async (req, res) => {
       name,
       phone,
       photoURL,
-      bio
+      bio,
+      firebaseUid
     });
 
     // Detailed input validation
@@ -26,12 +27,6 @@ router.post("/register", async (req, res) => {
       validationErrors.push('Email is required');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       validationErrors.push('Invalid email format');
-    }
-
-    if (!password) {
-      validationErrors.push('Password is required');
-    } else if (password.length < 6) {
-      validationErrors.push('Password must be at least 6 characters');
     }
 
     if (!name) {
@@ -60,100 +55,106 @@ router.post("/register", async (req, res) => {
     }
 
     try {
-      // Create user in Firebase
-      const userRecord = await admin.auth().createUser({
-        email,
-        password,
-        displayName: name,
-        photoURL
-      });
-      console.log('Firebase user created successfully:', userRecord.uid);
-
-      // Create user in database
-      const user = await User.create({
-        firebaseUid: userRecord.uid,
-        name,
-        email,
-        phone,
-        photoURL,
-        bio,
-        role: 'user'
-      });
-      console.log('Database user created successfully:', user._id);
-
-      res.status(201).json({
-        success: true,
-        data: {
-          uid: userRecord.uid,
-          email: userRecord.email,
-          displayName: userRecord.displayName,
-          photoURL: userRecord.photoURL,
-          phone: user.phone,
-          bio: user.bio,
-          role: user.role
-        }
-      });
-    } catch (firebaseError) {
-      console.error('Firebase/Database creation error:', firebaseError);
+      let userRecord;
       
-      // If Firebase user creation fails, try to clean up
-      if (firebaseError.code === 'auth/email-already-exists') {
-        // Try to get the existing user
+      // If firebaseUid is provided, use it (user already created in Firebase)
+      if (firebaseUid) {
         try {
-          const existingUser = await admin.auth().getUserByEmail(email);
-          console.log('Found existing Firebase user:', existingUser.uid);
-          
-          // Check if this user exists in our database
-          const dbUser = await User.findOne({ firebaseUid: existingUser.uid });
-          if (!dbUser) {
-            // User exists in Firebase but not in our database
-            // Create the database entry
-            const newUser = await User.create({
-              firebaseUid: existingUser.uid,
-              name,
-              email,
-              phone,
-              photoURL,
-              bio,
-              role: 'user'
-            });
-            console.log('Created database entry for existing Firebase user:', newUser._id);
-            
-            return res.status(201).json({
-              success: true,
-              data: {
-                uid: existingUser.uid,
-                email: existingUser.email,
-                displayName: existingUser.displayName,
-                photoURL: existingUser.photoURL,
-                phone: newUser.phone,
-                bio: newUser.bio,
-                role: newUser.role
-              }
+          userRecord = await admin.auth().getUser(firebaseUid);
+          console.log('Using existing Firebase user:', userRecord.uid);
+        } catch (error) {
+          console.error('Error getting Firebase user:', error);
+          return res.status(400).json({
+            success: false,
+            message: "Invalid Firebase user ID",
+            error: error.message
+          });
+        }
+      } else {
+        // Create new user in Firebase if no firebaseUid provided
+        try {
+          userRecord = await admin.auth().createUser({
+            email,
+            password,
+            displayName: name,
+            photoURL
+          });
+          console.log('Firebase user created successfully:', userRecord.uid);
+        } catch (error) {
+          console.error('Error creating Firebase user:', error);
+          if (error.code === 'auth/email-already-exists') {
+            return res.status(400).json({
+              success: false,
+              message: "This email is already registered in Firebase"
             });
           }
-        } catch (error) {
-          console.error('Error handling existing Firebase user:', error);
+          throw error;
         }
       }
+
+      // Create user in database
+      try {
+        const user = await User.create({
+          firebaseUid: userRecord.uid,
+          name,
+          email,
+          phone,
+          photoURL,
+          bio,
+          role: 'user'
+        });
+        console.log('Database user created successfully:', user._id);
+
+        res.status(201).json({
+          success: true,
+          data: {
+            uid: userRecord.uid,
+            email: userRecord.email,
+            displayName: userRecord.displayName,
+            photoURL: userRecord.photoURL,
+            phone: user.phone,
+            bio: user.bio,
+            role: user.role
+          }
+        });
+      } catch (dbError) {
+        console.error('Error creating database user:', dbError);
+        // If database creation fails, try to clean up Firebase user
+        if (!firebaseUid) {
+          try {
+            await admin.auth().deleteUser(userRecord.uid);
+            console.log('Cleaned up Firebase user after database error');
+          } catch (cleanupError) {
+            console.error('Error cleaning up Firebase user:', cleanupError);
+          }
+        }
+        throw dbError;
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
       
-      // Handle other Firebase errors
-      if (firebaseError.code === 'auth/invalid-email') {
+      // Handle specific error cases
+      if (error.code === 'auth/invalid-email') {
         return res.status(400).json({
           success: false,
           message: "Invalid email format"
         });
-      } else if (firebaseError.code === 'auth/weak-password') {
+      } else if (error.code === 'auth/weak-password') {
         return res.status(400).json({
           success: false,
           message: "Password should be at least 6 characters"
+        });
+      } else if (error.code === 'auth/user-not-found') {
+        return res.status(404).json({
+          success: false,
+          message: "Firebase user not found"
         });
       }
       
       return res.status(500).json({
         success: false,
         message: "Error creating user account",
-        error: firebaseError.message
+        error: error.message
       });
     }
   } catch (error) {

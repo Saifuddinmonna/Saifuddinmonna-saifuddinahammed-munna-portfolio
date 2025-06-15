@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    minlength: 2,
-    maxlength: 50
+    minlength: [2, "Name must be at least 2 characters long"],
+    maxlength: [50, "Name cannot exceed 50 characters"]
   },
   email: {
     type: String,
@@ -23,17 +23,20 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
     trim: true,
+    required: false,
     match: [/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, 'Please enter a valid phone number']
   },
   photoURL: {
     type: String,
     trim: true,
+    required: false,
     match: [/^https?:\/\/.+/, 'Please enter a valid URL']
   },
   bio: {
     type: String,
     trim: true,
-    maxlength: 500
+    required: false,
+    maxlength: [500, "Bio cannot exceed 500 characters"]
   },
   role: {
     type: String,

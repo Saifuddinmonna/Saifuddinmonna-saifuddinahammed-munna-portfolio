@@ -12,19 +12,28 @@ require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = process.env.CLIENT_URL 
+  ? [process.env.CLIENT_URL, process.env.CLIENT_URL.replace(/\/$/, '')]
+  : ["http://localhost:3000", "http://localhost:3000/"];
+
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
-    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true
   },
 });
 
 // Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
 app.use(express.json({ limit: '50mb' }));
@@ -42,8 +51,11 @@ app.use((err, req, res, next) => {
 });
 
 // MongoDB Connection
+const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/portfolio_saifuddin";
+console.log("MongoDB URI (masked):", mongoURI.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'));
+
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/portfolio", {
+  .connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
