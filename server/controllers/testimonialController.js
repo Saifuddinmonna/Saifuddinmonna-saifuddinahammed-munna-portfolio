@@ -1,41 +1,65 @@
 const Testimonial = require("../models/Testimonial");
 const { uploadToImageBB } = require("../utils/imageUploader");
 
-// Get all approved testimonials
-exports.getTestimonials = async (req, res) => {
+// Get public testimonials (no auth required)
+exports.getPublicTestimonials = async (req, res) => {
   try {
-    console.log('Fetching approved testimonials...');
+    console.log('Fetching public testimonials...');
     
     const testimonials = await Testimonial.find({ status: "approved" })
       .sort({ createdAt: -1 })
       .lean();
 
-    console.log('Found testimonials:', testimonials.length);
-
-    if (!testimonials || testimonials.length === 0) {
-      return res.status(200).json({
-        success: true,
-        data: [],
-        message: "No approved testimonials found"
-      });
-    }
+    console.log('Found public testimonials:', testimonials.length);
 
     res.status(200).json({
       success: true,
       data: testimonials,
-      message: "Testimonials fetched successfully"
+      message: "Public testimonials fetched successfully"
     });
   } catch (error) {
-    console.error('Error in getTestimonials:', error);
+    console.error('Error in getPublicTestimonials:', error);
     res.status(500).json({ 
       success: false,
-      message: "Error fetching testimonials",
+      message: "Error fetching public testimonials",
       error: error.message 
     });
   }
 };
 
-// Submit a new testimonial
+// Get user testimonials (requires auth)
+exports.getUserTestimonials = async (req, res) => {
+  try {
+    console.log('Fetching user testimonials...');
+    console.log('User:', req.user.email);
+
+    const testimonials = await Testimonial.find({
+      $or: [
+        { status: "approved" },
+        { email: req.user.email }
+      ]
+    })
+    .sort({ createdAt: -1 })
+    .lean();
+
+    console.log('Found user testimonials:', testimonials.length);
+
+    res.status(200).json({
+      success: true,
+      data: testimonials,
+      message: "User testimonials fetched successfully"
+    });
+  } catch (error) {
+    console.error('Error in getUserTestimonials:', error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error fetching user testimonials",
+      error: error.message 
+    });
+  }
+};
+
+// Submit a new testimonial (no auth required)
 exports.submitTestimonial = async (req, res) => {
   try {
     console.log('Submitting new testimonial...');
@@ -51,7 +75,7 @@ exports.submitTestimonial = async (req, res) => {
     const testimonial = await Testimonial.create({
       ...req.body,
       clientImageURL: finalImageUrl,
-      status: "pending" // Set initial status as pending
+      status: "pending"
     });
 
     console.log('Created testimonial:', testimonial);
@@ -71,7 +95,95 @@ exports.submitTestimonial = async (req, res) => {
   }
 };
 
-// Admin: Get all testimonials (including pending)
+// Update testimonial (requires auth)
+exports.updateTestimonial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(`Updating testimonial ${id}`);
+
+    const testimonial = await Testimonial.findById(id);
+    
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: "Testimonial not found"
+      });
+    }
+
+    // Check if user owns the testimonial
+    if (testimonial.email !== req.user.email && !req.user.isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this testimonial"
+      });
+    }
+
+    // Handle image upload if present
+    if (req.file) {
+      req.body.clientImageURL = await uploadToImageBB(req.file.buffer);
+    }
+
+    const updatedTestimonial = await Testimonial.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: updatedTestimonial,
+      message: "Testimonial updated successfully"
+    });
+  } catch (error) {
+    console.error('Error in updateTestimonial:', error);
+    res.status(400).json({
+      success: false,
+      message: "Error updating testimonial",
+      error: error.message
+    });
+  }
+};
+
+// Delete testimonial (requires auth)
+exports.deleteTestimonial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(`Deleting testimonial ${id}`);
+
+    const testimonial = await Testimonial.findById(id);
+    
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: "Testimonial not found"
+      });
+    }
+
+    // Check if user owns the testimonial
+    if (testimonial.email !== req.user.email && !req.user.isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this testimonial"
+      });
+    }
+
+    await testimonial.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Testimonial deleted successfully"
+    });
+  } catch (error) {
+    console.error('Error in deleteTestimonial:', error);
+    res.status(400).json({
+      success: false,
+      message: "Error deleting testimonial",
+      error: error.message
+    });
+  }
+};
+
+// Admin: Get all testimonials
 exports.getAllTestimonials = async (req, res) => {
   try {
     console.log('Fetching all testimonials...');
@@ -128,35 +240,6 @@ exports.updateTestimonialStatus = async (req, res) => {
     res.status(400).json({ 
       success: false,
       message: "Error updating testimonial status",
-      error: error.message 
-    });
-  }
-};
-
-// Admin: Delete testimonial
-exports.deleteTestimonial = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`Deleting testimonial ${id}`);
-
-    const testimonial = await Testimonial.findByIdAndDelete(id);
-
-    if (!testimonial) {
-      return res.status(404).json({ 
-        success: false,
-        message: "Testimonial not found" 
-      });
-    }
-
-    res.status(200).json({ 
-      success: true,
-      message: "Testimonial deleted successfully" 
-    });
-  } catch (error) {
-    console.error('Error in deleteTestimonial:', error);
-    res.status(400).json({ 
-      success: false,
-      message: "Error deleting testimonial",
       error: error.message 
     });
   }

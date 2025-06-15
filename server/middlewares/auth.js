@@ -46,12 +46,21 @@ const verifyToken = async (req, res, next) => {
       });
     }
 
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      console.log('No token found in authorization header');
+    // Check if token is in correct format
+    if (!authHeader.startsWith('Bearer ')) {
+      console.log('Invalid token format. Should start with "Bearer "');
       return res.status(401).json({ 
         success: false,
-        message: "No token provided" 
+        message: "Invalid token format" 
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!token || typeof token !== 'string') {
+      console.log('Invalid token format');
+      return res.status(401).json({ 
+        success: false,
+        message: "Invalid token format" 
       });
     }
 
