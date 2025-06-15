@@ -1,17 +1,27 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FaStar, FaQuoteLeft, FaCalendarAlt } from "react-icons/fa";
+import { FaStar, FaQuoteLeft, FaCalendarAlt, FaTrash } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import testimonialService from "../../services/testimonialService";
 import { toast } from "react-hot-toast";
 
 const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
   const queryClient = useQueryClient();
+  const isOwner = user?.email === testimonial.email;
+  const isAdmin = dbUser?.role === "admin";
 
+  // Determine which delete function to use based on user role
   const deleteMutation = useMutation({
-    mutationFn: () => testimonialService.deleteTestimonial(testimonial._id),
+    mutationFn: () => {
+      // If user is admin, use admin delete function
+      if (isAdmin) {
+        return testimonialService.deleteTestimonialAdmin(testimonial._id);
+      }
+      // Otherwise use regular delete function
+      return testimonialService.deleteTestimonial(testimonial._id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["testimonials"]);
       toast.success("Testimonial deleted successfully");
@@ -27,9 +37,6 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
       deleteMutation.mutate();
     }
   };
-
-  const isOwner = user?.email === testimonial.email;
-  const isAdmin = user?.role === "admin";
 
   // Format date
   const formatDate = dateString => {
@@ -89,9 +96,9 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
             <h3 className="font-bold text-lg text-[var(--text-primary)]">
               {testimonial.clientName}
             </h3>
-            {testimonial.status === "verified" && (
+            {testimonial.status === "approved" && (
               <span className="px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">
-                Verified
+                Approved
               </span>
             )}
           </div>
@@ -131,17 +138,30 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
               Edit
             </motion.button>
           )}
-          {(isOwner || isAdmin) && (
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleDelete}
+            disabled={deleteMutation.isLoading}
+            className="flex items-center gap-2 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50"
+          >
+            <FaTrash className="text-xs" />
+            {deleteMutation.isLoading ? "Deleting..." : "Delete"}
+          </motion.button>
+
+          {/* {(isOwner || isAdmin ) && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleDelete}
               disabled={deleteMutation.isLoading}
-              className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50"
             >
+              <FaTrash className="text-xs" />
               {deleteMutation.isLoading ? "Deleting..." : "Delete"}
             </motion.button>
-          )}
+          )} */}
         </div>
       )}
 

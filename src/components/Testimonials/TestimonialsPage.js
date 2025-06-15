@@ -4,19 +4,20 @@ import testimonialService from "../../services/testimonialService";
 import { useAuth } from "../../auth/context/AuthContext";
 import TestimonialCard from "./TestimonialCard";
 import TestimonialForm from "./TestimonialForm";
+import TestimonialAdminDashboard from "./TestimonialAdminDashboard";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPlus, FaMinus, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
 const TestimonialsPage = () => {
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const testimonialsPerPage = 9;
 
   // Determine which testimonial fetching function to use based on user role
   const getTestimonials = async () => {
-    if (user?.role === "admin") {
+    if (dbUser?.data?.role === "admin") {
       return await testimonialService.getAllTestimonials();
     } else if (user) {
       return await testimonialService.getUserTestimonials();
@@ -24,7 +25,7 @@ const TestimonialsPage = () => {
       return await testimonialService.getPublicTestimonials();
     }
   };
-
+  console.log("check if user is prestnt", dbUser);
   // Use React Query to fetch testimonials based on user role
   const {
     data: testimonialsData,
@@ -32,11 +33,11 @@ const TestimonialsPage = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["testimonials", user?.email, user?.role],
+    queryKey: ["testimonials", dbUser?.data?.email, dbUser?.data?.role],
     queryFn: getTestimonials,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-
+  console.log("db user pore ase keno ", dbUser?.data?.role);
   const handleSuccess = () => {
     setShowForm(false);
     refetch(); // Refetch testimonials after successful submission
@@ -129,11 +130,18 @@ const TestimonialsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Show Admin Dashboard for admin users */}
+      {dbUser?.data?.role === "admin" && (
+        <div className="mb-8">
+          <TestimonialAdminDashboard onUpdate={refetch} />
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-[var(--text-primary)]">Testimonials</h1>
           <p className="text-[var(--text-secondary)] mt-2">
-            {user?.role === "admin"
+            {dbUser?.data?.role === "admin"
               ? "All Testimonials"
               : user
               ? "Your Testimonials"
@@ -189,7 +197,7 @@ const TestimonialsPage = () => {
 
       {testimonials.length === 0 && (
         <div className="text-center text-[var(--text-secondary)] py-8">
-          {user?.role === "admin"
+          {dbUser?.data?.role === "admin"
             ? "No testimonials available in the system."
             : user
             ? "You haven't submitted any testimonials yet. Share your experience!"

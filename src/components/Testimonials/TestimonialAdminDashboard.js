@@ -1,174 +1,236 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { testimonialService } from "../../services/testimonialService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import testimonialService from "../../services/testimonialService";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import { FaCheck, FaTimes, FaSearch, FaFilter, FaTrash } from "react-icons/fa";
 
-const TestimonialAdminDashboard = () => {
-  const [selectedStatus, setSelectedStatus] = useState("all");
+const TestimonialAdminDashboard = ({ onUpdate }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const queryClient = useQueryClient();
 
-  const {
-    data: testimonials,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  // Fetch all testimonials
+  const { data: testimonialsData, isLoading } = useQuery({
     queryKey: ["admin-testimonials"],
     queryFn: testimonialService.getAllTestimonials,
-    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  const handleStatusChange = async (id, newStatus) => {
-    try {
-      await testimonialService.updateTestimonialStatus(id, newStatus);
+  // Update testimonial status mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }) => testimonialService.updateTestimonialStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin-testimonials"]);
+      onUpdate?.();
       toast.success("Testimonial status updated successfully");
-      refetch();
-    } catch (error) {
-      console.error("Error updating testimonial status:", error);
-      toast.error(error.message || "Failed to update testimonial status");
+    },
+    onError: error => {
+      toast.error(error.response?.data?.message || "Failed to update status");
+    },
+  });
+
+  // Delete testimonial mutation
+  const deleteMutation = useMutation({
+    mutationFn: id => testimonialService.deleteTestimonialAdmin(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin-testimonials"]);
+      onUpdate?.();
+      toast.success("Testimonial deleted successfully");
+    },
+    onError: error => {
+      toast.error(error.response?.data?.message || "Failed to delete testimonial");
+    },
+  });
+
+  const handleDelete = id => {
+    if (window.confirm("Are you sure you want to delete this testimonial?")) {
+      deleteMutation.mutate(id);
     }
   };
 
-  const filteredTestimonials = testimonials?.filter(testimonial => {
-    if (selectedStatus === "all") return true;
-    return testimonial.status === selectedStatus;
+  // Ensure testimonials is an array and has required properties
+  const testimonials = (
+    Array.isArray(testimonialsData)
+      ? testimonialsData
+      : testimonialsData?.data
+      ? testimonialsData.data
+      : []
+  ).map(testimonial => ({
+    ...testimonial,
+    clientName: testimonial.clientName || "Anonymous",
+    position: testimonial.position || "Not specified",
+    companyName: testimonial.companyName || "Not specified",
+    testimonialText: testimonial.testimonialText || "No text provided",
+    status: testimonial.status || "pending",
+  }));
+
+  // Filter testimonials based on search and status
+  const filteredTestimonials = testimonials.filter(testimonial => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const clientNameLower = (testimonial.clientName || "").toLowerCase();
+    const testimonialTextLower = (testimonial.testimonialText || "").toLowerCase();
+
+    const matchesSearch =
+      clientNameLower.includes(searchTermLower) || testimonialTextLower.includes(searchTermLower);
+
+    const matchesStatus = statusFilter === "all" || testimonial.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
   });
+
+  // Calculate statistics
+  const stats = {
+    total: testimonials.length || 0,
+    pending: testimonials.filter(t => t.status === "pending").length || 0,
+    approved: testimonials.filter(t => t.status === "approved").length || 0,
+    rejected: testimonials.filter(t => t.status === "rejected").length || 0,
+  };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center p-8">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center text-red-500 p-4">
-        {error.message || "Error loading testimonials. Please try again later."}
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-          Testimonials Admin Dashboard
-        </h1>
-        <div className="flex gap-4">
-          <select
-            value={selectedStatus}
-            onChange={e => setSelectedStatus(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)]"
-          >
-            <option value="all">All Testimonials</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
+    <div className="bg-[var(--background-paper)] rounded-lg p-6 shadow-lg">
+      <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Admin Dashboard</h2>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <StatCard title="Total" value={stats.total} color="bg-blue-500" />
+        <StatCard title="Pending" value={stats.pending} color="bg-yellow-500" />
+        <StatCard title="Approved" value={stats.approved} color="bg-green-500" />
+        <StatCard title="Rejected" value={stats.rejected} color="bg-red-500" />
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex-1">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search testimonials..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--background-default)] text-[var(--text-primary)]"
+            />
+            <FaSearch className="absolute left-3 top-3 text-[var(--text-secondary)]" />
+          </div>
+        </div>
+        <div className="w-full md:w-48">
+          <div className="relative">
+            <select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--background-default)] text-[var(--text-primary)] appearance-none"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <FaFilter className="absolute left-3 top-3 text-[var(--text-secondary)]" />
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-6">
-        {filteredTestimonials?.map(testimonial => (
-          <motion.div
-            key={testimonial._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[var(--background-paper)] rounded-lg p-6 shadow-lg"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                  <img
-                    src={testimonial.clientImageURL || "/default-avatar.png"}
-                    alt={testimonial.clientName}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+      {/* Testimonials List */}
+      <div className="space-y-4">
+        {filteredTestimonials.length > 0 ? (
+          filteredTestimonials.map(testimonial => (
+            <motion.div
+              key={testimonial._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-[var(--background-default)] p-4 rounded-lg border border-[var(--border-main)]"
+            >
+              <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-semibold text-[var(--text-primary)]">
                     {testimonial.clientName}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)]">{testimonial.email}</p>
-                  {testimonial.position && (
-                    <p className="text-sm text-[var(--text-secondary)]">{testimonial.position}</p>
-                  )}
-                  {testimonial.companyName && (
-                    <p className="text-sm text-[var(--text-secondary)]">
-                      {testimonial.companyName}
-                    </p>
-                  )}
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    {testimonial.position} at {testimonial.companyName}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      testimonial.status === "approved"
+                        ? "bg-green-100 text-green-800"
+                        : testimonial.status === "rejected"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {testimonial.status}
+                  </span>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleDelete(testimonial._id)}
+                    disabled={deleteMutation.isLoading}
+                    className="flex items-center gap-2 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50"
+                  >
+                    <FaTrash className="text-xs" />
+                    {deleteMutation.isLoading ? "Deleting..." : "Delete"}
+                  </motion.button>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleStatusChange(testimonial._id, "approved")}
-                  disabled={testimonial.status === "approved"}
-                  className={`p-2 rounded-full transition-colors ${
-                    testimonial.status === "approved"
-                      ? "bg-green-100 text-green-500"
-                      : "text-green-500 hover:bg-green-100"
-                  }`}
-                >
-                  <FaCheck />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleStatusChange(testimonial._id, "rejected")}
-                  disabled={testimonial.status === "rejected"}
-                  className={`p-2 rounded-full transition-colors ${
-                    testimonial.status === "rejected"
-                      ? "bg-red-100 text-red-500"
-                      : "text-red-500 hover:bg-red-100"
-                  }`}
-                >
-                  <FaTimes />
-                </motion.button>
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <p className="text-[var(--text-primary)]">{testimonial.testimonialText}</p>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span
-                className={`text-sm px-3 py-1 rounded-full ${
-                  testimonial.status === "approved"
-                    ? "bg-green-100 text-green-700"
-                    : testimonial.status === "rejected"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {testimonial.status.charAt(0).toUpperCase() + testimonial.status.slice(1)}
-              </span>
-              {testimonial.projectLink && (
-                <a
-                  href={testimonial.projectLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--primary-main)] hover:underline text-sm"
-                >
-                  View Project
-                </a>
+              <p className="text-[var(--text-primary)] mb-4">{testimonial.testimonialText}</p>
+              {testimonial.status === "pending" && (
+                <div className="flex gap-2">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() =>
+                      updateStatusMutation.mutate({
+                        id: testimonial._id,
+                        status: "approved",
+                      })
+                    }
+                    className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                  >
+                    <FaCheck />
+                    Approve
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() =>
+                      updateStatusMutation.mutate({
+                        id: testimonial._id,
+                        status: "rejected",
+                      })
+                    }
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    <FaTimes />
+                    Reject
+                  </motion.button>
+                </div>
               )}
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))
+        ) : (
+          <div className="text-center text-[var(--text-secondary)] py-8">
+            No testimonials found matching your criteria.
+          </div>
+        )}
       </div>
-
-      {filteredTestimonials?.length === 0 && (
-        <div className="text-center text-[var(--text-secondary)] py-8">No testimonials found.</div>
-      )}
     </div>
   );
 };
+
+// Stat Card Component
+const StatCard = ({ title, value, color }) => (
+  <motion.div whileHover={{ scale: 1.05 }} className={`${color} rounded-lg p-4 text-white`}>
+    <h3 className="text-lg font-semibold">{title}</h3>
+    <p className="text-3xl font-bold">{value}</p>
+  </motion.div>
+);
 
 export default TestimonialAdminDashboard;

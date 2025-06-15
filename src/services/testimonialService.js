@@ -108,6 +108,23 @@ const testimonialService = {
     }
   },
 
+  // Delete testimonial as admin (admin only)
+  deleteTestimonialAdmin: async id => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+      const response = await axios.delete(`${API_URL}/testimonials/admin/${id}`, {
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
+  },
+
   // Update testimonial status (admin only)
   updateTestimonialStatus: async (id, status) => {
     try {
