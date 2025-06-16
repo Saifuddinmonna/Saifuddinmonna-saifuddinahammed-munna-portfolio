@@ -492,7 +492,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     </h4>
                     <ul className="space-y-2">
                       {users
-                        .filter(
+                        ?.filter(
                           u =>
                             u.uid !== (dbUser?.firebaseUid || firebaseUser?.uid) && // Filter out current user
                             u.id !== "guest_placeholder_id" // Filter out any placeholder guest IDs
@@ -723,7 +723,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     Active Users:
                   </h5>
                   <ul className="space-y-2">
-                    {users.map(user => (
+                    {users?.map(user => (
                       <li
                         key={user.uid || user.id}
                         className="flex items-center justify-between bg-[var(--background-default)] p-2 rounded-md border border-[var(--border-color)]"

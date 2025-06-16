@@ -10,7 +10,7 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
     y: window.innerHeight - 80, // Initial Y position (bottom side)
   });
   const bubbleRef = useRef(null);
-  const { user: firebaseUser } = useAuth(); // Get Firebase user
+  const { user: firebaseUser, dbUser } = useAuth(); // Get Firebase user
   const navigate = useNavigate(); // Initialize useNavigate
 
   // Handle window resize to keep bubble on screen
@@ -27,7 +27,7 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
   }, []);
 
   const handleBubbleClick = () => {
-    if (firebaseUser) {
+    if (firebaseUser && dbUser) {
       onToggleChat();
     } else {
       navigate("/signin"); // <<< --- CONFIRM THIS ROUTE

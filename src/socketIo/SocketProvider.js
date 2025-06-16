@@ -184,18 +184,6 @@ export const SocketProvider = ({ children }) => {
         });
         return newChats;
       });
-
-      // Update messages state
-      setMessages(prev => {
-        const newMessages = history.map(msg => ({
-          ...msg,
-          type: "private",
-          messageType: "private",
-        }));
-        const existingIds = new Set(prev.map(m => m._id || m.id));
-        const uniqueNewMessages = newMessages.filter(m => !existingIds.has(m._id || m.id));
-        return [...prev, ...uniqueNewMessages];
-      });
     };
 
     const onRoomMessageHistory = history => {
