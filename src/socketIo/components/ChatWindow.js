@@ -6,6 +6,7 @@ import { useAuth } from "../../auth/context/AuthContext";
 import EmojiPicker from "emoji-picker-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import PrivateChatHistory from "./PrivateChatHistory";
 
 const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const {
@@ -33,6 +34,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [activeChatTab, setActiveChatTab] = useState("public"); // 'public', 'private', 'admin_panel', 'group'
   const [selectedPrivateChatUser, setSelectedPrivateChatUser] = useState(null); // For private chat
+  const [privateMessages, setPrivateMessages] = useState({});
   const messagesEndRef = useRef(null);
 
   // Guest User States
@@ -75,19 +77,28 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Request message history when chat opens or socket connects (if user is logged in)
   useEffect(() => {
-    if (!socket || !isChatOpen || !isConnected || !firebaseUser) return; // Add firebaseUser check
+    if (!socket || !isChatOpen || !isConnected || !firebaseUser) return;
 
     console.log("Requesting message history for tab:", activeChatTab);
 
     if (activeChatTab === "public") {
       socket.emit("requestPublicHistory");
     } else if (activeChatTab === "private" && selectedPrivateChatUser?.id) {
-      console.log("Requesting private history for user:", selectedPrivateChatUser.id);
-      socket.emit("requestPrivateHistory", { targetId: selectedPrivateChatUser.id });
+      const userId = selectedPrivateChatUser.uid || selectedPrivateChatUser.id;
+      console.log("Requesting private history for user:", userId);
+      socket.emit("requestPrivateHistory", { targetId: userId });
     } else if (activeChatTab === "group" && selectedGroup?.id) {
       socket.emit("requestRoomHistory", { roomId: selectedGroup.id });
     }
-  }, [socket, isChatOpen, isConnected, activeChatTab, selectedPrivateChatUser, selectedGroup]);
+  }, [
+    socket,
+    isChatOpen,
+    isConnected,
+    activeChatTab,
+    selectedPrivateChatUser,
+    selectedGroup,
+    firebaseUser,
+  ]);
 
   // Handle tab changes
   const handleTabChange = tab => {
@@ -134,6 +145,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     if (guestPhone.trim()) localStorage.setItem("guestPhone", guestPhone.trim()); // Persist guest phone
   };
 
+  // Update the sendMessage function
   const sendMessage = e => {
     e.preventDefault();
     if (inputValue.trim() === "") return;
@@ -144,23 +156,20 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       socket.emit("privateMessage", {
         receiverId: selectedPrivateChatUser.id,
         text: messageText,
+        type: "text",
       });
       toast.success(`Private message sent to ${selectedPrivateChatUser.name}`);
     } else if (activeChatTab === "group" && selectedGroup) {
       socket.emit("roomMessage", {
-        // Changed to roomMessage to match server
         roomId: selectedGroup.id,
         text: messageText,
       });
       toast.success(`Message sent to group: ${selectedGroup.name}`);
     } else if (activeChatTab === "admin_panel" && isAdmin) {
-      // Admin panel actions
-      // This is for broadcast, not a regular sendMessage
       socket.emit("adminBroadcast", { text: messageText });
       toast.success("Broadcast message sent!");
     } else {
-      // Public chat
-      socket.emit("publicMessage", { text: messageText }); // Changed to publicMessage to match server
+      socket.emit("publicMessage", { text: messageText });
     }
 
     setInputValue("");
@@ -306,6 +315,54 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     },
     [socket, isTyping]
   );
+
+  // Add effect to handle private messages
+  useEffect(() => {
+    if (!socket) return;
+
+    const handlePrivateMessage = message => {
+      setPrivateMessages(prev => {
+        const chatId =
+          message.senderId === (dbUser?.firebaseUid || socket.id)
+            ? message.receiverId
+            : message.senderId;
+
+        return {
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), message],
+        };
+      });
+
+      // If message is from current chat, scroll to bottom
+      if (selectedPrivateChatUser?.id === message.senderId) {
+        scrollToBottom();
+      }
+    };
+
+    socket.on("privateMessage", handlePrivateMessage);
+
+    return () => {
+      socket.off("privateMessage", handlePrivateMessage);
+    };
+  }, [socket, selectedPrivateChatUser, dbUser]);
+
+  // Update the user selection handler
+  const handleUserSelect = user => {
+    const userIdentifier = user.uid || user.id;
+    setSelectedPrivateChatUser({ ...user, id: userIdentifier });
+    console.log("Selected private chat user:", {
+      ...user,
+      id: userIdentifier,
+    });
+
+    // Request message history for the selected user
+    if (socket && isConnected) {
+      socket.emit("requestPrivateHistory", {
+        targetId: userIdentifier,
+      });
+    }
+    toast.success(`Started private chat with ${user.name || user.displayName}`);
+  };
 
   if (!isChatOpen) return null;
 
@@ -457,7 +514,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
           // Main Chat Area or Admin Panel
           <>
             {activeChatTab === "public" && (
-              <div>
+              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                 {currentMessages.map((msg, index) => (
                   <div
                     key={index}
@@ -476,6 +533,9 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     >
                       <div className="font-semibold text-sm mb-1">{getSenderDisplay(msg)}</div>
                       <p className="text-sm whitespace-pre-wrap">{renderMessageContent(msg)}</p>
+                      <div className="text-xs mt-1 opacity-70">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -483,233 +543,63 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
               </div>
             )}
 
-            {activeChatTab === "private" && (
-              <div className="flex-1 flex flex-col">
-                {!selectedPrivateChatUser ? (
-                  <div className="p-4">
-                    <h4 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
-                      Select a user to start private chat:
-                    </h4>
-                    <ul className="space-y-2">
-                      {users
-                        ?.filter(
-                          u =>
-                            u.uid !== (dbUser?.firebaseUid || firebaseUser?.uid) && // Filter out current user
-                            u.id !== "guest_placeholder_id" // Filter out any placeholder guest IDs
-                        )
-                        .map(user => (
-                          <li key={user.uid || user.id}>
-                            <button
-                              onClick={() => {
-                                const userIdentifier = user.uid || user.id;
-                                setSelectedPrivateChatUser({ ...user, id: userIdentifier });
-                                console.log("Selected private chat user:", {
-                                  ...user,
-                                  id: userIdentifier,
-                                });
-                                // Request message history for the selected user
-                                if (socket && isConnected) {
-                                  socket.emit("requestPrivateHistory", {
-                                    targetId: userIdentifier,
-                                  });
-                                }
-                                toast.success(
-                                  `Started private chat with ${user.name || user.displayName}`
-                                );
-                              }}
-                              className="w-full text-left px-4 py-2 rounded-md bg-[var(--background-default)] hover:bg-[var(--background-hover)] text-[var(--text-primary)] transition-colors duration-200 flex items-center"
-                            >
-                              <FaUser className="mr-2" />
-                              {user.name || user.displayName || user.id}{" "}
-                              {user.role ? `(${user.role})` : ""}
-                            </button>
-                          </li>
-                        ))}
-                    </ul>
+            {activeChatTab === "private" && selectedPrivateChatUser && (
+              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                {currentMessages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-start mb-4 ${
+                      msg.senderId === (dbUser?.firebaseUid || socket.id)
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`rounded-lg p-3 max-w-[70%] ${
+                        msg.senderId === (dbUser?.firebaseUid || socket.id)
+                          ? "bg-[var(--primary-main)] text-white"
+                          : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
+                      }`}
+                    >
+                      <div className="font-semibold text-sm mb-1">{getSenderDisplay(msg)}</div>
+                      <p className="text-sm whitespace-pre-wrap">{renderMessageContent(msg)}</p>
+                      <div className="text-xs mt-1 opacity-70">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-between p-3 bg-[var(--background-default)] border-b border-[var(--border-color)] rounded-t-lg">
-                      <button
-                        onClick={() => setSelectedPrivateChatUser(null)}
-                        className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
-                      >
-                        <FaBars className="w-5 h-5" />
-                      </button>
-                      <h4 className="font-semibold text-[var(--text-primary)]">
-                        Private Chat with{" "}
-                        {selectedPrivateChatUser.name || selectedPrivateChatUser.displayName}
-                      </h4>
-                      <div></div>
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                      {currentMessages.map((msg, index) => (
-                        <div
-                          key={index}
-                          className={`flex items-start mb-4 ${
-                            msg.senderId === (dbUser?.firebaseUid || socket.id)
-                              ? "justify-end"
-                              : "justify-start"
-                          }`}
-                        >
-                          <div
-                            className={`rounded-lg p-3 max-w-[70%] ${
-                              msg.senderId === (dbUser?.firebaseUid || socket.id)
-                                ? "bg-[var(--primary-main)] text-white"
-                                : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
-                            }`}
-                          >
-                            <div className="font-semibold text-sm mb-1">
-                              {getSenderDisplay(msg)}
-                            </div>
-                            <p className="text-sm whitespace-pre-wrap">
-                              {renderMessageContent(msg)}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                      <div ref={messagesEndRef} />
-                    </div>
-                  </>
-                )}
+                ))}
+                <div ref={messagesEndRef} />
               </div>
             )}
 
-            {activeChatTab === "group" && (
-              <div className="h-full flex flex-col">
-                {!selectedGroup ? (
-                  <div className="p-4 text-center text-[var(--text-secondary)]">
-                    <h4 className="text-lg font-semibold mb-4">Select or Create a Group:</h4>
-                    <div className="space-y-4 mb-6">
-                      <h5 className="font-semibold">Your Groups:</h5>
-                      {groups.length === 0 ? (
-                        <p className="text-sm">No groups available. Create one!</p>
-                      ) : (
-                        <ul className="space-y-2">
-                          {groups.map(group => (
-                            <li
-                              key={group.id}
-                              className="flex items-center justify-between bg-[var(--background-default)] p-2 rounded-md border border-[var(--border-color)]"
-                            >
-                              <span className="text-[var(--text-primary)]">{group.name}</span>
-                              <div className="space-x-2">
-                                {group.members.some(
-                                  m => m.id === (dbUser?.firebaseUid || firebaseUser?.uid)
-                                ) ? ( // Compare with user's UID
-                                  <button
-                                    onClick={() => {
-                                      setSelectedGroup(group);
-                                      console.log("Selected group:", group);
-                                      toast.success(`Joined group: ${group.name}`);
-                                    }}
-                                    className="px-3 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                                  >
-                                    Open Chat
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => joinGroup(group.id)}
-                                    className="px-3 py-1 text-xs bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
-                                  >
-                                    Join
-                                  </button>
-                                )}
-                                {group.members.some(
-                                  m => m.id === (dbUser?.firebaseUid || firebaseUser?.uid)
-                                ) && (
-                                  <button
-                                    onClick={() => {
-                                      leaveGroup(group.id);
-                                      setSelectedGroup(null);
-                                      toast.info(`Left group: ${group.name}`);
-                                    }}
-                                    className="px-3 py-1 text-xs bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                                  >
-                                    Leave
-                                  </button>
-                                )}
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                    <div className="space-y-4">
-                      <h5 className="font-semibold">Create New Group:</h5>
-                      <form
-                        onSubmit={e => {
-                          e.preventDefault();
-                          const groupName = e.target.newGroupName.value.trim();
-                          if (groupName) {
-                            createGroup(groupName);
-                            e.target.newGroupName.value = "";
-                          } else {
-                            toast.error("Group name cannot be empty.");
-                          }
-                        }}
-                        className="flex space-x-2"
-                      >
-                        <input
-                          type="text"
-                          name="newGroupName"
-                          placeholder="New Group Name"
-                          className="flex-1 px-3 py-2 border rounded-md bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                          required
-                        />
-                        <button
-                          type="submit"
-                          className="p-2 bg-[var(--primary-main)] text-white rounded-md hover:bg-[var(--primary-dark)] transition-colors"
-                        >
-                          Create
-                        </button>
-                      </form>
+            {activeChatTab === "group" && selectedGroup && (
+              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                {currentMessages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-start mb-4 ${
+                      msg.senderId === (dbUser?.firebaseUid || socket.id)
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`rounded-lg p-3 max-w-[70%] ${
+                        msg.senderId === (dbUser?.firebaseUid || socket.id)
+                          ? "bg-[var(--primary-main)] text-white"
+                          : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
+                      }`}
+                    >
+                      <div className="font-semibold text-sm mb-1">{getSenderDisplay(msg)}</div>
+                      <p className="text-sm whitespace-pre-wrap">{renderMessageContent(msg)}</p>
+                      <div className="text-xs mt-1 opacity-70">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </div>
                     </div>
                   </div>
-                ) : (
-                  // Group Chat Window with selected group
-                  <>
-                    <div className="flex items-center justify-between p-3 bg-[var(--background-default)] border-b border-[var(--border-color)] rounded-t-lg">
-                      <button
-                        onClick={() => setSelectedGroup(null)}
-                        className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
-                      >
-                        <FaBars className="w-5 h-5" />
-                      </button>
-                      <h4 className="font-semibold text-[var(--text-primary)]">
-                        Group Chat: {selectedGroup.name}
-                      </h4>
-                      <div></div> {/* Placeholder for alignment */}
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                      {currentMessages.map((msg, index) => (
-                        <div
-                          key={index}
-                          className={`flex items-start mb-4 ${
-                            msg.senderId === (dbUser?.firebaseUid || socket.id)
-                              ? "justify-end"
-                              : "justify-start"
-                          }`}
-                        >
-                          <div
-                            className={`rounded-lg p-3 max-w-[70%] ${
-                              msg.senderId === (dbUser?.firebaseUid || socket.id)
-                                ? "bg-[var(--primary-main)] text-white"
-                                : "bg-[var(--background-default)] text-[var(--text-primary)] border border-[var(--border-color)]"
-                            }`}
-                          >
-                            <div className="font-semibold text-sm mb-1">
-                              {getSenderDisplay(msg)}
-                            </div>
-                            <p className="text-sm whitespace-pre-wrap">
-                              {renderMessageContent(msg)}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                      <div ref={messagesEndRef} />
-                    </div>
-                  </>
-                )}
+                ))}
+                <div ref={messagesEndRef} />
               </div>
             )}
 
@@ -725,12 +615,12 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                   <ul className="space-y-2">
                     {users?.map(user => (
                       <li
-                        key={user.uid || user.id}
+                        key={dbUser._id || user.id}
                         className="flex items-center justify-between bg-[var(--background-default)] p-2 rounded-md border border-[var(--border-color)]"
                       >
                         <span className="text-[var(--text-primary)]">
-                          {user.name || user.displayName || "Guest"}{" "}
-                          {user.role ? `(${user.role})` : ""}
+                          {dbUser.name || user.displayName || "Guest"}{" "}
+                          {dbUser.role ? `(${user.role})` : ""}
                         </span>
                         <button
                           onClick={() => {

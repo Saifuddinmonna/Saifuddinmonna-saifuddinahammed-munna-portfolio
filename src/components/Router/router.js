@@ -24,7 +24,7 @@ const ProjectPage = lazy(() => import("../../pages/ProjectPage"));
 const PortfolioLayout = lazy(() => import("../MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
 const MyportfolioImage = lazy(() => import("../MyPortfolios/MyportfolioImage"));
 const GalleryPage = lazy(() => import("../../pages/GalleryPage"));
-const ResumeViewer = lazy(() => import("../ResumeViewer/ResumeViewer"));
+const ResumeViewer = lazy(() => import("../resumes/ResumeViewer/ResumeViewer"));
 const TestimonialsPage = lazy(() => import("../../components/Testimonials/TestimonialsPage.js"));
 const SignIn = lazy(() => import("../../auth/components/SignIn"));
 const SignUp = lazy(() => import("../../auth/components/SignUp"));

@@ -1,0 +1,120 @@
+.resumeViewerContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.resumeViewerContent {
+  flex: 1 1 45%;
+  min-width: 200px;
+  background: var(--background-paper);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resumeViewerHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.resumeViewerHeader h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resumeViewerHeader p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+/* Portrait Mode (412px) */
+@media screen and (max-width: 412px) {
+  .resumeViewerContainer {
+    padding: 8px;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .resumeViewerContainer > div {
+    width: 100%;
+  }
+
+  .resumeViewerContainer .flex-1 {
+    flex: 1 1 100%;
+  }
+
+  .resumeViewerContent {
+    padding: 0.8rem;
+    min-width: 150px;
+  }
+
+  .resumeViewerHeader h1 {
+    font-size: 1.6rem;
+  }
+
+  .resumeViewerHeader p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Landscape Mode (915px) */
+@media screen and (max-width: 776px) {
+  .resumeViewerContainer {
+    padding: 15px;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .resumeViewerContainer > div {
+    width: 100%;
+  }
+
+  .resumeViewerContainer .flex-1 {
+    flex: 1 1 100%;
+  }
+
+  /* Make buttons stack vertically on mobile */
+  .resumeViewerContainer .flex-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resumeViewerContainer .flex-wrap button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Adjust sidebar layout */
+  .resumeViewerContainer .bg-background-default {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .resumeViewerHeader h1 {
+    font-size: 2rem;
+  }
+
+  .resumeViewerHeader p {
+    font-size: 1.1rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .resumeViewerContainer {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .resumeViewerContent {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}

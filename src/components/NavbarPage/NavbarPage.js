@@ -275,17 +275,19 @@ const NavbarPage = () => {
             >
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 {navItems.map(item => (
-                  <button
-                    key={item.label}
-                    onClick={() => handleNavigation(item.path)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-base font-medium ${
-                      isActive(item.path)
-                        ? "bg-[var(--primary-main)] text-white"
-                        : "text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
+                  <>
+                    <button
+                      key={item.label}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-base font-medium ${
+                        isActive(item.path)
+                          ? "bg-[var(--primary-main)] text-white"
+                          : "text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  </>
                 ))}
                 <button
                   onClick={() => handleNavigation("/contact")}
@@ -297,6 +299,12 @@ const NavbarPage = () => {
                   <AuthNav />
                 </div>
               </div>
+              <button
+                onClick={toggleTheme}
+                className="ml-2 p-2 rounded-md text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white transition-colors duration-200"
+              >
+                {isDarkMode ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import { API_URL } from "../ApiForChangingTesting";
 
 // Create axios instance with default config
 const api = axios.create({
@@ -48,7 +47,7 @@ export const blogService = {
       if (search) params.append("search", search);
       if (category) params.append("category", category);
 
-      const response = await api.get(`/blogs?${params.toString()}`);
+      const response = await api.get(`/api/blogs?${params.toString()}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -59,7 +58,7 @@ export const blogService = {
   // Get single blog post by ID
   getBlog: async id => {
     try {
-      const response = await api.get(`/blogs/${id}`);
+      const response = await api.get(`/api/blogs/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -70,7 +69,7 @@ export const blogService = {
   // Create new blog
   createBlog: async blogData => {
     try {
-      const response = await api.post("/blogs", blogData);
+      const response = await api.post("/api/blogs", blogData);
       return response.data;
     } catch (error) {
       console.error("Error creating blog:", error);
@@ -81,7 +80,7 @@ export const blogService = {
   // Update blog
   updateBlog: async (id, blogData) => {
     try {
-      const response = await api.put(`/blogs/${id}`, blogData);
+      const response = await api.put(`/api/blogs/${id}`, blogData);
       return response.data;
     } catch (error) {
       console.error("Error updating blog:", error);
@@ -92,7 +91,7 @@ export const blogService = {
   // Delete blog
   deleteBlog: async id => {
     try {
-      const response = await api.delete(`/blogs/${id}`);
+      const response = await api.delete(`/api/blogs/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting blog:", error);

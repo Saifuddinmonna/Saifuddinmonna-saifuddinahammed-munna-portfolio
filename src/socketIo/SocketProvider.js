@@ -19,6 +19,7 @@ export const SocketProvider = ({ children }) => {
   const [groups, setGroups] = useState([]); // State to store chat groups
   const [selectedGroup, setSelectedGroup] = useState(null); // State to store the currently selected group
   const [privateChats, setPrivateChats] = useState({}); // New state for private chat history
+  const [privateMessages, setPrivateMessages] = useState({});
 
   useEffect(() => {
     if (loading) return; // Wait for auth loading to complete
@@ -99,13 +100,10 @@ export const SocketProvider = ({ children }) => {
 
     const onPrivateMessage = msg => {
       console.log("Received private message:", msg);
-      const messageWithType = { ...msg, type: "private", messageType: "private" };
+      const messageWithType = { ...msg, type: "private" };
 
-      // Update messages state
-      setMessages(prev => [...prev, messageWithType]);
-
-      // Update private chats state
-      setPrivateChats(prev => {
+      // Update private messages state
+      setPrivateMessages(prev => {
         const chatId =
           msg.senderId === (dbUser?.firebaseUid || socket.id) ? msg.receiverId : msg.senderId;
 
@@ -172,18 +170,14 @@ export const SocketProvider = ({ children }) => {
         if (!acc[chatId]) {
           acc[chatId] = [];
         }
-        acc[chatId].push({ ...msg, type: "private", messageType: "private" });
+        acc[chatId].push({ ...msg, type: "private" });
         return acc;
       }, {});
 
-      // Update private chats state
-      setPrivateChats(prev => {
-        const newChats = { ...prev };
-        Object.entries(groupedMessages).forEach(([chatId, messages]) => {
-          newChats[chatId] = [...(prev[chatId] || []), ...messages];
-        });
-        return newChats;
-      });
+      setPrivateMessages(prev => ({
+        ...prev,
+        ...groupedMessages,
+      }));
     };
 
     const onRoomMessageHistory = history => {
@@ -277,6 +271,7 @@ export const SocketProvider = ({ children }) => {
     joinGroup, // Expose joinGroup function
     leaveGroup, // Expose leaveGroup function
     privateChats, // Expose private chats state
+    privateMessages,
   };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;

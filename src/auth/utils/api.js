@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
 import axios from "axios";
-import { API_URL } from "../../config";
+import { API_URL } from "../../ApiForChangingTesting";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = API_URL;
 
 export const apiRequest = async (endpoint, options = {}) => {
   try {
@@ -45,7 +45,7 @@ export const verifyToken = async () => {
 // New function to get the current logged-in user's profile from /api/auth/me
 export const getCurrentUserProfile = async () => {
   try {
-    const profile = await apiRequest("/auth/me");
+    const profile = await apiRequest("/api/auth/me");
     console.log("getCurrentUserProfile response:", profile);
     return profile;
   } catch (error) {

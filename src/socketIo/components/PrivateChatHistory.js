@@ -15,17 +15,32 @@ const PrivateChatHistory = ({ selectedUser, onSelectUser }) => {
     queryKey: ["privateMessages", selectedUser?.id],
     queryFn: async () => {
       if (!selectedUser?.id) return [];
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/private-messages/history/${selectedUser.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      try {
+        console.log("Fetching private messages for user:", selectedUser.id);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/private-messages/history/${selectedUser.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Private message history response:", response.data);
+        return response.data.data.messages || [];
+      } catch (error) {
+        console.error("Error fetching private messages:", error.response?.data || error.message);
+        if (error.response?.status === 401) {
+          // Handle unauthorized access
+          localStorage.removeItem("authToken");
+          window.location.href = "/login";
         }
-      );
-      return response.data.data.messages;
+        throw new Error(error.response?.data?.message || "Failed to fetch private messages");
+      }
     },
-    enabled: !!selectedUser?.id && !!token,
+    enabled: !!selectedUser?.id,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) {
@@ -33,14 +48,20 @@ const PrivateChatHistory = ({ selectedUser, onSelectUser }) => {
   }
 
   if (error) {
-    return <div className="p-4 text-center text-red-500">Error loading messages</div>;
+    return (
+      <div className="p-4 text-center text-red-500">Error loading messages: {error.message}</div>
+    );
+  }
+
+  if (!privateMessages || privateMessages.length === 0) {
+    return <div className="p-4 text-center">No messages yet</div>;
   }
 
   return (
     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-      {privateMessages?.map((msg, index) => (
+      {privateMessages.map((msg, index) => (
         <div
-          key={index}
+          key={msg._id || index}
           className={`flex items-start mb-4 ${
             msg.senderId === selectedUser.id ? "justify-start" : "justify-end"
           }`}
