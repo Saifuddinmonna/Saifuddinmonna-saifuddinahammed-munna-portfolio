@@ -27,6 +27,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     privateChats,
   } = useSocket();
   const { user: firebaseUser } = useAuth(); // Firebase user for auth status
+  console.log("console log for firebase user", firebaseUser, dbUser?.data?.role);
   const navigate = useNavigate(); // Initialize useNavigate
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);

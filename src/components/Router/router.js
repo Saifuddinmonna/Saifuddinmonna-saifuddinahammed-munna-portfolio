@@ -39,9 +39,7 @@ const router = createBrowserRouter([
     path: "/*",
     element: (
       <Suspense fallback={<LoadingSpinner />}>
-        <PrivateRoute>
-          <ChatWindow />
-        </PrivateRoute>
+        <ChatWindow />
       </Suspense>
     ),
   },
@@ -158,26 +156,26 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-    ],
-  },
-  {
-    path: "/portfoliolayout",
-    element: (
-      <Suspense fallback={<LoadingSpinner />}>
-        <PortfolioLayout />
-      </Suspense>
-    ),
-    children: [
       {
-        path: "/portfoliolayout/:UsedPhone",
+        path: "/portfoliolayout",
         element: (
           <Suspense fallback={<LoadingSpinner />}>
-            <MyportfolioImage />
+            <PortfolioLayout />
           </Suspense>
         ),
-        loader: () => {
-          return fetch("portfolios.json");
-        },
+        children: [
+          {
+            path: "/portfoliolayout/:UsedPhone",
+            element: (
+              <Suspense fallback={<LoadingSpinner />}>
+                <MyportfolioImage />
+              </Suspense>
+            ),
+            loader: () => {
+              return fetch("portfolios.json");
+            },
+          },
+        ],
       },
     ],
   },

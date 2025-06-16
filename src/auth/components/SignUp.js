@@ -81,6 +81,7 @@ const SignUp = () => {
       setDbUser(profile);
 
       toast.success("Account created successfully!");
+
       // Reset form fields after successful registration
       setFormData({
         name: "",
@@ -91,7 +92,11 @@ const SignUp = () => {
         bio: "",
         photoURL: "",
       });
-      navigate("/");
+
+      // Navigate to home page after successful registration
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (error) {
       console.error("Registration error:", error);
       toast.error(error.message);
@@ -131,6 +136,7 @@ const SignUp = () => {
 
       console.log("Sending registration data to server:", userData);
       toast.success("Signed in with Google successfully!");
+
       // Reset form fields after successful Google sign-in
       setFormData({
         name: "",
@@ -141,7 +147,11 @@ const SignUp = () => {
         bio: "",
         photoURL: "",
       });
-      navigate("/");
+
+      // Navigate to home page after successful Google sign-in
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (error) {
       toast.error(error.message);
     } finally {

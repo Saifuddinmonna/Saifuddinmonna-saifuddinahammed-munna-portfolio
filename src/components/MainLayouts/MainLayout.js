@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // ... other imports
 import NavbarPage2 from "../NavbarPage/NavbarPage";
 import Footer from "../CommonComponents/Footer";
@@ -6,10 +6,16 @@ import { Outlet } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
 import ContactPage from "../../pages/ContactPage";
 import aboutPageForHome from "../About/aboutPageForHome"; // Assuming this is a component you want to include
+import ChatBubble from "../../socketIo/components/ChatBubble.js";
+import ChatWindow from "../../socketIo/components/ChatWindow.js";
 
 const MainLayout = () => {
   const { scrollYProgress } = useScroll();
-  // ... other states and effects ...
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const toggleChat = () => {
+    setIsChatOpen(prev => !prev);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background-default)]">
@@ -31,7 +37,8 @@ const MainLayout = () => {
       <main className="flex-grow pt-16">
         <Outlet />
       </main>
-
+      <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} />
+      <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} />
       <Footer />
     </div>
   );

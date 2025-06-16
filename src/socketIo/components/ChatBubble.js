@@ -30,7 +30,7 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
     if (firebaseUser) {
       onToggleChat();
     } else {
-      navigate('/login'); // <<< --- CONFIRM THIS ROUTE
+      navigate("/signin"); // <<< --- CONFIRM THIS ROUTE
     }
   };
 

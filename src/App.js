@@ -12,8 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "react-hot-toast";
 
 import { SocketProvider } from "./socketIo/SocketProvider";
-import ChatBubble from "./socketIo/components/ChatBubble";
-import ChatWindow from "./socketIo/components/ChatWindow";
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -77,7 +75,6 @@ const queryClient = new QueryClient({
 
 function App() {
   const [confettiStart, setConfettiStart] = useState(true);
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -85,10 +82,6 @@ function App() {
     }, 8000);
     return () => clearTimeout(timer);
   }, []);
-
-  const toggleChat = () => {
-    setIsChatOpen(prev => !prev);
-  };
 
   return (
     <AuthProvider>
@@ -111,8 +104,6 @@ function App() {
                 pauseOnHover
                 theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
               />
-              {/* <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} />
-              <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} /> */}
             </div>
           </SocketProvider>
         </QueryClientProvider>
