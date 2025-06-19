@@ -204,13 +204,13 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
     return messagesToRender.map((message, index) => (
       <div
-        key={message.id || index}
+        key={message._id || message.id || index}
         className={`flex ${
           message.senderId === firebaseUser?.uid ? "justify-end" : "justify-start"
         }`}
       >
         <div
-          className={`max-w-[75%] rounded-lg p-3 ${
+          className={`max-w-[70%] rounded-lg p-3 ${
             message.senderId === firebaseUser?.uid
               ? "bg-[var(--primary-main)] text-white"
               : "bg-[var(--background-default)] text-[var(--text-primary)]"
@@ -219,7 +219,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
           {message.senderId !== firebaseUser?.uid && (
             <div className="text-xs font-medium mb-1">{message.senderName || "Anonymous"}</div>
           )}
-          <div className="break-words">{message.text}</div>
+          <div className="break-words">{message.message || message.text}</div>
           <div className="text-xs mt-1 opacity-75">
             {new Date(message.timestamp).toLocaleTimeString()}
           </div>
@@ -258,17 +258,20 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
           text: inputValue.trim(),
           type: "text",
         });
+        toast.success(`Message sent to ${selectedPrivateChatUser.name}`);
       } else if (activeChatTab === "group" && selectedGroup) {
         await sendRoomMessage({
           roomId: selectedGroup.id,
           text: inputValue.trim(),
           type: "text",
         });
+        toast.success(`Message sent to group: ${selectedGroup.name}`);
       } else {
         await sendPublicMessage({
           text: inputValue.trim(),
           type: "text",
         });
+        toast.success("Message sent to public chat");
       }
       setInputValue("");
       scrollToBottom();
@@ -372,8 +375,11 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       return (
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
-            <FaExclamationCircle className="text-4xl text-yellow-500 mx-auto mb-2" />
-            <p className="text-[var(--text-secondary)]">Connecting to chat server...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-main)] mx-auto mb-4"></div>
+            <p className="text-[var(--text-secondary)] font-medium">Connecting to chat server...</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">
+              Please wait while we establish connection
+            </p>
           </div>
         </div>
       );
@@ -383,8 +389,11 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       return (
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
-            <FaSpinner className="text-4xl text-[var(--primary-main)] mx-auto mb-2 animate-spin" />
-            <p className="text-[var(--text-secondary)]">Loading messages...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-main)] mx-auto mb-4"></div>
+            <p className="text-[var(--text-secondary)] font-medium">Loading messages...</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">
+              Fetching your conversation history
+            </p>
           </div>
         </div>
       );
@@ -395,10 +404,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
         {/* Messages Container */}
         <div className="chat-messages-container p-4">
           {activeChatTab === "public" ? (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">{renderMessages("left")}</div>
-              <div className="space-y-4">{renderMessages("right")}</div>
-            </div>
+            <div className="flex flex-col space-y-4">{renderMessages()}</div>
           ) : (
             <div className="space-y-4">{renderMessages()}</div>
           )}
@@ -421,14 +427,14 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
               <div className="flex gap-2">
                 <button
                   type="submit"
-                  className="p-2 bg-[var(--primary-main)] text-white rounded hover:bg-[var(--primary-dark)]"
+                  className="p-2 bg-[var(--primary-main)] text-white rounded hover:bg-[var(--primary-dark)] transition-colors"
                 >
                   <FaCheck />
                 </button>
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  className="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                 >
                   <FaTimes />
                 </button>
@@ -442,34 +448,58 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   placeholder="Type a message..."
-                  className="w-full p-2 pr-10 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                  className="w-full p-2 pr-12 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
                   rows="2"
+                  disabled={isSending}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className="absolute right-2 bottom-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
-                >
-                  <FaSmile />
-                </button>
+                <div className="absolute right-2 bottom-2 flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors p-1"
+                  >
+                    <FaSmile />
+                  </button>
+                  <button
+                    type="submit"
+                    className={`p-1 rounded transition-colors ${
+                      isSending || !inputValue.trim()
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white"
+                    }`}
+                    disabled={isSending || !inputValue.trim()}
+                  >
+                    {isSending ? (
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                    ) : (
+                      <FaPaperPlane size={12} />
+                    )}
+                  </button>
+                </div>
                 {showEmojiPicker && (
-                  <div className="absolute bottom-full right-0 mb-2">
+                  <div className="absolute bottom-full right-0 mb-2 z-10">
                     <EmojiPicker onEmojiClick={handleEmojiSelect} />
                   </div>
                 )}
               </div>
-              <button
-                type="submit"
-                className="p-2 bg-[var(--primary-main)] text-white rounded hover:bg-[var(--primary-dark)]"
-                disabled={!inputValue.trim()}
-              >
-                <FaPaperPlane />
-              </button>
             </form>
           )}
           {typingUsers.length > 0 && (
-            <div className="mt-2 text-xs text-[var(--text-secondary)]">
-              {typingUsers.join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing...
+            <div className="mt-2 text-xs text-[var(--text-secondary)] flex items-center gap-1">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"></div>
+                <div
+                  className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
+                  style={{ animationDelay: "0.1s" }}
+                ></div>
+                <div
+                  className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
+              </div>
+              <span>
+                {typingUsers.join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing...
+              </span>
             </div>
           )}
         </div>
@@ -606,16 +636,28 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
         <div className="flex items-center gap-2">
           <h2 className="text-base sm:text-lg font-semibold">Chat</h2>
           {connected ? (
-            <span className="text-xs bg-green-500 px-2 py-1 rounded-full">Online</span>
+            <span className="text-xs bg-green-500 px-2 py-1 rounded-full flex items-center gap-1">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              Online
+            </span>
           ) : (
-            <span className="text-xs bg-red-500 px-2 py-1 rounded-full">Offline</span>
+            <span className="text-xs bg-red-500 px-2 py-1 rounded-full flex items-center gap-1">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              Offline
+            </span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={toggleMinimize} className="p-1 hover:bg-[var(--primary-dark)] rounded">
+          <button
+            onClick={toggleMinimize}
+            className="p-1 hover:bg-[var(--primary-dark)] rounded transition-colors"
+          >
             {isMinimized ? <FaChevronUp /> : <FaChevronDown />}
           </button>
-          <button onClick={onCloseChat} className="p-1 hover:bg-[var(--primary-dark)] rounded">
+          <button
+            onClick={onCloseChat}
+            className="p-1 hover:bg-[var(--primary-dark)] rounded transition-colors"
+          >
             <FaTimes />
           </button>
         </div>
@@ -627,7 +669,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
           <div className="flex border-b">
             <button
               onClick={() => setActiveChatTab("public")}
-              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium ${
+              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium transition-colors ${
                 activeChatTab === "public"
                   ? "border-b-2 border-[var(--primary-main)] text-[var(--primary-main)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -637,7 +679,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
             </button>
             <button
               onClick={() => setActiveChatTab("private")}
-              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium ${
+              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium transition-colors ${
                 activeChatTab === "private"
                   ? "border-b-2 border-[var(--primary-main)] text-[var(--primary-main)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -647,7 +689,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
             </button>
             <button
               onClick={() => setActiveChatTab("group")}
-              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium ${
+              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium transition-colors ${
                 activeChatTab === "group"
                   ? "border-b-2 border-[var(--primary-main)] text-[var(--primary-main)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -668,7 +710,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder="Search users..."
-                    className="w-full p-2 text-sm border rounded"
+                    className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
                   />
                 </div>
               )}
@@ -679,7 +721,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder="Search groups..."
-                    className="w-full p-2 text-sm border rounded"
+                    className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
                   />
                 </div>
               )}
@@ -689,24 +731,48 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     <button
                       key={user.uid}
                       onClick={() => handleSelectPrivateChat(user)}
-                      className={`w-full p-2 sm:p-3 text-left hover:bg-[var(--background-hover)] ${
+                      className={`w-full p-2 sm:p-3 text-left hover:bg-[var(--background-hover)] transition-colors ${
                         selectedPrivateChatUser?.uid === user.uid
-                          ? "bg-[var(--background-hover)]"
+                          ? "bg-[var(--primary-main)] text-white"
                           : ""
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[var(--primary-main)] flex items-center justify-center text-white text-xs sm:text-base">
+                        <div
+                          className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white text-xs sm:text-base ${
+                            selectedPrivateChatUser?.uid === user.uid
+                              ? "bg-white text-[var(--primary-main)]"
+                              : "bg-[var(--primary-main)]"
+                          }`}
+                        >
                           {user.name?.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm sm:text-base truncate">{user.name}</p>
-                          <p className="text-xs text-[var(--text-secondary)] truncate">
+                          <p
+                            className={`font-medium text-sm sm:text-base truncate ${
+                              selectedPrivateChatUser?.uid === user.uid ? "text-white" : ""
+                            }`}
+                          >
+                            {user.name}
+                          </p>
+                          <p
+                            className={`text-xs truncate ${
+                              selectedPrivateChatUser?.uid === user.uid
+                                ? "text-white opacity-75"
+                                : "text-[var(--text-secondary)]"
+                            }`}
+                          >
                             {user.email}
                           </p>
                         </div>
                         {unreadCounts[user.uid] > 0 && (
-                          <span className="bg-[var(--primary-main)] text-white text-xs px-2 py-1 rounded-full">
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full ${
+                              selectedPrivateChatUser?.uid === user.uid
+                                ? "bg-white text-[var(--primary-main)]"
+                                : "bg-[var(--primary-main)] text-white"
+                            }`}
+                          >
                             {unreadCounts[user.uid]}
                           </span>
                         )}
@@ -718,22 +784,46 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                     <button
                       key={group.id}
                       onClick={() => handleSelectGroup(group)}
-                      className={`w-full p-2 sm:p-3 text-left hover:bg-[var(--background-hover)] ${
-                        selectedGroup?.id === group.id ? "bg-[var(--background-hover)]" : ""
+                      className={`w-full p-2 sm:p-3 text-left hover:bg-[var(--background-hover)] transition-colors ${
+                        selectedGroup?.id === group.id ? "bg-[var(--primary-main)] text-white" : ""
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[var(--primary-main)] flex items-center justify-center text-white text-xs sm:text-base">
+                        <div
+                          className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white text-xs sm:text-base ${
+                            selectedGroup?.id === group.id
+                              ? "bg-white text-[var(--primary-main)]"
+                              : "bg-[var(--primary-main)]"
+                          }`}
+                        >
                           {group.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm sm:text-base truncate">{group.name}</p>
-                          <p className="text-xs text-[var(--text-secondary)] truncate">
+                          <p
+                            className={`font-medium text-sm sm:text-base truncate ${
+                              selectedGroup?.id === group.id ? "text-white" : ""
+                            }`}
+                          >
+                            {group.name}
+                          </p>
+                          <p
+                            className={`text-xs truncate ${
+                              selectedGroup?.id === group.id
+                                ? "text-white opacity-75"
+                                : "text-[var(--text-secondary)]"
+                            }`}
+                          >
                             {group.members.length} members
                           </p>
                         </div>
                         {unreadCounts[group.id] > 0 && (
-                          <span className="bg-[var(--primary-main)] text-white text-xs px-2 py-1 rounded-full">
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full ${
+                              selectedGroup?.id === group.id
+                                ? "bg-white text-[var(--primary-main)]"
+                                : "bg-[var(--primary-main)] text-white"
+                            }`}
+                          >
                             {unreadCounts[group.id]}
                           </span>
                         )}

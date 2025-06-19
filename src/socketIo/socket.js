@@ -184,17 +184,34 @@ class SocketService {
 
   onMessage(callback) {
     if (!this.socket) return;
-    this.socket.on("message", callback);
+    console.log("Setting up message listener");
+    this.socket.on("message", data => {
+      console.log("Socket received message event:", data);
+      callback(data);
+    });
+    // Also listen for publicMessage event
+    this.socket.on("publicMessage", data => {
+      console.log("Socket received publicMessage event:", data);
+      callback(data);
+    });
   }
 
   onPrivateMessage(callback) {
     if (!this.socket) return;
-    this.socket.on("privateMessage", callback);
+    console.log("Setting up private message listener");
+    this.socket.on("privateMessage", data => {
+      console.log("Socket received private message event:", data);
+      callback(data);
+    });
   }
 
   onRoomMessage(callback) {
     if (!this.socket) return;
-    this.socket.on("roomMessage", callback);
+    console.log("Setting up room message listener");
+    this.socket.on("roomMessage", data => {
+      console.log("Socket received room message event:", data);
+      callback(data);
+    });
   }
 
   onPublicMessage(callback) {

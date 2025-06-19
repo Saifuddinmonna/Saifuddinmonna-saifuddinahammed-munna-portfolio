@@ -48,10 +48,12 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onMessage(message => {
+        console.log("Received public message:", message);
         setMessages(prev => [...prev, message]);
       });
 
       socketService.onPrivateMessage(message => {
+        console.log("Received private message:", message);
         setPrivateMessages(prev => ({
           ...prev,
           [message.sender.uid]: [...(prev[message.sender.uid] || []), message],
@@ -59,6 +61,7 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onRoomMessage(message => {
+        console.log("Received room message:", message);
         setRoomMessages(prev => ({
           ...prev,
           [message.roomId]: [...(prev[message.roomId] || []), message],
@@ -66,6 +69,7 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onMessageHistory(history => {
+        console.log("Received message history:", history);
         setMessages(history);
       });
 
