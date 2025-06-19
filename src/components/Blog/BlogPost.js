@@ -36,7 +36,7 @@ const BlogPost = () => {
         role: user?.role === "admin" ? "admin" : "user",
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["blog", id]);
+      queryClient.invalidateQueries(["blogs", id]);
       const hasLiked = post.likes?.some(like => like.email === user?.email);
       toast.success(hasLiked ? "Post unliked successfully" : "Post liked successfully");
     },

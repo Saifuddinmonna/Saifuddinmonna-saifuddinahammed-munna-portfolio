@@ -1,278 +1,177 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { socket } from "./socket";
-import { useAuth } from "../auth/context/AuthContext"; // To get the user token for authentication
+import { useAuth } from "../auth/context/AuthContext";
+import { socketService } from "./socket";
 
 const SocketContext = createContext();
 
 export const useSocket = () => {
-  return useContext(SocketContext);
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocket must be used within a SocketProvider");
+  }
+  return context;
 };
 
 export const SocketProvider = ({ children }) => {
-  const { token, dbUser, loading } = useAuth();
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [users, setUsers] = useState([]); // State to store list of active users
-  const [typingUsers, setTypingUsers] = useState(new Set()); // State to store users who are typing
-  const [messages, setMessages] = useState([]); // State to store all chat messages
-  const [currentRoom, setCurrentRoom] = useState("general"); // Default to 'general' for public chat
-  const [hasUnreadPrivateMessages, setHasUnreadPrivateMessages] = useState(false); // New state for unread private messages
-  const [groups, setGroups] = useState([]); // State to store chat groups
-  const [selectedGroup, setSelectedGroup] = useState(null); // State to store the currently selected group
-  const [privateChats, setPrivateChats] = useState({}); // New state for private chat history
+  const { user, token } = useAuth();
+  const [connected, setConnected] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [privateMessages, setPrivateMessages] = useState({});
+  const [roomMessages, setRoomMessages] = useState({});
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const [typingUsers, setTypingUsers] = useState({});
+  const [activeRooms, setActiveRooms] = useState(new Set());
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (loading) return; // Wait for auth loading to complete
-
-    // Set auth token for socket connection
-    if (token) {
-      socket.auth = { token };
-    } else {
-      // For guest users, or if token is not available yet
-      // No specific auth needed for guest to connect initially, but we'll handle their ID later
-      socket.auth = {};
+    if (!user || !token) {
+      setConnected(false);
+      return;
     }
 
-    socket.connect();
+    try {
+      // Initialize socket connection
+      socketService.connect(token);
 
-    const onConnect = () => {
-      setIsConnected(true);
-      console.log("Socket connected!");
-
-      // Emit userJoin event after successful connection
-      if (dbUser && token) {
-        // Registered user
-        socket.emit("userJoin", {
-          token: token,
-          avatar: dbUser.photoURL || null, // Assuming dbUser has photoURL
-        });
-        socket.emit("requestGroupList"); // Request initial group list on connect
-        // Request private message history for all chats
-        socket.emit("requestAllPrivateHistory");
-      }
-      // For guest users, the `userJoin` will be emitted from ChatWindow after they input details
-    };
-
-    const onDisconnect = () => {
-      setIsConnected(false);
-      console.log("Socket disconnected!");
-      setUsers([]); // Clear users on disconnect
-      setTypingUsers(new Set()); // Clear typing users on disconnect
-    };
-
-    const onConnectError = error => {
-      console.error("Socket connection error from provider:", error);
-    };
-
-    const onUsersList = usersList => {
-      console.log("Current users list:", usersList);
-      setUsers(usersList);
-    };
-
-    const onUserJoined = data => {
-      console.log("New user joined:", data);
-      // Server will send updated usersList, so just rely on that or add user directly
-      // For now, rely on `usersList` event being sent after join
-    };
-
-    const onUserLeft = data => {
-      console.log("User left:", data);
-      // Server will send updated usersList, so just rely on that or remove user directly
-      // For now, rely on `usersList` event being sent after leave
-    };
-
-    const onUserTyping = ({ userId, userName, isTyping }) => {
-      setTypingUsers(prev => {
-        const newSet = new Set(prev);
-        if (isTyping) {
-          newSet.add(userName);
-        } else {
-          newSet.delete(userName);
-        }
-        return newSet;
+      // Set up event listeners
+      socketService.onUserJoined(data => {
+        setUsers(prev => [...prev, data.user]);
       });
-    };
 
-    const onPublicMessage = msg => {
-      console.log("Received public message:", msg);
-      setMessages(prev => [...prev, { ...msg, type: "public" }]);
-    };
+      socketService.onUserLeft(data => {
+        setUsers(prev => prev.filter(u => u.id !== data.user.id));
+      });
 
-    const onPrivateMessage = msg => {
-      console.log("Received private message:", msg);
-      const messageWithType = { ...msg, type: "private" };
+      socketService.onUsersList(usersList => {
+        setUsers(usersList);
+      });
 
-      // Update private messages state
-      setPrivateMessages(prev => {
-        const chatId =
-          msg.senderId === (dbUser?.firebaseUid || socket.id) ? msg.receiverId : msg.senderId;
+      socketService.onMessage(message => {
+        setMessages(prev => [...prev, message]);
+      });
 
-        return {
+      socketService.onPrivateMessage(message => {
+        setPrivateMessages(prev => ({
           ...prev,
-          [chatId]: [...(prev[chatId] || []), messageWithType],
-        };
+          [message.sender.uid]: [...(prev[message.sender.uid] || []), message],
+        }));
       });
 
-      // Set unread flag if the message is for the current user
-      if (msg.receiverId === (dbUser?.firebaseUid || socket.id)) {
-        setHasUnreadPrivateMessages(true);
-      }
-    };
-
-    const onRoomMessage = msg => {
-      console.log("Received room message:", msg);
-      setMessages(prev => [...prev, { ...msg, type: "room" }]);
-    };
-
-    const onBroadcastMessage = msg => {
-      console.log("Received broadcast message:", msg);
-      setMessages(prev => [...prev, { ...msg, type: "broadcast" }]);
-    };
-
-    const onGroupList = groupList => {
-      console.log("Received group list:", groupList);
-      setGroups(groupList);
-    };
-
-    const onGroupCreated = group => {
-      console.log("Group created:", group);
-      setGroups(prev => [...prev, group]);
-    };
-
-    const onGroupJoined = ({ groupId, userId }) => {
-      console.log(`${userId} joined group ${groupId}`);
-      // Server should send updated group list or message, for now, just log
-    };
-
-    const onGroupLeft = ({ groupId, userId }) => {
-      console.log(`${userId} left group ${groupId}`);
-      // Server should send updated group list or message, for now, just log
-    };
-
-    const onPublicMessageHistory = history => {
-      console.log("Received public message history:", history);
-      setMessages(prev => {
-        const newMessages = history.map(msg => ({ ...msg, type: "public" }));
-        const existingIds = new Set(prev.map(m => m.id));
-        const uniqueNewMessages = newMessages.filter(m => !existingIds.has(m.id));
-        return [...prev, ...uniqueNewMessages]; // Append history as it's typically fetched when the tab opens
+      socketService.onRoomMessage(message => {
+        setRoomMessages(prev => ({
+          ...prev,
+          [message.roomId]: [...(prev[message.roomId] || []), message],
+        }));
       });
-    };
 
-    const onPrivateMessageHistory = history => {
-      console.log("Received private message history:", history);
-
-      // Group messages by chat
-      const groupedMessages = history.reduce((acc, msg) => {
-        const chatId =
-          msg.senderId === (dbUser?.firebaseUid || socket.id) ? msg.receiverId : msg.senderId;
-
-        if (!acc[chatId]) {
-          acc[chatId] = [];
-        }
-        acc[chatId].push({ ...msg, type: "private" });
-        return acc;
-      }, {});
-
-      setPrivateMessages(prev => ({
-        ...prev,
-        ...groupedMessages,
-      }));
-    };
-
-    const onRoomMessageHistory = history => {
-      console.log("Received room message history:", history);
-      setMessages(prev => {
-        const newMessages = history.map(msg => ({ ...msg, type: "room" }));
-        const existingIds = new Set(prev.map(m => m.id));
-        const uniqueNewMessages = newMessages.filter(m => !existingIds.has(m.id));
-        return [...prev, ...uniqueNewMessages];
+      socketService.onMessageHistory(history => {
+        setMessages(history);
       });
+
+      socketService.onPrivateMessageHistory(history => {
+        const messagesByUser = history.reduce((acc, message) => {
+          const userId = message.sender.uid;
+          if (!acc[userId]) {
+            acc[userId] = [];
+          }
+          acc[userId].push(message);
+          return acc;
+        }, {});
+        setPrivateMessages(messagesByUser);
+      });
+
+      socketService.onRoomMessageHistory(history => {
+        const messagesByRoom = history.reduce((acc, message) => {
+          const roomId = message.roomId;
+          if (!acc[roomId]) {
+            acc[roomId] = [];
+          }
+          acc[roomId].push(message);
+          return acc;
+        }, {});
+        setRoomMessages(messagesByRoom);
+      });
+
+      socketService.onUserTyping(data => {
+        setTypingUsers(prev => ({
+          ...prev,
+          [data.userId]: data.isTyping,
+        }));
+      });
+
+      socketService.onUnreadCounts(counts => {
+        setUnreadCounts(counts);
+      });
+
+      socketService.onError(error => {
+        setError(error);
+        console.error("Socket error:", error);
+      });
+
+      // Join chat
+      socketService.joinChat({
+        token,
+        name: user.displayName,
+        email: user.email,
+        avatar: user.photoURL,
+      });
+
+      setConnected(true);
+
+      // Cleanup on unmount
+      return () => {
+        socketService.disconnect();
+        setConnected(false);
+      };
+    } catch (error) {
+      console.error("Socket initialization error:", error);
+      setError(error);
+      setConnected(false);
+    }
+  }, [user, token]);
+
+  // Token expiration handling
+  useEffect(() => {
+    const handleTokenExpiring = event => {
+      // Handle token expiration
+      console.log("Token expiring:", event.detail);
+      // You can implement your token refresh logic here
     };
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("connect_error", onConnectError);
-    socket.on("usersList", onUsersList);
-    socket.on("userJoined", onUserJoined);
-    socket.on("userLeft", onUserLeft);
-    socket.on("userTyping", onUserTyping);
-    socket.on("publicMessage", onPublicMessage);
-    socket.on("privateMessage", onPrivateMessage);
-    socket.on("roomMessage", onRoomMessage);
-    socket.on("broadcastMessage", onBroadcastMessage);
-    socket.on("groupList", onGroupList);
-    socket.on("groupCreated", onGroupCreated);
-    socket.on("groupJoined", onGroupJoined);
-    socket.on("groupLeft", onGroupLeft);
-    socket.on("publicMessageHistory", onPublicMessageHistory);
-    socket.on("privateMessageHistory", onPrivateMessageHistory);
-    socket.on("roomMessageHistory", onRoomMessageHistory);
-
+    window.addEventListener("tokenExpiring", handleTokenExpiring);
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("connect_error", onConnectError);
-      socket.off("usersList", onUsersList);
-      socket.off("userJoined", onUserJoined);
-      socket.off("userLeft", onUserLeft);
-      socket.off("userTyping", onUserTyping);
-      socket.off("publicMessage", onPublicMessage);
-      socket.off("privateMessage", onPrivateMessage);
-      socket.off("roomMessage", onRoomMessage);
-      socket.off("broadcastMessage", onBroadcastMessage);
-      socket.off("groupList", onGroupList);
-      socket.off("groupCreated", onGroupCreated);
-      socket.off("groupJoined", onGroupJoined);
-      socket.off("groupLeft", onGroupLeft);
-      socket.off("publicMessageHistory", onPublicMessageHistory);
-      socket.off("privateMessageHistory", onPrivateMessageHistory);
-      socket.off("roomMessageHistory", onRoomMessageHistory);
-      socket.disconnect(); // Disconnect when component unmounts
+      window.removeEventListener("tokenExpiring", handleTokenExpiring);
     };
-  }, [token, dbUser, loading]); // Added dbUser to dependencies
-
-  // Function for guest users to join, called from ChatWindow
-  const joinAsGuest = (guestName, phone = null) => {
-    socket.emit("userJoin", {
-      guestName: guestName,
-      phone: phone,
-    });
-  };
-
-  // New functions for group management
-  const createGroup = groupName => {
-    socket.emit("createGroup", { name: groupName });
-  };
-
-  const joinGroup = groupId => {
-    socket.emit("joinGroup", { groupId });
-  };
-
-  const leaveGroup = groupId => {
-    socket.emit("leaveGroup", { groupId });
-  };
+  }, []);
 
   const value = {
-    socket,
-    isConnected,
-    dbUser, // Provide dbUser from AuthContext for role-based UI
+    connected,
     users,
-    typingUsers,
-    messages, // Expose messages state
-    currentRoom, // Expose currentRoom state
-    joinAsGuest,
-    hasUnreadPrivateMessages, // Expose unread private messages flag
-    setHasUnreadPrivateMessages, // Expose setter to clear flag
-    groups, // Expose groups state
-    selectedGroup, // Expose selectedGroup state
-    setSelectedGroup, // Expose setter for selectedGroup
-    createGroup, // Expose createGroup function
-    joinGroup, // Expose joinGroup function
-    leaveGroup, // Expose leaveGroup function
-    privateChats, // Expose private chats state
+    messages,
     privateMessages,
+    roomMessages,
+    unreadCounts,
+    typingUsers,
+    activeRooms,
+    error,
+    sendPrivateMessage: socketService.sendPrivateMessage.bind(socketService),
+    sendRoomMessage: socketService.sendRoomMessage.bind(socketService),
+    sendPublicMessage: socketService.sendPublicMessage.bind(socketService),
+    requestPublicHistory: socketService.requestPublicHistory.bind(socketService),
+    requestPrivateHistory: socketService.requestPrivateHistory.bind(socketService),
+    joinRoom: socketService.joinRoom.bind(socketService),
+    leaveRoom: socketService.leaveRoom.bind(socketService),
+    sendTypingStatus: socketService.sendTypingStatus.bind(socketService),
+    markMessageAsRead: socketService.markMessageAsRead.bind(socketService),
+    markAllMessagesAsRead: socketService.markAllMessagesAsRead.bind(socketService),
+    markPrivateMessageAsRead: socketService.markPrivateMessageAsRead.bind(socketService),
+    editPrivateMessage: socketService.editPrivateMessage.bind(socketService),
+    deletePrivateMessage: socketService.deletePrivateMessage.bind(socketService),
+    getUnreadCount: socketService.getUnreadCount.bind(socketService),
   };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 };
+
+export default SocketProvider;

@@ -102,7 +102,7 @@ export const blogService = {
   // Add comment to blog
   addComment: async (blogId, comment) => {
     try {
-      const response = await api.post(`/blogs/${blogId}/comments`, comment);
+      const response = await api.post(`/api/blogs/${blogId}/comments`, comment);
       return response.data;
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -112,7 +112,7 @@ export const blogService = {
 
   updateComment: async (blogId, commentId, commentData, userData) => {
     try {
-      const response = await api.put(`/blogs/${blogId}/comments/${commentId}`, {
+      const response = await api.put(`/api/blogs/${blogId}/comments/${commentId}`, {
         ...commentData,
         userData: {
           email: userData.email,
@@ -128,7 +128,7 @@ export const blogService = {
 
   deleteComment: async (blogId, commentId, userData) => {
     try {
-      const response = await api.delete(`/blogs/${blogId}/comments/${commentId}`, {
+      const response = await api.delete(`/api/blogs/${blogId}/comments/${commentId}`, {
         data: {
           userData: {
             email: userData.email,
@@ -146,7 +146,7 @@ export const blogService = {
   // Like/Unlike blog
   toggleLike: async (blogId, user) => {
     try {
-      const response = await api.post(`/blogs/${blogId}/like`, { user });
+      const response = await api.post(`/api/blogs/${blogId}/like`, { user });
       return response.data;
     } catch (error) {
       console.error("Error toggling like:", error);

@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { FaComments, FaTimes } from "react-icons/fa";
-import { useAuth } from "../../auth/context/AuthContext"; // Import useAuth
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useAuth } from "../../auth/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useSocket } from "../SocketProvider";
 
 const ChatBubble = ({ onToggleChat, isChatOpen }) => {
   const [position, setPosition] = useState({
-    x: window.innerWidth - 80, // Initial X position (right side)
-    y: window.innerHeight - 80, // Initial Y position (bottom side)
+    x: window.innerWidth - 80,
+    y: window.innerHeight - 80,
   });
   const bubbleRef = useRef(null);
-  const { user: firebaseUser, dbUser } = useAuth(); // Get Firebase user
-  const navigate = useNavigate(); // Initialize useNavigate
+  const { user: firebaseUser } = useAuth();
+  const navigate = useNavigate();
+  const { unreadCounts } = useSocket();
+
+  // Calculate total unread messages
+  const totalUnread = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0);
 
   // Handle window resize to keep bubble on screen
   useEffect(() => {
@@ -27,10 +32,10 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
   }, []);
 
   const handleBubbleClick = () => {
-    if (firebaseUser && dbUser) {
+    if (firebaseUser) {
       onToggleChat();
     } else {
-      navigate("/signin"); // <<< --- CONFIRM THIS ROUTE
+      navigate("/signin");
     }
   };
 
@@ -56,12 +61,27 @@ const ChatBubble = ({ onToggleChat, isChatOpen }) => {
       onDragEnd={(event, info) => {
         setPosition({ x: info.point.x, y: info.point.y });
       }}
-      onClick={handleBubbleClick} // Updated onClick handler
+      onClick={handleBubbleClick}
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      {isChatOpen ? <FaTimes className="w-6 h-6" /> : <FaComments className="w-6 h-6" />}
+      {isChatOpen ? (
+        <FaTimes className="w-6 h-6" />
+      ) : (
+        <div className="relative">
+          <FaComments className="w-6 h-6" />
+          {totalUnread > 0 && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+            >
+              {totalUnread > 99 ? "99+" : totalUnread}
+            </motion.div>
+          )}
+        </div>
+      )}
     </motion.div>
   );
 };
