@@ -17,6 +17,7 @@ import {
   FaExclamationCircle,
   FaChevronUp,
   FaChevronDown,
+  FaChevronRight,
 } from "react-icons/fa";
 import { useSocket } from "../SocketProvider";
 import EmojiPicker from "emoji-picker-react";
@@ -25,6 +26,11 @@ import { useNavigate } from "react-router-dom";
 import PrivateChatHistory from "./PrivateChatHistory";
 import { ThemeContext } from "../../App";
 import { theme } from "../../theme/theme";
+import CreateGroupModal from "./ChatWindowComponents/CreateGroupModal";
+import ChatHeader from "./ChatWindowComponents/ChatHeader";
+import ChatTabs from "./ChatWindowComponents/ChatTabs";
+import ChatSidebar from "./ChatWindowComponents/ChatSidebar";
+import ChatArea from "./ChatWindowComponents/ChatArea";
 
 const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const {
@@ -97,6 +103,8 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const [newGroupDescription, setNewGroupDescription] = useState("");
   const [selectedUsersForGroup, setSelectedUsersForGroup] = useState([]);
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [fetchedHistories, setFetchedHistories] = useState(new Set());
 
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const currentTheme = isDarkMode ? theme.dark : theme.light;
@@ -207,26 +215,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   // Handle tab changes
   const handleTabChange = async tab => {
     setActiveChatTab(tab);
-    setIsLoading(true);
-    try {
-      if (tab === "private") {
-        markAllMessagesAsRead(selectedPrivateChatUser?.id);
-      }
-      if (connected && dbUser) {
-        if (tab === "public") {
-          await requestPublicHistory();
-        } else if (tab === "private" && selectedPrivateChatUser?.id) {
-          await requestPrivateHistory(selectedPrivateChatUser.id);
-        } else if (tab === "group" && selectedGroup?.id) {
-          // Handle room history request
-        }
-      }
-    } catch (error) {
-      console.error("Error changing tab:", error);
-      toast.error("Failed to load messages");
-    } finally {
-      setIsLoading(false);
-    }
+    // History fetching is now handled by handleSelectPrivateChatUser
   };
 
   // Message rendering function
@@ -259,10 +248,14 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     return messagesToRender.map((message, index) => {
       // Improved sender matching for message sender name
       const senderUser = users.find(
-        u => u.uid === message.senderId || u.id === message.senderId || u._id === message.senderId
+        u =>
+          u.uid === message.sender?.uid ||
+          u.id === message.sender?.id ||
+          u._id === message.sender?._id
       );
-      const senderName = message.senderName || senderUser?.name || "User";
-      const isCurrentUser = message.senderId === currentUserId;
+      const senderName = message.senderName || senderUser?.name || message.sender?.name || "User";
+      const isCurrentUser =
+        message.sender?.uid === currentUserId || message.senderId === currentUserId;
       // For private chat, always show sender info and time for each message
       const showSenderInfo =
         activeChatTab === "private"
@@ -351,7 +344,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     setIsSending(true);
     try {
       if (activeChatTab === "private" && selectedPrivateChatUser) {
-        await sendPrivateMessage({
+        sendPrivateMessage({
           receiverId: selectedPrivateChatUser.uid,
           text: inputValue.trim(),
           type: "text",
@@ -458,8 +451,15 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Handlers
   const handleSelectPrivateChatUser = user => {
+    if (!user) return;
     setSelectedPrivateChatUser(user);
     setActiveChatTab("private");
+
+    // Fetch history only if it hasn't been fetched before for this user
+    if (!fetchedHistories.has(user.uid)) {
+      requestPrivateHistory(user.uid);
+      setFetchedHistories(prev => new Set(prev).add(user.uid));
+    }
   };
 
   const handleSelectGroup = group => {
@@ -604,180 +604,8 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   };
 
   // Render chat content based on active tab
-  const renderChatContent = () => {
-    if (!connected) {
-      return (
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-main)] mx-auto mb-4"></div>
-            <p className="text-[var(--text-secondary)] font-medium">Connecting to chat server...</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">
-              Please wait while we establish connection
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    if (isLoading) {
-      return (
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-main)] mx-auto mb-4"></div>
-            <p className="text-[var(--text-secondary)] font-medium">Loading messages...</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">
-              Fetching your conversation history
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <>
-        {/* Chat Header */}
-        {activeChatTab === "group" && selectedGroup && (
-          <div className="p-3 border-b bg-[var(--background-default)]">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--primary-main)] flex items-center justify-center text-white text-sm font-semibold">
-                {selectedGroup.name.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-[var(--text-primary)]">{selectedGroup.name}</h3>
-                <p className="text-xs text-[var(--text-secondary)]">
-                  {selectedGroup.members?.length || 0} members
-                  {selectedGroup.description && (
-                    <span className="ml-2">• {selectedGroup.description}</span>
-                  )}
-                </p>
-                {selectedGroup.creatorName && (
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    Created by {selectedGroup.creatorName}
-                  </p>
-                )}
-              </div>
-              <button
-                onClick={() => setSelectedGroup(null)}
-                className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                title="Back to groups"
-              >
-                <FaTimes />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Messages Container */}
-        <div className="chat-messages-container p-4">
-          {activeChatTab === "public" ? (
-            <div className="flex flex-col space-y-4">{renderMessages()}</div>
-          ) : (
-            <div className="space-y-4">{renderMessages()}</div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Area */}
-        <div className="chat-input-container">
-          {editingMessage ? (
-            <form onSubmit={handleUpdateMessage} className="flex items-end gap-2">
-              <div className="flex-1">
-                <textarea
-                  value={editText}
-                  onChange={e => setEditText(e.target.value)}
-                  placeholder="Edit your message..."
-                  className="w-full p-2 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  rows="2"
-                />
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="p-2 bg-[var(--primary-main)] text-white rounded hover:bg-[var(--primary-dark)] transition-colors"
-                >
-                  <FaCheck />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancelEdit}
-                  className="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                >
-                  <FaTimes />
-                </button>
-              </div>
-            </form>
-          ) : (
-            <form onSubmit={handleSendMessage} className="flex items-end gap-2">
-              <div className="flex-1 relative">
-                <textarea
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  placeholder={
-                    activeChatTab === "private" && selectedPrivateChatUser
-                      ? `Message ${selectedPrivateChatUser.name}...`
-                      : activeChatTab === "group" && selectedGroup
-                      ? `Message ${selectedGroup.name}...`
-                      : "Type a message..."
-                  }
-                  className="w-full p-2 pr-12 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  rows="2"
-                  disabled={isSending}
-                />
-                <div className="absolute right-2 bottom-2 flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors p-1"
-                  >
-                    <FaSmile />
-                  </button>
-                  <button
-                    type="submit"
-                    className={`p-1 rounded transition-colors ${
-                      isSending || !inputValue.trim()
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white"
-                    }`}
-                    disabled={isSending || !inputValue.trim()}
-                  >
-                    {isSending ? (
-                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                    ) : (
-                      <FaPaperPlane size={12} />
-                    )}
-                  </button>
-                </div>
-                {showEmojiPicker && (
-                  <div className="absolute bottom-full right-0 mb-2 z-10">
-                    <EmojiPicker onEmojiClick={handleEmojiSelect} />
-                  </div>
-                )}
-              </div>
-            </form>
-          )}
-          {typingUsers.length > 0 && (
-            <div className="mt-2 text-xs text-[var(--text-secondary)] flex items-center gap-1">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"></div>
-                <div
-                  className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
-                  style={{ animationDelay: "0.1s" }}
-                ></div>
-                <div
-                  className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
-                  style={{ animationDelay: "0.2s" }}
-                ></div>
-              </div>
-              <span>
-                {typingUsers.join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing...
-              </span>
-            </div>
-          )}
-        </div>
-      </>
-    );
-  };
+  // THIS FUNCTION IS NOW MOVED TO ChatArea.js
+  // const renderChatContent = () => { ... }
 
   // Render user list
   const renderUserList = () => (
@@ -898,6 +726,17 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     setIsMinimized(!isMinimized);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
+  const handleTextAreaClick = () => {
+    // Hide sidebar on mobile when clicking text area
+    if (window.innerWidth < 768) {
+      setIsSidebarVisible(false);
+    }
+  };
+
   if (!isChatOpen) return null;
 
   return (
@@ -912,510 +751,105 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     >
       <style>{chatStyles}</style>
       {/* Header */}
-      <div
-        className="p-2 sm:p-4 border-b flex items-center justify-between rounded-t-lg"
-        style={{
-          background: currentTheme.primary.main,
-          color: currentTheme.text.primary,
-          borderBottom: `1px solid ${currentTheme.border.main}`,
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <h2 className="text-base sm:text-lg font-semibold">Chat</h2>
-          {connected ? (
-            <span className="text-xs bg-green-500 px-2 py-1 rounded-full flex items-center gap-1">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-              Online
-            </span>
-          ) : (
-            <span className="text-xs bg-red-500 px-2 py-1 rounded-full flex items-center gap-1">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-              Offline
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="p-1 rounded transition-colors border"
-            style={{
-              background: isDarkMode
-                ? currentTheme.background.default
-                : currentTheme.background.paper,
-              color: currentTheme.text.primary,
-              borderColor: currentTheme.border.main,
-            }}
-            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {isDarkMode ? "🌙" : "☀️"}
-          </button>
-          <button
-            onClick={toggleMinimize}
-            className="p-1 hover:bg-[var(--primary-dark)] rounded transition-colors"
-          >
-            {isMinimized ? <FaChevronUp /> : <FaChevronDown />}
-          </button>
-          <button
-            onClick={onCloseChat}
-            className="p-1 hover:bg-[var(--primary-dark)] rounded transition-colors"
-          >
-            <FaTimes />
-          </button>
-        </div>
-      </div>
+      <ChatHeader
+        connected={connected}
+        toggleTheme={toggleTheme}
+        isDarkMode={isDarkMode}
+        toggleMinimize={toggleMinimize}
+        isMinimized={isMinimized}
+        onCloseChat={onCloseChat}
+        currentTheme={currentTheme}
+      />
 
       {!isMinimized && (
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Tabs */}
-          <div className="flex border-b">
-            <button
-              onClick={() => setActiveChatTab("public")}
-              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium transition-colors ${
-                activeChatTab === "public"
-                  ? "border-b-2 border-[var(--primary-main)] text-[var(--primary-main)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              Public
-            </button>
-            <button
-              onClick={() => setActiveChatTab("private")}
-              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium transition-colors ${
-                activeChatTab === "private"
-                  ? "border-b-2 border-[var(--primary-main)] text-[var(--primary-main)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              Private
-            </button>
-            <button
-              onClick={() => setActiveChatTab("group")}
-              className={`flex-1 p-2 sm:p-3 text-xs sm:text-sm font-medium transition-colors ${
-                activeChatTab === "group"
-                  ? "border-b-2 border-[var(--primary-main)] text-[var(--primary-main)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              Group
-            </button>
-          </div>
+          <ChatTabs activeChatTab={activeChatTab} setActiveChatTab={setActiveChatTab} />
 
           {/* Chat Content */}
-          <div className="flex-1 flex flex-col sm:flex-row overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* Sidebar */}
-            <div className="w-full sm:w-1/3 border-b sm:border-b-0 sm:border-r overflow-y-auto custom-scrollbar">
-              {activeChatTab === "private" && (
-                <div className="p-2">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search users..."
-                    className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  />
-                </div>
-              )}
-              {activeChatTab === "group" && (
-                <div className="p-2">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FaUsers className="text-[var(--primary-main)]" />
-                    <span className="text-sm font-medium text-[var(--text-primary)]">Groups</span>
-                    {dbUser?.data?.role === "admin" && (
-                      <span className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded-full">
-                        Admin
-                      </span>
-                    )}
-                    {/* Debug info */}
-                    <span className="text-xs text-gray-500">
-                      Role: {dbUser?.data?.role || "none"}
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search groups..."
-                    className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  />
-                  {/* Show create button for admin OR for testing - remove the role check temporarily */}
-                  {(dbUser?.data?.role === "admin" || true) && (
-                    <button
-                      onClick={() => setShowCreateGroup(true)}
-                      className="w-full mt-2 p-2 bg-[var(--primary-main)] text-white rounded hover:bg-[var(--primary-dark)] transition-colors text-sm flex items-center justify-center gap-2"
-                    >
-                      <FaUsers />
-                      Create New Group
-                    </button>
-                  )}
-                  <div className="mt-2 text-xs text-[var(--text-secondary)]">
-                    {filteredGroups.length} group{filteredGroups.length !== 1 ? "s" : ""} available
-                  </div>
-                </div>
-              )}
-              <div className="divide-y">
-                {activeChatTab === "private" &&
-                  filteredUsers.map(user => (
-                    <button
-                      key={user.id}
-                      onClick={() => handleSelectPrivateChatUser(user)}
-                      className={`w-full p-3 text-left hover:bg-[var(--background-hover)] transition-colors border-b border-[var(--border-main)] ${
-                        selectedPrivateChatUser?.id === user.id
-                          ? "bg-[var(--primary-main)] text-white"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0 ${
-                            selectedPrivateChatUser?.id === user.id
-                              ? "bg-white text-[var(--primary-main)]"
-                              : "bg-[var(--primary-main)]"
-                          }`}
-                        >
-                          {user.name?.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p
-                            className={`font-semibold text-sm truncate ${
-                              selectedPrivateChatUser?.id === user.id ? "text-white" : ""
-                            }`}
-                          >
-                            {user.name}
-                          </p>
-                          <p
-                            className={`text-xs truncate ${
-                              selectedPrivateChatUser?.id === user.id
-                                ? "text-white opacity-75"
-                                : "text-[var(--text-secondary)]"
-                            }`}
-                          >
-                            {user.email}
-                          </p>
-                        </div>
-                        {unreadCounts[user.id] > 0 && (
-                          <span
-                            className={`text-xs px-2 py-1 rounded-full ${
-                              selectedPrivateChatUser?.id === user.id
-                                ? "bg-white text-[var(--primary-main)]"
-                                : "bg-[var(--primary-main)] text-white"
-                            }`}
-                          >
-                            {unreadCounts[user.id]}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                {activeChatTab === "group" && (
-                  <>
-                    {filteredGroups.length === 0 ? (
-                      <div className="p-4 text-center text-[var(--text-secondary)]">
-                        <FaUsers className="mx-auto mb-2 text-2xl opacity-50" />
-                        <p className="text-sm">No groups available</p>
-                        {dbUser?.data?.role === "admin" && (
-                          <p className="text-xs mt-1">Create a group to get started</p>
-                        )}
-                        {dbUser?.data?.role !== "admin" && (
-                          <p className="text-xs mt-1">Ask an admin to create a group</p>
-                        )}
-                        <p className="text-xs mt-2 opacity-75">
-                          Groups will appear here once created
-                        </p>
-                        <p className="text-xs mt-1 opacity-50">
-                          You can join groups to start chatting with members
-                        </p>
-                      </div>
-                    ) : (
-                      filteredGroups.map(group => {
-                        const isMember = group.members?.some(member => member.id === currentUserId);
-                        const isAdmin = dbUser?.data?.role === "admin";
-                        const isCreator = group.createdBy === currentUserId;
-                        const memberCount = group.members?.length || 0;
-
-                        return (
-                          <div
-                            key={group.id}
-                            className={`w-full p-3 text-left hover:bg-[var(--background-hover)] transition-colors border-b border-[var(--border-main)] cursor-pointer ${
-                              selectedGroup?.id === group.id
-                                ? "bg-[var(--primary-main)] text-white"
-                                : ""
-                            }`}
-                            onClick={() => {
-                              if (isMember) {
-                                handleSelectGroup(group);
-                              } else {
-                                // If not a member, show a message to join first
-                                toast.error("Please join the group first to chat");
-                              }
-                            }}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0 ${
-                                  selectedGroup?.id === group.id
-                                    ? "bg-white text-[var(--primary-main)]"
-                                    : "bg-[var(--primary-main)]"
-                                }`}
-                              >
-                                {group.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <p
-                                    className={`font-semibold text-sm truncate ${
-                                      selectedGroup?.id === group.id ? "text-white" : ""
-                                    }`}
-                                  >
-                                    {group.name}
-                                  </p>
-                                  {isCreator && (
-                                    <span
-                                      className={`text-xs px-2 py-1 rounded-full ${
-                                        selectedGroup?.id === group.id
-                                          ? "bg-white text-[var(--primary-main)]"
-                                          : "bg-[var(--primary-main)] text-white"
-                                      }`}
-                                    >
-                                      Creator
-                                    </span>
-                                  )}
-                                  {isMember && (
-                                    <span
-                                      className={`text-xs px-2 py-1 rounded-full ${
-                                        selectedGroup?.id === group.id
-                                          ? "bg-white text-[var(--primary-main)]"
-                                          : "bg-green-500 text-white"
-                                      }`}
-                                    >
-                                      Member
-                                    </span>
-                                  )}
-                                </div>
-                                <p
-                                  className={`text-xs mb-1 ${
-                                    selectedGroup?.id === group.id
-                                      ? "text-white opacity-75"
-                                      : "text-[var(--text-secondary)]"
-                                  }`}
-                                >
-                                  <span className="font-medium">{memberCount}</span> member
-                                  {memberCount !== 1 ? "s" : ""}
-                                  {isMember && (
-                                    <span className="ml-2 text-green-500">• Joined</span>
-                                  )}
-                                </p>
-                                {group.description && (
-                                  <p
-                                    className={`text-xs truncate mb-2 ${
-                                      selectedGroup?.id === group.id
-                                        ? "text-white opacity-75"
-                                        : "text-[var(--text-secondary)]"
-                                    }`}
-                                  >
-                                    {group.description}
-                                  </p>
-                                )}
-                                {group.creatorName && (
-                                  <p
-                                    className={`text-xs ${
-                                      selectedGroup?.id === group.id
-                                        ? "text-white opacity-75"
-                                        : "text-[var(--text-secondary)]"
-                                    }`}
-                                  >
-                                    Created by {group.creatorName}
-                                  </p>
-                                )}
-                              </div>
-                              <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                                {unreadCounts[group.id] > 0 && (
-                                  <span
-                                    className={`text-xs px-2 py-1 rounded-full font-medium ${
-                                      selectedGroup?.id === group.id
-                                        ? "bg-white text-[var(--primary-main)]"
-                                        : "bg-red-500 text-white"
-                                    }`}
-                                  >
-                                    {unreadCounts[group.id]}
-                                  </span>
-                                )}
-                                <div className="flex gap-1">
-                                  {!isMember ? (
-                                    <button
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                        handleJoinGroup(group.id);
-                                      }}
-                                      className="text-xs px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors font-medium"
-                                    >
-                                      Join
-                                    </button>
-                                  ) : (
-                                    <button
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                        handleLeaveGroup(group.id);
-                                      }}
-                                      className="text-xs px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors font-medium"
-                                    >
-                                      Leave
-                                    </button>
-                                  )}
-                                  {isMember && (
-                                    <button
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                        handleSelectGroup(group);
-                                      }}
-                                      className={`text-xs px-3 py-1 rounded font-medium transition-colors ${
-                                        selectedGroup?.id === group.id
-                                          ? "bg-white text-[var(--primary-main)]"
-                                          : "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
-                                      }`}
-                                    >
-                                      Chat
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
+            {isSidebarVisible && (
+              <ChatSidebar
+                activeChatTab={activeChatTab}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                dbUser={dbUser}
+                setShowCreateGroup={setShowCreateGroup}
+                filteredGroups={filteredGroups}
+                filteredUsers={filteredUsers}
+                handleSelectPrivateChatUser={handleSelectPrivateChatUser}
+                selectedPrivateChatUser={selectedPrivateChatUser}
+                unreadCounts={unreadCounts}
+                currentUserId={currentUserId}
+                handleSelectGroup={handleSelectGroup}
+                selectedGroup={selectedGroup}
+                handleJoinGroup={handleJoinGroup}
+                handleLeaveGroup={handleLeaveGroup}
+                toggleSidebar={toggleSidebar}
+              />
+            )}
 
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-              <div className="flex-1 overflow-y-auto custom-scrollbar">{renderChatContent()}</div>
+            <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto relative">
+              {/* Sidebar Toggle Button for Mobile */}
+              {!isSidebarVisible && (
+                <button
+                  onClick={toggleSidebar}
+                  className="absolute top-2 left-2 z-10 p-2 bg-[var(--primary-main)] text-white rounded-full shadow-lg md:hidden"
+                  title="Show sidebar"
+                >
+                  <FaChevronRight />
+                </button>
+              )}
+
+              <ChatArea
+                connected={connected}
+                isLoading={isLoading}
+                activeChatTab={activeChatTab}
+                selectedGroup={selectedGroup}
+                setSelectedGroup={setSelectedGroup}
+                currentTheme={currentTheme}
+                currentMessages={currentMessages}
+                messagesEndRef={messagesEndRef}
+                editingMessage={editingMessage}
+                handleUpdateMessage={handleUpdateMessage}
+                editText={editText}
+                setEditText={setEditText}
+                handleCancelEdit={handleCancelEdit}
+                handleSendMessage={handleSendMessage}
+                inputValue={inputValue}
+                handleInputChange={handleInputChange}
+                handleKeyDown={handleKeyDown}
+                isSending={isSending}
+                showEmojiPicker={showEmojiPicker}
+                setShowEmojiPicker={setShowEmojiPicker}
+                handleEmojiSelect={handleEmojiSelect}
+                typingUsers={typingUsers}
+                selectedPrivateChatUser={selectedPrivateChatUser}
+                onTextAreaClick={handleTextAreaClick}
+                users={users}
+                currentUserId={currentUserId}
+              />
             </div>
           </div>
         </div>
       )}
 
       {/* Create Group Modal */}
-      {showCreateGroup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--background-paper)] rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)]">Create New Group</h3>
-              <button
-                onClick={() => setShowCreateGroup(false)}
-                className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <form onSubmit={handleCreateGroup} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                  Group Name *
-                </label>
-                <input
-                  type="text"
-                  value={newGroupName}
-                  onChange={e => setNewGroupName(e.target.value)}
-                  placeholder="Enter group name"
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  required
-                  maxLength={100}
-                />
-                <p className="text-xs text-[var(--text-secondary)] mt-1">
-                  {newGroupName.length}/100 characters
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                  Description
-                </label>
-                <textarea
-                  value={newGroupDescription}
-                  onChange={e => setNewGroupDescription(e.target.value)}
-                  placeholder="Enter group description"
-                  className="w-full p-2 border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                  rows="3"
-                  maxLength={500}
-                />
-                <p className="text-xs text-[var(--text-secondary)] mt-1">
-                  {newGroupDescription.length}/500 characters
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                  Add Members ({selectedUsersForGroup.length} selected)
-                </label>
-                <div className="max-h-32 overflow-y-auto border rounded p-2 bg-[var(--background-default)]">
-                  {users.length === 0 ? (
-                    <p className="text-sm text-[var(--text-secondary)] text-center py-2">
-                      No users available
-                    </p>
-                  ) : (
-                    users.map(user => (
-                      <label
-                        key={user.id}
-                        className="flex items-center gap-2 p-1 hover:bg-[var(--background-hover)] rounded cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedUsersForGroup.includes(user.id)}
-                          onChange={() => toggleUserSelection(user.id)}
-                          className="rounded text-[var(--primary-main)] focus:ring-[var(--primary-main)]"
-                        />
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-[var(--primary-main)] flex items-center justify-center text-white text-xs">
-                            {user.name?.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <span className="text-sm text-[var(--text-primary)] font-medium">
-                              {user.name}
-                            </span>
-                            <p className="text-xs text-[var(--text-secondary)]">{user.email}</p>
-                          </div>
-                        </div>
-                      </label>
-                    ))
-                  )}
-                </div>
-                {selectedUsersForGroup.length > 0 && (
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Selected: {selectedUsersForGroup.length} user
-                    {selectedUsersForGroup.length !== 1 ? "s" : ""}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="submit"
-                  className="flex-1 p-2 bg-[var(--primary-main)] text-white rounded hover:bg-[var(--primary-dark)] transition-colors flex items-center justify-center gap-2"
-                  disabled={!newGroupName.trim() || isCreatingGroup}
-                >
-                  {isCreatingGroup ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <FaUsers />
-                      Create Group
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateGroup(false)}
-                  className="flex-1 p-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <CreateGroupModal
+        showCreateGroup={showCreateGroup}
+        setShowCreateGroup={setShowCreateGroup}
+        handleCreateGroup={handleCreateGroup}
+        newGroupName={newGroupName}
+        setNewGroupName={setNewGroupName}
+        newGroupDescription={newGroupDescription}
+        setNewGroupDescription={setNewGroupDescription}
+        users={users}
+        selectedUsersForGroup={selectedUsersForGroup}
+        toggleUserSelection={toggleUserSelection}
+        isCreatingGroup={isCreatingGroup}
+      />
     </div>
   );
 };

@@ -57,9 +57,10 @@ export const SocketProvider = ({ children }) => {
 
       socketService.onPrivateMessage(message => {
         console.log("Received private message:", message);
+        const chatPartnerId = message.sender.uid;
         setPrivateMessages(prev => ({
           ...prev,
-          [message.sender.uid]: [...(prev[message.sender.uid] || []), message],
+          [chatPartnerId]: [...(prev[chatPartnerId] || []), message],
         }));
       });
 
@@ -77,15 +78,20 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onPrivateMessageHistory(history => {
-        const messagesByUser = history.reduce((acc, message) => {
-          const userId = message.sender.uid;
-          if (!acc[userId]) {
-            acc[userId] = [];
-          }
-          acc[userId].push(message);
-          return acc;
-        }, {});
-        setPrivateMessages(messagesByUser);
+        if (!history || history.length === 0) return;
+
+        // Identify the chat partner from the first message
+        const currentUserId = user.uid;
+        const firstMsg = history[0];
+        const partnerId =
+          firstMsg.sender.uid === currentUserId ? firstMsg.receiverId : firstMsg.sender.uid;
+
+        if (partnerId) {
+          setPrivateMessages(prev => ({
+            ...prev,
+            [partnerId]: history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+          }));
+        }
       });
 
       socketService.onRoomMessageHistory(history => {
@@ -205,6 +211,25 @@ export const SocketProvider = ({ children }) => {
     };
   }, []);
 
+  const sendPrivateMessage = ({ receiverId, text, type }) => {
+    const message = {
+      receiverId,
+      text,
+      type,
+      sender: {
+        uid: user.uid,
+        name: user.displayName,
+        avatar: user.photoURL,
+      },
+      timestamp: new Date().toISOString(),
+    };
+    socketService.sendPrivateMessage(message);
+    setPrivateMessages(prev => ({
+      ...prev,
+      [receiverId]: [...(prev[receiverId] || []), message],
+    }));
+  };
+
   const value = {
     connected,
     users,
@@ -219,7 +244,7 @@ export const SocketProvider = ({ children }) => {
     setSelectedGroup,
     setGroups,
     error,
-    sendPrivateMessage: socketService.sendPrivateMessage.bind(socketService),
+    sendPrivateMessage,
     sendRoomMessage: socketService.sendRoomMessage.bind(socketService),
     sendPublicMessage: socketService.sendPublicMessage.bind(socketService),
     requestPublicHistory: socketService.requestPublicHistory.bind(socketService),
