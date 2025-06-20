@@ -104,7 +104,14 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   // Filtered users and groups based on search
   const filteredUsers = useMemo(() => {
     if (!users) return [];
-    return users.filter(
+
+    // De-duplicate users to prevent the same user from appearing multiple times in the list.
+    // It creates a Map using a unique key (id or uid) to store only the last unique user object.
+    const uniqueUsers = Array.from(
+      new Map(users.map(user => [user.id || user.uid, user])).values()
+    );
+
+    return uniqueUsers.filter(
       user =>
         user.name?.toLowerCase().includes((searchQuery || "").toLowerCase()) ||
         user.email?.toLowerCase().includes((searchQuery || "").toLowerCase())
@@ -123,7 +130,9 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   // Get messages for current chat
   const currentMessages = useMemo(() => {
     if (activeChatTab === "private" && selectedPrivateChatUser) {
-      return privateMessages[selectedPrivateChatUser.uid] || [];
+      // Sort private messages by timestamp ascending
+      const msgs = privateMessages[selectedPrivateChatUser.uid] || [];
+      return [...msgs].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
     } else if (activeChatTab === "public") {
       // Split messages into two columns for public chat
       const publicMessages = messages || [];
@@ -247,34 +256,74 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       );
     }
 
-    return messagesToRender.map((message, index) => (
-      <div
-        key={message._id || message.id || index}
-        className={`flex ${message.senderId === currentUserId ? "justify-end" : "justify-start"}`}
-      >
+    return messagesToRender.map((message, index) => {
+      // Improved sender matching for message sender name
+      const senderUser = users.find(
+        u => u.uid === message.senderId || u.id === message.senderId || u._id === message.senderId
+      );
+      const senderName = message.senderName || senderUser?.name || "User";
+      const isCurrentUser = message.senderId === currentUserId;
+      // For private chat, always show sender info and time for each message
+      const showSenderInfo =
+        activeChatTab === "private"
+          ? true
+          : index === 0 || messagesToRender[index - 1].senderId !== message.senderId;
+      // For Messenger style, show name only for other user, and only at the start of a group
+      const showNameAbove =
+        !isCurrentUser &&
+        (index === 0 || messagesToRender[index - 1].senderId !== message.senderId);
+      return (
         <div
-          className={`max-w-[70%] rounded-lg p-3 ${
-            message.senderId === currentUserId
-              ? "bg-[var(--primary-main)] text-white"
-              : "bg-[var(--background-default)] text-[var(--text-primary)]"
-          }`}
+          key={message._id || message.id || index}
+          className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} w-full`}
+          style={{ marginTop: showNameAbove ? 16 : 6 }}
         >
-          {message.senderId !== currentUserId && (
-            <div className="text-xs font-medium mb-1 flex items-center gap-2">
-              <span className="w-4 h-4 rounded-full bg-[var(--primary-main)] flex items-center justify-center text-white text-xs">
-                {(message.senderName || "A").charAt(0).toUpperCase()}
-              </span>
-              {message.senderName || "Anonymous"}
-              {activeChatTab === "group" && <span className="text-xs opacity-75">• Group</span>}
+          <div className="flex flex-col items-end max-w-full w-full">
+            {/* Show sender name above bubble for other user at start of group */}
+            {showNameAbove && (
+              <div
+                className="text-xs font-bold mb-1 ml-2"
+                style={{ color: currentTheme.text.secondary, textAlign: "left" }}
+              >
+                {senderName}
+              </div>
+            )}
+            <div
+              className={`rounded-xl px-4 py-2 shadow-md break-words max-w-[80%] sm:max-w-[80%] w-fit ${
+                isCurrentUser
+                  ? "bg-[var(--primary-main)] text-white ml-auto"
+                  : "bg-[var(--background-default)] text-[var(--text-primary)] mr-auto"
+              }`}
+              style={{
+                marginLeft: isCurrentUser ? "auto" : 0,
+                marginRight: isCurrentUser ? 0 : "auto",
+                border: isCurrentUser
+                  ? `2px solid ${currentTheme.primary.light}` // Vibrant border for own messages
+                  : `1px solid ${currentTheme.border.main}`,
+                maxWidth: window.innerWidth < 640 ? "90%" : "80%",
+                minWidth: 40,
+                fontSize: 15,
+              }}
+            >
+              {message.message || message.text}
             </div>
-          )}
-          <div className="break-words">{message.message || message.text}</div>
-          <div className="text-xs mt-1 opacity-75">
-            {new Date(message.timestamp).toLocaleTimeString()}
+            <div
+              className={`text-xs mt-1 opacity-70 ${isCurrentUser ? "text-right" : "text-left"}`}
+              style={{
+                color: currentTheme.text.secondary,
+                maxWidth: window.innerWidth < 640 ? "90%" : "80%",
+              }}
+            >
+              {new Date(message.timestamp).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    ));
+      );
+    });
   };
 
   // Message handling functions
@@ -853,7 +902,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   return (
     <div
-      className="fixed bottom-4 right-4 w-[90vw] max-w-[350px] h-[80vh] max-h-[500px] rounded-lg shadow-lg flex flex-col z-50 sm:max-w-[400px] md:max-w-[450px] lg:max-w-[500px] overflow-hidden"
+      className="fixed bottom-4 right-4 w-[90vw] max-w-[350px] h-[80vh] max-h-[500px] rounded-lg shadow-lg flex flex-col z-50 sm:max-w-[560px] md:max-w-[630px] lg:max-w-[700px] lg:max-h-[700px] overflow-hidden"
       style={{
         background: currentTheme.background.paper,
         color: currentTheme.text.primary,
