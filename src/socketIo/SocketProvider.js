@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "../auth/context/AuthContext";
 import { socketService } from "./socket";
+import { toast } from "react-hot-toast";
 
 const SocketContext = createContext();
 
@@ -22,6 +23,8 @@ export const SocketProvider = ({ children }) => {
   const [unreadCounts, setUnreadCounts] = useState({});
   const [typingUsers, setTypingUsers] = useState({});
   const [activeRooms, setActiveRooms] = useState(new Set());
+  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -97,6 +100,56 @@ export const SocketProvider = ({ children }) => {
         setRoomMessages(messagesByRoom);
       });
 
+      // Group event listeners
+      socketService.onGroupsList(groupsList => {
+        setGroups(groupsList);
+      });
+
+      socketService.onGroupCreated(group => {
+        setGroups(prev => [...prev, group]);
+        toast.success(`Group "${group.name}" created successfully!`);
+      });
+
+      socketService.onGroupJoined(data => {
+        setGroups(prev =>
+          prev.map(group =>
+            group.id === data.groupId ? { ...group, members: [...group.members, data.user] } : group
+          )
+        );
+        toast.success(`Joined group "${data.groupName}"!`);
+      });
+
+      socketService.onGroupLeft(data => {
+        setGroups(prev =>
+          prev.map(group =>
+            group.id === data.groupId
+              ? { ...group, members: group.members.filter(member => member.id !== data.userId) }
+              : group
+          )
+        );
+        toast.success(`Left group "${data.groupName}"!`);
+      });
+
+      socketService.onUserAddedToGroup(data => {
+        setGroups(prev =>
+          prev.map(group =>
+            group.id === data.groupId ? { ...group, members: [...group.members, data.user] } : group
+          )
+        );
+        toast.success(`${data.user.name} added to group "${data.groupName}"!`);
+      });
+
+      socketService.onUserRemovedFromGroup(data => {
+        setGroups(prev =>
+          prev.map(group =>
+            group.id === data.groupId
+              ? { ...group, members: group.members.filter(member => member.id !== data.userId) }
+              : group
+          )
+        );
+        toast.success(`${data.userName} removed from group "${data.groupName}"!`);
+      });
+
       socketService.onUserTyping(data => {
         setTypingUsers(prev => ({
           ...prev,
@@ -120,6 +173,9 @@ export const SocketProvider = ({ children }) => {
         email: user.email,
         avatar: user.photoURL,
       });
+
+      // Get groups
+      socketService.getGroups();
 
       setConnected(true);
 
@@ -158,14 +214,25 @@ export const SocketProvider = ({ children }) => {
     unreadCounts,
     typingUsers,
     activeRooms,
+    groups,
+    selectedGroup,
+    setSelectedGroup,
+    setGroups,
     error,
     sendPrivateMessage: socketService.sendPrivateMessage.bind(socketService),
     sendRoomMessage: socketService.sendRoomMessage.bind(socketService),
     sendPublicMessage: socketService.sendPublicMessage.bind(socketService),
     requestPublicHistory: socketService.requestPublicHistory.bind(socketService),
     requestPrivateHistory: socketService.requestPrivateHistory.bind(socketService),
+    requestGroupHistory: socketService.requestGroupHistory.bind(socketService),
     joinRoom: socketService.joinRoom.bind(socketService),
     leaveRoom: socketService.leaveRoom.bind(socketService),
+    createGroup: socketService.createGroup.bind(socketService),
+    joinGroup: socketService.joinGroup.bind(socketService),
+    leaveGroup: socketService.leaveGroup.bind(socketService),
+    getGroups: socketService.getGroups.bind(socketService),
+    addUserToGroup: socketService.addUserToGroup.bind(socketService),
+    removeUserFromGroup: socketService.removeUserFromGroup.bind(socketService),
     sendTypingStatus: socketService.sendTypingStatus.bind(socketService),
     markMessageAsRead: socketService.markMessageAsRead.bind(socketService),
     markAllMessagesAsRead: socketService.markAllMessagesAsRead.bind(socketService),

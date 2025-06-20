@@ -113,6 +113,11 @@ class SocketService {
     this.socket.emit("requestPrivateHistory", { userId });
   }
 
+  requestGroupHistory(groupId) {
+    if (!this.socket) return;
+    this.socket.emit("requestGroupHistory", { groupId });
+  }
+
   // Room management
   joinRoom(roomData) {
     if (!this.socket) return;
@@ -122,6 +127,37 @@ class SocketService {
   leaveRoom(roomId) {
     if (!this.socket) return;
     this.socket.emit("leaveRoom", roomId);
+  }
+
+  // Group management
+  createGroup(groupData) {
+    if (!this.socket) return;
+    this.socket.emit("createGroup", groupData);
+  }
+
+  joinGroup(groupId) {
+    if (!this.socket) return;
+    this.socket.emit("joinGroup", groupId);
+  }
+
+  leaveGroup(groupId) {
+    if (!this.socket) return;
+    this.socket.emit("leaveGroup", groupId);
+  }
+
+  getGroups() {
+    if (!this.socket) return;
+    this.socket.emit("getGroups");
+  }
+
+  addUserToGroup(groupId, userId) {
+    if (!this.socket) return;
+    this.socket.emit("addUserToGroup", { groupId, userId });
+  }
+
+  removeUserFromGroup(groupId, userId) {
+    if (!this.socket) return;
+    this.socket.emit("removeUserFromGroup", { groupId, userId });
   }
 
   // Typing indicators
@@ -302,6 +338,37 @@ class SocketService {
   onError(callback) {
     if (!this.socket) return;
     this.socket.on("error", callback);
+  }
+
+  // Group event listeners
+  onGroupsList(callback) {
+    if (!this.socket) return;
+    this.socket.on("groupsList", callback);
+  }
+
+  onGroupCreated(callback) {
+    if (!this.socket) return;
+    this.socket.on("groupCreated", callback);
+  }
+
+  onGroupJoined(callback) {
+    if (!this.socket) return;
+    this.socket.on("groupJoined", callback);
+  }
+
+  onGroupLeft(callback) {
+    if (!this.socket) return;
+    this.socket.on("groupLeft", callback);
+  }
+
+  onUserAddedToGroup(callback) {
+    if (!this.socket) return;
+    this.socket.on("userAddedToGroup", callback);
+  }
+
+  onUserRemovedFromGroup(callback) {
+    if (!this.socket) return;
+    this.socket.on("userRemovedFromGroup", callback);
   }
 }
 
