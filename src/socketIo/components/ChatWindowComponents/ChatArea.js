@@ -89,7 +89,7 @@ const ChatArea = ({
               className={`rounded-xl px-4 py-2 shadow-md break-words max-w-[80%] sm:max-w-[80%] w-fit ${
                 isCurrentUser
                   ? "bg-[var(--primary-main)] text-white ml-auto"
-                  : "bg-[var(--background-default)] text-[var(--text-primary)] mr-auto"
+                  : `bg-[var(--background-default)] dark:bg-gray-700 text-[var(--text-primary)] mr-auto`
               }`}
               style={{
                 marginLeft: isCurrentUser ? "auto" : 0,

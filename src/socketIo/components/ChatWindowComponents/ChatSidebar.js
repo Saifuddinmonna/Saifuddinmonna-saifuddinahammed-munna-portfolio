@@ -36,7 +36,7 @@ const ChatSidebar = ({
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search users..."
-            className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+            className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] bg-transparent"
           />
         </div>
       )}
@@ -58,7 +58,7 @@ const ChatSidebar = ({
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search groups..."
-            className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+            className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] bg-transparent"
           />
           {/* Show create button for admin OR for testing - remove the role check temporarily */}
           {(dbUser?.data?.role === "admin" || true) && (
