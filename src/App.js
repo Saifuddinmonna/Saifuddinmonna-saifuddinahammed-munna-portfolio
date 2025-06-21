@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
 import router from "./components/Router/router";
-import TestimonialsPage from "./pages/TestimonialsPage";
+
 import { AuthProvider } from "./auth/context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

@@ -78,10 +78,7 @@ const ChatArea = ({
         >
           <div className="flex flex-col items-start max-w-full w-full">
             {showNameAbove && (
-              <div
-                className="text-xs font-bold mb-1 ml-2"
-                style={{ color: currentTheme.text.secondary }}
-              >
+              <div className="text-xs font-bold mb-1 ml-2 text-[var(--text-secondary)]">
                 {senderName}
               </div>
             )}
@@ -89,14 +86,14 @@ const ChatArea = ({
               className={`rounded-xl px-4 py-2 shadow-md break-words max-w-[80%] sm:max-w-[80%] w-fit ${
                 isCurrentUser
                   ? "bg-[var(--primary-main)] text-white ml-auto"
-                  : `bg-[var(--background-default)] dark:bg-gray-700 text-[var(--text-primary)] mr-auto`
+                  : "bg-[var(--background-default)] text-[var(--text-primary)] mr-auto"
               }`}
               style={{
                 marginLeft: isCurrentUser ? "auto" : 0,
                 marginRight: isCurrentUser ? 0 : "auto",
                 border: isCurrentUser
-                  ? `2px solid ${currentTheme.primary.light}`
-                  : `1px solid ${currentTheme.border.main}`,
+                  ? "2px solid var(--primary-light)"
+                  : "1px solid var(--border-main)",
                 maxWidth: window.innerWidth < 640 ? "90%" : "80%",
                 minWidth: 40,
                 fontSize: 15,
@@ -107,7 +104,7 @@ const ChatArea = ({
             <div
               className={`text-xs mt-1 opacity-70 ${isCurrentUser ? "text-right" : "text-left"}`}
               style={{
-                color: currentTheme.text.secondary,
+                color: "var(--text-secondary)",
                 maxWidth: window.innerWidth < 640 ? "90%" : "80%",
                 alignSelf: isCurrentUser ? "flex-end" : "flex-start",
               }}
@@ -156,7 +153,7 @@ const ChatArea = ({
       <>
         {/* Chat Header */}
         {activeChatTab === "group" && selectedGroup && (
-          <div className="p-3 border-b bg-[var(--background-default)]">
+          <div className="p-3 border-b bg-[var(--background-default)] border-[var(--border-main)]">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[var(--primary-main)] flex items-center justify-center text-white text-sm font-semibold">
                 {selectedGroup.name.charAt(0).toUpperCase()}
@@ -201,7 +198,7 @@ const ChatArea = ({
                   value={editText}
                   onChange={e => setEditText(e.target.value)}
                   placeholder="Edit your message..."
-                  className="w-full p-2 pr-10 sm:pr-20 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] max-h-[20vh] md:max-h-[30vh]"
+                  className="w-full p-2 pr-10 sm:pr-20 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] max-h-[20vh] md:max-h-[30vh] bg-[var(--background-paper)] border-[var(--border-main)] text-[var(--text-primary)]"
                   rows="2"
                 />
                 <div className="absolute top-0 right-2 flex flex-col sm:flex-row gap-1">
@@ -236,7 +233,7 @@ const ChatArea = ({
                       ? `Message ${selectedGroup.name}...`
                       : "Type a message..."
                   }
-                  className="w-full p-2 pr-12 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] max-h-[25vh] md:max-h-[35vh]"
+                  className="w-full p-2 pr-12 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] max-h-[25vh] md:max-h-[35vh] bg-[var(--background-paper)] border-[var(--border-main)] text-[var(--text-primary)]"
                   rows="2"
                   disabled={isSending}
                 />
@@ -252,7 +249,7 @@ const ChatArea = ({
                     type="submit"
                     className={`p-1 rounded transition-colors ${
                       isSending || !inputValue.trim()
-                        ? "bg-gray-400 cursor-not-allowed"
+                        ? "bg-[var(--border-main)] text-[var(--text-disabled)] cursor-not-allowed"
                         : "bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white"
                     }`}
                     disabled={isSending || !inputValue.trim()}

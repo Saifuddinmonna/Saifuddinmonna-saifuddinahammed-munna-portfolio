@@ -6,6 +6,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import testimonialService from "../../services/testimonialService";
 import { toast } from "react-hot-toast";
 
+// Add line-clamp utility styles
+const lineClampStyles = `
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+`;
+
 const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
   const { user, dbUser } = useAuth();
   const queryClient = useQueryClient();
@@ -53,6 +63,8 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
       transition={{ duration: 0.3 }}
       className="bg-[var(--background-paper)] rounded-lg p-6 shadow-lg relative overflow-hidden"
     >
+      <style>{lineClampStyles}</style>
+
       {/* Quote Icon Background */}
       <div className="absolute top-4 right-4 text-[var(--primary-main)] opacity-10">
         <FaQuoteLeft size={60} />
@@ -69,14 +81,30 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
       </div>
 
       {/* Testimonial Text */}
-      <p className="text-[var(--text-primary)] mb-6 italic relative z-10">
-        "{testimonial.testimonialText}"
-      </p>
+      <div className="mb-6 relative z-10">
+        <p className="text-[var(--text-primary)] italic line-clamp-4 leading-relaxed">
+          "{testimonial.testimonialText}"
+        </p>
+        {testimonial.testimonialText.length > 300 && (
+          <button
+            className="text-[var(--primary-main)] text-xs mt-2 hover:underline"
+            onClick={e => {
+              const textElement = e.target.previousElementSibling;
+              textElement.classList.toggle("line-clamp-4");
+              e.target.textContent = textElement.classList.contains("line-clamp-4")
+                ? "Read more"
+                : "Read less";
+            }}
+          >
+            Read more
+          </button>
+        )}
+      </div>
 
       {/* Client Info with Modern Design */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
         {/* Profile Image with Modern Border */}
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-[var(--primary-main)] ring-offset-4 ring-offset-[var(--background-paper)] shadow-lg">
             <img
               src={testimonial.clientImageURL || "https://via.placeholder.com/150"}
@@ -91,22 +119,26 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
         </div>
 
         {/* Author Info with Modern Typography */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-lg text-[var(--text-primary)]">
+            <h3 className="font-bold text-lg text-[var(--text-primary)] truncate">
               {testimonial.clientName}
             </h3>
             {testimonial.status === "approved" && (
-              <span className="px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">
+              <span className="px-2 py-0.5 text-xs bg-green-500 text-white rounded-full flex-shrink-0">
                 Approved
               </span>
             )}
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-[var(--primary-main)]">{testimonial.position}</p>
-            <p className="text-sm text-[var(--text-secondary)]">{testimonial.companyName}</p>
+            <p className="text-sm font-medium text-[var(--primary-main)] truncate">
+              {testimonial.position}
+            </p>
+            <p className="text-sm text-[var(--text-secondary)] truncate">
+              {testimonial.companyName}
+            </p>
             <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-              <FaCalendarAlt className="text-[var(--primary-main)]" />
+              <FaCalendarAlt className="text-[var(--primary-main)] flex-shrink-0" />
               <span>{formatDate(testimonial.createdAt)}</span>
             </div>
           </div>
@@ -119,7 +151,7 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
           href={testimonial.projectLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 text-[var(--primary-main)] hover:text-[var(--primary-dark)] text-sm block"
+          className="mt-4 text-[var(--primary-main)] hover:text-[var(--primary-dark)] text-sm block truncate"
         >
           View Project →
         </a>
@@ -149,19 +181,6 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
             <FaTrash className="text-xs" />
             {deleteMutation.isLoading ? "Deleting..." : "Delete"}
           </motion.button>
-
-          {/* {(isOwner || isAdmin ) && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleDelete}
-              disabled={deleteMutation.isLoading}
-              className="flex items-center gap-2 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50"
-            >
-              <FaTrash className="text-xs" />
-              {deleteMutation.isLoading ? "Deleting..." : "Delete"}
-            </motion.button>
-          )} */}
         </div>
       )}
 

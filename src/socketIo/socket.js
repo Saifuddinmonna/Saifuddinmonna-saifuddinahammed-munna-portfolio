@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
+import { API_URL } from "../ApiForChangingTesting";
 
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
+const SOCKET_URL = API_URL;
 
 class SocketService {
   constructor() {

@@ -5,6 +5,16 @@ import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { FaCheck, FaTimes, FaSearch, FaFilter, FaTrash } from "react-icons/fa";
 
+// Add line-clamp utility styles
+const lineClampStyles = `
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+`;
+
 const TestimonialAdminDashboard = ({ onUpdate }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -96,6 +106,7 @@ const TestimonialAdminDashboard = ({ onUpdate }) => {
 
   return (
     <div className="bg-[var(--background-paper)] rounded-lg p-6 shadow-lg">
+      <style>{lineClampStyles}</style>
       <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Admin Dashboard</h2>
 
       {/* Statistics Cards */}
@@ -147,18 +158,18 @@ const TestimonialAdminDashboard = ({ onUpdate }) => {
               animate={{ opacity: 1, y: 0 }}
               className="bg-[var(--background-default)] p-4 rounded-lg border border-[var(--border-main)]"
             >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-semibold text-[var(--text-primary)]">
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-3 mb-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-[var(--text-primary)] truncate">
                     {testimonial.clientName}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-sm text-[var(--text-secondary)] truncate">
                     {testimonial.position} at {testimonial.companyName}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${
+                    className={`px-2 py-1 rounded-full text-xs whitespace-nowrap ${
                       testimonial.status === "approved"
                         ? "bg-green-100 text-green-800"
                         : testimonial.status === "rejected"
@@ -173,16 +184,34 @@ const TestimonialAdminDashboard = ({ onUpdate }) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleDelete(testimonial._id)}
                     disabled={deleteMutation.isLoading}
-                    className="flex items-center gap-2 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:opacity-50 whitespace-nowrap"
                   >
                     <FaTrash className="text-xs" />
                     {deleteMutation.isLoading ? "Deleting..." : "Delete"}
                   </motion.button>
                 </div>
               </div>
-              <p className="text-[var(--text-primary)] mb-4">{testimonial.testimonialText}</p>
+              <div className="mb-4">
+                <p className="text-[var(--text-primary)] text-sm leading-relaxed break-words line-clamp-3">
+                  {testimonial.testimonialText}
+                </p>
+                {testimonial.testimonialText.length > 200 && (
+                  <button
+                    className="text-[var(--primary-main)] text-xs mt-1 hover:underline"
+                    onClick={e => {
+                      const textElement = e.target.previousElementSibling;
+                      textElement.classList.toggle("line-clamp-3");
+                      e.target.textContent = textElement.classList.contains("line-clamp-3")
+                        ? "Read more"
+                        : "Read less";
+                    }}
+                  >
+                    Read more
+                  </button>
+                )}
+              </div>
               {testimonial.status === "pending" && (
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -192,7 +221,7 @@ const TestimonialAdminDashboard = ({ onUpdate }) => {
                         status: "approved",
                       })
                     }
-                    className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm whitespace-nowrap"
                   >
                     <FaCheck />
                     Approve
@@ -206,7 +235,7 @@ const TestimonialAdminDashboard = ({ onUpdate }) => {
                         status: "rejected",
                       })
                     }
-                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm whitespace-nowrap"
                   >
                     <FaTimes />
                     Reject
