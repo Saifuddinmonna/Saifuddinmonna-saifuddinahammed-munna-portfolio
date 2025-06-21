@@ -160,7 +160,7 @@ const TestimonialCard = ({ testimonial, onDelete, onEdit }) => {
       {/* Admin/Owner Actions */}
       {(isOwner || isAdmin) && (
         <div className="mt-4 pt-4 border-t border-[var(--border-main)] flex justify-end gap-2">
-          {isOwner && (
+          {(isOwner || isAdmin) && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
