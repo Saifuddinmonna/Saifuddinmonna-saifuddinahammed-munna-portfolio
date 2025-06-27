@@ -14,6 +14,7 @@ import { Toaster } from "react-hot-toast";
 // Lazy load SocketProvider
 const LazySocketProvider = lazy(() => import("./socketIo/LazySocketProvider"));
 const PerformanceMonitor = lazy(() => import("./components/PerformanceMonitor"));
+const PerformanceOptimizer = lazy(() => import("./components/PerformanceOptimizer"));
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -107,6 +108,7 @@ function App() {
                 theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
               />
               <PerformanceMonitor />
+              <PerformanceOptimizer />
             </div>
           </LazySocketProvider>
         </QueryClientProvider>

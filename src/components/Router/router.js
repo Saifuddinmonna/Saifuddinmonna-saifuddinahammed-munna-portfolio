@@ -18,7 +18,7 @@ const LoadingSpinner = () => (
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
-const HomeLayout = lazy(() => import("../MainLayouts/HomeLayout"));
+const OptimizedHomeLayout = lazy(() => import("../MainLayouts/OptimizedHomeLayout"));
 const About = lazy(() => import("../About/About.js"));
 const ContactPage = lazy(() => import("../../pages/ContactPage"));
 const MyPortfolios = lazy(() => import("../MyPortfolios/MyPortfoliosForHomePage.js"));
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         path: "/",
         element: (
           <Suspense fallback={<LoadingSpinner />}>
-            <HomeLayout />
+            <OptimizedHomeLayout />
           </Suspense>
         ),
       },
