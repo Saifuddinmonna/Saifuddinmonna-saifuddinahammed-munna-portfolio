@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import axios from "axios";
-import { API_URL } from "../../ApiForChangingTesting";
+import { API_URL } from "../../utils/apiConfig";
 
 const API_BASE_URL = API_URL;
 

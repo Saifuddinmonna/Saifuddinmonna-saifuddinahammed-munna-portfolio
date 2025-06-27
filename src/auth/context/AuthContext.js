@@ -8,7 +8,7 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../../firebase/firebase.config";
+import { auth } from "../../config/firebase.config";
 import { toast } from "react-toastify";
 import { getCurrentUserProfile } from "../utils/api";
 

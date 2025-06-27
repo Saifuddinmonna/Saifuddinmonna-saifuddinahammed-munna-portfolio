@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { blogService } from "../services/blogService";
-import Pagination from "../components/common/Pagination";
+import Pagination from "../components/ui/Pagination";
 import { useAuth } from "../auth/context/AuthContext";
 
 const Blog = () => {

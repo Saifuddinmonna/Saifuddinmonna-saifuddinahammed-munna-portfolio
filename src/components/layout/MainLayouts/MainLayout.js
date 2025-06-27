@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 // ... other imports
 import NavbarPage2 from "../NavbarPage/NavbarPage";
-import Footer from "../CommonComponents/Footer";
+import Footer from "../Footer";
 import { Outlet } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
-import ContactPage from "../../pages/ContactPage";
-import aboutPageForHome from "../About/aboutPageForHome"; // Assuming this is a component you want to include
-import ChatBubble from "../../socketIo/components/ChatBubble.js";
-import ChatWindow from "../../socketIo/components/ChatWindow.js";
+import ContactPage from "../../../pages/ContactPage";
+import aboutPageForHome from "../../About/aboutPageForHome"; // Assuming this is a component you want to include
+import ChatBubble from "../../../socketIo/components/ChatBubble.js";
+import ChatWindow from "../../../socketIo/components/ChatWindow.js";
 
 const MainLayout = () => {
   const { scrollYProgress } = useScroll();

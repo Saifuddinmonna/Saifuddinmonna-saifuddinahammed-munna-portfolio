@@ -1,16 +1,16 @@
 import React, { useState, useEffect, lazy, Suspense } from "react";
 import ReactConfetti from "react-confetti";
 import { motion } from "framer-motion";
-import IntersectionLoader from "../IntersectionLoader";
+import IntersectionLoader from "../../features/IntersectionLoader";
 
 // Lazy load all components for better performance
-const HomePageHero = lazy(() => import("../CommonComponents/HomePageHero"));
-const SkillDetails = lazy(() => import("../CommonComponents/SkillProgressbar"));
-const SkillChart = lazy(() => import("../CommonComponents/SkillChart"));
-const MyPortfolios = lazy(() => import("../MyPortfolios/MyPortfoliosForHomePage"));
-const MyServicesv2 = lazy(() => import("../Myservices/MyServicesv2"));
-const HomeLayoutComponents = lazy(() => import("../HomePageComponents/HomeLayoutComponents"));
-const ContactMeForHomePage = lazy(() => import("../ContractMe/ContactMeForHomePage"));
+const HomePageHero = lazy(() => import("../../CommonComponents/HomePageHero"));
+const SkillDetails = lazy(() => import("../../CommonComponents/SkillProgressbar"));
+const SkillChart = lazy(() => import("../../CommonComponents/SkillChart"));
+const MyPortfolios = lazy(() => import("../../MyPortfolios/MyPortfoliosForHomePage"));
+const MyServicesv2 = lazy(() => import("../../Myservices/MyServicesv2"));
+const HomeLayoutComponents = lazy(() => import("../../HomePageComponents/HomeLayoutComponents"));
+const ContactMeForHomePage = lazy(() => import("../../ContractMe/ContactMeForHomePage"));
 
 // Loading skeleton components
 const HeroSkeleton = () => (

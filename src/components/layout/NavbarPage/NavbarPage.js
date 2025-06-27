@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSun, FaMoon } from "react-icons/fa";
-import { ThemeContext } from "../../App";
-import AuthNav from "../../auth/components/AuthNav";
+import { ThemeContext } from "../../../App";
+import AuthNav from "../../../auth/components/AuthNav";
 
 const NavbarPage = () => {
   const [isOpen, setIsOpen] = useState(false);

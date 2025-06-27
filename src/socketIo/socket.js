@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { API_URL } from "../ApiForChangingTesting";
+import { API_URL } from "../utils/apiConfig";
 
 const SOCKET_URL = API_URL;
 

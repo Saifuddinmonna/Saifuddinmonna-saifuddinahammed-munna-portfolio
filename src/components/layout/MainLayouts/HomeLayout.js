@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ReactConfetti from "react-confetti";
 import { motion } from "framer-motion";
-import HomePageHero from "../CommonComponents/HomePageHero";
-import SkillDetails from "../CommonComponents/SkillProgressbar";
-import SkillChart from "../CommonComponents/SkillChart";
-import MyPortfolios from "../MyPortfolios/MyPortfoliosForHomePage";
-import MyServicesv2 from "../Myservices/MyServicesv2";
-import HomeLayoutComponents from "../HomePageComponents/HomeLayoutComponents";
-import ContactMeForHomePage from "../ContractMe/ContactMeForHomePage";
+import HomePageHero from "../../CommonComponents/HomePageHero";
+import SkillDetails from "../../CommonComponents/SkillProgressbar";
+import SkillChart from "../../CommonComponents/SkillChart";
+import MyPortfolios from "../../MyPortfolios/MyPortfoliosForHomePage";
+import MyServicesv2 from "../../Myservices/MyServicesv2";
+import HomeLayoutComponents from "../../HomePageComponents/HomeLayoutComponents";
+import ContactMeForHomePage from "../../ContractMe/ContactMeForHomePage";
 
 /**
  * Animation variants for section transitions

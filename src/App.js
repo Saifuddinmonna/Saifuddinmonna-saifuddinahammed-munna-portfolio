@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, lazy } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
-import router from "./components/Router/router";
+import router from "./components/layout/Router/router";
 
 import { AuthProvider } from "./auth/context/AuthContext";
 import { ToastContainer } from "react-toastify";
@@ -13,8 +13,8 @@ import { Toaster } from "react-hot-toast";
 
 // Lazy load SocketProvider
 const LazySocketProvider = lazy(() => import("./socketIo/LazySocketProvider"));
-const PerformanceMonitor = lazy(() => import("./components/PerformanceMonitor"));
-const PerformanceOptimizer = lazy(() => import("./components/PerformanceOptimizer"));
+const PerformanceMonitor = lazy(() => import("./components/features/PerformanceMonitor"));
+const PerformanceOptimizer = lazy(() => import("./components/features/PerformanceOptimizer"));
 
 // Create Theme Context
 export const ThemeContext = createContext();

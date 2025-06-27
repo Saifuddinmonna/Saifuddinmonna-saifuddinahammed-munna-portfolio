@@ -58,8 +58,8 @@ import { ThemeContext } from "../../../App";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import portfoliosName from "../portfolios.json";
 import "./Portfolio.css";
-import NavbarPage2 from "../../NavbarPage/NavbarPage";
-import Footer from "../../CommonComponents/Footer";
+import NavbarPage2 from "../../layout/NavbarPage/NavbarPage";
+import Footer from "../../layout/Footer";
 import {
   FaSearch,
   FaThLarge,

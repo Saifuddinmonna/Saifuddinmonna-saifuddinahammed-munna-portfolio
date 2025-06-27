@@ -2,12 +2,12 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
-import Blog from "../Blog/Blog";
-import BlogEditor from "../Blog/BlogEditor";
-import BlogPost from "../Blog/BlogPost";
+import Blog from "../../Blog/Blog";
+import BlogEditor from "../../Blog/BlogEditor";
+import BlogPost from "../../Blog/BlogPost";
 
 // Lazy load ChatWindow
-const LazyChatWindow = lazy(() => import("../../socketIo/components/LazyChatWindow.js"));
+const LazyChatWindow = lazy(() => import("../../../socketIo/components/LazyChatWindow.js"));
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -19,17 +19,17 @@ const LoadingSpinner = () => (
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
 const OptimizedHomeLayout = lazy(() => import("../MainLayouts/OptimizedHomeLayout"));
-const About = lazy(() => import("../About/About.js"));
-const ContactPage = lazy(() => import("../../pages/ContactPage"));
-const MyPortfolios = lazy(() => import("../MyPortfolios/MyPortfoliosForHomePage.js"));
-const ProjectPage = lazy(() => import("../../pages/ProjectPage"));
-const PortfolioLayout = lazy(() => import("../MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
-const MyportfolioImage = lazy(() => import("../MyPortfolios/MyportfolioImage"));
-const GalleryPage = lazy(() => import("../../pages/GalleryPage"));
-const ResumeViewer = lazy(() => import("../resumes/ResumeViewer/ResumeViewer"));
-const TestimonialsPage = lazy(() => import("../../components/Testimonials/TestimonialsPage.js"));
-const SignIn = lazy(() => import("../../auth/components/SignIn"));
-const SignUp = lazy(() => import("../../auth/components/SignUp"));
+const About = lazy(() => import("../../About/About.js"));
+const ContactPage = lazy(() => import("../../../pages/ContactPage"));
+const MyPortfolios = lazy(() => import("../../MyPortfolios/MyPortfoliosForHomePage.js"));
+const ProjectPage = lazy(() => import("../../../pages/ProjectPage"));
+const PortfolioLayout = lazy(() => import("../../MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
+const MyportfolioImage = lazy(() => import("../../MyPortfolios/MyportfolioImage"));
+const GalleryPage = lazy(() => import("../../../pages/GalleryPage"));
+const ResumeViewer = lazy(() => import("../../resumes/ResumeViewer/ResumeViewer"));
+const TestimonialsPage = lazy(() => import("../../../components/Testimonials/TestimonialsPage.js"));
+const SignIn = lazy(() => import("../../../auth/components/SignIn"));
+const SignUp = lazy(() => import("../../../auth/components/SignUp"));
 
 // Create router configuration
 const router = createBrowserRouter([

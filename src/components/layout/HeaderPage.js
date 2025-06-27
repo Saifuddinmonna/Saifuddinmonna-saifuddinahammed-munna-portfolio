@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Main.css";
+import "../../assets/Main.css";
 import Typewriter from "typewriter-effect";
 
 const HeaderPage = () => {

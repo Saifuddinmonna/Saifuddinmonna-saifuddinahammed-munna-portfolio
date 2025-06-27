@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaExternalLinkAlt, FaGithub, FaServer } from "react-icons/fa";
-import NavbarPage2 from "../NavbarPage/NavbarPage";
-import Footer from "../CommonComponents/Footer";
+import NavbarPage2 from "../layout/NavbarPage/NavbarPage";
+import Footer from "../layout/Footer";
 
 // Assuming portfolios.json is in the public folder or accessible via fetch
 import allProjectsData from "./portfolios.json"; // Direct import if in src

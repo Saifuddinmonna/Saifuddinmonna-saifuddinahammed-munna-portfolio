@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAuthToken, handleAuthError } from "../auth/utils/api";
 
-import { API_URL } from "../ApiForChangingTesting";
+import { API_URL } from "../utils/apiConfig";
 
 const testimonialService = {
   // Get public testimonials (no auth required)

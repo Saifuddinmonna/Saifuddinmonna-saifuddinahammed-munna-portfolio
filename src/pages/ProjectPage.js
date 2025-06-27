@@ -12,7 +12,7 @@ import {
   FaLink,
   FaExclamationCircle,
 } from "react-icons/fa";
-import NavbarPage from "../components/NavbarPage/NavbarPage"; // Corrected import to NavbarPage.js
+import NavbarPage from "../components/layout/NavbarPage/NavbarPage"; // Corrected import to NavbarPage.js
 const ProjectPage = () => {
   const { projectName } = useParams(); // This matches :projectName in your App.js route
   console.log("[ProjectPage] projectName from URL params:", projectName);

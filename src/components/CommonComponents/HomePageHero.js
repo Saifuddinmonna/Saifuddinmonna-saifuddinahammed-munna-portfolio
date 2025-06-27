@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import "./Main.css"; // Jodi Main.css ekhaneo proyojon hoy
+import "../../assets/Main.css"; // Updated path to assets directory
 import Typewriter from "typewriter-effect";
 import { motion } from "framer-motion"; // Framer Motion import kora
 import { Link } from "react-router-dom"; // Add this import

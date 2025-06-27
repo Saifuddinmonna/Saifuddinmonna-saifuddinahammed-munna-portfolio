@@ -1,5 +1,5 @@
 import axios from "axios";
-import API_URL from "../ApiForChangingTesting.js";
+import { API_URL } from "../utils/apiConfig";
 
 const api = axios.create({
   baseURL: API_URL,

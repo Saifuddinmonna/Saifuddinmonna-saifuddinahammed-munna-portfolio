@@ -1,68 +1,36 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import ReactConfetti from "react-confetti";
 import GalleryGrid from "../components/Gallery/GalleryGrid";
-import Lightbox from "../components/Gallery/Lightbox"; // Import your Lightbox
+import Lightbox from "../components/Gallery/Lightbox";
 import portfoliosData from "../components/MyPortfolios/portfolios.json";
-import NavbarPage from "../components/NavbarPage/NavbarPage"; // Corrected import
-import Footer from "../components/CommonComponents/Footer";
+import NavbarPage from "../components/layout/NavbarPage/NavbarPage";
+import Footer from "../components/layout/Footer";
 import { ThemeContext } from "../App";
-import { motion, useScroll, useSpring } from "framer-motion";
-import {
-  FaSearch,
-  FaThLarge,
-  FaList, // Assuming you might want a list view for GalleryGrid
-  FaSort,
-  FaPalette,
-  FaTags,
-} from "react-icons/fa";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
+import { FaSearch, FaThLarge, FaList, FaSort, FaPalette, FaTags } from "react-icons/fa";
 
-// Add Google Fonts (consistent with PortfolioLayout)
+// Add Google Fonts
 const fontStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 `;
 
 // Constants
 const CONFETTI_DURATION = 5000;
-
 const SORT_OPTIONS = {
-  NEWEST: "newest", // Assuming 'id' or index can determine newest
+  NEWEST: "newest",
   OLDEST: "oldest",
   NAME_ASC: "name_asc",
   NAME_DESC: "name_desc",
 };
 
 const VIEW_MODES = {
-  GRID_AUTO: "grid-auto", // Let GalleryGrid decide based on its internal logic
-  // You can add more if GalleryGrid supports them, e.g., GRID_2, GRID_3
-  // LIST: "list", // If GalleryGrid can render items as a list
+  GRID_1: "grid-1",
+  GRID_2: "grid-2",
+  GRID_3: "grid-3",
+  LIST: "list",
 };
 
-// Helper to prepare initial gallery data in the format GalleryItem/Lightbox expect
-const prepareGalleryData = () => {
-  return portfoliosData
-    .flatMap((project, projectIndex) =>
-      project.image.map(img => ({
-        src: `/images/${img}`,
-        alt: `${project.name} - ${img}`,
-        title: project.name,
-        description: project.category,
-        projectData: {
-          name: project.name,
-          id: project.id || `proj-${projectIndex}`, // Ensure an ID for sorting
-          category: project.category,
-          liveWebsite: project.liveWebsite,
-          liveWebsiteRepo: project.liveWebsiteRepo,
-          liveServersite: project.liveServersite,
-          liveServersiteRepo: project.liveServersiteRepo,
-          technology: project.technology,
-          overview: project.overview,
-        },
-      }))
-    )
-    .sort((a, b) => (b.projectData.id || 0) - (a.projectData.id || 0)); // Default sort by newest if id exists
-};
-
-// Tooltip Component (reusable)
+// Tooltip Component
 const Tooltip = ({ children, text }) => (
   <div className="relative group">
     {children}
@@ -73,28 +41,72 @@ const Tooltip = ({ children, text }) => (
   </div>
 );
 
+// Button animation variants
+const buttonVariants = {
+  initial: { scale: 1 },
+  hover: {
+    scale: 1.05,
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10,
+    },
+  },
+  tap: {
+    scale: 0.95,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10,
+    },
+  },
+};
+
 const GalleryPage = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const { scrollYProgress } = useScroll();
-  useSpring(scrollYProgress);
+  const scaleX = useSpring(scrollYProgress);
 
   const [confettiStart, setConfettiStart] = useState(true);
   const [galleryData, setGalleryData] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState(VIEW_MODES.GRID_AUTO);
+  const [viewMode, setViewMode] = useState(VIEW_MODES.GRID_3);
   const [sortBy, setSortBy] = useState(SORT_OPTIONS.NEWEST);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedImageForLightbox, setSelectedImageForLightbox] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  // Prepare gallery data
   useEffect(() => {
     setIsLoading(true);
-    const data = prepareGalleryData();
+    const data = portfoliosData
+      .flatMap((project, projectIndex) =>
+        project.image.map(img => ({
+          src: `/images/${img}`,
+          alt: `${project.name} - ${img}`,
+          title: project.name,
+          description: project.category,
+          projectData: {
+            name: project.name,
+            id: project.id || `proj-${projectIndex}`,
+            category: project.category,
+            liveWebsite: project.liveWebsite,
+            liveWebsiteRepo: project.liveWebsiteRepo,
+            liveServersite: project.liveServersite,
+            liveServersiteRepo: project.liveServersiteRepo,
+            technology: project.technology,
+            overview: project.overview,
+          },
+        }))
+      )
+      .sort((a, b) => (b.projectData.id || 0) - (a.projectData.id || 0));
     setGalleryData(data);
     setIsLoading(false);
   }, []);
 
+  // Filter and sort data
   const filterAndSortData = useCallback(() => {
     let filteredData = [...galleryData];
 
@@ -147,17 +159,20 @@ const GalleryPage = () => {
   }, []);
 
   const handleImageClick = image => {
-    setSelectedImageForLightbox(image);
+    setSelectedImage(image);
+  };
+
+  const handleCloseLightbox = () => {
+    setSelectedImage(null);
   };
 
   const uniqueCategories = Array.from(new Set(galleryData.map(item => item.projectData.category)));
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.05 } }, // Faster stagger for gallery
+    visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
   };
 
-  // Loading skeleton can be simpler if GalleryGrid handles its own items
   const LoadingSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
       {[...Array(8)].map((_, i) => (
@@ -174,6 +189,16 @@ const GalleryPage = () => {
       <div className="fixed top-0 left-0 right-0 z-50">
         <NavbarPage />
       </div>
+
+      {/* Progress Bar */}
+      <motion.div
+        className="fixed left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 z-40"
+        style={{
+          scaleX,
+          transformOrigin: "0%",
+          top: "3.5rem",
+        }}
+      />
 
       <main className="flex-grow bg-[var(--background-default)] pt-20">
         <div className="container mx-auto px-4 py-4">
@@ -212,99 +237,136 @@ const GalleryPage = () => {
               </div>
             </div>
 
-            {/* Main Content Area for Gallery */}
+            {/* Main Content */}
             <div className="flex-1">
-              <div className="mb-6 flex flex-wrap items-center gap-4">
-                {/* Search Input */}
-                <div className="flex-1 min-w-[200px]">
-                  <Tooltip text="Search by title, category, or technology">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search gallery..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent shadow-sm hover:shadow-md transition-all duration-300"
-                      />
-                      <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]" />
-                    </div>
-                  </Tooltip>
-                </div>
+              {/* Header Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="bg-[var(--background-paper)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-color)] p-6 mb-6"
+              >
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 text-[var(--text-primary)]"
+                >
+                  Project{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)]">
+                    Gallery
+                  </span>
+                </motion.h1>
 
-                {/* Sort Options */}
-                <Tooltip text="Sort items">
-                  <div className="relative">
-                    <select
-                      value={sortBy}
-                      onChange={e => setSortBy(e.target.value)}
-                      className="appearance-none bg-[var(--background-paper)] border border-[var(--border-color)] text-[var(--text-primary)] py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent shadow-sm hover:shadow-md transition-all duration-300"
-                    >
-                      <option value={SORT_OPTIONS.NEWEST}>Newest</option>
-                      <option value={SORT_OPTIONS.OLDEST}>Oldest</option>
-                      <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
-                      <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--text-secondary)]">
-                      <FaSort className="fill-current h-4 w-4" />
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="text-center text-[var(--text-secondary)] mb-8 max-w-2xl mx-auto"
+                >
+                  Explore my portfolio of web development projects. Click on any image to view
+                  details and access live demos.
+                </motion.p>
+
+                {/* Controls Section */}
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-6">
+                  {/* Search Bar */}
+                  <div className="relative flex-1 max-w-md">
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]" />
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-[var(--background-elevated)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent text-[var(--text-primary)]"
+                    />
+                  </div>
+
+                  {/* View Mode Controls */}
+                  <div className="flex items-center gap-2">
+                    <Tooltip text="Grid View">
+                      <motion.button
+                        variants={buttonVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        whileTap="tap"
+                        onClick={() => setViewMode(VIEW_MODES.GRID_3)}
+                        className={`p-2 rounded-lg transition-all duration-300 ${
+                          viewMode === VIEW_MODES.GRID_3
+                            ? "bg-[var(--primary-main)] text-white"
+                            : "bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)]"
+                        }`}
+                      >
+                        <FaThLarge />
+                      </motion.button>
+                    </Tooltip>
+
+                    <Tooltip text="List View">
+                      <motion.button
+                        variants={buttonVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        whileTap="tap"
+                        onClick={() => setViewMode(VIEW_MODES.LIST)}
+                        className={`p-2 rounded-lg transition-all duration-300 ${
+                          viewMode === VIEW_MODES.LIST
+                            ? "bg-[var(--primary-main)] text-white"
+                            : "bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)]"
+                        }`}
+                      >
+                        <FaList />
+                      </motion.button>
+                    </Tooltip>
+
+                    {/* Sort Dropdown */}
+                    <div className="relative">
+                      <Tooltip text="Sort Options">
+                        <motion.button
+                          variants={buttonVariants}
+                          initial="initial"
+                          whileHover="hover"
+                          whileTap="tap"
+                          className="p-2 rounded-lg bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)] transition-all duration-300"
+                        >
+                          <FaSort />
+                        </motion.button>
+                      </Tooltip>
+                      <select
+                        value={sortBy}
+                        onChange={e => setSortBy(e.target.value)}
+                        className="absolute right-0 top-full mt-1 bg-[var(--background-elevated)] border border-[var(--border-color)] rounded-lg px-3 py-1 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+                      >
+                        <option value={SORT_OPTIONS.NEWEST}>Newest First</option>
+                        <option value={SORT_OPTIONS.OLDEST}>Oldest First</option>
+                        <option value={SORT_OPTIONS.NAME_ASC}>Name A-Z</option>
+                        <option value={SORT_OPTIONS.NAME_DESC}>Name Z-A</option>
+                      </select>
                     </div>
                   </div>
-                </Tooltip>
+                </div>
 
-                {/* View Mode (Simplified for now, assuming GalleryGrid handles its layout) */}
-                {/* You can expand this if GalleryGrid takes specific column props */}
-                <Tooltip text="Toggle View (Feature may depend on GalleryGrid capabilities)">
-                  <button
-                    onClick={() => setViewMode(VIEW_MODES.GRID_AUTO)} // Example, adapt if GalleryGrid has view modes
-                    className={`px-4 py-2 rounded-md bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-[var(--background-elevated)] shadow-sm hover:shadow-md transition-all duration-300`}
-                  >
-                    <FaThLarge />
-                  </button>
-                </Tooltip>
-              </div>
+                {/* Results Count */}
+                <div className="text-center text-[var(--text-secondary)] text-sm">
+                  Showing {displayedItems.length} of {galleryData.length} projects
+                </div>
+              </motion.div>
 
-              {/* Instructions Section (Optional - can be removed or kept) */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 mb-6 shadow-md">
-                <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                  Welcome to the Gallery!
-                </h2>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Explore projects, hover for quick details, and click to see more or visit live
-                  sites. Use the filters and search to navigate.
-                </p>
-              </div>
-
-              {isLoading ? (
-                <LoadingSkeleton />
-              ) : displayedItems.length > 0 ? (
-                <motion.div variants={containerVariants} initial="hidden" animate="visible">
-                  <GalleryGrid
-                    images={displayedItems}
-                    onImageClick={handleImageClick}
-                    // Pass viewMode or other props if GalleryGrid supports them
-                    // e.g., className={viewMode === VIEW_MODES.LIST ? "list-view-class" : "grid-view-class"}
-                  />
-                </motion.div>
-              ) : (
-                <motion.p
-                  className="text-center text-xl text-[var(--text-secondary)] mt-8"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  No gallery items found matching your criteria.
-                </motion.p>
-              )}
+              {/* Gallery Content */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="bg-[var(--background-paper)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-color)] p-6"
+              >
+                {isLoading ? <LoadingSkeleton /> : <GalleryGrid images={displayedItems} />}
+              </motion.div>
             </div>
           </div>
         </div>
       </main>
 
-      {selectedImageForLightbox && (
-        <Lightbox
-          image={selectedImageForLightbox}
-          onClose={() => setSelectedImageForLightbox(null)}
-        />
-      )}
+      {selectedImage && <Lightbox image={selectedImage} onClose={handleCloseLightbox} />}
+
       <Footer />
     </div>
   );

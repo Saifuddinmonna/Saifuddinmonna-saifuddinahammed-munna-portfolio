@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../../ApiForChangingTesting";
+import { API_URL } from "../../utils/apiConfig";
 
 const authService = {
   async login(email, password) {
