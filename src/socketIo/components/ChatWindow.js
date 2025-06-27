@@ -76,6 +76,11 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const messagesEndRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [activeTab, setActiveTab] = useState("public");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Get the correct user ID (use firebaseUid from MongoDB or fallback to Firebase UID)
   const currentUserId = dbUser?.firebaseUid || firebaseUser?.uid;
@@ -96,7 +101,6 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const [showUserList, setShowUserList] = useState(false);
   const [showGroupList, setShowGroupList] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -214,7 +218,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Handle tab changes
   const handleTabChange = async tab => {
-    setActiveChatTab(tab);
+    setActiveTab(tab);
     // History fetching is now handled by handleSelectPrivateChatUser
   };
 
@@ -453,7 +457,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const handleSelectPrivateChatUser = user => {
     if (!user) return;
     setSelectedPrivateChatUser(user);
-    setActiveChatTab("private");
+    setActiveTab("private");
 
     // Fetch history only if it hasn't been fetched before for this user
     if (!fetchedHistories.has(user.uid)) {
@@ -464,7 +468,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   const handleSelectGroup = group => {
     setSelectedGroup(group);
-    setActiveChatTab("group");
+    setActiveTab("group");
 
     // Load group message history
     if (connected && group?.id) {
@@ -622,7 +626,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
             }`}
             onClick={() => {
               setSelectedPrivateChatUser(user);
-              setActiveChatTab("private");
+              setActiveTab("private");
               markAllMessagesAsRead(user.id);
             }}
           >
@@ -664,7 +668,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
             className="flex items-center justify-between p-2 rounded-md hover:bg-[var(--background-default)] cursor-pointer"
             onClick={() => {
               setSelectedGroup(group);
-              setActiveChatTab("group");
+              setActiveTab("group");
               setShowGroupList(false);
             }}
           >
@@ -737,6 +741,20 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     }
   };
 
+  // Delay chat window loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 5000); // Load chat window after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Don't render anything until visible
+  if (!isVisible) {
+    return null;
+  }
+
   if (!isChatOpen) return null;
 
   return (
@@ -764,14 +782,14 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       {!isMinimized && (
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Tabs */}
-          <ChatTabs activeChatTab={activeChatTab} setActiveChatTab={setActiveChatTab} />
+          <ChatTabs activeChatTab={activeTab} setActiveChatTab={setActiveTab} />
 
           {/* Chat Content */}
           <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* Sidebar */}
             {isSidebarVisible && (
               <ChatSidebar
-                activeChatTab={activeChatTab}
+                activeChatTab={activeTab}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 dbUser={dbUser}
@@ -806,7 +824,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
               <ChatArea
                 connected={connected}
                 isLoading={isLoading}
-                activeChatTab={activeChatTab}
+                activeChatTab={activeTab}
                 selectedGroup={selectedGroup}
                 setSelectedGroup={setSelectedGroup}
                 currentTheme={currentTheme}

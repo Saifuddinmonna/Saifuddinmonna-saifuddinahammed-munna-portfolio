@@ -23,11 +23,12 @@ const BlogPost = () => {
     queryKey: ["blog", id],
     queryFn: async () => {
       const response = await blogService.getBlog(id);
+      console.log("BlogPost API Response:", response);
       return response;
     },
   });
 
-  const post = response?.data;
+  const post = response?.data || response;
 
   const likeMutation = useMutation({
     mutationFn: () =>
@@ -210,7 +211,7 @@ const BlogPost = () => {
               {isAuthor && (
                 <div className="flex gap-4">
                   <button
-                    onClick={() => navigate(`/blog/editor/${post._id}`)}
+                    onClick={() => navigate(`/blog/edit/${post._id}`)}
                     className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
                   >
                     <FaEdit size={20} />

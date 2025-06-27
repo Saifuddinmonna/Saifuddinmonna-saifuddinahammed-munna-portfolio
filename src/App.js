@@ -1,7 +1,7 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
 import router from "./components/Router/router";
@@ -11,7 +11,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "react-hot-toast";
 
-import { SocketProvider } from "./socketIo/SocketProvider";
+// Lazy load SocketProvider
+const LazySocketProvider = lazy(() => import("./socketIo/LazySocketProvider"));
+const PerformanceMonitor = lazy(() => import("./components/PerformanceMonitor"));
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -88,7 +90,7 @@ function App() {
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
           <Toaster position="top-right" />
-          <SocketProvider>
+          <LazySocketProvider>
             <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
               {confettiStart && <ReactConfetti />}
               <RouterProvider router={router} />
@@ -104,8 +106,9 @@ function App() {
                 pauseOnHover
                 theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
               />
+              <PerformanceMonitor />
             </div>
-          </SocketProvider>
+          </LazySocketProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </AuthProvider>

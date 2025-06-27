@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -11,7 +11,11 @@ const BlogEditor = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const editorRef = useRef(null);
   const [showAuthorInfo, setShowAuthorInfo] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isEditorReady, setIsEditorReady] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -26,30 +30,99 @@ const BlogEditor = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  // Debug useEffect to monitor formData changes
+  useEffect(() => {
+    console.log("FormData changed:", formData);
+    console.log("Current form values:");
+    console.log("- Title:", formData.title);
+    console.log("- Category:", formData.category);
+    console.log("- Image:", formData.image);
+    console.log("- Content length:", formData.content?.length || 0);
+    console.log("- Author name:", formData.author?.name);
+  }, [formData]);
+
+  // Handle TinyMCE editor initialization
+  useEffect(() => {
+    if (isDataLoaded && isEditorReady && formData.content) {
+      console.log("TinyMCE editor ready with content via value prop");
+    }
+  }, [isDataLoaded, isEditorReady, formData.content]);
+
+  // Handle content updates after initial load
+  useEffect(() => {
+    if (isEditorReady && editorRef.current && formData.content && isDataLoaded) {
+      const currentContent = editorRef.current.getContent();
+      if (currentContent !== formData.content) {
+        console.log("Updating editor content");
+        editorRef.current.setContent(formData.content);
+      }
+    }
+  }, [formData.content, isEditorReady, isDataLoaded]);
+
   useEffect(() => {
     if (id) {
       const fetchPost = async () => {
         try {
-          const data = await blogService.getBlogById(id);
+          setIsLoading(true);
+          console.log("Fetching blog with ID:", id);
+
+          const data = await blogService.getBlog(id);
           console.log("Fetched blog data:", data);
-          setFormData({
+          console.log("Raw data type:", typeof data);
+          console.log("Data structure:", {
             title: data.title,
-            content: data.content || "",
+            content: data.content,
             category: data.category,
             image: data.image,
+            author: data.author,
+            hasAuthor: !!data.author,
+            authorName: data.author?.name,
+            authorEmail: data.author?.email,
+          });
+
+          // Check if data is wrapped in another object
+          const actualData = data.data || data;
+          console.log("Actual data after unwrapping:", actualData);
+
+          // Safe access to author data
+          const authorData = actualData.author || {};
+          console.log("Author data after safe access:", authorData);
+
+          const formDataToSet = {
+            title: actualData.title || "",
+            content: actualData.content || "",
+            category: actualData.category || "",
+            image: actualData.image || "",
             author: {
               name:
-                data.author.name || user?.displayName || user?.email?.split("@")[0] || "Anonymous",
-              email: data.author.email || user?.email || "",
-              phone: data.author.phone || "",
-              isHidden: data.author.isHidden || false,
+                authorData.name || user?.displayName || user?.email?.split("@")[0] || "Anonymous",
+              email: authorData.email || user?.email || "",
+              phone: authorData.phone || "",
+              isHidden: authorData.isHidden || false,
             },
-          });
-          setShowAuthorInfo(!data.author.isHidden);
+          };
+
+          console.log("Setting form data:", formDataToSet);
+          console.log("Form data title:", formDataToSet.title);
+          console.log("Form data category:", formDataToSet.category);
+          console.log("Form data image:", formDataToSet.image);
+
+          setFormData(formDataToSet);
+          setShowAuthorInfo(!authorData.isHidden);
+          setIsDataLoaded(true);
+
+          console.log("Form data set successfully");
         } catch (error) {
           console.error("Error fetching post:", error);
+          console.error("Error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+          });
           toast.error("Failed to load post");
           navigate("/blog");
+        } finally {
+          setIsLoading(false);
         }
       };
       fetchPost();
@@ -151,6 +224,45 @@ const BlogEditor = () => {
   return (
     <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        {isLoading && (
+          <div className="mb-6 p-4 bg-[var(--background-paper)] rounded-lg shadow-lg">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-main)]"></div>
+              <span className="ml-3 text-[var(--text-primary)]">Loading blog post...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Data Loaded Indicator */}
+        {!isLoading && id && isDataLoaded && (
+          <div className="mb-6 p-4 bg-green-100 dark:bg-green-900 rounded-lg shadow-lg">
+            <div className="text-green-800 dark:text-green-200">
+              <h3 className="font-bold mb-2">✅ Data Loaded Successfully:</h3>
+              <div className="text-sm space-y-1">
+                <p>
+                  <strong>Title:</strong> {formData.title || "Not loaded"}
+                </p>
+                <p>
+                  <strong>Category:</strong> {formData.category || "Not loaded"}
+                </p>
+                <p>
+                  <strong>Image:</strong> {formData.image || "Not loaded"}
+                </p>
+                <p>
+                  <strong>Content Length:</strong> {formData.content?.length || 0} characters
+                </p>
+                <p>
+                  <strong>Author:</strong> {formData.author?.name || "Not loaded"}
+                </p>
+                <p>
+                  <strong>Editor Ready:</strong> {isEditorReady ? "✅ Yes" : "⏳ Loading..."}
+                </p>
+              </div>
+              <p className="text-xs mt-2 italic">You can now edit the fields without reloading</p>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSave} className="space-y-6">
           <div className="mb-6">
             <input
@@ -238,6 +350,18 @@ const BlogEditor = () => {
             <div>
               <label className="block text-[var(--text-primary)] mb-2">Content</label>
               <Editor
+                key={`editor-${id || "new"}-${isDataLoaded ? "loaded" : "new"}`}
+                onInit={(evt, editor) => {
+                  editorRef.current = editor;
+                  setIsEditorReady(true);
+                  console.log("TinyMCE editor initialized");
+
+                  // Load content if available
+                  if (formData.content && formData.content.trim()) {
+                    console.log("Loading content during initialization");
+                    editor.setContent(formData.content);
+                  }
+                }}
                 apiKey="dlfn3zegy6zpe1fznqli3y0i6rkf4mlhpntqfq5vcqetdl5v"
                 value={formData.content}
                 onEditorChange={content => {
@@ -303,7 +427,163 @@ const BlogEditor = () => {
               />
             </div>
 
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-6 space-x-4">
+              {process.env.NODE_ENV === "development" && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("Current form data:", formData);
+                      console.log("Current content length:", formData.content.length);
+                      toast.success("Check console for form data");
+                    }}
+                    className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-300"
+                  >
+                    Debug Data
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const testData = await blogService.getBlog(id);
+                        console.log("API Test Response:", testData);
+                        console.log("Author data:", testData.author);
+                        toast.success("Check console for API response");
+                      } catch (error) {
+                        console.error("API Test Error:", error);
+                        toast.error("API test failed");
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                  >
+                    Test API
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("=== FORM FIELD VALUES ===");
+                      console.log("Title:", formData.title);
+                      console.log("Content:", formData.content);
+                      console.log("Category:", formData.category);
+                      console.log("Image:", formData.image);
+                      console.log("Author Name:", formData.author.name);
+                      console.log("Author Email:", formData.author.email);
+                      console.log("Author Phone:", formData.author.phone);
+                      console.log("Show Author Info:", showAuthorInfo);
+                      console.log("Is Loading:", isLoading);
+                      console.log("Blog ID:", id);
+                      console.log("========================");
+                      toast.success("Form field values logged to console");
+                    }}
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-300"
+                  >
+                    Check Fields
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (id) {
+                        setIsLoading(true);
+                        try {
+                          const data = await blogService.getBlog(id);
+                          console.log("Force refresh - Raw data:", data);
+                          const actualData = data.data || data;
+                          console.log("Force refresh - Actual data:", actualData);
+
+                          setFormData({
+                            title: actualData.title || "",
+                            content: actualData.content || "",
+                            category: actualData.category || "",
+                            image: actualData.image || "",
+                            author: {
+                              name:
+                                actualData.author?.name ||
+                                user?.displayName ||
+                                user?.email?.split("@")[0] ||
+                                "Anonymous",
+                              email: actualData.author?.email || user?.email || "",
+                              phone: actualData.author?.phone || "",
+                              isHidden: actualData.author?.isHidden || false,
+                            },
+                          });
+                          toast.success("Data refreshed successfully");
+                        } catch (error) {
+                          console.error("Force refresh error:", error);
+                          toast.error("Failed to refresh data");
+                        } finally {
+                          setIsLoading(false);
+                        }
+                      }
+                    }}
+                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-300"
+                  >
+                    Force Refresh
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("=== TINYMCE EDITOR STATUS ===");
+                      console.log("Blog ID:", id);
+                      console.log("Content Length:", formData.content?.length || 0);
+                      console.log("Is Data Loaded:", isDataLoaded);
+                      console.log("Editor Ref:", editorRef.current);
+                      if (editorRef.current) {
+                        console.log("Editor Content:", editorRef.current.getContent());
+                        console.log(
+                          "Editor Content Length:",
+                          editorRef.current.getContent().length
+                        );
+                      }
+                      console.log("=============================");
+                      toast.success("TinyMCE status logged to console");
+                    }}
+                    className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-300"
+                  >
+                    Check Editor
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editorRef.current && formData.content) {
+                        console.log("Manually setting content in editor");
+                        editorRef.current.setContent(formData.content);
+                        toast.success("Content manually set in editor");
+                      } else {
+                        toast.error("Editor not ready or no content");
+                      }
+                    }}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors duration-300"
+                  >
+                    Set Content
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editorRef.current) {
+                        console.log("=== CURSOR POSITION TEST ===");
+                        const selection = editorRef.current.selection;
+                        const cursorPos = selection.getRng();
+                        console.log("Cursor position:", cursorPos);
+                        console.log("Content length:", editorRef.current.getContent().length);
+
+                        // Move cursor to end
+                        const body = editorRef.current.getBody();
+                        const lastNode = body.lastChild;
+                        if (lastNode) {
+                          selection.setCursorLocation(lastNode, -1);
+                          console.log("Cursor moved to end");
+                          toast.success("Cursor moved to end of content");
+                        }
+                      } else {
+                        toast.error("Editor not ready");
+                      }
+                    }}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-300"
+                  >
+                    Fix Cursor
+                  </button>
+                </>
+              )}
               <button
                 type="submit"
                 disabled={isSaving}

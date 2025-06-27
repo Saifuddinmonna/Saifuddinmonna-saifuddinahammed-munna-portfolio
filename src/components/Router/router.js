@@ -1,11 +1,13 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
-import ChatWindow from "../../socketIo/components/ChatWindow.js";
+import ProtectedRoute from "./ProtectedRoute";
 import Blog from "../Blog/Blog";
 import BlogEditor from "../Blog/BlogEditor";
 import BlogPost from "../Blog/BlogPost";
-import ProtectedRoute from "./ProtectedRoute";
+
+// Lazy load ChatWindow
+const LazyChatWindow = lazy(() => import("../../socketIo/components/LazyChatWindow.js"));
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -39,7 +41,7 @@ const router = createBrowserRouter([
     path: "/*",
     element: (
       <Suspense fallback={<LoadingSpinner />}>
-        <ChatWindow />
+        <LazyChatWindow />
       </Suspense>
     ),
   },

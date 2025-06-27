@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useAuth } from "../auth/context/AuthContext";
 import { socketService } from "./socket";
 import { toast } from "react-hot-toast";
@@ -16,6 +16,7 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }) => {
   const { user, token } = useAuth();
   const [connected, setConnected] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [privateMessages, setPrivateMessages] = useState({});
@@ -27,13 +28,15 @@ export const SocketProvider = ({ children }) => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (!user || !token) {
-      setConnected(false);
+  // Lazy initialize socket connection
+  const initializeSocket = useCallback(async () => {
+    if (!user || !token || isInitialized) {
       return;
     }
 
     try {
+      console.log("Initializing socket connection...");
+
       // Initialize socket connection
       socketService.connect(token);
 
@@ -184,18 +187,34 @@ export const SocketProvider = ({ children }) => {
       socketService.getGroups();
 
       setConnected(true);
-
-      // Cleanup on unmount
-      return () => {
-        socketService.disconnect();
-        setConnected(false);
-      };
+      setIsInitialized(true);
+      console.log("Socket connection initialized successfully");
     } catch (error) {
       console.error("Socket initialization error:", error);
       setError(error);
       setConnected(false);
     }
-  }, [user, token]);
+  }, [user, token, isInitialized]);
+
+  // Initialize socket after page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      initializeSocket();
+    }, 2000); // Delay socket initialization by 2 seconds
+
+    return () => clearTimeout(timer);
+  }, [initializeSocket]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (isInitialized) {
+        socketService.disconnect();
+        setConnected(false);
+        setIsInitialized(false);
+      }
+    };
+  }, [isInitialized]);
 
   // Token expiration handling
   useEffect(() => {

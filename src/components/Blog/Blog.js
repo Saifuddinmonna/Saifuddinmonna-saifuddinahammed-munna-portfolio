@@ -243,7 +243,7 @@ const Blog = () => {
                   {user && post.author?.email === user.email && (
                     <div className="flex gap-2">
                       <Link
-                        to={`/blog/editor/${post._id}`}
+                        to={`/blog/edit/${post._id}`}
                         className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
                       >
                         <FaEdit />
