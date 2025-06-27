@@ -284,7 +284,46 @@ const GalleryPage = () => {
 
                   {/* View Mode Controls */}
                   <div className="flex items-center gap-2">
-                    <Tooltip text="Grid View">
+                    <Tooltip text="Grid 1 Column">
+                      <motion.button
+                        variants={buttonVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        whileTap="tap"
+                        onClick={() => setViewMode(VIEW_MODES.GRID_1)}
+                        className={`p-2 rounded-lg transition-all duration-300 ${
+                          viewMode === VIEW_MODES.GRID_1
+                            ? "bg-[var(--primary-main)] text-white"
+                            : "bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)]"
+                        }`}
+                      >
+                        <div className="w-4 h-4 grid grid-cols-1 gap-0.5">
+                          <div className="w-full h-full bg-current rounded-sm"></div>
+                        </div>
+                      </motion.button>
+                    </Tooltip>
+
+                    <Tooltip text="Grid 2 Columns">
+                      <motion.button
+                        variants={buttonVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        whileTap="tap"
+                        onClick={() => setViewMode(VIEW_MODES.GRID_2)}
+                        className={`p-2 rounded-lg transition-all duration-300 ${
+                          viewMode === VIEW_MODES.GRID_2
+                            ? "bg-[var(--primary-main)] text-white"
+                            : "bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)]"
+                        }`}
+                      >
+                        <div className="w-4 h-4 grid grid-cols-2 gap-0.5">
+                          <div className="w-full h-full bg-current rounded-sm"></div>
+                          <div className="w-full h-full bg-current rounded-sm"></div>
+                        </div>
+                      </motion.button>
+                    </Tooltip>
+
+                    <Tooltip text="Grid 3+ Columns">
                       <motion.button
                         variants={buttonVariants}
                         initial="initial"
@@ -319,7 +358,7 @@ const GalleryPage = () => {
                     </Tooltip>
 
                     {/* Sort Dropdown */}
-                    <div className="relative">
+                    <div className="relative group">
                       <Tooltip text="Sort Options">
                         <motion.button
                           variants={buttonVariants}
@@ -331,16 +370,18 @@ const GalleryPage = () => {
                           <FaSort />
                         </motion.button>
                       </Tooltip>
-                      <select
-                        value={sortBy}
-                        onChange={e => setSortBy(e.target.value)}
-                        className="absolute right-0 top-full mt-1 bg-[var(--background-elevated)] border border-[var(--border-color)] rounded-lg px-3 py-1 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                      >
-                        <option value={SORT_OPTIONS.NEWEST}>Newest First</option>
-                        <option value={SORT_OPTIONS.OLDEST}>Oldest First</option>
-                        <option value={SORT_OPTIONS.NAME_ASC}>Name A-Z</option>
-                        <option value={SORT_OPTIONS.NAME_DESC}>Name Z-A</option>
-                      </select>
+                      <div className="absolute right-0 top-full mt-1 bg-[var(--background-elevated)] border border-[var(--border-color)] rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 min-w-[150px]">
+                        <select
+                          value={sortBy}
+                          onChange={e => setSortBy(e.target.value)}
+                          className="w-full bg-transparent border-none px-3 py-2 text-[var(--text-primary)] focus:outline-none cursor-pointer"
+                        >
+                          <option value={SORT_OPTIONS.NEWEST}>Newest First</option>
+                          <option value={SORT_OPTIONS.OLDEST}>Oldest First</option>
+                          <option value={SORT_OPTIONS.NAME_ASC}>Name A-Z</option>
+                          <option value={SORT_OPTIONS.NAME_DESC}>Name Z-A</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -358,7 +399,11 @@ const GalleryPage = () => {
                 animate="visible"
                 className="bg-[var(--background-paper)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-color)] p-6"
               >
-                {isLoading ? <LoadingSkeleton /> : <GalleryGrid images={displayedItems} />}
+                {isLoading ? (
+                  <LoadingSkeleton />
+                ) : (
+                  <GalleryGrid images={displayedItems} viewMode={viewMode} />
+                )}
               </motion.div>
             </div>
           </div>
