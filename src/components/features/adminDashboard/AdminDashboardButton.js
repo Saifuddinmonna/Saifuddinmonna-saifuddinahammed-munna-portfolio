@@ -2,18 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaCog, FaShieldAlt } from "react-icons/fa";
-import { useAuth } from "../../../auth/context/AuthContext";
+import { useIsAdmin } from "../../../utils/adminUtils";
 
 const AdminDashboardButton = () => {
-  const { user, dbUser } = useAuth();
+  // Use the utility hook for admin check
+  const isAdmin = useIsAdmin();
 
-  // Check if user is admin
-  const isAdmin = dbUser?.role === "admin" && dbUser?.isAdmin === true;
-  console.log("form admin dashboard button", isAdmin);
+  console.log("🔍 AdminDashboardButton Debug:");
+  console.log("  - isAdmin result:", isAdmin);
 
   if (!isAdmin) {
+    console.log("❌ AdminDashboardButton: Not showing - user is not admin");
     return null;
   }
+
+  console.log("✅ AdminDashboardButton: Showing - user is admin");
 
   return (
     <Link to="/admin/dashboard">

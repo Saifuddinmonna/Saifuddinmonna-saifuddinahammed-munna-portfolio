@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../auth/context/AuthContext";
+import { checkIsAdmin } from "../../utils/adminUtils";
 
 const AdminRoute = ({ children }) => {
   const { user, dbUser, loading } = useAuth();
@@ -13,7 +14,10 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  if (!user || dbUser.role !== "admin" || dbUser.isAdmin !== true) {
+  // Use the utility function to check if user is admin
+  const isAdmin = checkIsAdmin(dbUser);
+
+  if (!user || !isAdmin) {
     return <Navigate to="/login" />;
   }
 

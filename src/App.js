@@ -11,8 +11,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "react-hot-toast";
 
-// Lazy load SocketProvider
-const LazySocketProvider = lazy(() => import("./socketIo/LazySocketProvider"));
+// Import SocketProvider directly
+import { SocketProvider } from "./socketIo/SocketProvider";
 const PerformanceMonitor = lazy(() => import("./components/features/PerformanceMonitor"));
 const PerformanceOptimizer = lazy(() => import("./components/features/PerformanceOptimizer"));
 
@@ -91,7 +91,7 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <Toaster position="top-right" />
-          <LazySocketProvider>
+          <SocketProvider>
             <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
               {confettiStart && <ReactConfetti />}
               <RouterProvider router={router} />
@@ -110,7 +110,7 @@ function App() {
               <PerformanceMonitor />
               <PerformanceOptimizer />
             </div>
-          </LazySocketProvider>
+          </SocketProvider>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

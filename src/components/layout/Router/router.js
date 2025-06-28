@@ -14,9 +14,6 @@ import MyPortfolios from "../../MyPortfolios/MyPortfoliosForHomePage";
 import GalleryPage from "../../../pages/GalleryPage";
 import AdminDashboardHome from "../../features/adminDashboard/AdminDashboardHome";
 
-// Lazy load ChatWindow
-const LazyChatWindow = lazy(() => import("../../../socketIo/components/LazyChatWindow.js"));
-
 // Loading Spinner Component
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
@@ -41,14 +38,6 @@ const router = createBrowserRouter([
   {
     path: "/projects/:projectName",
     element: <Suspense fallback={<LoadingSpinner />}></Suspense>,
-  },
-  {
-    path: "/*",
-    element: (
-      <Suspense fallback={<LoadingSpinner />}>
-        <LazyChatWindow />
-      </Suspense>
-    ),
   },
 
   {

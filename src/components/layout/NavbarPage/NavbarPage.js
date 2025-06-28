@@ -68,9 +68,7 @@ const NavbarPage = () => {
             {/* Logo/Brand */}
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center group" onClick={() => setIsOpen(false)}>
-                <span className="text-2xl font-bold text-[var(--primary-main)] group-hover:text-[var(--primary-dark)] transition-all duration-300">
-                  MyPortfolio
-                </span>
+                <span className="text-2xl font-bold text-[var(--primary-main)] group-hover:text-[var(--primary-dark)] transition-all duration-300"></span>
               </Link>
             </div>
 

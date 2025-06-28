@@ -19,7 +19,6 @@ import {
   FaChevronDown,
   FaChevronRight,
 } from "react-icons/fa";
-import { useSocket } from "../SocketProvider";
 import EmojiPicker from "emoji-picker-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +30,7 @@ import ChatHeader from "./ChatWindowComponents/ChatHeader";
 import ChatTabs from "./ChatWindowComponents/ChatTabs";
 import ChatSidebar from "./ChatWindowComponents/ChatSidebar";
 import ChatArea from "./ChatWindowComponents/ChatArea";
+import { useSocket } from "../SocketProvider";
 
 const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const {
