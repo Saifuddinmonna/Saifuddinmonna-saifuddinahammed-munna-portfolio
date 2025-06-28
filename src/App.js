@@ -87,9 +87,9 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
           <Toaster position="top-right" />
           <LazySocketProvider>
             <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
@@ -111,9 +111,9 @@ function App() {
               <PerformanceOptimizer />
             </div>
           </LazySocketProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </AuthProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

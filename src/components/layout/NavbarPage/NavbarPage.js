@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { ThemeContext } from "../../../App";
 import AuthNav from "../../../auth/components/AuthNav";
+import AdminDashboardButton from "../../features/adminDashboard/AdminDashboardButton";
 
 const NavbarPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -215,6 +216,7 @@ const NavbarPage = () => {
               >
                 {isDarkMode ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
               </button>
+              <AdminDashboardButton />
               <AuthNav />
             </div>
 
@@ -305,6 +307,8 @@ const NavbarPage = () => {
               >
                 {isDarkMode ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
               </button>
+              <AdminDashboardButton />
+              <AuthNav />
             </motion.div>
           )}
         </AnimatePresence>
