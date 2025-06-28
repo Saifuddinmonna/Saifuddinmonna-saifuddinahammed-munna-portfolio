@@ -15,7 +15,7 @@ import { useAuth } from "../../../auth/context/AuthContext";
 
 const AdminDashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { logout } = useAuth();
+  const { logOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const AdminDashboardLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await logOut();
       navigate("/");
     } catch (error) {
       console.error("Logout error:", error);

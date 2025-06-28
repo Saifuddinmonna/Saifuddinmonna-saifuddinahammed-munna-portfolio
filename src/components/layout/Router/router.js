@@ -7,6 +7,8 @@ import Blog from "../../Blog/Blog";
 import BlogEditor from "../../Blog/BlogEditor";
 import BlogPost from "../../Blog/BlogPost";
 import AdminDashboardLayout from "../../features/adminDashboard/AdminDashboardLayout";
+import AdminTestimonialsManager from "../../features/adminDashboard/AdminTestimonialsManager";
+import AdminBlogManager from "../../features/adminDashboard/AdminBlogManager";
 import TestimonialsPage from "../../Testimonials/TestimonialsPage";
 import MyPortfolios from "../../MyPortfolios/MyPortfoliosForHomePage";
 import GalleryPage from "../../../pages/GalleryPage";
@@ -106,11 +108,15 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "blog",
-        element: <Blog />,
+        path: "/blog",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <Blog />
+          </Suspense>
+        ),
       },
       {
-        path: "blog/new",
+        path: "/blog/new",
         element: (
           <ProtectedRoute>
             <BlogEditor />
@@ -118,7 +124,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "blog/edit/:id",
+        path: "/blog/edit/:id",
         element: (
           <ProtectedRoute>
             <BlogEditor />
@@ -126,7 +132,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "blog/:id",
+        path: "/blog/:id",
         element: <BlogPost />,
       },
       {
@@ -196,11 +202,19 @@ const router = createBrowserRouter([
           },
           {
             path: "blog",
-            element: <Blog />,
+            element: <AdminBlogManager />,
+          },
+          {
+            path: "blog/new",
+            element: <BlogEditor />,
+          },
+          {
+            path: "blog/edit/:id",
+            element: <BlogEditor />,
           },
           {
             path: "testimonials",
-            element: <TestimonialsPage />,
+            element: <AdminTestimonialsManager />,
           },
           {
             path: "mywork",
