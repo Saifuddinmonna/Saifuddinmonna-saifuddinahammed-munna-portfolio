@@ -43,12 +43,12 @@ const BlogCard = memo(({ blog }) => {
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex items-center gap-2 mb-4">
           <span className="px-3 py-1 bg-[var(--primary-light)] text-[var(--primary-main)] rounded-full text-sm">
-            {blog.tags[0]}
+            {blog.tags?.[0] || "No Tag"}
           </span>
-          <span className="text-[var(--text-secondary)] text-sm">{blog.readTime}</span>
+          <span className="text-[var(--text-secondary)] text-sm">{blog.readTime || ""}</span>
         </div>
         <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2 line-clamp-2">
-          {blog.title}
+          {blog.title || "Untitled"}
         </h2>
         <div className="flex-1">
           <p className="text-[var(--text-secondary)] mb-4 line-clamp-4">
@@ -61,9 +61,11 @@ const BlogCard = memo(({ blog }) => {
         <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
-              <span className="text-[var(--primary-main)] font-bold">{blog.author.name[0]}</span>
+              <span className="text-[var(--primary-main)] font-bold">
+                {blog.author?.name?.[0] || "?"}
+              </span>
             </div>
-            <span className="text-[var(--text-primary)]">{blog.author.name}</span>
+            <span className="text-[var(--text-primary)]">{blog.author?.name || "Unknown"}</span>
           </div>
           <div className="flex gap-2">
             {hasMoreContent && (

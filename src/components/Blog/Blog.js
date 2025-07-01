@@ -8,6 +8,9 @@ import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useDataFetching } from "../../hooks/useDataFetching";
 import { useQueryClient } from "@tanstack/react-query";
+import BlogGrid from "./BlogGrid";
+import BlogLoading from "./BlogLoading";
+import BlogError from "./BlogError";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -39,19 +42,21 @@ const Blog = () => {
         category: selectedCategory === "All" ? "" : selectedCategory,
       }),
     {
-      staleTime: 2 * 60 * 1000, // 2 minutes
+      staleTime: 0, // Always fetch fresh data
       retry: 2,
+      keepPreviousData: true,
     }
   );
 
-  console.log("📊 [Blog] Raw data received:", blogs);
-  console.log("📊 [Blog] Data type:", typeof blogs);
-  console.log("📊 [Blog] Is array:", Array.isArray(blogs));
+  console.log("📊 [Blog] from Blog.js Raw data received:", blogs);
+  console.log("📊 [Blog] from Blog.js Data type:", typeof blogs);
+  console.log("📊 [Blog] from Blog.js Is array:", Array.isArray(blogs));
 
-  useEffect(() => {
-    refetch();
-  }, [refetch, currentPage, searchQuery, selectedCategory]);
-
+  // Defensive extraction: always get an array
+  const postsArray = Array.isArray(blogs?.data) ? blogs.data : [];
+  const totalPages = blogs?.pagination?.pages || 1;
+  console.log("📊 [Blog] from Blog.js postsArray:", postsArray);
+  console.log("📊 [Blog] from Blog.js totalPages:", totalPages);
   const handleReadMore = article => {
     setSelectedArticle(article);
     setShowModal(true);
@@ -116,24 +121,20 @@ const Blog = () => {
 
   const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
 
-  // Get data from response
-  const postsArray = blogs?.data || [];
-  const totalPages = blogs?.pagination?.pages || 1;
-
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
-      </div>
-    );
+    return <BlogLoading />;
   }
 
   if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-500">Error loading blog posts: {error.message}</div>
-      </div>
-    );
+    return <BlogError error={error} />;
+  }
+
+  if (!Array.isArray(postsArray)) {
+    return <div className="text-center text-[var(--text-secondary)]">Loading...</div>;
+  }
+
+  if (postsArray.length === 0) {
+    return <div className="text-center text-[var(--text-secondary)]">No post available</div>;
   }
 
   return (
@@ -234,70 +235,7 @@ const Blog = () => {
         </div>
 
         {/* Blog Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {postsArray.map(post => (
-            <motion.div
-              key={post._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg"
-            >
-              {post.image && (
-                <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
-              )}
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">{post.title}</h2>
-                  {user && post.author?.email === user.email && (
-                    <div className="flex gap-2">
-                      <Link
-                        to={`/blog/edit/${post._id}`}
-                        className="text-[var(--primary-main)] hover:text-[var(--primary-dark)]"
-                      >
-                        <FaEdit />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(post._id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  )}
-                </div>
-                <div className="text-sm text-[var(--text-secondary)] mb-4">
-                  <p>By {post.author?.name || "Anonymous"}</p>
-                  <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                  <p>{post.readTime}</p>
-                </div>
-                <div
-                  className="prose prose-sm dark:prose-invert max-w-none mb-4 line-clamp-3"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
-                <div className="flex justify-between items-center">
-                  <button
-                    onClick={() => handleLike(post._id)}
-                    className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
-                  >
-                    {post.likes?.some(like => like.email === user?.email) ? (
-                      <FaHeart className="text-red-500" />
-                    ) : (
-                      <FaRegHeart />
-                    )}
-                    <span>{post.likes?.length || 0}</span>
-                  </button>
-                  <Link
-                    to={`/blog/${post._id}`}
-                    className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] font-medium"
-                  >
-                    Read More
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <BlogGrid blogs={postsArray} />
 
         {/* Pagination */}
         {totalPages > 1 && (
