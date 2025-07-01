@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useDataFetching } from "../../hooks/useDataFetching";
 import testimonialService from "../../services/testimonialService";
 import { useAuth } from "../../auth/context/AuthContext";
 import TestimonialCard from "./TestimonialCard";
@@ -17,27 +17,37 @@ const TestimonialsPage = () => {
 
   // Determine which testimonial fetching function to use based on user role
   const getTestimonials = async () => {
+    console.log("🔍 [Testimonials] User role:", dbUser?.data?.role);
+    console.log("🔍 [Testimonials] User:", user);
+
     if (dbUser?.data?.role === "admin") {
+      console.log("🔍 [Testimonials] Fetching admin testimonials");
       return await testimonialService.getAllTestimonials();
     } else if (user) {
+      console.log("🔍 [Testimonials] Fetching user testimonials");
       return await testimonialService.getUserTestimonials();
     } else {
+      console.log("🔍 [Testimonials] Fetching public testimonials");
       return await testimonialService.getPublicTestimonials();
     }
   };
-  console.log("check if user is prestnt", dbUser);
-  // Use React Query to fetch testimonials based on user role
+
+  // Use the new custom hook for better data handling
   const {
     data: testimonialsData,
     isLoading,
     error,
     refetch,
-  } = useQuery({
-    queryKey: ["testimonials", dbUser?.data?.email, dbUser?.data?.role],
-    queryFn: getTestimonials,
+  } = useDataFetching(["testimonials", dbUser?.data?.email, dbUser?.data?.role], getTestimonials, {
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: true, // Always enable the query
+    retry: 2,
   });
-  console.log("db user pore ase keno ", dbUser?.data?.role);
+
+  console.log("📊 [Testimonials] Raw data received:", testimonialsData);
+  console.log("📊 [Testimonials] Data type:", typeof testimonialsData);
+  console.log("📊 [Testimonials] Is array:", Array.isArray(testimonialsData));
+
   const handleSuccess = () => {
     setShowForm(false);
     refetch(); // Refetch testimonials after successful submission
@@ -55,17 +65,41 @@ const TestimonialsPage = () => {
   if (error) {
     return (
       <div className="text-center text-red-500 p-4">
-        {error.message || "Error loading testimonials. Please try again later."}
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">Error Loading Testimonials</h3>
+          <p className="text-sm">{error.message || "Please try again later."}</p>
+        </div>
+        <button
+          onClick={() => refetch()}
+          className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)]"
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
-  // Ensure testimonials is an array
-  const testimonials = Array.isArray(testimonialsData)
-    ? testimonialsData
-    : testimonialsData?.data
-    ? testimonialsData.data
-    : [];
+  // Ensure testimonials is an array with proper data extraction
+  let testimonials = [];
+
+  if (testimonialsData) {
+    if (Array.isArray(testimonialsData)) {
+      testimonials = testimonialsData;
+    } else if (testimonialsData.data && Array.isArray(testimonialsData.data)) {
+      testimonials = testimonialsData.data;
+    } else if (testimonialsData.works && Array.isArray(testimonialsData.works)) {
+      testimonials = testimonialsData.works;
+    } else if (typeof testimonialsData === "object") {
+      // If it's an object, try to find array properties
+      const possibleArrays = Object.values(testimonialsData).filter(val => Array.isArray(val));
+      if (possibleArrays.length > 0) {
+        testimonials = possibleArrays[0];
+      }
+    }
+  }
+
+  console.log("📊 [Testimonials] Final processed testimonials:", testimonials);
+  console.log("📊 [Testimonials] Testimonials count:", testimonials.length);
 
   // Calculate pagination
   const totalPages = Math.ceil(testimonials.length / testimonialsPerPage);
@@ -130,6 +164,20 @@ const TestimonialsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Debug Info - Remove in production */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <h4 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Debug Info:</h4>
+          <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+            <div>User Role: {dbUser?.data?.role || "None"}</div>
+            <div>User Email: {dbUser?.data?.email || "None"}</div>
+            <div>Raw Data Type: {typeof testimonialsData}</div>
+            <div>Raw Data: {JSON.stringify(testimonialsData, null, 2).substring(0, 200)}...</div>
+            <div>Processed Testimonials Count: {testimonials.length}</div>
+          </div>
+        </div>
+      )}
+
       {/* Show Admin Dashboard for admin users */}
       {dbUser?.data?.role === "admin" && (
         <div className="mb-8">
@@ -146,6 +194,7 @@ const TestimonialsPage = () => {
               : user
               ? "Your Testimonials"
               : "Public Testimonials"}
+            {testimonials.length > 0 && ` (${testimonials.length} total)`}
           </p>
         </div>
         {user && (
@@ -184,91 +233,82 @@ const TestimonialsPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentTestimonials.map(testimonial => (
-          <TestimonialCard
-            key={testimonial._id}
-            testimonial={testimonial}
-            onDelete={() => refetch()}
-            onEdit={() => setShowForm(true)}
-          />
-        ))}
-      </div>
+      {/* Testimonials Grid */}
+      {testimonials.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentTestimonials.map(testimonial => (
+              <TestimonialCard
+                key={testimonial._id}
+                testimonial={testimonial}
+                onDelete={() => refetch()}
+                onEdit={() => setShowForm(true)}
+              />
+            ))}
+          </div>
 
-      {testimonials.length === 0 && (
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center mt-8 space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-[var(--border-main)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--background-elevated)]"
+              >
+                <FaChevronLeft />
+              </button>
+
+              {getPageNumbers().map((pageNumber, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`px-3 py-2 rounded-lg border ${
+                    pageNumber === currentPage
+                      ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                      : "border-[var(--border-main)] hover:bg-[var(--background-elevated)]"
+                  } ${pageNumber === "..." ? "cursor-default" : ""}`}
+                  disabled={pageNumber === "..."}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-[var(--border-main)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--background-elevated)]"
+              >
+                <FaChevronRight />
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
         <div className="text-center text-[var(--text-secondary)] py-8">
-          {dbUser?.data?.role === "admin"
-            ? "No testimonials available in the system."
-            : user
-            ? "You haven't submitted any testimonials yet. Share your experience!"
-            : "No public testimonials available at the moment."}
-        </div>
-      )}
-
-      {/* Modern Pagination */}
-      {testimonials.length > 0 && (
-        <div className="flex justify-center items-center mt-8 gap-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`p-2 rounded-lg ${
-              currentPage === 1
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                : "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
-            }`}
-          >
-            <FaChevronLeft />
-          </motion.button>
-
-          {getPageNumbers().map((number, index) => (
-            <motion.button
-              key={index}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handlePageChange(number)}
-              className={`px-4 py-2 rounded-lg ${
-                number === currentPage
-                  ? "bg-[var(--primary-main)] text-white"
-                  : number === "..."
-                  ? "bg-transparent text-[var(--text-secondary)] cursor-default"
-                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--primary-light)]"
-              }`}
-            >
-              {number}
-            </motion.button>
-          ))}
-
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`p-2 rounded-lg ${
-              currentPage === totalPages
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                : "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
-            }`}
-          >
-            <FaChevronRight />
-          </motion.button>
-        </div>
-      )}
-
-      {!user && (
-        <div className="text-center mt-8 p-4 bg-[var(--background-paper)] rounded-lg">
-          <p className="text-[var(--text-secondary)] mb-4">
-            Want to share your experience? Login to submit a testimonial!
+          <div className="text-6xl mb-4">💬</div>
+          <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+            {dbUser?.data?.role === "admin"
+              ? "No testimonials found"
+              : user
+              ? "You haven't submitted any testimonials yet"
+              : "No testimonials available"}
+          </h3>
+          <p className="mb-4">
+            {dbUser?.data?.role === "admin"
+              ? "Testimonials will appear here once users submit them."
+              : user
+              ? "Share your experience to get started!"
+              : "Check back later for testimonials."}
           </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => (window.location.href = "/login")}
-            className="bg-[var(--primary-main)] text-white px-6 py-2 rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
-          >
-            Login to Submit
-          </motion.button>
+          {user && !showForm && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
+            >
+              <FaPlus />
+              Submit Your First Testimonial
+            </button>
+          )}
         </div>
       )}
     </div>

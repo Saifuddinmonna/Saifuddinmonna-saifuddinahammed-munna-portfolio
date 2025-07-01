@@ -21,7 +21,7 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// Custom hook for fetching user data from server
+// Custom hook for fetching user data from server - Updated for TanStack Query v5
 const useUserData = (token, enabled) => {
   return useQuery({
     queryKey: ["userData", token],
@@ -60,7 +60,7 @@ const useUserData = (token, enabled) => {
     enabled: enabled && !!token,
     retry: 1,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime in v5)
   });
 };
 
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }) => {
         setTokenReady(false);
         localStorage.removeItem("authToken");
         // Clear user data from cache
-        queryClient.removeQueries(["userData"]);
+        queryClient.removeQueries({ queryKey: ["userData"] });
       }
       setUser(currentUser);
       setLoading(false);
@@ -241,7 +241,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("authToken");
 
       // Clear user data from cache
-      queryClient.removeQueries(["userData"]);
+      queryClient.removeQueries({ queryKey: ["userData"] });
 
       toast.success("Signed out successfully!");
     } catch (error) {
@@ -259,7 +259,7 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setTokenReady(false);
         localStorage.removeItem("authToken");
-        queryClient.removeQueries(["userData"]);
+        queryClient.removeQueries({ queryKey: ["userData"] });
       }
     }
   }, [userDataError, queryClient]);

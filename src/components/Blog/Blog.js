@@ -6,7 +6,7 @@ import { blogService } from "../../services/blogService";
 import { toast } from "react-hot-toast";
 import { FaSearch, FaEdit, FaTrash, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../../auth/context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useDataFetching } from "../../hooks/useDataFetching";
 import { useQueryClient } from "@tanstack/react-query";
 
 const ARTICLES_PER_PAGE = 10;
@@ -23,21 +23,30 @@ const Blog = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  // Use the new custom hook for better data handling
   const {
     data: blogs = {},
     isLoading,
     error,
     refetch,
-  } = useQuery({
-    queryKey: ["blogs", currentPage, searchQuery, selectedCategory],
-    queryFn: () =>
+  } = useDataFetching(
+    ["blogs", currentPage, searchQuery, selectedCategory],
+    () =>
       blogService.getAllBlogs({
         page: currentPage,
         limit: ARTICLES_PER_PAGE,
         search: searchQuery,
         category: selectedCategory === "All" ? "" : selectedCategory,
       }),
-  });
+    {
+      staleTime: 2 * 60 * 1000, // 2 minutes
+      retry: 2,
+    }
+  );
+
+  console.log("📊 [Blog] Raw data received:", blogs);
+  console.log("📊 [Blog] Data type:", typeof blogs);
+  console.log("📊 [Blog] Is array:", Array.isArray(blogs));
 
   useEffect(() => {
     refetch();
