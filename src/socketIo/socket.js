@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
-import { API_URL } from "../utils/apiConfig";
+import { BASE_API_URL } from "../utils/apiConfig";
 
-const SOCKET_URL = API_URL;
+const SOCKET_URL = BASE_API_URL;
 
 class SocketService {
   constructor() {

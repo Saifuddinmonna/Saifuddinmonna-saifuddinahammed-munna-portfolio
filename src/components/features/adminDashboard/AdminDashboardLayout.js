@@ -39,9 +39,9 @@ const AdminDashboardLayout = () => {
       color: "from-purple-500 to-purple-600",
     },
     {
-      name: "My Work Manager",
+      name: "My Project Works",
       icon: FaBriefcase,
-      path: "/admin/dashboard/mywork",
+      path: "/admin/dashboard/myprojectworks",
       color: "from-orange-500 to-orange-600",
     },
     {

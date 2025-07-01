@@ -1,13 +1,12 @@
 import axios from "axios";
-import { getAuthToken, handleAuthError } from "../auth/utils/api";
-
-import { API_URL } from "../utils/apiConfig";
+import { getAuthToken, handleAuthError } from "./apiService";
+import { BASE_API_URL } from "../utils/apiConfig";
 
 const testimonialService = {
   // Get public testimonials (no auth required)
   getPublicTestimonials: async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/testimonials/public`);
+      const response = await axios.get(`${BASE_API_URL}/api/testimonials/public`);
       console.log("akhane public testomonial test korsi ", response.data);
       return response.data;
     } catch (error) {
@@ -23,7 +22,7 @@ const testimonialService = {
       if (!token) {
         throw new Error("Authentication required");
       }
-      const response = await axios.get(`${API_URL}/api/testimonials/user`, {
+      const response = await axios.get(`${BASE_API_URL}/api/testimonials/user`, {
         headers: { Authorization: token },
       });
       return response.data;
@@ -40,7 +39,7 @@ const testimonialService = {
       if (!token) {
         throw new Error("Authentication required");
       }
-      const response = await axios.get(`${API_URL}/api/testimonials/admin/all`, {
+      const response = await axios.get(`${BASE_API_URL}/api/testimonials/admin/all`, {
         headers: { Authorization: token },
       });
       return response.data;
@@ -59,7 +58,7 @@ const testimonialService = {
       if (!token) {
         throw new Error("Authentication required");
       }
-      const response = await axios.post(`${API_URL}/api/testimonials`, formData, {
+      const response = await axios.post(`${BASE_API_URL}/api/testimonials`, formData, {
         headers: {
           Authorization: token,
           "Content-Type": "multipart/form-data",
@@ -79,7 +78,7 @@ const testimonialService = {
       if (!token) {
         throw new Error("Authentication required");
       }
-      const response = await axios.patch(`${API_URL}/api/testimonials/${id}`, formData, {
+      const response = await axios.patch(`${BASE_API_URL}/api/testimonials/${id}`, formData, {
         headers: {
           Authorization: token,
           "Content-Type": "multipart/form-data",
@@ -99,7 +98,7 @@ const testimonialService = {
       if (!token) {
         throw new Error("Authentication required");
       }
-      const response = await axios.delete(`${API_URL}/api/testimonials/${id}`, {
+      const response = await axios.delete(`${BASE_API_URL}/api/testimonials/${id}`, {
         headers: { Authorization: token },
       });
       return response.data;
@@ -116,7 +115,7 @@ const testimonialService = {
       if (!token) {
         throw new Error("Authentication required");
       }
-      const response = await axios.delete(`${API_URL}/api/testimonials/admin/${id}`, {
+      const response = await axios.delete(`${BASE_API_URL}/api/testimonials/admin/${id}`, {
         headers: { Authorization: token },
       });
       return response.data;
@@ -134,7 +133,7 @@ const testimonialService = {
         throw new Error("Authentication required");
       }
       const response = await axios.patch(
-        `${API_URL}/api/testimonials/admin/${id}/status`,
+        `${BASE_API_URL}/api/testimonials/admin/${id}/status`,
         { status },
         { headers: { Authorization: token } }
       );

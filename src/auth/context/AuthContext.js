@@ -10,9 +10,10 @@ import {
 } from "firebase/auth";
 import { auth } from "../../config/firebase.config";
 import { toast } from "react-toastify";
-import { getCurrentUserProfile } from "../utils/api";
+import { getCurrentUserProfile } from "../../services/apiService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { BASE_API_URL } from "../../utils/apiConfig";
 
 const AuthContext = createContext();
 
@@ -27,7 +28,7 @@ const useUserData = (token, enabled) => {
     queryFn: async () => {
       if (!token) return null;
       try {
-        const apiUrl = `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/me`;
+        const apiUrl = `${BASE_API_URL}/api/auth/me`;
         console.log("🔍 API URL being used:", apiUrl);
         console.log("🔍 Environment variable REACT_APP_API_URL:", process.env.REACT_APP_API_URL);
         console.log("🔍 Token being used:", token ? "Token exists" : "No token");
@@ -148,7 +149,7 @@ export const AuthProvider = ({ children }) => {
       // Create user profile on server
       try {
         await axios.post(
-          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/register`,
+          `${BASE_API_URL}/api/auth/register`,
           {
             email: firebaseUser.email,
             uid: firebaseUser.uid,
@@ -203,7 +204,7 @@ export const AuthProvider = ({ children }) => {
       // Create or update user profile on server
       try {
         await axios.post(
-          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/google`,
+          `${BASE_API_URL}/api/auth/google`,
           {
             email: firebaseUser.email,
             uid: firebaseUser.uid,

@@ -1,12 +1,13 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BASE_API_URL } from "../utils/apiConfig";
 
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const baseURL = BASE_API_URL;
 
 // Create axios instance
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: baseURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -80,6 +81,60 @@ export const authAPI = {
     const response = await api.get("/api/auth/verify-token");
     return response.data;
   },
+};
+
+// Auth utility functions (merged from auth/utils/api.js)
+export const getAuthToken = () => {
+  const token = localStorage.getItem("authToken");
+  return token ? `Bearer ${token}` : null;
+};
+
+export const handleAuthError = error => {
+  if (error.response?.status === 401) {
+    localStorage.removeItem("authToken");
+    window.location.href = "/login";
+  }
+  throw error;
+};
+
+// Generic API request function (merged from auth/utils/api.js)
+export const apiRequest = async (endpoint, options = {}) => {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    };
+
+    const response = await fetch(`${baseURL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Something went wrong");
+    }
+
+    return await response.json();
+  } catch (error) {
+    toast.error(error.message);
+    throw error;
+  }
+};
+
+// Get current user profile (merged from auth/utils/api.js)
+export const getCurrentUserProfile = async () => {
+  try {
+    const profile = await apiRequest("/api/auth/me");
+    console.log("getCurrentUserProfile response:", profile);
+    return profile;
+  } catch (error) {
+    console.error("Error fetching current user profile:", error);
+    throw error;
+  }
 };
 
 // Blog API functions
@@ -223,6 +278,66 @@ export const galleryAPI = {
         "Content-Type": "multipart/form-data",
       },
     });
+    return response.data;
+  },
+};
+
+// MyProjectWorks API functions
+export const myProjectWorksAPI = {
+  // Get all project works with pagination
+  getAllProjectWorks: async (params = {}) => {
+    try {
+      console.log("Calling API with params:", params);
+      const response = await api.get("/api/my-project-works", { params });
+      console.log("API Response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("API Error:", error);
+      throw error;
+    }
+  },
+
+  // Get single project work
+  getProjectWork: async id => {
+    const response = await api.get(`/api/my-project-works/${id}`);
+    return response.data;
+  },
+
+  // Create new project work
+  createProjectWork: async projectData => {
+    const response = await api.post("/api/my-project-works", projectData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  // Update project work
+  updateProjectWork: async (id, projectData) => {
+    const response = await api.put(`/api/my-project-works/${id}`, projectData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  // Delete project work
+  deleteProjectWork: async id => {
+    const response = await api.delete(`/api/my-project-works/${id}`);
+    return response.data;
+  },
+
+  // Delete single image from project work
+  deleteProjectWorkImage: async (projectId, imageId) => {
+    const response = await api.delete(`/api/my-project-works/${projectId}/images/${imageId}`);
+    return response.data;
+  },
+
+  // Delete single documentation from project work
+  deleteProjectWorkDoc: async (projectId, docId) => {
+    const response = await api.delete(`/api/my-project-works/${projectId}/docs/${docId}`);
     return response.data;
   },
 };

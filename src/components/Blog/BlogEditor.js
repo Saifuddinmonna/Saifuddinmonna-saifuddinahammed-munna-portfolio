@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Editor } from "@tinymce/tinymce-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
 import { useAuth } from "../../auth/context/AuthContext";
+import TinyMCEEditor from "../ui/TinyMCEEditor";
 
 const BlogEditor = () => {
   const { id } = useParams();
@@ -349,81 +349,30 @@ const BlogEditor = () => {
           <div className="bg-[var(--background-paper)] rounded-xl p-6 shadow-lg">
             <div>
               <label className="block text-[var(--text-primary)] mb-2">Content</label>
-              <Editor
+              <TinyMCEEditor
                 key={`editor-${id || "new"}-${isDataLoaded ? "loaded" : "new"}`}
-                onInit={(evt, editor) => {
-                  editorRef.current = editor;
-                  setIsEditorReady(true);
-                  console.log("TinyMCE editor initialized");
-
-                  // Load content if available
-                  if (formData.content && formData.content.trim()) {
-                    console.log("Loading content during initialization");
-                    editor.setContent(formData.content);
-                  }
-                }}
-                apiKey="dlfn3zegy6zpe1fznqli3y0i6rkf4mlhpntqfq5vcqetdl5v"
                 value={formData.content}
-                onEditorChange={content => {
+                onChange={content => {
                   console.log("Editor content changed:", content);
                   setFormData(prev => ({
                     ...prev,
                     content: content,
                   }));
                 }}
-                init={{
-                  height: 500,
-                  menubar: true,
-                  plugins: [
-                    "advlist",
-                    "autolink",
-                    "lists",
-                    "link",
-                    "image",
-                    "charmap",
-                    "preview",
-                    "anchor",
-                    "searchreplace",
-                    "visualblocks",
-                    "code",
-                    "fullscreen",
-                    "insertdatetime",
-                    "media",
-                    "table",
-                    "help",
-                    "wordcount",
-                  ],
-                  toolbar:
-                    "undo redo | blocks | " +
-                    "bold italic forecolor | alignleft aligncenter " +
-                    "alignright alignjustify | bullist numlist outdent indent | " +
-                    "removeformat | help",
-                  content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                  branding: false,
-                  promotion: false,
-                  skin: localStorage.getItem("theme") === "dark" ? "oxide-dark" : "oxide",
-                  content_css: localStorage.getItem("theme") === "dark" ? "dark" : "default",
-                  entity_encoding: "raw",
-                  encoding: "xml",
-                  convert_urls: false,
-                  relative_urls: false,
-                  remove_script_host: false,
-                  preserve_caret_position: true,
-                  paste_data_images: true,
-                  paste_as_text: false,
-                  paste_word_valid_elements:
-                    "b,strong,i,em,h1,h2,h3,h4,h5,h6,p,br,ul,ol,li,a[href],span",
-                  paste_retain_style_properties: "all",
-                  paste_strip_class_attributes: false,
-                  paste_remove_styles: false,
-                  paste_remove_styles_if_webkit: false,
-                  paste_preprocess: function (plugin, args) {
-                    console.log("Paste preprocess:", args.content);
-                  },
-                  paste_postprocess: function (plugin, args) {
-                    console.log("Paste postprocess:", args.node);
-                  },
+                onInit={(evt, editor) => {
+                  editorRef.current = editor;
+                  setIsEditorReady(true);
+                  console.log("TinyMCE editor initialized");
+                  if (formData.content && formData.content.trim()) {
+                    console.log("Loading content during initialization");
+                    editor.setContent(formData.content);
+                  }
                 }}
+                init={
+                  {
+                    // You can pass additional or override config here if needed
+                  }
+                }
               />
             </div>
 

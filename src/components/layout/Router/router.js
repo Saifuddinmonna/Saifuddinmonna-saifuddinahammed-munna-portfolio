@@ -9,6 +9,10 @@ import BlogPost from "../../Blog/BlogPost";
 import AdminDashboardLayout from "../../features/adminDashboard/AdminDashboardLayout";
 import AdminTestimonialsManager from "../../features/adminDashboard/AdminTestimonialsManager";
 import AdminBlogManager from "../../features/adminDashboard/AdminBlogManager";
+import AdminMyProjectWorksManager from "../../features/adminDashboard/AdminMyProjectWorksManager";
+import MyProjectWorksList from "../../features/adminDashboard/MyProjectWorksList";
+import MyProjectWorksForm from "../../features/adminDashboard/MyProjectWorksForm";
+import MyProjectWorksDetail from "../../features/adminDashboard/MyProjectWorksDetail";
 import TestimonialsPage from "../../Testimonials/TestimonialsPage";
 import MyPortfolios from "../../MyPortfolios/MyPortfoliosForHomePage";
 import GalleryPage from "../../../pages/GalleryPage";
@@ -204,6 +208,28 @@ const router = createBrowserRouter([
           {
             path: "testimonials",
             element: <AdminTestimonialsManager />,
+          },
+          {
+            path: "myprojectworks",
+            element: <AdminMyProjectWorksManager />,
+            children: [
+              {
+                path: "",
+                element: <MyProjectWorksList />,
+              },
+              {
+                path: "create",
+                element: <MyProjectWorksForm />,
+              },
+              {
+                path: "edit/:id",
+                element: <MyProjectWorksForm />,
+              },
+              {
+                path: "detail/:id",
+                element: <MyProjectWorksDetail />,
+              },
+            ],
           },
           {
             path: "mywork",

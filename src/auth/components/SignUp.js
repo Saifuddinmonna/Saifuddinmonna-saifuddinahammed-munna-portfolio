@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaGoogle } from "react-icons/fa";
-import { apiRequest } from "../utils/api";
-import { getCurrentUserProfile } from "../utils/api";
+import { apiRequest } from "../../services/apiService";
+import { getCurrentUserProfile } from "../../services/apiService";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
