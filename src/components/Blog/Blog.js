@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import BlogGrid from "./BlogGrid";
 import BlogLoading from "./BlogLoading";
 import BlogError from "./BlogError";
+import BlogPagination from "./BlogPagination";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -25,6 +26,7 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [showEmpty, setShowEmpty] = useState(false);
 
   // Use the new custom hook for better data handling
   const {
@@ -53,8 +55,15 @@ const Blog = () => {
   console.log("📊 [Blog] from Blog.js Is array:", Array.isArray(blogs));
 
   // Defensive extraction: always get an array
-  const postsArray = Array.isArray(blogs?.data) ? blogs.data : [];
-  const totalPages = blogs?.pagination?.pages || 1;
+  let postsArray = [];
+  let totalPages = 1;
+  if (Array.isArray(blogs)) {
+    postsArray = blogs;
+    totalPages = 1;
+  } else if (Array.isArray(blogs?.data)) {
+    postsArray = blogs.data;
+    totalPages = blogs?.pagination?.pages || 1;
+  }
   console.log("📊 [Blog] from Blog.js postsArray:", postsArray);
   console.log("📊 [Blog] from Blog.js totalPages:", totalPages);
   const handleReadMore = article => {
@@ -121,20 +130,21 @@ const Blog = () => {
 
   const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
 
+  useEffect(() => {
+    if (Array.isArray(postsArray) && postsArray.length === 0) {
+      const timer = setTimeout(() => setShowEmpty(true), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setShowEmpty(false);
+    }
+  }, [postsArray]);
+
   if (isLoading) {
     return <BlogLoading />;
   }
 
   if (error) {
     return <BlogError error={error} />;
-  }
-
-  if (!Array.isArray(postsArray)) {
-    return <div className="text-center text-[var(--text-secondary)]">Loading...</div>;
-  }
-
-  if (postsArray.length === 0) {
-    return <div className="text-center text-[var(--text-secondary)]">No post available</div>;
   }
 
   return (
@@ -235,43 +245,20 @@ const Blog = () => {
         </div>
 
         {/* Blog Posts Grid */}
-        <BlogGrid blogs={postsArray} />
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <span className="px-3 py-2 text-[var(--text-primary)]">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 bg-[var(--background-paper)] border border-[var(--border-main)] text-[var(--text-primary)] rounded-md hover:bg-[var(--background-elevated)] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
+        {Array.isArray(postsArray) && postsArray.length === 0 && showEmpty ? (
+          <div className="text-center text-[var(--text-secondary)]">No post available</div>
+        ) : (
+          <BlogGrid blogs={postsArray} />
         )}
 
-        {/* No Results Message */}
-        {postsArray.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-[var(--text-secondary)] text-lg">
-              {activeTab === "search"
-                ? "No posts found matching your search."
-                : activeTab === "category"
-                ? "No posts found in this category."
-                : "No blog posts available."}
-            </p>
-          </div>
-        )}
+        {/* Pagination always visible */}
+        <BlogPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          blogs={postsArray}
+          totalPosts={blogs?.pagination?.total || postsArray.length}
+        />
 
         {/* Newsletter Section */}
         <div className="mt-16 bg-[var(--primary-main)] rounded-2xl p-8 text-center">

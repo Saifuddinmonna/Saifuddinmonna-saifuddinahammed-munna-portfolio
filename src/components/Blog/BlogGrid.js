@@ -2,6 +2,7 @@ import React from "react";
 import BlogCard from "./BlogCard";
 
 const BlogGrid = ({ blogs }) => {
+  console.log("📊 [BlogGrid] from BlogGrid.js blogs:", blogs);
   if (!blogs || blogs.length === 0) {
     return <div className="text-center text-[var(--text-secondary)]">No blogs found.</div>;
   }
