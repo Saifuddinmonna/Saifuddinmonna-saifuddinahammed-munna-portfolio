@@ -21,54 +21,8 @@ export const useDataFetching = (queryKey, queryFn, options = {}) => {
         console.log(`🔄 [${queryKey.join("-")}] Fetching data...`);
         const result = await queryFn(...args);
         console.log(`✅ [${queryKey.join("-")}] Raw API response:`, result);
-
-        // Simplified data extraction logic
-        let processedData = result;
-
-        // Handle nested data structures consistently
-        if (result && typeof result === "object") {
-          // If result has a data property, extract it
-          if ("data" in result) {
-            processedData = result.data;
-            console.log(`📦 [${queryKey.join("-")}] Extracted from result.data:`, processedData);
-
-            // If the extracted data also has a data property (double nesting)
-            if (processedData && typeof processedData === "object" && "data" in processedData) {
-              processedData = processedData.data;
-              console.log(
-                `📦 [${queryKey.join("-")}] Further extracted from nested data:`,
-                processedData
-              );
-            }
-          }
-          // If result has a works property (specific to MyProjectWorks)
-          else if ("works" in result && Array.isArray(result.works)) {
-            processedData = result.works;
-            console.log(`📦 [${queryKey.join("-")}] Extracted from result.works:`, processedData);
-          }
-          // If result has a projects property
-          else if ("projects" in result && Array.isArray(result.projects)) {
-            processedData = result.projects;
-            console.log(
-              `📦 [${queryKey.join("-")}] Extracted from result.projects:`,
-              processedData
-            );
-          }
-        }
-
-        // Final validation and logging
-        if (Array.isArray(processedData)) {
-          console.log(
-            `📊 [${queryKey.join("-")}] Final array data (${processedData.length} items):`,
-            processedData
-          );
-        } else if (processedData && typeof processedData === "object") {
-          console.log(`📊 [${queryKey.join("-")}] Final object data:`, processedData);
-        } else {
-          console.log(`📊 [${queryKey.join("-")}] Final data:`, processedData);
-        }
-
-        return processedData;
+        // Return the full API response as-is, do not extract or modify
+        return result;
       } catch (error) {
         console.error(`❌ [${queryKey.join("-")}] Error:`, error);
         throw error;

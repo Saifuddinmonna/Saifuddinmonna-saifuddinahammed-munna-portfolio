@@ -10,7 +10,7 @@ const BlogPagination = ({ currentPage, totalPages, onPageChange, blogs, totalPos
     <div className="mt-12">
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
       <div className="text-center mt-4 text-[var(--text-secondary)]">
-        Showing {blogs.length} of {totalPosts} posts
+        Showing {blogs.length} of {totalPosts} posts hello render kuthai hosse
       </div>
     </div>
   );

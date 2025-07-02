@@ -27,45 +27,36 @@ const Blog = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showEmpty, setShowEmpty] = useState(false);
+  const limit = 10;
 
-  // Use the new custom hook for better data handling
-  const {
-    data: blogs = {},
-    isLoading,
-    error,
-    refetch,
-  } = useDataFetching(
+  const { data, isLoading, error, refetch } = useDataFetching(
     ["blogs", currentPage, searchQuery, selectedCategory],
     () =>
       blogService.getAllBlogs({
         page: currentPage,
-        limit: ARTICLES_PER_PAGE,
+        limit,
         search: searchQuery,
         category: selectedCategory === "All" ? "" : selectedCategory,
       }),
     {
-      staleTime: 0, // Always fetch fresh data
+      staleTime: 0,
       retry: 2,
       keepPreviousData: true,
+      select: apiResponse => ({
+        blogs: Array.isArray(apiResponse.data) ? apiResponse.data : [],
+        pagination: apiResponse.pagination || {},
+      }),
     }
   );
-
-  console.log("📊 [Blog] from Blog.js Raw data received:", blogs);
-  console.log("📊 [Blog] from Blog.js Data type:", typeof blogs);
-  console.log("📊 [Blog] from Blog.js Is array:", Array.isArray(blogs));
-
-  // Defensive extraction: always get an array
-  let postsArray = [];
-  let totalPages = 1;
-  if (Array.isArray(blogs)) {
-    postsArray = blogs;
-    totalPages = 1;
-  } else if (Array.isArray(blogs?.data)) {
-    postsArray = blogs.data;
-    totalPages = blogs?.pagination?.pages || 1;
-  }
-  console.log("📊 [Blog] from Blog.js postsArray:", postsArray);
-  console.log("📊 [Blog] from Blog.js totalPages:", totalPages);
+  console.log("data", data);
+  console.log("data.blogs", data?.blogs);
+  console.log("data.pagination", data?.pagination);
+  const blogs = data?.blogs || [];
+  const pagination = data?.pagination || {};
+  const totalBlogs = pagination.total || 0;
+  const totalPages = pagination.pages || Math.ceil(totalBlogs / limit);
+  console.log("blogsfrom const blog ", blogs);
+  console.log("blogsfrom const pagination ", pagination);
   const handleReadMore = article => {
     setSelectedArticle(article);
     setShowModal(true);
@@ -76,16 +67,13 @@ const Blog = () => {
     setSelectedArticle(null);
   };
 
-  const handleNextPage = () => {
-    setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+  const handlePageChange = page => {
+    setCurrentPage(page);
   };
 
-  const handlePrevPage = () => {
-    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
-  };
-
-  const handlePageClick = pageNumber => {
-    setCurrentPage(pageNumber);
+  const handleSearch = e => {
+    e.preventDefault();
+    setCurrentPage(1);
   };
 
   const handleEdit = post => {
@@ -117,11 +105,6 @@ const Blog = () => {
     }
   };
 
-  const handleSearch = e => {
-    e.preventDefault();
-    setCurrentPage(1);
-  };
-
   const handleCategoryChange = category => {
     setSelectedCategory(category);
     setCurrentPage(1);
@@ -131,13 +114,13 @@ const Blog = () => {
   const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
 
   useEffect(() => {
-    if (Array.isArray(postsArray) && postsArray.length === 0) {
+    if (Array.isArray(blogs) && blogs.length === 0) {
       const timer = setTimeout(() => setShowEmpty(true), 3000); // 3 seconds
       return () => clearTimeout(timer);
     } else {
       setShowEmpty(false);
     }
-  }, [postsArray]);
+  }, [blogs]);
 
   if (isLoading) {
     return <BlogLoading />;
@@ -245,19 +228,19 @@ const Blog = () => {
         </div>
 
         {/* Blog Posts Grid */}
-        {Array.isArray(postsArray) && postsArray.length === 0 && showEmpty ? (
+        {Array.isArray(blogs) && blogs.length === 0 && showEmpty ? (
           <div className="text-center text-[var(--text-secondary)]">No post available</div>
         ) : (
-          <BlogGrid blogs={postsArray} />
+          <BlogGrid blogs={blogs} />
         )}
 
         {/* Pagination always visible */}
         <BlogPagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          blogs={postsArray}
-          totalPosts={blogs?.pagination?.total || postsArray.length}
+          onPageChange={handlePageChange}
+          blogs={blogs}
+          totalPosts={totalBlogs}
         />
 
         {/* Newsletter Section */}

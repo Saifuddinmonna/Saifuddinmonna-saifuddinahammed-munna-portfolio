@@ -24,21 +24,22 @@ api.interceptors.request.use(
 );
 
 // Add response interceptor for logging
-api.interceptors.response.use(
-  response => {
-    console.log("API Response:", response.data);
-    return response;
-  },
-  error => {
-    console.error("API Error:", error.response?.data || error.message);
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.response.use(
+//   response => {
+//     console.log("API Response:", response.data);
+//     return response.data;
+//   },
+//   error => {
+//     console.error("API Error:", error.response?.data || error.message);
+//     return Promise.reject(error);
+//   }
+// );
 
 export const blogService = {
   // Get all blogs with pagination and filters
   getAllBlogs: async ({ page = 1, limit = 10, search = "", category = "" }) => {
     try {
+      console.log("page,limit.search,catagory", page, limit, search, category);
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -48,6 +49,12 @@ export const blogService = {
       if (category) params.append("category", category);
 
       const response = await api.get(`/api/blogs?${params.toString()}`);
+      //const { data, pagination } = response.data;
+      // console.log("data", data);
+      // console.log("pagination", pagination);
+      // console.log("response.data.data", response.data);
+      console.log("response.data.pagination", response.data.pagination);
+      console.log("response from getallblogs", response);
       return response.data;
     } catch (error) {
       console.error("Error fetching blogs:", error);
