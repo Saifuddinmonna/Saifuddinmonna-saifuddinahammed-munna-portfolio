@@ -324,10 +324,15 @@ const MyProjectWorksForm = () => {
 
   // Remove existing image (API call)
   const removeExistingImage = async imageId => {
+    console.log("imageid id deleting ", imageId);
     if (!window.confirm("Delete this image?")) return;
     try {
       await myProjectWorksAPI.deleteProjectWorkImage(id, imageId);
-      setExistingImages(prev => prev.filter(img => img._id !== imageId));
+      setExistingImages(prev => {
+        const updated = prev.filter(img => img._id !== imageId);
+        console.log("Updated images after delete:", updated);
+        return updated;
+      });
       toast.success("Image deleted");
     } catch {
       toast.error("Failed to delete image");
@@ -601,6 +606,15 @@ const MyProjectWorksForm = () => {
         });
       }
 
+      // Add current existing images (after deletions) by their _id or url
+      if (existingImages && existingImages.length > 0) {
+        // Prefer _id, fallback to url
+        formData.append(
+          "existingImages",
+          JSON.stringify(existingImages.map(img => img._id || img.url))
+        );
+      }
+
       // Add markdown documentation
       if (data.mdDocumentation && data.mdDocumentation.length > 0) {
         formData.append("mdDocumentation", JSON.stringify(data.mdDocumentation));
@@ -698,7 +712,7 @@ const MyProjectWorksForm = () => {
           <input
             type="text"
             {...register("name")}
-            placeholder="Project Name"
+            placeholder="Project Name (required, 2-100 characters)"
             defaultValue={formValues.name}
             disabled={loading}
             className={getInputClassName(errors.name)}
@@ -741,7 +755,7 @@ const MyProjectWorksForm = () => {
                     className={getInputClassName(errors.category)}
                     onChange={handlePredefinedCategoryChange}
                   >
-                    <option value="">Choose a category...</option>
+                    <option value="">Choose a category... (required)</option>
                     {PREDEFINED_CATEGORIES.map((category, index) => (
                       <option key={index} value={category}>
                         {String(index + 1).padStart(2, "0")}. {category}
@@ -762,7 +776,7 @@ const MyProjectWorksForm = () => {
                   <input
                     type="text"
                     {...register("category")}
-                    placeholder="Enter custom category (e.g., AI/ML Projects, IoT Applications, Blockchain Solutions)"
+                    placeholder="Enter custom category (required, 2-50 characters, e.g., AI/ML Projects)"
                     value={formValues.category || ""}
                     disabled={loading}
                     className={getInputClassName(errors.category)}
@@ -784,7 +798,7 @@ const MyProjectWorksForm = () => {
           <label className="block font-medium mb-1 text-[var(--text-primary)]">Overview</label>
           <textarea
             {...register("overview")}
-            placeholder="Project Overview"
+            placeholder="Project Overview (required, 10-1000 characters)"
             defaultValue={formValues.overview}
             disabled={loading}
             className={`${getInputClassName(errors.overview)} min-h-[80px] resize-vertical`}
@@ -810,7 +824,7 @@ const MyProjectWorksForm = () => {
           <input
             type="text"
             {...register("technology")}
-            placeholder="React, Node.js, MongoDB"
+            placeholder="Technologies (required, comma separated, e.g., React, Node.js, MongoDB)"
             defaultValue={formValues.technology}
             disabled={loading}
             className={getInputClassName(errors.technology)}
@@ -827,7 +841,7 @@ const MyProjectWorksForm = () => {
           <input
             type="url"
             {...register("liveWebsite")}
-            placeholder="https://example.com"
+            placeholder="Live Website URL (optional, must be a valid URL)"
             defaultValue={formValues.liveWebsite}
             disabled={loading}
             className={getInputClassName(errors.liveWebsite)}
@@ -844,7 +858,7 @@ const MyProjectWorksForm = () => {
           <input
             type="url"
             {...register("liveWebsiteRepo")}
-            placeholder="https://github.com/username/frontend"
+            placeholder="Frontend Repo URL (optional, must be a valid URL)"
             defaultValue={formValues.liveWebsiteRepo}
             disabled={loading}
             className={getInputClassName(errors.liveWebsiteRepo)}
@@ -861,7 +875,7 @@ const MyProjectWorksForm = () => {
           <input
             type="url"
             {...register("liveServersite")}
-            placeholder="https://api.example.com"
+            placeholder="Backend Live URL (optional, must be a valid URL)"
             defaultValue={formValues.liveServersite}
             disabled={loading}
             className={getInputClassName(errors.liveServersite)}
@@ -878,7 +892,7 @@ const MyProjectWorksForm = () => {
           <input
             type="url"
             {...register("liveServersiteRepo")}
-            placeholder="https://github.com/username/backend"
+            placeholder="Backend Repo URL (optional, must be a valid URL)"
             defaultValue={formValues.liveServersiteRepo}
             disabled={loading}
             className={getInputClassName(errors.liveServersiteRepo)}
@@ -1082,7 +1096,7 @@ const MyProjectWorksForm = () => {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => toggleMdPreview(`existing`, idx)}
+                        onClick={() => toggleMdPreview("existing", idx)}
                         className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                         title={showMdPreview[`existing-${idx}`] ? "Hide Preview" : "Show Preview"}
                       >
@@ -1184,7 +1198,7 @@ const MyProjectWorksForm = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => toggleMdPreview(`new`, idx)}
+                    onClick={() => toggleMdPreview("new", idx)}
                     className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                     title={showMdPreview[`new-${idx}`] ? "Hide Preview" : "Show Preview"}
                   >
@@ -1213,7 +1227,7 @@ const MyProjectWorksForm = () => {
                 type="text"
                 value={doc.title}
                 onChange={e => handleMdDocChange(idx, "title", e.target.value)}
-                placeholder="Documentation Title"
+                placeholder="Documentation Title (required)"
                 className="w-full border border-[var(--border-main)] rounded-lg px-3 py-2 mb-2 bg-[var(--background-default)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
               />
               <input
@@ -1354,6 +1368,12 @@ const MyProjectWorksForm = () => {
               ? "Update Project"
               : "Create Project"}
           </motion.button>
+          {/* Error message if button is disabled due to invalid form */}
+          {!isValid && !loading && !submitting && (
+            <div className="text-red-500 text-sm mt-2 flex-1">
+              Please fill all required fields correctly to enable the button.
+            </div>
+          )}
         </div>
       </form>
     </div>
