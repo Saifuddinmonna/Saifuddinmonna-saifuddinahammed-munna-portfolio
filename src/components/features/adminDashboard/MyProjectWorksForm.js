@@ -327,9 +327,9 @@ const MyProjectWorksForm = () => {
     console.log("imageid id deleting ", imageId);
     if (!window.confirm("Delete this image?")) return;
     try {
-      await myProjectWorksAPI.deleteProjectWorkImage(id, imageId);
+      await myProjectWorksAPI.deleteProjectWorkImage(id, encodeURIComponent(imageId));
       setExistingImages(prev => {
-        const updated = prev.filter(img => img._id !== imageId);
+        const updated = prev.filter(img => img.public_id !== imageId);
         console.log("Updated images after delete:", updated);
         return updated;
       });
@@ -607,12 +607,15 @@ const MyProjectWorksForm = () => {
       }
 
       // Add current existing images (after deletions) by their _id or url
+      // if (existingImages && existingImages.length > 0) {
+      //   // Prefer _id, fallback to url
+      //   formData.append(
+      //     "existingImages",
+      //     JSON.stringify(existingImages.map(img => img._id || img.url))
+      //   );
+      // }
       if (existingImages && existingImages.length > 0) {
-        // Prefer _id, fallback to url
-        formData.append(
-          "existingImages",
-          JSON.stringify(existingImages.map(img => img._id || img.url))
-        );
+        formData.append("existingImages", JSON.stringify(existingImages.map(img => img.public_id)));
       }
 
       // Add markdown documentation
@@ -976,7 +979,7 @@ const MyProjectWorksForm = () => {
                   />
                   <button
                     type="button"
-                    onClick={() => removeExistingImage(img._id)}
+                    onClick={() => removeExistingImage(img.public_id)}
                     className="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg px-1 text-xs hover:bg-red-700 transition-colors duration-200"
                     title="Delete"
                   >
