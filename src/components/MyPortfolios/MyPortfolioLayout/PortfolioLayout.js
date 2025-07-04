@@ -1,11 +1,9 @@
 // =======================
 // React & Library Imports
 // =======================
-import React, { useEffect, useState, useContext, useCallback } from "react";
-import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState, useContext } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import ReactConfetti from "react-confetti";
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import "react-photo-view/dist/react-photo-view.css";
 import { useParams } from "react-router-dom";
 
 // =======================
@@ -22,122 +20,26 @@ import "./Portfolio.css";
 // Components
 // =======================
 import NavbarPage2 from "../../layout/NavbarPage/NavbarPage";
-import Footer from "../../layout/Footer";
+import { CategorySidebar, SearchAndFilters, LoadingSkeleton, PortfolioCard } from "./components";
 
 // =======================
 // API Services
 // =======================
-import {
-  getAllPortfolioProjects,
-  getPortfolioProject,
-  getAllCategories,
-} from "../../../services/apiService";
+import { getAllPortfolioProjects, getAllCategories } from "../../../services/apiService";
 
 // =======================
-// Icons
+// Utils & Constants
 // =======================
 import {
-  FaSearch,
-  FaThLarge,
-  FaList,
-  FaSort,
-  FaGithub,
-  FaServer,
-  FaExternalLinkAlt,
-  FaLayerGroup,
-  FaShoppingCart,
-  FaBriefcase,
-  FaGraduationCap,
-  FaQuestionCircle,
-  FaCode,
-  FaClipboardList,
-  FaMobileAlt,
-  FaCalculator,
-  FaNewspaper,
-  FaPalette,
-} from "react-icons/fa";
-
-// =======================
-// Google Fonts (inline)
-// =======================
-const fontStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-`;
-
-// =======================
-// Constants
-// =======================
-const CONFETTI_DURATION = 8000;
-const MOBILE_BREAKPOINT = 720;
-const SCROLL_POSITION = {
-  mobile: 800,
-  desktop: 0,
-};
-
-const SORT_OPTIONS = {
-  NEWEST: "newest",
-  OLDEST: "oldest",
-  NAME_ASC: "name_asc",
-  NAME_DESC: "name_desc",
-};
-
-const STYLE_OPTIONS = {
-  DEFAULT: "default",
-  MODERN: "modern",
-  MINIMAL: "minimal",
-  GRADIENT: "gradient",
-  NEUMORPHIC: "neumorphic",
-};
-
-const VIEW_MODES = {
-  GRID_1: "grid-1",
-  GRID_2: "grid-2",
-  GRID_3: "grid-3",
-  LIST: "list",
-};
-
-// =======================
-// Tooltip Component
-// =======================
-const Tooltip = ({ children, text }) => (
-  <div className="relative group">
-    {children}
-    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-[var(--background-elevated)] text-[var(--text-primary)] text-sm rounded-md shadow-lg border border-[var(--border-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-      {text}
-      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-[var(--background-elevated)]"></div>
-    </div>
-  </div>
-);
-
-// =======================
-// Animation Variants
-// =======================
-const buttonVariants = {
-  initial: { scale: 1 },
-  hover: {
-    scale: 1.05,
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-    transition: {
-      type: "spring",
-      stiffness: 400,
-      damping: 10,
-    },
-  },
-  tap: {
-    scale: 0.95,
-    transition: {
-      type: "spring",
-      stiffness: 400,
-      damping: 10,
-    },
-  },
-};
-
-// =======================
-// Common Styles
-// =======================
-const commonButtonStyles =
-  "transition-all duration-300 ease-in-out transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-md hover:shadow-lg";
+  CONFETTI_DURATION,
+  SORT_OPTIONS,
+  STYLE_OPTIONS,
+  VIEW_MODES,
+  fontStyles,
+  buttonVariants,
+  commonButtonStyles,
+  getStyleClasses,
+} from "./utils";
 
 // =======================
 // Main PortfolioLayout Component
@@ -161,26 +63,25 @@ const PortfolioLayout = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentStyle, setCurrentStyle] = useState(STYLE_OPTIONS.DEFAULT);
 
-  // ===== Fetch portfolio data =====
+  // ===== Fetch categories =====
   useEffect(() => {
-    const fetchPortfolioData = async () => {
-      setIsLoading(true);
+    const fetchCategories = async () => {
       try {
         const response = await getAllCategories();
         setAllCategories(response.data);
         console.log(
-          "response from the data fetching for all gertegories in profileLayout page ",
+          "response from the data fetching for all categories in profileLayout page ",
           response.data
         );
       } catch (error) {
-        console.error("Error fetching portfolio data:", error);
-        setDatasServer([]);
-      } finally {
-        setIsLoading(false);
+        console.error("Error fetching categories:", error);
+        setAllCategories([]);
       }
     };
-    fetchPortfolioData();
-  }, [selectedCategory]);
+    fetchCategories();
+  }, []);
+
+  // ===== Fetch portfolio data =====
   useEffect(() => {
     const fetchPortfolioData = async () => {
       setIsLoading(true);
@@ -201,9 +102,7 @@ const PortfolioLayout = () => {
     };
     fetchPortfolioData();
   }, [selectedCategory]);
-  useEffect(() => {
-    console.log("show the selected or currect categories ", selectedCategory);
-  }, [selectedCategory]);
+
   // ===== Confetti animation control =====
   useEffect(() => {
     setConfettiStart(true);
@@ -233,83 +132,6 @@ const PortfolioLayout = () => {
     },
   };
 
-  const titleVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
-  // ===== Style variants for different preview modes =====
-  const getStyleClasses = style => {
-    switch (style) {
-      case STYLE_OPTIONS.MODERN:
-        return {
-          card: "bg-gradient-to-br from-[var(--background-paper)] to-[var(--background-elevated)] border-none shadow-lg hover:shadow-xl",
-          title: "text-[var(--primary-main)] dark:text-[var(--primary-light)]",
-          category: "text-[var(--secondary-main)] dark:text-[var(--secondary-light)]",
-          description: "text-[var(--text-secondary)]",
-          button:
-            "bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white hover:from-[var(--primary-dark)] hover:to-[var(--secondary-dark)]",
-        };
-      case STYLE_OPTIONS.MINIMAL:
-        return {
-          card: "bg-[var(--background-paper)] border border-[var(--border-color)] shadow-sm hover:shadow-md",
-          title: "text-[var(--text-primary)]",
-          category: "text-[var(--text-secondary)]",
-          description: "text-[var(--text-secondary)]",
-          button:
-            "bg-[var(--background-elevated)] text-[var(--text-primary)] hover:bg-[var(--background-paper)]",
-        };
-      case STYLE_OPTIONS.GRADIENT:
-        return {
-          card: "bg-gradient-to-r from-[var(--primary-main)]/10 to-[var(--secondary-main)]/10 border border-[var(--border-color)]/50",
-          title: "text-[var(--primary-main)] dark:text-[var(--primary-light)]",
-          category: "text-[var(--secondary-main)] dark:text-[var(--secondary-light)]",
-          description: "text-[var(--text-secondary)]",
-          button:
-            "bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] text-white",
-        };
-      case STYLE_OPTIONS.NEUMORPHIC:
-        return {
-          card: "bg-[var(--background-paper)] shadow-[5px_5px_10px_rgba(0,0,0,0.1),-5px_-5px_10px_rgba(255,255,255,0.1)] border-none",
-          title: "text-[var(--text-primary)]",
-          category: "text-[var(--text-secondary)]",
-          description: "text-[var(--text-secondary)]",
-          button: "bg-[var(--background-elevated)] text-[var(--text-primary)] shadow-inner",
-        };
-      default:
-        return {
-          card: "bg-[var(--background-paper)] border border-[var(--border-color)]",
-          title: "text-[var(--text-primary)]",
-          category: "text-[var(--text-secondary)]",
-          description: "text-[var(--text-secondary)]",
-          button: "bg-[var(--primary-main)] text-white",
-        };
-    }
-  };
-
-  // =======================
-  // Loading Skeleton
-  // =======================
-  const LoadingSkeleton = () => (
-    <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
-      {[1, 2, 3].map(i => (
-        <div
-          key={i}
-          className="p-6 bg-[var(--background-paper)] rounded-xl border border-[var(--border-color)] shadow-md"
-        >
-          <div className="h-8 bg-[var(--background-elevated)] rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-[var(--background-elevated)] rounded w-1/2 mb-2"></div>
-          <div className="h-4 bg-[var(--background-elevated)] rounded w-full mb-2"></div>
-          <div className="h-4 bg-[var(--background-elevated)] rounded w-2/3"></div>
-        </div>
-      ))}
-    </div>
-  );
-
   // =======================
   // Render
   // =======================
@@ -325,196 +147,30 @@ const PortfolioLayout = () => {
         <div className="container mx-auto px-4 py-4">
           {/* Left Side Categories Menu */}
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="w-full md:w-64 lg:w-72 shrink-0">
-              <div className="sticky top-24 bg-[var(--background-paper)] dark:bg-[var(--background-elevated)] rounded-lg shadow-md border border-[var(--border-color)] p-4">
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
-                  Categories
-                </h3>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 ${
-                      selectedCategory === null
-                        ? "bg-[var(--primary-main)] text-white"
-                        : "text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                    }`}
-                  >
-                    All Projects
-                  </button>
-                  {/* Category Buttons */}
-                  {Array.isArray(allCategories) &&
-                    allCategories.map(category => (
-                      <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category)}
-                        className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 ${
-                          selectedCategory === category
-                            ? "bg-[var(--primary-main)] text-white"
-                            : "text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                        }`}
-                      >
-                        {category}
-                      </button>
-                    ))}
-                </div>
-              </div>
-            </div>
+            <CategorySidebar
+              allCategories={allCategories}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
 
             {/* Main Content Area */}
             <div className="flex-1">
               {/* Search and Filter Bar */}
-              <div className="mb-6 flex flex-wrap items-center gap-4">
-                {/* Search Input */}
-                <div className="flex-1 min-w-[200px]">
-                  <Tooltip text="Search projects by name, category, or technology">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search projects..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent shadow-md hover:shadow-lg transition-all duration-300"
-                      />
-                      <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]" />
-                    </div>
-                  </Tooltip>
-                </div>
-
-                {/* Sort By Dropdown */}
-                <Tooltip text="Sort projects by different criteria">
-                  <motion.div
-                    className="relative"
-                    variants={buttonVariants}
-                    initial="initial"
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <select
-                      value={sortBy}
-                      onChange={e => setSortBy(e.target.value)}
-                      className={`appearance-none bg-[var(--background-paper)] border border-[var(--border-color)] text-[var(--text-primary)] py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent ${commonButtonStyles}`}
-                    >
-                      <option value={SORT_OPTIONS.NEWEST}>Newest</option>
-                      <option value={SORT_OPTIONS.OLDEST}>Oldest</option>
-                      <option value={SORT_OPTIONS.NAME_ASC}>Name (A-Z)</option>
-                      <option value={SORT_OPTIONS.NAME_DESC}>Name (Z-A)</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--text-secondary)]">
-                      <FaSort className="fill-current h-4 w-4" />
-                    </div>
-                  </motion.div>
-                </Tooltip>
-
-                {/* Style Preview Button */}
-                <Tooltip text="Change the visual style of project cards">
-                  <motion.div
-                    className="relative group"
-                    variants={buttonVariants}
-                    initial="initial"
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCurrentStyle(prev => {
-                          const styles = Object.values(STYLE_OPTIONS);
-                          const currentIndex = styles.indexOf(prev);
-                          return styles[(currentIndex + 1) % styles.length];
-                        })
-                      }
-                      className={`px-4 py-2 rounded-md bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-[var(--background-elevated)] ${commonButtonStyles}`}
-                    >
-                      <FaPalette className="h-4 w-4 inline-block mr-2" />
-                      <span>Style: {currentStyle}</span>
-                    </button>
-                    <div className="absolute right-0 mt-2 w-48 bg-[var(--background-paper)] rounded-md shadow-lg border border-[var(--border-color)] hidden group-hover:block z-50 transform transition-all duration-300 origin-top-right">
-                      {Object.values(STYLE_OPTIONS).map(style => (
-                        <motion.button
-                          key={style}
-                          onClick={() => setCurrentStyle(style)}
-                          className={`w-full text-left px-4 py-2 hover:bg-[var(--background-elevated)] ${
-                            currentStyle === style
-                              ? "bg-[var(--primary-main)] text-white"
-                              : "text-[var(--text-primary)]"
-                          } ${commonButtonStyles}`}
-                          whileHover={{ x: 5 }}
-                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                        >
-                          {style.charAt(0).toUpperCase() + style.slice(1)}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </motion.div>
-                </Tooltip>
-
-                {/* View Mode Buttons */}
-                <Tooltip text="Change the number of cards per row">
-                  <motion.div
-                    className="flex rounded-md shadow-sm"
-                    variants={buttonVariants}
-                    initial="initial"
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setViewMode(VIEW_MODES.GRID_1)}
-                      className={`px-4 py-2 rounded-l-md border border-[var(--border-color)] ${
-                        viewMode === VIEW_MODES.GRID_1
-                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
-                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
-                      aria-label="1 card per row"
-                    >
-                      <FaThLarge className="transform rotate-45" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewMode(VIEW_MODES.GRID_2)}
-                      className={`px-4 py-2 border-t border-b border-[var(--border-color)] ${
-                        viewMode === VIEW_MODES.GRID_2
-                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
-                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
-                      aria-label="2 cards per row"
-                    >
-                      <div className="flex gap-1">
-                        <FaThLarge className="transform rotate-45" />
-                        <FaThLarge className="transform rotate-45" />
-                      </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewMode(VIEW_MODES.GRID_3)}
-                      className={`px-4 py-2 border-t border-b border-[var(--border-color)] ${
-                        viewMode === VIEW_MODES.GRID_3
-                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
-                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
-                      aria-label="3 cards per row"
-                    >
-                      <div className="flex gap-1">
-                        <FaThLarge className="transform rotate-45" />
-                        <FaThLarge className="transform rotate-45" />
-                        <FaThLarge className="transform rotate-45" />
-                      </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewMode(VIEW_MODES.LIST)}
-                      className={`px-4 py-2 rounded-r-md border border-[var(--border-color)] ${
-                        viewMode === VIEW_MODES.LIST
-                          ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
-                          : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                      } focus:z-10 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:border-transparent transition-colors duration-200 ${commonButtonStyles}`}
-                      aria-label="List view"
-                    >
-                      <FaList />
-                    </button>
-                  </motion.div>
-                </Tooltip>
-              </div>
+              <SearchAndFilters
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                currentStyle={currentStyle}
+                setCurrentStyle={setCurrentStyle}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                SORT_OPTIONS={SORT_OPTIONS}
+                STYLE_OPTIONS={STYLE_OPTIONS}
+                VIEW_MODES={VIEW_MODES}
+                buttonVariants={buttonVariants}
+                commonButtonStyles={commonButtonStyles}
+              />
 
               {/* Portfolio Grid/List */}
               {isLoading ? (
@@ -536,188 +192,22 @@ const PortfolioLayout = () => {
                 >
                   {(datasServer || []).map(project => {
                     const styleClasses = getStyleClasses(currentStyle);
-                    const photoProviderImages = Array.isArray(project.images)
-                      ? project.images.map((img, idx) => ({
-                          src: img.fullImageUrl,
-                          key: idx,
-                        }))
-                      : [];
 
                     return (
-                      <motion.div
+                      <PortfolioCard
                         key={project.name}
-                        className={`rounded-xl overflow-hidden transition-all duration-300 ${
-                          styleClasses.card
-                        } ${viewMode === VIEW_MODES.LIST ? "md:flex md:flex-row items-start" : ""}`}
-                        variants={cardVariants}
-                        whileHover={{
-                          y:
-                            viewMode === VIEW_MODES.GRID_1
-                              ? -5
-                              : viewMode === VIEW_MODES.GRID_2
-                              ? -5
-                              : viewMode === VIEW_MODES.GRID_3
-                              ? -5
-                              : 0,
-                          boxShadow: isDarkMode
-                            ? "0 10px 15px -3px rgba(0 0 0 / 0.4)"
-                            : "0 10px 15px -3px rgba(0 0 0 / 0.1)",
-                        }}
-                      >
-                        {/* Project Image(s) */}
-                        <div
-                          className={`$${
-                            viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4 p-2" : "aspect-video"
-                          } relative overflow-hidden`}
-                        >
-                          <PhotoProvider images={photoProviderImages}>
-                            {viewMode === VIEW_MODES.LIST ? (
-                              <div className="flex flex-wrap gap-2 justify-start items-start h-full overflow-y-auto">
-                                {Array.isArray(project.images) &&
-                                  project.images.map((img, index) => (
-                                    <PhotoView key={`${project.name}-img-${index}`} index={index}>
-                                      <motion.img
-                                        src={img.thumbnailUrl || img.fullImageUrl}
-                                        alt={`${project.name} image ${index + 1}`}
-                                        className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer hover:opacity-80 transition-opacity duration-300"
-                                        whileHover={{ opacity: 0.8 }}
-                                        transition={{ duration: 0.3 }}
-                                      />
-                                    </PhotoView>
-                                  ))}
-                              </div>
-                            ) : (
-                              Array.isArray(project.images) &&
-                              project.images.length > 0 && (
-                                <PhotoView index={0}>
-                                  <motion.img
-                                    src={project.images[0].fullImageUrl}
-                                    alt={`${project.name} image 1`}
-                                    className="w-full h-full object-cover transition-all duration-300"
-                                    whileHover={{ scale: 1.05 }}
-                                    transition={{ duration: 0.3 }}
-                                  />
-                                </PhotoView>
-                              )
-                            )}
-                          </PhotoProvider>
-                          {/* Conditional overlays for GRID modes only */}
-                          {viewMode !== VIEW_MODES.LIST &&
-                            Array.isArray(project.images) &&
-                            project.images.length > 0 && (
-                              <>
-                                {viewMode === VIEW_MODES.GRID_1 && (
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                )}
-                                {viewMode === VIEW_MODES.GRID_2 && (
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                )}
-                                {viewMode === VIEW_MODES.GRID_3 && (
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                )}
-                              </>
-                            )}
-                        </div>
-                        {/* Project Details */}
-                        <div
-                          className={`p-5 md:p-6 lg:p-7 ${
-                            viewMode === VIEW_MODES.LIST ? "flex-1" : ""
-                          }`}
-                        >
-                          <h3
-                            className={`text-xl md:text-2xl font-semibold mb-3 ${styleClasses.title}`}
-                          >
-                            {project.name}
-                          </h3>
-                          <p className={`text-sm md:text-base mb-3 ${styleClasses.category}`}>
-                            {project.category}
-                          </p>
-                          <p
-                            className={`text-sm md:text-base line-clamp-3 mb-4 ${styleClasses.description}`}
-                          >
-                            {project.overview[0]}
-                          </p>
-                          {viewMode === VIEW_MODES.LIST && (
-                            <PortfolioOverview
-                              overview={project.overview}
-                              showMore={showMore}
-                              setShowMore={setShowMore}
-                            />
-                          )}
-
-                          {/* Project Links with Tooltips */}
-                          <div className="flex flex-wrap gap-3 mt-4">
-                            {project.liveWebsite && (
-                              <Tooltip text="Visit the live website">
-                                <motion.a
-                                  href={project.liveWebsite}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
-                                  variants={buttonVariants}
-                                  initial="initial"
-                                  whileHover="hover"
-                                  whileTap="tap"
-                                >
-                                  <FaExternalLinkAlt className="text-sm md:text-base" />
-                                  <span>Live</span>
-                                </motion.a>
-                              </Tooltip>
-                            )}
-                            {project.liveWebsiteRepo && (
-                              <Tooltip text="View the source code on GitHub">
-                                <motion.a
-                                  href={project.liveWebsiteRepo}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
-                                  variants={buttonVariants}
-                                  initial="initial"
-                                  whileHover="hover"
-                                  whileTap="tap"
-                                >
-                                  <FaGithub className="text-sm md:text-base" />
-                                  <span>Code</span>
-                                </motion.a>
-                              </Tooltip>
-                            )}
-                            {project.liveServersite && (
-                              <Tooltip text="Visit the server deployment">
-                                <motion.a
-                                  href={project.liveServersite}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
-                                  variants={buttonVariants}
-                                  initial="initial"
-                                  whileHover="hover"
-                                  whileTap="tap"
-                                >
-                                  <FaServer className="text-sm md:text-base" />
-                                  <span>Server</span>
-                                </motion.a>
-                              </Tooltip>
-                            )}
-                            {project.liveServersiteRepo && (
-                              <Tooltip text="View the server code on GitHub">
-                                <motion.a
-                                  href={project.liveServersiteRepo}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles}`}
-                                  variants={buttonVariants}
-                                  initial="initial"
-                                  whileHover="hover"
-                                  whileTap="tap"
-                                >
-                                  <FaGithub className="text-sm md:text-base" />
-                                  <span>Server Code</span>
-                                </motion.a>
-                              </Tooltip>
-                            )}
-                          </div>
-                        </div>
-                      </motion.div>
+                        project={project}
+                        viewMode={viewMode}
+                        currentStyle={currentStyle}
+                        styleClasses={styleClasses}
+                        isDarkMode={isDarkMode}
+                        showMore={showMore}
+                        setShowMore={setShowMore}
+                        commonButtonStyles={commonButtonStyles}
+                        buttonVariants={buttonVariants}
+                        cardVariants={cardVariants}
+                        VIEW_MODES={VIEW_MODES}
+                      />
                     );
                   })}
                 </motion.div>
@@ -739,113 +229,6 @@ const PortfolioLayout = () => {
     </div>
   );
 };
-
-// =======================
-// Sub-components
-// =======================
-const PortfolioLinks = ({ liveWebsite, liveWebsiteRepo, liveServersite, liveServersiteRepo }) => (
-  <div className="flex flex-wrap gap-3 mt-4">
-    {liveWebsite && (
-      <motion.a
-        href={liveWebsite}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
-        whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <FaExternalLinkAlt className="text-sm md:text-base" />
-        <span>Live</span>
-      </motion.a>
-    )}
-    {liveWebsiteRepo && (
-      <motion.a
-        href={liveWebsiteRepo}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
-        whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <FaGithub className="text-sm md:text-base" />
-        <span>Code</span>
-      </motion.a>
-    )}
-    {liveServersite && (
-      <motion.a
-        href={liveServersite}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--success-main)] text-white rounded-lg hover:bg-[var(--success-dark)] transition-colors duration-300"
-        whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <FaServer className="text-sm md:text-base" />
-        <span>Server</span>
-      </motion.a>
-    )}
-    {liveServersiteRepo && (
-      <motion.a
-        href={liveServersiteRepo}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 text-sm md:text-base bg-[var(--background-elevated)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--background-paper)] transition-colors duration-300 border border-[var(--border-color)]"
-        whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <FaGithub className="text-sm md:text-base" />
-        <span>Server Code</span>
-      </motion.a>
-    )}
-  </div>
-);
-
-const PortfolioOverview = ({ overview, showMore, setShowMore }) => (
-  <div className="mt-4">
-    <h4 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Overview</h4>
-    {showMore ? (
-      <>
-        {overview.map((item, index) => (
-          <p key={index} className="text-sm text-[var(--text-secondary)] mb-1">
-            {item}
-          </p>
-        ))}
-      </>
-    ) : (
-      <>
-        {overview.slice(0, 2).map((item, index) => (
-          <p key={index} className="text-sm text-[var(--text-secondary)] mb-1">
-            {item}
-          </p>
-        ))}
-      </>
-    )}
-    {overview.length > 2 && (
-      <button
-        onClick={() => setShowMore(!showMore)}
-        className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] text-sm mt-2 transition-colors duration-200 focus:outline-none"
-      >
-        {showMore ? "Show Less" : "Show More"}
-      </button>
-    )}
-  </div>
-);
-
-const PortfolioImage = ({ img }) => (
-  <div className="">
-    <div className="border border-[var(--border-color)] m-2 p-2 rounded transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 bg-[var(--background-paper)] duration-300">
-      <PhotoProvider>
-        <PhotoView src={`images/${img}`}>
-          <motion.img
-            src={`images/${img}`}
-            alt="Portfolio image"
-            className="w-full h-auto rounded transition-all duration-300"
-          />
-        </PhotoView>
-      </PhotoProvider>
-    </div>
-  </div>
-);
 
 // =======================
 // Export
