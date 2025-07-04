@@ -305,8 +305,8 @@ export const myProjectWorksAPI = {
         result = {
           data: response.data,
           totalItems: response.data.length,
-          totalPages: 1,
-          currentPage: 1,
+          totalPages: "" || 1,
+          currentPage: "" || 1,
         };
       }
 
@@ -398,6 +398,20 @@ export const myProjectWorksAPI = {
     } catch (error) {
       console.error("❌ [API] getProjectWork Error:", error);
       console.error("❌ [API] Error response:", error.response);
+      throw error;
+    }
+  },
+  getAllCategories: async param => {
+    try {
+      const response = await api.get("/api/my-project-works/allCategories");
+      console.log(
+        "✅ [API] getallCategories  Response gerAllCategories in apiService:",
+        response.data
+      );
+      return response.data;
+    } catch (error) {
+      console.error("❌ [API] getall categories  Error:", error);
+      console.error("❌ [API] Error responsefrom all categories:", error.response);
       throw error;
     }
   },
@@ -533,5 +547,6 @@ export const apiUtils = {
 
 export const getAllPortfolioProjects = myProjectWorksAPI.getAllProjectWorks;
 export const getPortfolioProject = myProjectWorksAPI.getProjectWork;
+export const getAllCategories = myProjectWorksAPI.getAllCategories;
 
 export default api;

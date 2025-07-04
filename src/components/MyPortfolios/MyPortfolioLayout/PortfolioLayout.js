@@ -1,16 +1,41 @@
+// =======================
+// React & Library Imports
+// =======================
 import React, { useEffect, useState, useContext, useCallback } from "react";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import ReactConfetti from "react-confetti";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useParams } from "react-router-dom";
+
+// =======================
+// Contexts
+// =======================
 import { ThemeContext } from "../../../App";
-import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
-// import datasServer from "../portfolios.json";
+
+// =======================
+// Styles
+// =======================
 import "./Portfolio.css";
+
+// =======================
+// Components
+// =======================
 import NavbarPage2 from "../../layout/NavbarPage/NavbarPage";
 import Footer from "../../layout/Footer";
-import { getAllPortfolioProjects, getPortfolioProject } from "../../../services/apiService";
 
+// =======================
+// API Services
+// =======================
+import {
+  getAllPortfolioProjects,
+  getPortfolioProject,
+  getAllCategories,
+} from "../../../services/apiService";
+
+// =======================
+// Icons
+// =======================
 import {
   FaSearch,
   FaThLarge,
@@ -32,12 +57,16 @@ import {
   FaPalette,
 } from "react-icons/fa";
 
-// Add Google Fonts
+// =======================
+// Google Fonts (inline)
+// =======================
 const fontStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 `;
 
+// =======================
 // Constants
+// =======================
 const CONFETTI_DURATION = 8000;
 const MOBILE_BREAKPOINT = 720;
 const SCROLL_POSITION = {
@@ -67,7 +96,9 @@ const VIEW_MODES = {
   LIST: "list",
 };
 
-// Add Tooltip Component
+// =======================
+// Tooltip Component
+// =======================
 const Tooltip = ({ children, text }) => (
   <div className="relative group">
     {children}
@@ -78,7 +109,9 @@ const Tooltip = ({ children, text }) => (
   </div>
 );
 
-// Add animation variants for buttons
+// =======================
+// Animation Variants
+// =======================
 const buttonVariants = {
   initial: { scale: 1 },
   hover: {
@@ -100,18 +133,23 @@ const buttonVariants = {
   },
 };
 
-// Common button styles
+// =======================
+// Common Styles
+// =======================
 const commonButtonStyles =
   "transition-all duration-300 ease-in-out transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-md hover:shadow-lg";
 
+// =======================
+// Main PortfolioLayout Component
+// =======================
 const PortfolioLayout = () => {
-  // Context and Hooks
+  // ===== Context and Hooks =====
   const { isDarkMode } = useContext(ThemeContext);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress);
   const { UsedPhone: nameFilter } = useParams();
 
-  // State Management
+  // ===== State Management =====
   const [confettiStart, setConfettiStart] = useState(true);
   const [datasServer, setDatasServer] = useState();
   const [showMore, setShowMore] = useState(false);
@@ -119,16 +157,40 @@ const PortfolioLayout = () => {
   const [viewMode, setViewMode] = useState(VIEW_MODES.GRID_3);
   const [sortBy, setSortBy] = useState(SORT_OPTIONS.NEWEST);
   const [isLoading, setIsLoading] = useState(true);
+  const [allCategories, setAllCategories] = useState();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentStyle, setCurrentStyle] = useState(STYLE_OPTIONS.DEFAULT);
 
-  // Fetch portfolio data
+  // ===== Fetch portfolio data =====
   useEffect(() => {
     const fetchPortfolioData = async () => {
       setIsLoading(true);
       try {
-        const response = await getAllPortfolioProjects();
-        // response is an object with a data property (the array)
+        const response = await getAllCategories();
+        setAllCategories(response.data);
+        console.log(
+          "response from the data fetching for all gertegories in profileLayout page ",
+          response.data
+        );
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+        setDatasServer([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPortfolioData();
+  }, [selectedCategory]);
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      setIsLoading(true);
+      try {
+        const params = {};
+        if (selectedCategory) {
+          params.category = selectedCategory;
+        }
+
+        const response = await getAllPortfolioProjects(params);
         setDatasServer(response.data);
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
@@ -138,11 +200,11 @@ const PortfolioLayout = () => {
       }
     };
     fetchPortfolioData();
-  }, []);
-
-  console.log("data from response with server data ", datasServer);
-
-  // Confetti animation control
+  }, [selectedCategory]);
+  useEffect(() => {
+    console.log("show the selected or currect categories ", selectedCategory);
+  }, [selectedCategory]);
+  // ===== Confetti animation control =====
   useEffect(() => {
     setConfettiStart(true);
     const timer = setTimeout(() => {
@@ -151,7 +213,7 @@ const PortfolioLayout = () => {
     return () => clearTimeout(timer);
   }, [datasServer]);
 
-  // Animation variants
+  // ===== Animation variants for cards and containers =====
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -180,7 +242,7 @@ const PortfolioLayout = () => {
     },
   };
 
-  // Style variants for different preview modes
+  // ===== Style variants for different preview modes =====
   const getStyleClasses = style => {
     switch (style) {
       case STYLE_OPTIONS.MODERN:
@@ -229,7 +291,9 @@ const PortfolioLayout = () => {
     }
   };
 
-  // Loading skeleton component
+  // =======================
+  // Loading Skeleton
+  // =======================
   const LoadingSkeleton = () => (
     <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
       {[1, 2, 3].map(i => (
@@ -246,15 +310,16 @@ const PortfolioLayout = () => {
     </div>
   );
 
+  // =======================
+  // Render
+  // =======================
   return (
     <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <style>{fontStyles}</style>
       {confettiStart && <ReactConfetti />}
 
       {/* Fixed Navigation */}
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <NavbarPage2 />
-      </div>
+      <div className="fixed top-0 left-0 right-0 z-50">{/* <NavbarPage2 /> */}</div>
 
       <main className="flex-grow bg-[var(--background-default)] pt-20">
         <div className="container mx-auto px-4 py-4">
@@ -276,8 +341,9 @@ const PortfolioLayout = () => {
                   >
                     All Projects
                   </button>
-                  {Array.from(new Set((datasServer || []).map(project => project.category))).map(
-                    category => (
+                  {/* Category Buttons */}
+                  {Array.isArray(allCategories) &&
+                    allCategories.map(category => (
                       <button
                         key={category}
                         onClick={() => setSelectedCategory(category)}
@@ -289,8 +355,7 @@ const PortfolioLayout = () => {
                       >
                         {category}
                       </button>
-                    )
-                  )}
+                    ))}
                 </div>
               </div>
             </div>
@@ -299,6 +364,7 @@ const PortfolioLayout = () => {
             <div className="flex-1">
               {/* Search and Filter Bar */}
               <div className="mb-6 flex flex-wrap items-center gap-4">
+                {/* Search Input */}
                 <div className="flex-1 min-w-[200px]">
                   <Tooltip text="Search projects by name, category, or technology">
                     <div className="relative">
@@ -470,10 +536,12 @@ const PortfolioLayout = () => {
                 >
                   {(datasServer || []).map(project => {
                     const styleClasses = getStyleClasses(currentStyle);
-                    const photoProviderImages = project.images.map((img, idx) => ({
-                      src: img.fullImageUrl,
-                      key: idx,
-                    }));
+                    const photoProviderImages = Array.isArray(project.images)
+                      ? project.images.map((img, idx) => ({
+                          src: img.fullImageUrl,
+                          key: idx,
+                        }))
+                      : [];
 
                     return (
                       <motion.div
@@ -496,27 +564,30 @@ const PortfolioLayout = () => {
                             : "0 10px 15px -3px rgba(0 0 0 / 0.1)",
                         }}
                       >
+                        {/* Project Image(s) */}
                         <div
-                          className={`${
+                          className={`$${
                             viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4 p-2" : "aspect-video"
                           } relative overflow-hidden`}
                         >
                           <PhotoProvider images={photoProviderImages}>
                             {viewMode === VIEW_MODES.LIST ? (
                               <div className="flex flex-wrap gap-2 justify-start items-start h-full overflow-y-auto">
-                                {project.images.map((img, index) => (
-                                  <PhotoView key={`${project.name}-img-${index}`} index={index}>
-                                    <motion.img
-                                      src={img.thumbnailUrl || img.fullImageUrl}
-                                      alt={`${project.name} image ${index + 1}`}
-                                      className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer hover:opacity-80 transition-opacity duration-300"
-                                      whileHover={{ opacity: 0.8 }}
-                                      transition={{ duration: 0.3 }}
-                                    />
-                                  </PhotoView>
-                                ))}
+                                {Array.isArray(project.images) &&
+                                  project.images.map((img, index) => (
+                                    <PhotoView key={`${project.name}-img-${index}`} index={index}>
+                                      <motion.img
+                                        src={img.thumbnailUrl || img.fullImageUrl}
+                                        alt={`${project.name} image ${index + 1}`}
+                                        className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer hover:opacity-80 transition-opacity duration-300"
+                                        whileHover={{ opacity: 0.8 }}
+                                        transition={{ duration: 0.3 }}
+                                      />
+                                    </PhotoView>
+                                  ))}
                               </div>
                             ) : (
+                              Array.isArray(project.images) &&
                               project.images.length > 0 && (
                                 <PhotoView index={0}>
                                   <motion.img
@@ -531,20 +602,23 @@ const PortfolioLayout = () => {
                             )}
                           </PhotoProvider>
                           {/* Conditional overlays for GRID modes only */}
-                          {viewMode !== VIEW_MODES.LIST && project.images.length > 0 && (
-                            <>
-                              {viewMode === VIEW_MODES.GRID_1 && (
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                              )}
-                              {viewMode === VIEW_MODES.GRID_2 && (
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                              )}
-                              {viewMode === VIEW_MODES.GRID_3 && (
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                              )}
-                            </>
-                          )}
+                          {viewMode !== VIEW_MODES.LIST &&
+                            Array.isArray(project.images) &&
+                            project.images.length > 0 && (
+                              <>
+                                {viewMode === VIEW_MODES.GRID_1 && (
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                )}
+                                {viewMode === VIEW_MODES.GRID_2 && (
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                )}
+                                {viewMode === VIEW_MODES.GRID_3 && (
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                )}
+                              </>
+                            )}
                         </div>
+                        {/* Project Details */}
                         <div
                           className={`p-5 md:p-6 lg:p-7 ${
                             viewMode === VIEW_MODES.LIST ? "flex-1" : ""
@@ -666,8 +740,9 @@ const PortfolioLayout = () => {
   );
 };
 
-// Sub-components (kept for reference, assuming they are defined elsewhere or inline)
-
+// =======================
+// Sub-components
+// =======================
 const PortfolioLinks = ({ liveWebsite, liveWebsiteRepo, liveServersite, liveServersiteRepo }) => (
   <div className="flex flex-wrap gap-3 mt-4">
     {liveWebsite && (
@@ -772,4 +847,7 @@ const PortfolioImage = ({ img }) => (
   </div>
 );
 
+// =======================
+// Export
+// =======================
 export default PortfolioLayout;
