@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import ReactConfetti from "react-confetti";
 import GalleryGrid from "../components/Gallery/GalleryGrid";
-import Lightbox from "../components/Gallery/Lightbox";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 
 import NavbarPage from "../components/layout/NavbarPage/NavbarPage";
 import Footer from "../components/layout/Footer";
 import { ThemeContext } from "../App";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
-import { FaSearch, FaThLarge, FaList, FaSort, FaPalette, FaTags } from "react-icons/fa";
+import { FaSearch, FaThLarge, FaList, FaSort, FaPalette, FaTags, FaEye } from "react-icons/fa";
 import { getAllPortfolioProjects, getPortfolioProject } from "../services/apiService";
 
 // Add Google Fonts
@@ -77,18 +78,18 @@ const GalleryPage = () => {
   const [sortBy, setSortBy] = useState(SORT_OPTIONS.NEWEST);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const { datasServer, setDatasServer } = useState();
+  const [datasServer, setDatasServer] = useState([]);
 
+  // Fetch portfolio data
   useEffect(() => {
     const fetchPortfolioData = async () => {
       setIsLoading(true);
       try {
         const response = await getAllPortfolioProjects();
-        // response is an object with a data property (the array)
-        setDatasServer(response.data);
+        console.log("✅ Gallery - Portfolio data loaded:", response.data);
+        setDatasServer(response.data || []);
       } catch (error) {
-        console.error("Error fetching portfolio data:", error);
+        console.error("❌ Gallery - Error fetching portfolio data:", error);
         setDatasServer([]);
       } finally {
         setIsLoading(false);
@@ -96,33 +97,50 @@ const GalleryPage = () => {
     };
     fetchPortfolioData();
   }, []);
-  // Prepare gallery data
+
+  // Prepare gallery data from portfolio data
   useEffect(() => {
-    setIsLoading(true);
-    const data = datasServer
-      .flatMap((project, projectIndex) =>
-        project.image.map(img => ({
-          src: `/images/${img}`,
-          alt: `${project.name} - ${img}`,
-          title: project.name,
-          description: project.category,
-          projectData: {
-            name: project.name,
-            id: project.id || `proj-${projectIndex}`,
-            category: project.category,
-            liveWebsite: project.liveWebsite,
-            liveWebsiteRepo: project.liveWebsiteRepo,
-            liveServersite: project.liveServersite,
-            liveServersiteRepo: project.liveServersiteRepo,
-            technology: project.technology,
-            overview: project.overview,
-          },
-        }))
-      )
-      .sort((a, b) => (b.projectData.id || 0) - (a.projectData.id || 0));
-    setGalleryData(data);
-    setIsLoading(false);
-  }, []);
+    if (!Array.isArray(datasServer) || datasServer.length === 0) {
+      setGalleryData([]);
+      return;
+    }
+
+    try {
+      const data = datasServer
+        .flatMap((project, projectIndex) => {
+          if (!project.images || !Array.isArray(project.images)) {
+            console.warn(`⚠️ Project ${project.name} has no images array`);
+            return [];
+          }
+
+          return project.images.map(img => ({
+            src: img.fullImageUrl || img.thumbnailUrl || `/images/${img}`,
+            thumbnail: img.thumbnailUrl || img.fullImageUrl || `/images/${img}`,
+            alt: `${project.name} - ${img._id || "image"}`,
+            title: project.name,
+            description: project.category,
+            projectData: {
+              name: project.name,
+              id: project._id || `proj-${projectIndex}`,
+              category: project.category,
+              liveWebsite: project.liveWebsite,
+              liveWebsiteRepo: project.liveWebsiteRepo,
+              liveServersite: project.liveServersite,
+              liveServersiteRepo: project.liveServersiteRepo,
+              technology: project.technology,
+              overview: project.overview,
+            },
+          }));
+        })
+        .sort((a, b) => (b.projectData.id || 0) - (a.projectData.id || 0));
+
+      console.log("✅ Gallery - Processed data:", data.length, "images");
+      setGalleryData(data);
+    } catch (error) {
+      console.error("❌ Gallery - Error processing data:", error);
+      setGalleryData([]);
+    }
+  }, [datasServer]);
 
   // Filter and sort data
   const filterAndSortData = useCallback(() => {
@@ -175,14 +193,6 @@ const GalleryPage = () => {
     const timer = setTimeout(() => setConfettiStart(false), CONFETTI_DURATION);
     return () => clearTimeout(timer);
   }, []);
-
-  const handleImageClick = image => {
-    setSelectedImage(image);
-  };
-
-  const handleCloseLightbox = () => {
-    setSelectedImage(null);
-  };
 
   const uniqueCategories = Array.from(new Set(galleryData.map(item => item.projectData.category)));
 
@@ -427,8 +437,6 @@ const GalleryPage = () => {
           </div>
         </div>
       </main>
-
-      {selectedImage && <Lightbox image={selectedImage} onClose={handleCloseLightbox} />}
 
       <Footer />
     </div>

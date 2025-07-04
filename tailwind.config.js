@@ -12,6 +12,7 @@ module.exports = withMT({
   },
   plugins: [
     require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/typography"),
     require("kutty"),
     require("flowbite/plugin"),
     require("daisyui"),

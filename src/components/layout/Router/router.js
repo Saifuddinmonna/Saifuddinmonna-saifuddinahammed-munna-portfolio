@@ -32,6 +32,7 @@ const About = lazy(() => import("../../About/About.js"));
 const ContactPage = lazy(() => import("../../../pages/ContactPage"));
 const ProjectPage = lazy(() => import("../../../pages/ProjectPage"));
 const PortfolioLayout = lazy(() => import("../../MyPortfolios/MyPortfolioLayout/PortfolioLayout"));
+const PortfolioDetailsPage = lazy(() => import("../../MyPortfolios/PortfolioDetailsPage"));
 const MyportfolioImage = lazy(() => import("../../MyPortfolios/MyportfolioImage"));
 const ResumeViewer = lazy(() => import("../../resumes/ResumeViewer/ResumeViewer"));
 const SignIn = lazy(() => import("../../../auth/components/SignIn"));
@@ -97,6 +98,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <MyPortfolios />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/project/:projectId",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <PortfolioDetailsPage />
           </Suspense>
         ),
       },

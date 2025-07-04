@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { PhotoProvider, PhotoView } from "react-photo-view";
-import { FaGithub, FaServer, FaExternalLinkAlt } from "react-icons/fa";
+import {
+  FaGithub,
+  FaServer,
+  FaExternalLinkAlt,
+  FaEye,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import PortfolioOverview from "./PortfolioOverview";
 
 const PortfolioCard = ({
@@ -17,12 +25,26 @@ const PortfolioCard = ({
   cardVariants,
   VIEW_MODES,
 }) => {
-  const photoProviderImages = Array.isArray(project.images)
-    ? project.images.map((img, idx) => ({
-        src: img.fullImageUrl,
-        key: idx,
-      }))
-    : [];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Auto-rotate images every 3000ms if there are multiple images
+  useEffect(() => {
+    if (!Array.isArray(project.images) || project.images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prev => (prev + 1) % project.images.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [project.images]);
+
+  const handleCardPrev = () => {
+    setCurrentImageIndex(prev => (prev - 1 + project.images.length) % project.images.length);
+  };
+
+  const handleCardNext = () => {
+    setCurrentImageIndex(prev => (prev + 1) % project.images.length);
+  };
 
   return (
     <motion.div
@@ -51,37 +73,102 @@ const PortfolioCard = ({
           viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4 p-2" : "aspect-video"
         } relative overflow-hidden`}
       >
-        <PhotoProvider images={photoProviderImages}>
-          {viewMode === VIEW_MODES.LIST ? (
-            <div className="flex flex-wrap gap-2 justify-start items-start h-full overflow-y-auto">
-              {Array.isArray(project.images) &&
-                project.images.map((img, index) => (
-                  <PhotoView key={`${project.name}-img-${index}`} index={index}>
-                    <motion.img
-                      src={img.thumbnailUrl || img.fullImageUrl}
-                      alt={`${project.name} image ${index + 1}`}
-                      className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer hover:opacity-80 transition-opacity duration-300"
-                      whileHover={{ opacity: 0.8 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </PhotoView>
-                ))}
-            </div>
-          ) : (
-            Array.isArray(project.images) &&
-            project.images.length > 0 && (
-              <PhotoView index={0}>
+        {viewMode === VIEW_MODES.LIST ? (
+          <div className="flex flex-wrap gap-2 justify-start items-start h-full overflow-y-auto">
+            {Array.isArray(project.images) &&
+              project.images.map((img, index) => (
+                <PhotoView key={`${project.name}-img-${index}`} index={index}>
+                  <motion.img
+                    src={img.thumbnailUrl || img.fullImageUrl}
+                    alt={`${project.name} image ${index + 1}`}
+                    className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer"
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{
+                      duration: 0.6,
+                      delay: index * 0.1,
+                      ease: "easeOut",
+                      type: "spring",
+                      stiffness: 120,
+                      damping: 15,
+                    }}
+                    whileHover={{
+                      scale: 1.1,
+                      opacity: 0.8,
+                      transition: { duration: 0.3 },
+                    }}
+                  />
+                </PhotoView>
+              ))}
+          </div>
+        ) : (
+          Array.isArray(project.images) &&
+          project.images.length > 0 && (
+            <div className="relative w-full h-full">
+              {/* Main Image */}
+              <PhotoView
+                src={project.images[currentImageIndex].fullImageUrl}
+                index={currentImageIndex}
+              >
                 <motion.img
-                  src={project.images[0].fullImageUrl}
-                  alt={`${project.name} image 1`}
-                  className="w-full h-full object-cover transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
+                  key={currentImageIndex}
+                  src={
+                    project.images[currentImageIndex].thumbnailUrl ||
+                    project.images[currentImageIndex].fullImageUrl
+                  }
+                  alt={`${project.name} image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover cursor-pointer group"
+                  initial={{ opacity: 0, x: 100, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -100, scale: 1.05 }}
+                  transition={{
+                    duration: 3.0,
+                    ease: "easeInOut",
+                    type: "spring",
+                    stiffness: 60,
+                    damping: 20,
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    transition: { duration: 0.4 },
+                  }}
                 />
               </PhotoView>
-            )
-          )}
-        </PhotoProvider>
+
+              {/* Click to enlarge indicator */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
+                  Click to enlarge
+                </div>
+              </div>
+
+              {/* Navigation Arrows for Card */}
+              {project.images.length > 1 && (
+                <>
+                  <button
+                    onClick={handleCardPrev}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors duration-200 z-10"
+                  >
+                    <FaChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleCardNext}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors duration-200 z-10"
+                  >
+                    <FaChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
+
+              {/* Image Counter */}
+              {project.images.length > 1 && (
+                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  {currentImageIndex + 1} / {project.images.length}
+                </div>
+              )}
+            </div>
+          )
+        )}
         {/* Conditional overlays for GRID modes only */}
         {viewMode !== VIEW_MODES.LIST &&
           Array.isArray(project.images) &&
@@ -118,6 +205,20 @@ const PortfolioCard = ({
 
         {/* Project Links with Tooltips */}
         <div className="flex flex-wrap gap-3 mt-4">
+          {/* View Details Button */}
+          <motion.div
+            className={`${styleClasses.button} flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg ${commonButtonStyles} cursor-pointer`}
+            variants={buttonVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <Link to={`/project/${project._id}`} className="flex items-center gap-2">
+              <FaEye className="text-sm md:text-base" />
+              <span>View Details</span>
+            </Link>
+          </motion.div>
+
           {project.liveWebsite && (
             <motion.a
               href={project.liveWebsite}

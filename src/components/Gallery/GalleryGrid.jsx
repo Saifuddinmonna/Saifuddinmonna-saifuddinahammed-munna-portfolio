@@ -1,18 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
+import { PhotoProvider } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 import GalleryItem from "./GalleryItem";
-import Lightbox from "./Lightbox";
 
 const GalleryGrid = ({ images, viewMode = "grid-3" }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const handleImageClick = image => {
-    setSelectedImage(image);
-  };
-
-  const handleCloseLightbox = () => {
-    setSelectedImage(null);
-  };
-
   // Get grid classes based on view mode
   const getGridClasses = () => {
     switch (viewMode) {
@@ -38,20 +29,27 @@ const GalleryGrid = ({ images, viewMode = "grid-3" }) => {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <div className={`grid ${getGridClasses()} gap-6`}>
-        {images.map((image, index) => (
-          <div key={index} className={getItemClasses()}>
-            <GalleryItem
-              image={image}
-              onClick={() => handleImageClick(image)}
-              viewMode={viewMode}
-            />
-          </div>
-        ))}
+    <PhotoProvider
+      maskOpacity={0.8}
+      maskClosable={true}
+      photoClosable={true}
+      bannerVisible={false}
+      overlayRender={({ overlay, index }) => (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+          {index + 1} / {images.length}
+        </div>
+      )}
+    >
+      <div className="container mx-auto px-4">
+        <div className={`grid ${getGridClasses()} gap-6`}>
+          {images.map((image, index) => (
+            <div key={index} className={getItemClasses()}>
+              <GalleryItem image={image} index={index} viewMode={viewMode} />
+            </div>
+          ))}
+        </div>
       </div>
-      {selectedImage && <Lightbox image={selectedImage} onClose={handleCloseLightbox} />}
-    </div>
+    </PhotoProvider>
   );
 };
 

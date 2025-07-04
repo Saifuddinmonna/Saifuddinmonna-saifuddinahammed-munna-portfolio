@@ -548,5 +548,6 @@ export const apiUtils = {
 export const getAllPortfolioProjects = myProjectWorksAPI.getAllProjectWorks;
 export const getPortfolioProject = myProjectWorksAPI.getProjectWork;
 export const getAllCategories = myProjectWorksAPI.getAllCategories;
+export const getProjectWork = myProjectWorksAPI.getProjectWork;
 
 export default api;
