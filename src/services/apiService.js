@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_API_URL } from "../utils/apiConfig";
+import MyProjectWorksList from "../components/features/adminDashboard/MyProjectWorksList";
 
 // API Configuration
 const baseURL = BASE_API_URL;
@@ -529,5 +530,8 @@ export const apiUtils = {
     return response.data;
   },
 };
+
+export const getAllPortfolioProjects = myProjectWorksAPI.getAllProjectWorks;
+export const getPortfolioProject = myProjectWorksAPI.getProjectWork;
 
 export default api;

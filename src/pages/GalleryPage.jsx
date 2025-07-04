@@ -2,12 +2,13 @@ import React, { useEffect, useState, useContext, useCallback } from "react";
 import ReactConfetti from "react-confetti";
 import GalleryGrid from "../components/Gallery/GalleryGrid";
 import Lightbox from "../components/Gallery/Lightbox";
-import portfoliosData from "../components/MyPortfolios/portfolios.json";
+
 import NavbarPage from "../components/layout/NavbarPage/NavbarPage";
 import Footer from "../components/layout/Footer";
 import { ThemeContext } from "../App";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { FaSearch, FaThLarge, FaList, FaSort, FaPalette, FaTags } from "react-icons/fa";
+import { getAllPortfolioProjects, getPortfolioProject } from "../services/apiService";
 
 // Add Google Fonts
 const fontStyles = `
@@ -77,11 +78,28 @@ const GalleryPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const { datasServer, setDatasServer } = useState();
 
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getAllPortfolioProjects();
+        // response is an object with a data property (the array)
+        setDatasServer(response.data);
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+        setDatasServer([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPortfolioData();
+  }, []);
   // Prepare gallery data
   useEffect(() => {
     setIsLoading(true);
-    const data = portfoliosData
+    const data = datasServer
       .flatMap((project, projectIndex) =>
         project.image.map(img => ({
           src: `/images/${img}`,

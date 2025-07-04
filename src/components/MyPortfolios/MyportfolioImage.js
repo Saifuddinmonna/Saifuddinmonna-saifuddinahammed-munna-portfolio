@@ -3,27 +3,40 @@ import React, { useEffect, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useLoaderData, useParams } from "react-router-dom";
-import portfoliosName from "./portfolios.json";
+
+import { getAllPortfolioProjects, getPortfolioProject } from "../../services/apiService";
 
 const MyportfolioImage = () => {
-  const [datas, setDatas] = useState(portfoliosName);
-  const [datas2, setDatas2] = useState(portfoliosName);
+  const [datas, setDatas] = useState();
+  const [datas2, setDatas2] = useState();
   const [data4, setData4] = useState();
   const [showMore, setShowMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const datas3 = useLoaderData({});
   const websiteName = useParams();
   const nameFilter = websiteName?.UsedPhone;
-
   useEffect(() => {
-    fetch("portfolios.json")
-      .then(res => res.json())
-      .then(datas => setDatas(datas));
-    console.log(datas);
-  }, [nameFilter]);
+    const fetchPortfolioData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getAllPortfolioProjects();
+        // response is an object with a data property (the array)
+        setDatas2(response.data);
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+        setDatas2([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPortfolioData();
+  }, []);
+
+  console.log("data from response with server data ", datas2);
 
   const dataFilter = async props => {
-    const newData = await datas.filter(data => data.name == nameFilter);
+    const newData = await datas2.filter(data => data.name == nameFilter);
     setDatas2(newData);
     console.log(nameFilter);
     console.log(newData);
@@ -33,18 +46,15 @@ const MyportfolioImage = () => {
     dataFilter();
   }, [nameFilter]);
 
-  console.log(datas);
   console.log(datas2);
   console.log(websiteName);
 
   console.log(nameFilter);
-  // console.log(datas3);
-  console.log(data4);
 
   return (
     <div className="min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <div className="col-span-6">
-        {datas2?.map((p, ind) => (
+        {datas2?.map((project, ind) => (
           <div
             key={ind}
             className="container p-3 m-5 shadow-xl border border-[var(--border-color)] rounded-xl mx-auto bg-[var(--background-paper)]"
@@ -52,9 +62,9 @@ const MyportfolioImage = () => {
             <section className="text-[var(--text-secondary)] body-font">
               <div className="container p-3 m-3 mx-auto">
                 <h1 className="sm:text-3xl text-2xl font-medium title-font text-center text-[var(--text-primary)] mb-20">
-                  {p.category}
+                  {project.category}
                   <br className="hidden sm:block" />
-                  {p.name}
+                  {project.name}
                 </h1>
                 <div className="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
                   <div className="p-4 md:w-1/2 lg:w-1/3 flex">
@@ -64,7 +74,7 @@ const MyportfolioImage = () => {
                         <a
                           className="text-decoration-none"
                           target="_blank"
-                          href={p.liveWebsite}
+                          href={project.liveWebsite}
                           rel="noreferrer"
                         >
                           Live Website
@@ -74,30 +84,30 @@ const MyportfolioImage = () => {
                         <a
                           className="text-decoration-none"
                           target="_blank"
-                          href={p.liveWebsiteRepo}
+                          href={project.liveWebsiteRepo}
                           rel="noreferrer"
                         >
                           Live Website Repo
                         </a>
                       </p>
-                      {p.liveServersite && (
+                      {project.liveServersite && (
                         <p className="text-left mt-1 btn btn-warning btn-sm d-block text-[var(--text-primary)] text-xl bg-[var(--success-main)] hover:bg-[var(--success-dark)] transition-colors duration-300">
                           <a
                             className="text-decoration-none"
                             target="_blank"
-                            href={p.liveServersite}
+                            href={project.liveServersite}
                             rel="noreferrer"
                           >
                             && ( Live Serversite)
                           </a>
                         </p>
                       )}
-                      {p.liveServersiteRepo && (
+                      {project.liveServersiteRepo && (
                         <p className="text-left mt-1 btn btn-warning btn-sm d-block text-[var(--text-primary)] text-xl bg-[var(--success-main)] hover:bg-[var(--success-dark)] transition-colors duration-300">
                           <a
                             className="text-decoration-none"
                             target="_blank"
-                            href={p.liveServersiteRepo}
+                            href={project.liveServersiteRepo}
                             rel="noreferrer"
                           >
                             LiveServer Site Repo
@@ -113,7 +123,7 @@ const MyportfolioImage = () => {
                         Used Technologies
                       </h2>
                       <p className="leading-relaxed text-base text-[var(--text-secondary)]">
-                        {p.technology}
+                        {project.technology}
                       </p>
                     </div>
                   </div>
@@ -124,7 +134,7 @@ const MyportfolioImage = () => {
                       </h2>
                       {showMore ? (
                         <>
-                          {p.overview.map((over, ind) => (
+                          {project.overview.map((over, ind) => (
                             <p key={ind} className="text-left text-[var(--text-secondary)]">
                               {over}
                             </p>
@@ -132,7 +142,7 @@ const MyportfolioImage = () => {
                         </>
                       ) : (
                         <>
-                          {p.overview.slice(0, 2).map((over, ind) => (
+                          {project.overview.slice(0, 2).map((over, ind) => (
                             <p key={ind} className="text-left text-[var(--text-secondary)]">
                               {over}
                             </p>
@@ -164,7 +174,7 @@ const MyportfolioImage = () => {
             </section>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-              {p?.image?.map((imgs, ind) => (
+              {project?.image?.map((imgs, ind) => (
                 <div key={ind} className="">
                   <div className="border border-[var(--border-color)] m-2 p-2 rounded transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-[var(--background-elevated)] duration-300">
                     <PhotoProvider>

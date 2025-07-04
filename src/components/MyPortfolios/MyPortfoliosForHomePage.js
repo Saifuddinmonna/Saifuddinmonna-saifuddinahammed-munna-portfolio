@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaExternalLinkAlt, FaGithub, FaServer } from "react-icons/fa";
 import NavbarPage2 from "../layout/NavbarPage/NavbarPage";
 import Footer from "../layout/Footer";
+import { getAllPortfolioProjects, getPortfolioProject } from "../../services/apiService";
 
 // Assuming portfolios.json is in the public folder or accessible via fetch
-import allProjectsData from "./portfolios.json"; // Direct import if in src
 
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -24,10 +24,28 @@ const cardVariants = {
 const MyPortfolios = () => {
   const [recentProjects, setRecentProjects] = useState([]);
   const [hoveredProject, setHoveredProject] = useState(null);
+  const { datasServer, setDatasServer } = useState();
+  const { isLoading, setIsLoading } = useState();
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getAllPortfolioProjects();
+        // response is an object with a data property (the array)
+        setDatasServer(response.data);
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+        setDatasServer([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPortfolioData();
+  }, []);
 
   useEffect(() => {
     // If using direct import:
-    setRecentProjects(allProjectsData.slice(0, 3)); // Show first 3 projects as a teaser
+    setRecentProjects(datasServer.slice(0, 3)); // Show first 3 projects as a teaser
 
     // If fetching from public folder:
     // fetch('/portfolios.json') // Make sure this path is correct

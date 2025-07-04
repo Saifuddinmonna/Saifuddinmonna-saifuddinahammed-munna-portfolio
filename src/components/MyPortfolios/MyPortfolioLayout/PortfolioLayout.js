@@ -1,54 +1,3 @@
-/**
- * PortfolioLayout Component
- *
- * Comment Index:
- * 1. Constants Section (Lines 15-20)
- *    - CONFETTI_DURATION
- *    - MOBILE_BREAKPOINT
- *    - SCROLL_POSITION
- *
- * 2. Context and Hooks Section (Lines 23-27)
- *    - ThemeContext
- *    - Scroll Progress
- *    - URL Parameters
- *
- * 3. State Management Section (Lines 29-32)
- *    - Confetti State
- *    - Portfolio Data State
- *    - Show More State
- *
- * 4. Data Fetching Section (Lines 34-45)
- *    - Portfolio Data Fetch
- *    - Error Handling
- *
- * 5. Filter Functions Section (Lines 47-66)
- *    - Portfolio Filter
- *    - Reset Function
- *
- * 6. Effect Hooks Section (Lines 68-80)
- *    - Category Filter Effect
- *    - Confetti Animation Effect
- *
- * 7. Animation Variants Section (Lines 82-97)
- *    - Card Animations
- *    - Title Animations
- *
- * 8. Hover Animations Section (Lines 99-110)
- *    - Button Hover Effects
- *    - Link Hover Effects
- *
- * 9. Main Component Structure (Lines 112-383)
- *    - Navigation
- *    - Sidebar
- *    - Main Content
- *    - Portfolio Cards
- *
- * 10. Sub-Components Section (Lines 385-450)
- *     - PortfolioLinks
- *     - PortfolioOverview
- *     - PortfolioImage
- */
-
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import ReactConfetti from "react-confetti";
 import { PhotoProvider, PhotoView } from "react-photo-view";
@@ -56,10 +5,12 @@ import "react-photo-view/dist/react-photo-view.css";
 import { useParams } from "react-router-dom";
 import { ThemeContext } from "../../../App";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
-import portfoliosName from "../portfolios.json";
+// import datasServer from "../portfolios.json";
 import "./Portfolio.css";
 import NavbarPage2 from "../../layout/NavbarPage/NavbarPage";
 import Footer from "../../layout/Footer";
+import { getAllPortfolioProjects, getPortfolioProject } from "../../../services/apiService";
+
 import {
   FaSearch,
   FaThLarge,
@@ -162,7 +113,7 @@ const PortfolioLayout = () => {
 
   // State Management
   const [confettiStart, setConfettiStart] = useState(true);
-  const [datas, setDatas] = useState(portfoliosName);
+  const [datasServer, setDatasServer] = useState();
   const [showMore, setShowMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState(VIEW_MODES.GRID_3);
@@ -176,12 +127,12 @@ const PortfolioLayout = () => {
     const fetchPortfolioData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("portfolios.json");
-        const data = await response.json();
-        setDatas(data);
+        const response = await getAllPortfolioProjects();
+        // response is an object with a data property (the array)
+        setDatasServer(response.data);
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
-        setDatas(portfoliosName);
+        setDatasServer([]);
       } finally {
         setIsLoading(false);
       }
@@ -189,51 +140,7 @@ const PortfolioLayout = () => {
     fetchPortfolioData();
   }, []);
 
-  // Filter and sort portfolio data
-  const filterAndSortData = useCallback(() => {
-    let filteredData = [...portfoliosName];
-
-    // Apply category filter
-    if (selectedCategory) {
-      filteredData = filteredData.filter(data => data.category === selectedCategory);
-    }
-
-    // Apply search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filteredData = filteredData.filter(
-        data =>
-          data.name.toLowerCase().includes(query) ||
-          data.category.toLowerCase().includes(query) ||
-          data.technology.some(tech => tech.toLowerCase().includes(query))
-      );
-    }
-
-    // Apply sorting
-    switch (sortBy) {
-      case SORT_OPTIONS.NEWEST:
-        filteredData.sort((a, b) => b.id - a.id);
-        break;
-      case SORT_OPTIONS.OLDEST:
-        filteredData.sort((a, b) => a.id - b.id);
-        break;
-      case SORT_OPTIONS.NAME_ASC:
-        filteredData.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case SORT_OPTIONS.NAME_DESC:
-        filteredData.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      default:
-        break;
-    }
-
-    setDatas(filteredData);
-  }, [searchQuery, sortBy, selectedCategory]);
-
-  // Apply filters when dependencies change
-  useEffect(() => {
-    filterAndSortData();
-  }, [filterAndSortData]);
+  console.log("data from response with server data ", datasServer);
 
   // Confetti animation control
   useEffect(() => {
@@ -242,7 +149,7 @@ const PortfolioLayout = () => {
       setConfettiStart(false);
     }, CONFETTI_DURATION);
     return () => clearTimeout(timer);
-  }, [datas]);
+  }, [datasServer]);
 
   // Animation variants
   const containerVariants = {
@@ -369,7 +276,7 @@ const PortfolioLayout = () => {
                   >
                     All Projects
                   </button>
-                  {Array.from(new Set(portfoliosName.map(project => project.category))).map(
+                  {Array.from(new Set((datasServer || []).map(project => project.category))).map(
                     category => (
                       <button
                         key={category}
@@ -546,7 +453,7 @@ const PortfolioLayout = () => {
               {/* Portfolio Grid/List */}
               {isLoading ? (
                 <LoadingSkeleton />
-              ) : datas.length > 0 ? (
+              ) : Array.isArray(datasServer) && datasServer.length > 0 ? (
                 <motion.div
                   className={`grid gap-6 md:gap-8 lg:gap-10 ${
                     viewMode === VIEW_MODES.GRID_1
@@ -561,11 +468,11 @@ const PortfolioLayout = () => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {datas.map(project => {
+                  {(datasServer || []).map(project => {
                     const styleClasses = getStyleClasses(currentStyle);
-                    const photoProviderImages = project.image.map((img, idx) => ({
-                      src: `/images/${img}`,
-                      key: idx, // Unique key for each image in the provider
+                    const photoProviderImages = project.images.map((img, idx) => ({
+                      src: img.fullImageUrl,
+                      key: idx,
                     }));
 
                     return (
@@ -596,12 +503,11 @@ const PortfolioLayout = () => {
                         >
                           <PhotoProvider images={photoProviderImages}>
                             {viewMode === VIEW_MODES.LIST ? (
-                              // LIST MODE: Render all images as clickable PhotoViews
                               <div className="flex flex-wrap gap-2 justify-start items-start h-full overflow-y-auto">
-                                {project.image.map((img, index) => (
+                                {project.images.map((img, index) => (
                                   <PhotoView key={`${project.name}-img-${index}`} index={index}>
                                     <motion.img
-                                      src={`/images/${img}`}
+                                      src={img.thumbnailUrl || img.fullImageUrl}
                                       alt={`${project.name} image ${index + 1}`}
                                       className="h-24 w-auto object-contain rounded shadow-sm cursor-pointer hover:opacity-80 transition-opacity duration-300"
                                       whileHover={{ opacity: 0.8 }}
@@ -611,11 +517,10 @@ const PortfolioLayout = () => {
                                 ))}
                               </div>
                             ) : (
-                              // GRID MODES: Render only the first image as a clickable PhotoView
-                              project.image.length > 0 && (
+                              project.images.length > 0 && (
                                 <PhotoView index={0}>
                                   <motion.img
-                                    src={`/images/${project.image[0]}`}
+                                    src={project.images[0].fullImageUrl}
                                     alt={`${project.name} image 1`}
                                     className="w-full h-full object-cover transition-all duration-300"
                                     whileHover={{ scale: 1.05 }}
@@ -626,7 +531,7 @@ const PortfolioLayout = () => {
                             )}
                           </PhotoProvider>
                           {/* Conditional overlays for GRID modes only */}
-                          {viewMode !== VIEW_MODES.LIST && project.image.length > 0 && (
+                          {viewMode !== VIEW_MODES.LIST && project.images.length > 0 && (
                             <>
                               {viewMode === VIEW_MODES.GRID_1 && (
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

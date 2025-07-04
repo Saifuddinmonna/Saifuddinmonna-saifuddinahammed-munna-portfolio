@@ -1,6 +1,8 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import portfoliosData from "../components/MyPortfolios/portfolios.json"; //
+// import portfoliosData from "../components/MyPortfolios/portfolios.json"; //
+import { useState, useEffect } from "react";
+import { getAllPortfolioProjects, getPortfolioProject } from "../services/apiService";
 // Adjust path if ProjectPage.js is elsewhere
 import {
   FaExternalLinkAlt,
@@ -13,11 +15,30 @@ import {
   FaExclamationCircle,
 } from "react-icons/fa";
 import NavbarPage from "../components/layout/NavbarPage/NavbarPage"; // Corrected import to NavbarPage.js
+
 const ProjectPage = () => {
+  const { datasServer, setDatasServer } = useState();
+  const { isLoading, setIsLoading } = useState();
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getAllPortfolioProjects();
+        // response is an object with a data property (the array)
+        setDatasServer(response.data);
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+        setDatasServer([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPortfolioData();
+  }, []);
   const { projectName } = useParams(); // This matches :projectName in your App.js route
   console.log("[ProjectPage] projectName from URL params:", projectName);
 
-  const project = portfoliosData.find(p => p.name === projectName);
+  const project = datasServer.find(p => p.name === projectName);
   console.log("[ProjectPage] Found project object:", project);
 
   if (!project) {
