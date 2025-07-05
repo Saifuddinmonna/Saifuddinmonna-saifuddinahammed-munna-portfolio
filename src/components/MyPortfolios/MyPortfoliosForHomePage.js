@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaExternalLinkAlt, FaGithub, FaServer } from "react-icons/fa";
 import NavbarPage2 from "../layout/NavbarPage/NavbarPage";
 import Footer from "../layout/Footer";
-import { getAllPortfolioProjects, getPortfolioProject } from "../../services/apiService";
+import { getAllPortfolioProjects } from "../../services/apiService";
+import { CompactSpinner } from "../LoadingSpinner";
 
-// Assuming portfolios.json is in the public folder or accessible via fetch
-
+// Animation variants for cards
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: index => ({
@@ -22,40 +22,117 @@ const cardVariants = {
 };
 
 const MyPortfolios = () => {
+  // ===== State Management =====
   const [recentProjects, setRecentProjects] = useState([]);
   const [hoveredProject, setHoveredProject] = useState(null);
-  const { datasServer, setDatasServer } = useState();
-  const { isLoading, setIsLoading } = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // ===== Fetch Portfolio Data =====
   useEffect(() => {
     const fetchPortfolioData = async () => {
       setIsLoading(true);
+      setError(null);
+
       try {
+        // Fetch all projects and limit to 6 on the frontend
         const response = await getAllPortfolioProjects();
-        // response is an object with a data property (the array)
-        setDatasServer(response.data);
+
+        if (response && response.data && Array.isArray(response.data)) {
+          // Limit to 6 projects for the home page
+          setRecentProjects(response.data.slice(0, 6));
+        } else {
+          console.warn("Invalid response format:", response);
+          setRecentProjects([]);
+        }
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
-        setDatasServer([]);
+        setError("Failed to load projects. Please try again later.");
+        setRecentProjects([]);
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchPortfolioData();
   }, []);
 
-  useEffect(() => {
-    // If using direct import:
-    setRecentProjects(datasServer.slice(0, 3)); // Show first 3 projects as a teaser
+  // ===== Render Loading State =====
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <NavbarPage2 />
+        </div>
+        <main className="flex-grow pt-24 pb-16">
+          <div className="container mx-auto px-6 sm:px-8 lg:px-12">
+            <section className="py-12 md:py-16 lg:py-20 bg-[var(--background-paper)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-color)]">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <motion.h2
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 lg:mb-16 text-[var(--text-primary)]"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Explore My{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)]">
+                    Recent Work
+                  </span>
+                </motion.h2>
+                <CompactSpinner message="Loading recent projects..." size="large" />
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
-    // If fetching from public folder:
-    // fetch('/portfolios.json') // Make sure this path is correct
-    //     .then(res => res.json())
-    //     .then(data => {
-    //         setRecentProjects(data.slice(0, 3)); // Show first 3 projects
-    //     })
-    //     .catch(error => console.error("Failed to load projects for teaser:", error));
-  }, []);
+  // ===== Render Error State =====
+  if (error) {
+    return (
+      <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <NavbarPage2 />
+        </div>
+        <main className="flex-grow pt-24 pb-16">
+          <div className="container mx-auto px-6 sm:px-8 lg:px-12">
+            <section className="py-12 md:py-16 lg:py-20 bg-[var(--background-paper)]/50 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-color)]">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <motion.h2
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 lg:mb-16 text-[var(--text-primary)]"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Explore My{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-main)] to-[var(--secondary-main)] dark:from-[var(--primary-light)] dark:to-[var(--secondary-light)]">
+                    Recent Work
+                  </span>
+                </motion.h2>
+                <motion.div
+                  className="text-center text-[var(--text-secondary)] mb-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <p className="text-lg mb-4">{error}</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </motion.div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
+  // ===== Main Render =====
   return (
     <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <div className="fixed top-0 left-0 right-0 z-50">
@@ -82,7 +159,7 @@ const MyPortfolios = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 mb-12 md:mb-16">
                   {recentProjects.map((project, index) => (
                     <motion.div
-                      key={project.name}
+                      key={project.name || project._id || index}
                       className="group relative bg-[var(--background-paper)] rounded-xl shadow-[var(--shadow-lg)] overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-lg)] border border-[var(--border-color)]"
                       variants={cardVariants}
                       initial="hidden"
@@ -93,41 +170,55 @@ const MyPortfolios = () => {
                       onHoverStart={() => setHoveredProject(project.name)}
                       onHoverEnd={() => setHoveredProject(null)}
                     >
-                      <Link to={`/projects/${encodeURIComponent(project.name)}`} className="block">
+                      <Link
+                        to={`/project/${project._id || encodeURIComponent(project.name)}`}
+                        className="block"
+                      >
                         <div className="relative aspect-video overflow-hidden">
                           <motion.img
-                            src={`/images/${project.image[0]}`}
-                            alt={project.name}
+                            src={
+                              project.image && project.image[0]
+                                ? `/images/${project.image[0]}`
+                                : "/images/1.JPG"
+                            }
+                            alt={project.name || "Project"}
                             className="w-full h-full object-cover transition-all duration-300 dark:brightness-75 dark:contrast-110"
                             whileHover={{ scale: 1.1 }}
                             transition={{ duration: 0.3 }}
+                            onError={e => {
+                              e.target.src = "/images/1.JPG";
+                            }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
                       </Link>
                       <div className="p-5 md:p-6 lg:p-7">
                         <Link
-                          to={`/projects/${encodeURIComponent(project.name)}`}
+                          to={`/project/${project._id || encodeURIComponent(project.name)}`}
                           className="block mb-3"
                         >
                           <motion.h3
                             className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-main)] dark:group-hover:text-[var(--primary-light)] transition-colors"
                             whileHover={{ x: 5 }}
                           >
-                            {project.name}
+                            {project.name || "Untitled Project"}
                           </motion.h3>
                         </Link>
                         <motion.p
                           className="text-sm md:text-base text-[var(--primary-main)] dark:text-[var(--primary-light)] mb-3 md:mb-4"
                           whileHover={{ x: 5 }}
                         >
-                          {project.category}
+                          {project.category || "Uncategorized"}
                         </motion.p>
                         <motion.p
                           className="text-[var(--text-secondary)] text-sm md:text-base line-clamp-2 mb-4 md:mb-5"
                           whileHover={{ x: 5 }}
                         >
-                          {project.overview[0]}
+                          {project.overview &&
+                          Array.isArray(project.overview) &&
+                          project.overview[0]
+                            ? project.overview[0]
+                            : project.description || "No description available"}
                         </motion.p>
 
                         {/* Project Links */}
@@ -170,7 +261,7 @@ const MyPortfolios = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
                 >
-                  Loading projects...
+                  No projects available at the moment.
                 </motion.p>
               )}
 
@@ -181,7 +272,7 @@ const MyPortfolios = () => {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <Link to="/PortfolioLayout">
+                <Link to="/portfolio">
                   <motion.button
                     className="relative group px-8 py-3 md:px-10 md:py-4 text-[var(--primary-main)] dark:text-[var(--primary-light)] font-bold rounded-lg overflow-hidden border border-[var(--primary-main)] dark:border-[var(--primary-light)] hover:border-[var(--primary-dark)] dark:hover:border-[var(--primary-main)] transition-colors duration-300"
                     whileHover={{ scale: 1.05 }}
@@ -189,7 +280,6 @@ const MyPortfolios = () => {
                   >
                     <span className="relative z-10 text-base md:text-lg">View All Projects</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-main)]/10 to-[var(--secondary-main)]/10 dark:from-[var(--primary-light)]/20 dark:to-[var(--secondary-light)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    {/* <div className="absolute inset-0 border-2 border-[var(--primary-main)]/30 dark:border-[var(--primary-light)]/30 rounded-lg" /> */}
                   </motion.button>
                 </Link>
               </motion.div>

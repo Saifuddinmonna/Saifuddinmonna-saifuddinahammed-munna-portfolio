@@ -17,13 +17,8 @@ import TestimonialsPage from "../../Testimonials/TestimonialsPage";
 import MyPortfolios from "../../MyPortfolios/MyPortfoliosForHomePage";
 import GalleryPage from "../../../pages/GalleryPage";
 import AdminDashboardHome from "../../features/adminDashboard/AdminDashboardHome";
-
-// Loading Spinner Component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
-    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
-  </div>
-);
+import { ErrorFallback, NotFoundError } from "../../ErrorBoundary";
+import LoadingSpinner from "../../LoadingSpinner";
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
@@ -43,6 +38,7 @@ const router = createBrowserRouter([
   {
     path: "/projects/:projectName",
     element: <Suspense fallback={<LoadingSpinner />}></Suspense>,
+    errorElement: <ErrorFallback />,
   },
 
   {
@@ -52,6 +48,7 @@ const router = createBrowserRouter([
         <MainLayout />
       </Suspense>
     ),
+    errorElement: <ErrorFallback />,
     children: [
       {
         path: "/",
@@ -60,6 +57,7 @@ const router = createBrowserRouter([
             <OptimizedHomeLayout />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/about",
@@ -68,6 +66,7 @@ const router = createBrowserRouter([
             <About />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/portfolio",
@@ -76,6 +75,7 @@ const router = createBrowserRouter([
             <PortfolioLayout />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/gallery",
@@ -84,6 +84,7 @@ const router = createBrowserRouter([
             <GalleryPage />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/contact",
@@ -92,6 +93,7 @@ const router = createBrowserRouter([
             <ContactPage />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/mywork",
@@ -100,6 +102,7 @@ const router = createBrowserRouter([
             <MyPortfolios />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/project/:projectId",
@@ -108,6 +111,7 @@ const router = createBrowserRouter([
             <PortfolioDetailsPage />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/blog",
@@ -116,6 +120,7 @@ const router = createBrowserRouter([
             <Blog />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/blog/new",
@@ -124,6 +129,7 @@ const router = createBrowserRouter([
             <BlogEditor />
           </ProtectedRoute>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/blog/edit/:id",
@@ -132,10 +138,12 @@ const router = createBrowserRouter([
             <BlogEditor />
           </ProtectedRoute>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/blog/:id",
         element: <BlogPost />,
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/resume",
@@ -144,6 +152,7 @@ const router = createBrowserRouter([
             <ResumeViewer />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/testimonials",
@@ -152,6 +161,7 @@ const router = createBrowserRouter([
             <TestimonialsPage />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/signin",
@@ -160,6 +170,7 @@ const router = createBrowserRouter([
             <SignIn />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/signup",
@@ -168,6 +179,7 @@ const router = createBrowserRouter([
             <SignUp />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
       },
       {
         path: "/portfoliolayout",
@@ -176,6 +188,7 @@ const router = createBrowserRouter([
             <PortfolioLayout />
           </Suspense>
         ),
+        errorElement: <ErrorFallback />,
         children: [
           {
             path: "/portfoliolayout/:UsedPhone",
@@ -184,6 +197,7 @@ const router = createBrowserRouter([
                 <MyportfolioImage />
               </Suspense>
             ),
+            errorElement: <ErrorFallback />,
             loader: () => {
               return fetch("portfolios.json");
             },
@@ -197,60 +211,78 @@ const router = createBrowserRouter([
             <AdminDashboardLayout />
           </AdminRoute>
         ),
+        errorElement: <ErrorFallback />,
         children: [
           {
             path: "",
             element: <AdminDashboardHome />,
+            errorElement: <ErrorFallback />,
           },
           {
             path: "blog",
             element: <AdminBlogManager />,
+            errorElement: <ErrorFallback />,
           },
           {
             path: "blog/new",
             element: <BlogEditor />,
+            errorElement: <ErrorFallback />,
           },
           {
             path: "blog/edit/:id",
             element: <BlogEditor />,
+            errorElement: <ErrorFallback />,
           },
           {
             path: "testimonials",
             element: <AdminTestimonialsManager />,
+            errorElement: <ErrorFallback />,
           },
           {
             path: "myprojectworks",
             element: <AdminMyProjectWorksManager />,
+            errorElement: <ErrorFallback />,
             children: [
               {
                 path: "",
                 element: <MyProjectWorksList />,
+                errorElement: <ErrorFallback />,
               },
               {
                 path: "create",
                 element: <MyProjectWorksForm />,
+                errorElement: <ErrorFallback />,
               },
               {
                 path: "edit/:id",
                 element: <MyProjectWorksForm />,
+                errorElement: <ErrorFallback />,
               },
               {
                 path: "detail/:id",
                 element: <MyProjectWorksDetail />,
+                errorElement: <ErrorFallback />,
               },
             ],
           },
           {
             path: "mywork",
             element: <MyPortfolios />,
+            errorElement: <ErrorFallback />,
           },
           {
             path: "gallery",
             element: <GalleryPage />,
+            errorElement: <ErrorFallback />,
           },
         ],
       },
     ],
+  },
+  // Catch-all route for 404 errors
+  {
+    path: "*",
+    element: <NotFoundError />,
   },
 ]);
 

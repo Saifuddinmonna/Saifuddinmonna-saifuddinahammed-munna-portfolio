@@ -13,6 +13,8 @@ import { Toaster } from "react-hot-toast";
 
 // Import SocketProvider directly
 import { SocketProvider } from "./socketIo/SocketProvider";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { initializeErrorHandling } from "./utils/errorHandler";
 const PerformanceMonitor = lazy(() => import("./components/features/PerformanceMonitor"));
 const PerformanceOptimizer = lazy(() => import("./components/features/PerformanceOptimizer"));
 
@@ -100,34 +102,41 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Initialize error handling
+  useEffect(() => {
+    initializeErrorHandling();
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
-          <Toaster position="top-right" />
-          <SocketProvider>
-            <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-              {confettiStart && <ReactConfetti />}
-              <RouterProvider router={router} />
-              <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
-              />
-              <PerformanceMonitor />
-              <PerformanceOptimizer />
-            </div>
-          </SocketProvider>
-        </ThemeProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ThemeProvider>
+            <Toaster position="top-right" />
+            <SocketProvider>
+              <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
+                {confettiStart && <ReactConfetti />}
+                <RouterProvider router={router} />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
+                />
+                <PerformanceMonitor />
+                <PerformanceOptimizer />
+              </div>
+            </SocketProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

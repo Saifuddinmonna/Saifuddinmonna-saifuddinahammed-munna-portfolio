@@ -4,13 +4,23 @@ import { Link } from "react-router-dom";
 const BlogCard = memo(({ blog }) => {
   const [showFullContent, setShowFullContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // Memoize content processing for better performance
   const { plainText, truncatedText, hasMoreContent, displayText } = useMemo(() => {
+    if (!blog.content) {
+      return {
+        plainText: "",
+        truncatedText: "",
+        hasMoreContent: false,
+        displayText: "No content available",
+      };
+    }
+
     const plainText = blog.content.replace(/<[^>]*>/g, "");
     const words = plainText.split(" ");
-    const truncatedText = words.slice(0, 100).join(" ");
-    const hasMoreContent = words.length > 100;
+    const truncatedText = words.slice(0, 80).join(" "); // Reduced to 80 words for better fit
+    const hasMoreContent = words.length > 80;
     const displayText = showFullContent ? plainText : truncatedText;
 
     return { plainText, truncatedText, hasMoreContent, displayText };
@@ -20,10 +30,18 @@ const BlogCard = memo(({ blog }) => {
     setImageLoaded(true);
   };
 
+  const handleImageError = e => {
+    // Fallback to a placeholder image if the original fails to load
+    e.target.src = "/images/1.JPG";
+    setImageLoaded(true);
+    setImageError(true);
+  };
+
   return (
-    <div className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 h-[400px] flex flex-col">
+    <div className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-[var(--border-color)] flex flex-col h-full">
+      {/* Image Section */}
       {blog.image && (
-        <div className="h-48 flex-shrink-0 relative">
+        <div className="h-48 flex-shrink-0 relative overflow-hidden">
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
               <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
@@ -31,56 +49,99 @@ const BlogCard = memo(({ blog }) => {
           )}
           <img
             src={blog.image}
-            alt={blog.title}
+            alt={blog.title || "Blog post image"}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             }`}
             loading="lazy"
             onLoad={handleImageLoad}
+            onError={handleImageError}
           />
         </div>
       )}
-      <div className="p-6 flex-1 flex flex-col">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="px-3 py-1 bg-[var(--primary-light)] text-[var(--primary-main)] rounded-full text-sm">
-            {blog.tags?.[0] || "No Tag"}
+
+      {/* Content Section - Fixed height to prevent footer movement */}
+      <div className="p-4 sm:p-6 flex-1 flex flex-col">
+        {/* Tags and Read Time */}
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          <span className="px-2 py-1 bg-[var(--primary-light)] text-[var(--primary-main)] rounded-full text-xs font-medium">
+            {blog.tags?.[0] || "General"}
           </span>
-          <span className="text-[var(--text-secondary)] text-sm">{blog.readTime || ""}</span>
+          {blog.readTime && (
+            <span className="text-[var(--text-secondary)] text-xs">{blog.readTime}</span>
+          )}
         </div>
-        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2 line-clamp-2">
-          {blog.title || "Untitled"}
+
+        {/* Title */}
+        <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] mb-3 line-clamp-2 leading-tight">
+          {blog.title || "Untitled Post"}
         </h2>
-        <div className="flex-1">
-          <p className="text-[var(--text-secondary)] mb-4 line-clamp-4">
-            {displayText}
-            {!showFullContent && hasMoreContent && (
-              <span className="text-[var(--primary-main)]">...</span>
+
+        {/* Content - Fixed height container */}
+        <div className="flex-1 min-h-0 mb-4">
+          <div className="h-full overflow-hidden">
+            <p className="text-[var(--text-secondary)] text-sm leading-relaxed line-clamp-3">
+              {displayText}
+              {!showFullContent && hasMoreContent && (
+                <span className="text-[var(--primary-main)]">...</span>
+              )}
+            </p>
+
+            {/* Expanded content - Only show if there's more content */}
+            {showFullContent && hasMoreContent && (
+              <div className="mt-2 max-h-32 overflow-y-auto">
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed">{plainText}</p>
+              </div>
             )}
-          </p>
+          </div>
         </div>
-        <div className="flex items-center justify-between mt-auto">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
-              <span className="text-[var(--primary-main)] font-bold">
-                {blog.author?.name?.[0] || "?"}
+
+        {/* Footer Section - Always at bottom */}
+        <div className="mt-auto pt-4 border-t border-[var(--border-color)]">
+          {/* Author Info */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-full bg-[var(--primary-light)] flex items-center justify-center flex-shrink-0">
+              <span className="text-[var(--primary-main)] font-bold text-sm">
+                {blog.author?.name?.[0]?.toUpperCase() || "A"}
               </span>
             </div>
-            <span className="text-[var(--text-primary)]">{blog.author?.name || "Unknown"}</span>
+            <div className="min-w-0 flex-1">
+              <span className="text-[var(--text-primary)] text-sm font-medium block truncate">
+                {blog.author?.name || "Anonymous"}
+              </span>
+              {blog.createdAt && (
+                <span className="text-[var(--text-secondary)] text-xs block">
+                  {new Date(blog.createdAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
           </div>
-          <div className="flex gap-2">
-            {hasMoreContent && (
-              <button
-                onClick={() => setShowFullContent(!showFullContent)}
-                className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300 text-sm"
-              >
-                {showFullContent ? "Show Less" : "Read More"}
-              </button>
-            )}
+
+          {/* Action Buttons - Fixed at bottom */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex-1">
+              {hasMoreContent && (
+                <button
+                  onClick={() => setShowFullContent(!showFullContent)}
+                  className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300 text-sm font-medium px-3 py-1 rounded-md hover:bg-[var(--primary-light)]"
+                >
+                  {showFullContent ? "Show Less" : "Read More"}
+                </button>
+              )}
+            </div>
             <Link
               to={`/blog/${blog._id}`}
-              className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300"
+              className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300 text-sm font-medium px-3 py-1 rounded-md hover:bg-[var(--primary-light)] flex items-center gap-1 flex-shrink-0"
             >
-              Full Post →
+              Full Post
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </Link>
           </div>
         </div>
