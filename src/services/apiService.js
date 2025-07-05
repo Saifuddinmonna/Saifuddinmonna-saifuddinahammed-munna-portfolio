@@ -499,6 +499,74 @@ export const myProjectWorksAPI = {
   },
 };
 
+// Resume API functions
+export const resumeAPI = {
+  // Get all resumes (with pagination, filter, search)
+  getAllResumes: async (params = {}) => {
+    const response = await api.get("/api/resumes", { params });
+    return response.data;
+  },
+
+  // Get single resume by ID
+  getResume: async id => {
+    const response = await api.get(`/api/resumes/${id}`);
+    return response.data;
+  },
+
+  // Create new resume (with file upload)
+  createResume: async resumeData => {
+    const formData = new FormData();
+    // Append all fields to formData
+    Object.entries(resumeData).forEach(([key, value]) => {
+      if (key === "resumeFile" && value) {
+        formData.append("resumeFile", value);
+      } else if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
+      } else if (typeof value === "boolean") {
+        formData.append(key, JSON.stringify(value));
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+    const response = await api.post("/api/resumes", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+
+  // Update resume (with file upload)
+  updateResume: async (id, resumeData) => {
+    const formData = new FormData();
+    Object.entries(resumeData).forEach(([key, value]) => {
+      if (key === "resumeFile" && value) {
+        formData.append("resumeFile", value);
+      } else if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
+      } else if (typeof value === "boolean") {
+        formData.append(key, JSON.stringify(value));
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+    const response = await api.put(`/api/resumes/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+
+  // Delete resume
+  deleteResume: async id => {
+    const response = await api.delete(`/api/resumes/${id}`);
+    return response.data;
+  },
+
+  // Toggle resume active status
+  toggleResumeStatus: async id => {
+    const response = await api.patch(`/api/resumes/${id}/toggle-status`);
+    return response.data;
+  },
+};
+
 // Dashboard API functions
 export const dashboardAPI = {
   // Get dashboard stats

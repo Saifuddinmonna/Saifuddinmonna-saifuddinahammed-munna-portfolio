@@ -1,50 +1,27 @@
-import React from "react";
+import React, { memo } from "react";
+import { FaSearch } from "react-icons/fa";
 
-const BlogSearch = ({
-  searchTerm,
-  setSearchTerm,
-  selectedCategory,
-  handleCategoryChange,
-  handleSearch,
-}) => {
-  const categories = ["All", "Web Development", "JavaScript", "React", "Node.js"];
+const BlogSearch = memo(({ searchQuery, handleSearchQueryChange, handleSearch, activeTab }) => {
+  if (activeTab !== "search") {
+    return null;
+  }
 
   return (
-    <div className="mb-8">
-      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
+    <form onSubmit={handleSearch} className="max-w-md mx-auto">
+      <div className="relative">
         <input
           type="text"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          placeholder="Search blogs..."
-          className="flex-1 px-4 py-2 rounded-lg bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+          value={searchQuery}
+          onChange={handleSearchQueryChange}
+          placeholder="Search blog posts..."
+          className="w-full px-4 py-3 pl-12 pr-4 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-all duration-200"
         />
-        <button
-          type="submit"
-          className="px-6 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
-        >
-          Search
-        </button>
-      </form>
-
-      {/* Category Filter */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {categories.map(category => (
-          <button
-            key={category}
-            onClick={() => handleCategoryChange(category === "All" ? "" : category)}
-            className={`px-4 py-2 rounded-lg ${
-              selectedCategory === (category === "All" ? "" : category)
-                ? "bg-[var(--primary-main)] text-white"
-                : "bg-[var(--background-paper)] text-[var(--text-primary)]"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
+        <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)] w-4 h-4" />
       </div>
-    </div>
+    </form>
   );
-};
+});
+
+BlogSearch.displayName = "BlogSearch";
 
 export default BlogSearch;

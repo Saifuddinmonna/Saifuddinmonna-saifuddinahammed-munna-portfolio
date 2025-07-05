@@ -22,6 +22,7 @@
     "framer-motion": "^9.1.7",
     "kutty": "^0.6.0",
     "lucide-react": "^0.515.0",
+    "mammoth": "^1.9.1",
     "my-portfolio-website": "file:",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.10",
@@ -73,12 +74,18 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-runtime": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.23.0",
     "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.21",
+    "babel-jest": "^30.0.4",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.4",
     "globals": "^16.0.0",
+    "identity-obj-proxy": "^3.0.0",
     "postcss": "^8.5.5",
     "tailwindcss": "^3.4.17"
   }

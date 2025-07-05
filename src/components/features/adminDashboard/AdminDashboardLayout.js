@@ -10,6 +10,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
+  FaFileAlt,
 } from "react-icons/fa";
 import { useAuth } from "../../../auth/context/AuthContext";
 
@@ -49,6 +50,12 @@ const AdminDashboardLayout = () => {
       icon: FaImages,
       path: "/admin/dashboard/gallery",
       color: "from-pink-500 to-pink-600",
+    },
+    {
+      name: "Resume Manager",
+      icon: FaFileAlt,
+      path: "/admin/dashboard/resumes",
+      color: "from-yellow-500 to-yellow-600",
     },
   ];
 

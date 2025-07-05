@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect } from "react";
+import React, { useState, useMemo, useContext, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../App";
 import { useNavigate, Link } from "react-router-dom";
@@ -12,6 +12,9 @@ import BlogGrid from "./BlogGrid";
 import BlogLoading from "./BlogLoading";
 import BlogError from "./BlogError";
 import BlogPagination from "./BlogPagination";
+import BlogSearch from "./BlogSearch";
+import BlogCategories from "./BlogCategories";
+import BlogTabs from "./BlogTabs";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -23,6 +26,7 @@ const Blog = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -30,12 +34,12 @@ const Blog = () => {
   const limit = 10;
 
   const { data, isLoading, error, refetch } = useDataFetching(
-    ["blogs", currentPage, searchQuery, selectedCategory],
+    ["blogs", currentPage, debouncedSearchQuery, selectedCategory],
     () =>
       blogService.getAllBlogs({
         page: currentPage,
         limit,
-        search: searchQuery,
+        search: debouncedSearchQuery,
         category: selectedCategory === "All" ? "" : selectedCategory,
       }),
     {
@@ -71,10 +75,13 @@ const Blog = () => {
     setCurrentPage(page);
   };
 
-  const handleSearch = e => {
-    e.preventDefault();
-    setCurrentPage(1);
-  };
+  const handleSearch = useCallback(
+    e => {
+      e.preventDefault();
+      setCurrentPage(1);
+    },
+    [setCurrentPage]
+  );
 
   const handleEdit = post => {
     navigate(`/blog/edit/${post.id}`);
@@ -105,13 +112,27 @@ const Blog = () => {
     }
   };
 
-  const handleCategoryChange = category => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
-    setActiveTab("category");
-  };
+  const handleCategoryChange = useCallback(
+    category => {
+      setSelectedCategory(category);
+      setCurrentPage(1);
+      setActiveTab("category");
+    },
+    [setSelectedCategory, setCurrentPage, setActiveTab]
+  );
 
-  const categories = ["All", "Web Development", "JavaScript", "React", "Node.js", "Database"];
+  const handleSearchQueryChange = useCallback(e => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  // Debounce search query to prevent too many API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (Array.isArray(blogs) && blogs.length === 0) {
@@ -154,77 +175,27 @@ const Blog = () => {
 
         {/* Tabs and Search Section */}
         <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-4 mb-6">
-            <button
-              onClick={() => {
-                setActiveTab("all");
-                setSelectedCategory("All");
-                setSearchQuery("");
-              }}
-              className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
-                activeTab === "all"
-                  ? "bg-[var(--primary-main)] text-white"
-                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-              }`}
-            >
-              All Posts
-            </button>
-            <button
-              onClick={() => setActiveTab("category")}
-              className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
-                activeTab === "category"
-                  ? "bg-[var(--primary-main)] text-white"
-                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-              }`}
-            >
-              Categories
-            </button>
-            <button
-              onClick={() => setActiveTab("search")}
-              className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
-                activeTab === "search"
-                  ? "bg-[var(--primary-main)] text-white"
-                  : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-              }`}
-            >
-              Search
-            </button>
-          </div>
+          <BlogTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            setSelectedCategory={setSelectedCategory}
+            setSearchQuery={setSearchQuery}
+          />
 
           {/* Search Form */}
-          {activeTab === "search" && (
-            <form onSubmit={handleSearch} className="max-w-md mx-auto">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search blog posts..."
-                  className="w-full px-4 py-2 pl-10 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-                />
-                <FaSearch className="absolute left-3 top-3 text-[var(--text-secondary)]" />
-              </div>
-            </form>
-          )}
+          <BlogSearch
+            searchQuery={searchQuery}
+            handleSearchQueryChange={handleSearchQueryChange}
+            handleSearch={handleSearch}
+            activeTab={activeTab}
+          />
 
           {/* Categories */}
-          {activeTab === "category" && (
-            <div className="flex flex-wrap justify-center gap-2 mt-4">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryChange(category)}
-                  className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
-                    selectedCategory === category
-                      ? "bg-[var(--primary-main)] text-white"
-                      : "bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
+          <BlogCategories
+            selectedCategory={selectedCategory}
+            handleCategoryChange={handleCategoryChange}
+            activeTab={activeTab}
+          />
         </div>
 
         {/* Blog Posts Grid */}

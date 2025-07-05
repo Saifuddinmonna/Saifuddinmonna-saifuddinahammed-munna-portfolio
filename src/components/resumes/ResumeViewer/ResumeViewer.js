@@ -311,16 +311,19 @@ const ResumeViewer = ({ children }) => {
               onClick={() => setActiveTab(key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
                 activeTab === key
-                  ? "bg-gradient-to-r from-primary-main to-secondary-main text-white"
-                  : "bg-background-paper text-text-primary hover:bg-background-elevated"
+                  ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg font-semibold"
+                  : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-300 hover:text-blue-500 hover:border-blue-500"
               }`}
+              style={{
+                color: activeTab === key ? "white" : undefined,
+              }}
             >
-              {value.icon}
-              <span>{value.title}</span>
+              <span style={{ color: activeTab === key ? "white" : undefined }}>{value.icon}</span>
+              <span style={{ color: activeTab === key ? "white" : undefined }}>{value.title}</span>
             </button>
           ))}
         </div>
-        <div className="flex resumeViewerContainer gap-8">
+        <div className="flex flex-col lg:flex-row resumeViewerContainer gap-8">
           {/* Main Content */}
           <div className="flex-1">
             <motion.div
@@ -335,7 +338,7 @@ const ResumeViewer = ({ children }) => {
           </div>
 
           {/* Right Sidebar */}
-          <div className="w-64 space-y-4">
+          <div className="w-full lg:w-64 space-y-4">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -346,116 +349,83 @@ const ResumeViewer = ({ children }) => {
                 <h2 className="text-lg font-semibold text-white/80">Quick Actions</h2>
               </div>
               <div className="p-2 space-y-1.5">
-                <a
-                  href="/documents/myCv/resume of Saifuddin Ahammed.html"
-                  download="resume of Saifuddin Ahammed.html"
-                  className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
-                           bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
-                           dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <a
+                    href="/documents/myCv/resume of Saifuddin Ahammed.html"
+                    download="resume of Saifuddin Ahammed.html"
+                    className="flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-300 w-full bg-blue-100 text-gray-700 hover:bg-blue-500 hover:text-white border border-gray-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download HTML Resume
-                </a>
-                <a
-                  href="/documents/myCv/cv for saifuddin ahmmed monna.html"
-                  download="cv for saifuddin ahmmed monna.html"
-                  className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
-                           bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
-                           dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                    <span className="truncate">HTML Resume</span>
+                  </a>
+                  <a
+                    href="/documents/myCv/cv for saifuddin ahmmed monna.html"
+                    download="cv for saifuddin ahmmed monna.html"
+                    className="flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-300 w-full bg-blue-100 text-gray-700 hover:bg-blue-500 hover:text-white border border-gray-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download HTML CV
-                </a>
-                <a
-                  href="/documents/myCv/singlePage resume of Saifuddin Ahammed Monna.html"
-                  download="singlePage resume of Saifuddin Ahammed Monna.html"
-                  className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
-                           bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
-                           dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                    <span className="truncate">HTML CV</span>
+                  </a>
+                  <a
+                    href="/documents/myCv/singlePage resume of Saifuddin Ahammed Monna.html"
+                    download="singlePage resume of Saifuddin Ahammed Monna.html"
+                    className="flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-300 w-full bg-blue-100 text-gray-700 hover:bg-blue-500 hover:text-white border border-gray-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download Single Page Resume
-                </a>
-                <a
-                  href="/documents/myCv/_resume of Saifuddin Ahammed Monna.pdf"
-                  download="_resume of Saifuddin Ahammed Monna.pdf"
-                  className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
-                           bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
-                           dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                    <span className="truncate">Single Page</span>
+                  </a>
+                  <a
+                    href="/documents/myCv/_resume of Saifuddin Ahammed Monna.pdf"
+                    download="_resume of Saifuddin Ahammed Monna.pdf"
+                    className="flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-300 w-full bg-blue-100 text-gray-700 hover:bg-blue-500 hover:text-white border border-gray-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download PDF Resume
-                </a>
-                <a
-                  href="/documents/myCv/cv for saifuddin ahmmed monna.pdf"
-                  download="cv for saifuddin ahmmed monna.pdf"
-                  className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 w-full
-                           bg-[var(--primary-light)] text-[var(--text-primary)] hover:bg-[var(--primary-main)] hover:text-white
-                           dark:bg-[var(--primary-main)] dark:text-white dark:hover:bg-[var(--primary-dark)]"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                    <span className="truncate">PDF Resume</span>
+                  </a>
+                  <a
+                    href="/documents/myCv/cv for saifuddin ahmmed monna.pdf"
+                    download="cv for saifuddin ahmmed monna.pdf"
+                    className="flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-300 w-full bg-blue-100 text-gray-700 hover:bg-blue-500 hover:text-white border border-gray-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download PDF CV
-                </a>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                    <span className="truncate">PDF CV</span>
+                  </a>
+                </div>
               </div>
             </motion.div>
 

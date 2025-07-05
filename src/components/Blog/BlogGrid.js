@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import BlogCard from "./BlogCard";
 
-const BlogGrid = ({ blogs }) => {
+const BlogGrid = memo(({ blogs }) => {
   console.log("📊 [BlogGrid] from BlogGrid.js blogs:", blogs);
 
   if (!blogs || blogs.length === 0) {
@@ -24,6 +24,8 @@ const BlogGrid = ({ blogs }) => {
       ))}
     </div>
   );
-};
+});
+
+BlogGrid.displayName = "BlogGrid";
 
 export default BlogGrid;

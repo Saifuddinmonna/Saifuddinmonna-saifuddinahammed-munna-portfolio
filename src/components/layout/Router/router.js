@@ -19,6 +19,7 @@ import GalleryPage from "../../../pages/GalleryPage";
 import AdminDashboardHome from "../../features/adminDashboard/AdminDashboardHome";
 import { ErrorFallback, NotFoundError } from "../../ErrorBoundary";
 import LoadingSpinner from "../../LoadingSpinner";
+import AdminResumesManager from "../../features/adminDashboard/AdminResumesManager";
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
@@ -273,6 +274,11 @@ const router = createBrowserRouter([
           {
             path: "gallery",
             element: <GalleryPage />,
+            errorElement: <ErrorFallback />,
+          },
+          {
+            path: "resumes",
+            element: <AdminResumesManager />,
             errorElement: <ErrorFallback />,
           },
         ],

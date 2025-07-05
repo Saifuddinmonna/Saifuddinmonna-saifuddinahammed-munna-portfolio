@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FaTachometerAlt, FaChartLine, FaUsers, FaCog } from "react-icons/fa";
+import { FaTachometerAlt, FaChartLine, FaUsers, FaCog, FaFileAlt } from "react-icons/fa";
 
 const AdminDashboardHome = () => {
   const stats = [
@@ -27,6 +27,12 @@ const AdminDashboardHome = () => {
       value: "24",
       icon: FaCog,
       color: "from-orange-500 to-orange-600",
+    },
+    {
+      name: "Resume Manager",
+      icon: FaFileAlt,
+      path: "/admin/dashboard/resumes",
+      color: "from-yellow-500 to-yellow-600",
     },
   ];
 
