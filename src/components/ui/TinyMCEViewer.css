@@ -1,0 +1,169 @@
+.tinymce-viewer-container {
+  position: relative;
+  height: 100%;
+}
+
+.tinymce-viewer {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: white;
+  padding: 20px;
+  overflow: auto;
+  height: 100%;
+}
+
+.debug-panel {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tinymce-viewer .tinymce-content {
+  max-width: 100%;
+}
+
+.tinymce-viewer h1,
+.tinymce-viewer h2,
+.tinymce-viewer h3,
+.tinymce-viewer h4,
+.tinymce-viewer h5,
+.tinymce-viewer h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.tinymce-viewer h1 {
+  font-size: 2em;
+}
+.tinymce-viewer h2 {
+  font-size: 1.75em;
+}
+.tinymce-viewer h3 {
+  font-size: 1.5em;
+}
+.tinymce-viewer h4 {
+  font-size: 1.25em;
+}
+.tinymce-viewer h5 {
+  font-size: 1.1em;
+}
+.tinymce-viewer h6 {
+  font-size: 1em;
+}
+
+.tinymce-viewer p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.tinymce-viewer ul,
+.tinymce-viewer ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.tinymce-viewer li {
+  margin-bottom: 0.5em;
+}
+
+.tinymce-viewer ul li {
+  list-style-type: disc;
+}
+
+.tinymce-viewer ol li {
+  list-style-type: decimal;
+}
+
+.tinymce-viewer blockquote {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-left: 4px solid #ddd;
+  background-color: #f9f9f9;
+  font-style: italic;
+}
+
+.tinymce-viewer a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.tinymce-viewer a:hover {
+  color: #003366;
+}
+
+.tinymce-viewer strong,
+.tinymce-viewer b {
+  font-weight: bold;
+}
+
+.tinymce-viewer em,
+.tinymce-viewer i {
+  font-style: italic;
+}
+
+.tinymce-viewer table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.tinymce-viewer th,
+.tinymce-viewer td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.tinymce-viewer th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.tinymce-viewer img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
+.tinymce-viewer code {
+  background-color: #f4f4f4;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+.tinymce-viewer pre {
+  background-color: #f4f4f4;
+  padding: 1em;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.tinymce-viewer pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Print styles */
+@media print {
+  .tinymce-viewer {
+    background-color: white !important;
+    color: black !important;
+    padding: 0 !important;
+  }
+
+  .tinymce-viewer a {
+    color: black !important;
+    text-decoration: underline !important;
+  }
+
+  .debug-panel {
+    display: none !important;
+  }
+}

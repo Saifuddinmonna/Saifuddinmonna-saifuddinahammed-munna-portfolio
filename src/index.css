@@ -123,7 +123,41 @@ select:focus {
 
 /* Dark mode specific adjustments */
 .dark {
-  /* Add any dark mode specific overrides here */
+  /* Dark mode specific overrides */
+  color-scheme: dark;
+  background-color: rgb(15, 23, 42) !important; /* slate-900 */
+  color: rgb(248, 250, 252) !important; /* slate-50 */
+}
+
+/* Dark mode scrollbar styling */
+.dark ::-webkit-scrollbar-track {
+  background: rgb(30, 41, 59); /* slate-800 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(51, 65, 85); /* slate-700 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(71, 85, 105); /* slate-600 */
+}
+
+/* Force dark mode styles for better contrast */
+.dark * {
+  border-color: rgb(51, 65, 85) !important; /* slate-700 */
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: rgb(30, 41, 59) !important; /* slate-800 */
+  color: rgb(248, 250, 252) !important; /* slate-50 */
+  border-color: rgb(51, 65, 85) !important; /* slate-700 */
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgb(148, 163, 184) !important; /* slate-400 */
 }
 
 /* Utility classes */
@@ -309,9 +343,7 @@ select:focus {
 }
 
 /* Text color overrides */
-.text-gray-800 {
-  /* This rule is problematic as it redefines .text-gray-800 based on theme. Remove it. */
-}
+/* Removed problematic .text-gray-800 rule that was causing conflicts */
 
 .dark .dark\:text-gray-200 {
   color: hsl(var(--foreground)); /* Keep if this is the intended dark mode override */

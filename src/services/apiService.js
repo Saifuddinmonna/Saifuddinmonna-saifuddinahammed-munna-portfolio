@@ -9,11 +9,103 @@ const baseURL = BASE_API_URL;
 // Create axios instance
 const api = axios.create({
   baseURL: baseURL,
-  timeout: 7000,
+  timeout: 7000, // Default timeout for regular requests
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Create axios instance for file uploads with longer timeout
+const uploadApi = axios.create({
+  baseURL: baseURL,
+  timeout: 300000, // 5 minutes for large file uploads
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+});
+
+// Create axios instance for resume operations with medium timeout
+const resumeApi = axios.create({
+  baseURL: baseURL,
+  timeout: 35000, // 13 seconds for resume operations
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+});
+
+// Request interceptor for resume API
+resumeApi.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for resume API
+resumeApi.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.code === "ECONNABORTED") {
+      toast.error("Resume operation timeout. Please try again.");
+    } else if (error.response?.status === 401) {
+      localStorage.removeItem("authToken");
+      window.location.href = "/signin";
+      toast.error("Session expired. Please login again.");
+    } else if (error.response?.status === 413) {
+      toast.error("File too large. Please use a smaller file.");
+    } else if (error.response?.status >= 500) {
+      toast.error("Server error during resume operation. Please try again later.");
+    } else if (error.response?.data?.message) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Resume operation failed. Please try again.");
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Request interceptor for upload API
+uploadApi.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for upload API
+uploadApi.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.code === "ECONNABORTED") {
+      toast.error("Upload timeout. Please try again with a smaller file or check your connection.");
+    } else if (error.response?.status === 401) {
+      localStorage.removeItem("authToken");
+      window.location.href = "/signin";
+      toast.error("Session expired. Please login again.");
+    } else if (error.response?.status === 413) {
+      toast.error("File too large. Please use a smaller file.");
+    } else if (error.response?.status >= 500) {
+      toast.error("Server error during upload. Please try again later.");
+    } else if (error.response?.data?.message) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Upload failed. Please try again.");
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
@@ -503,7 +595,7 @@ export const myProjectWorksAPI = {
 export const resumeAPI = {
   // Get all resumes (with pagination, filter, search)
   getAllResumes: async (params = {}) => {
-    const response = await api.get("/api/resumes", { params });
+    const response = await resumeApi.get("/api/resumes", { params });
     return response.data;
   },
 
@@ -515,55 +607,177 @@ export const resumeAPI = {
 
   // Create new resume (with file upload)
   createResume: async resumeData => {
-    const formData = new FormData();
-    // Append all fields to formData
-    Object.entries(resumeData).forEach(([key, value]) => {
-      if (key === "resumeFile" && value) {
-        formData.append("resumeFile", value);
-      } else if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value));
-      } else if (typeof value === "boolean") {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value);
+    try {
+      console.log("[Resume API] Creating resume with data:", Object.keys(resumeData));
+
+      const formData = new FormData();
+
+      // Append text fields
+      if (resumeData.name) formData.append("name", resumeData.name);
+      if (resumeData.versionName) formData.append("versionName", resumeData.versionName);
+      if (resumeData.summary) formData.append("summary", resumeData.summary);
+      if (resumeData.forWhichPost) formData.append("forWhichPost", resumeData.forWhichPost);
+      if (resumeData.originalCreationDate)
+        formData.append("originalCreationDate", resumeData.originalCreationDate);
+      if (resumeData.textContent) formData.append("textContent", resumeData.textContent);
+
+      // Append arrays as JSON strings
+      if (resumeData.suitableFor)
+        formData.append("suitableFor", JSON.stringify(resumeData.suitableFor));
+      if (resumeData.tags) formData.append("tags", JSON.stringify(resumeData.tags));
+
+      // Append boolean
+      if (resumeData.isActive !== undefined)
+        formData.append("isActive", JSON.stringify(resumeData.isActive));
+
+      // Append files
+      if (resumeData.pdfFile) {
+        console.log("[Resume API] Adding PDF file:", resumeData.pdfFile.name);
+        formData.append("pdfFile", resumeData.pdfFile);
       }
-    });
-    const response = await api.post("/api/resumes", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return response.data;
+      if (resumeData.docxFile) {
+        console.log("[Resume API] Adding DOCX file:", resumeData.docxFile.name);
+        formData.append("docxFile", resumeData.docxFile);
+      }
+      if (resumeData.videoFile) {
+        console.log("[Resume API] Adding Video file:", resumeData.videoFile.name);
+        formData.append("videoFile", resumeData.videoFile);
+      }
+
+      console.log(
+        "[Resume API] FormData entries:",
+        Array.from(formData.entries()).map(([key, value]) => [
+          key,
+          typeof value === "object" ? value.name || "File" : value,
+        ])
+      );
+
+      const response = await resumeApi.post("/api/resumes", formData);
+      console.log("[Resume API] Create response:", response.data);
+
+      // Show success toast
+      toast.success("✅ Resume created successfully!");
+
+      return response.data;
+    } catch (error) {
+      console.error("[Resume API] Create error:", error);
+
+      // Show error toast
+      if (error.response?.data?.message) {
+        toast.error(`❌ Failed to create resume: ${error.response.data.message}`);
+      } else {
+        toast.error("❌ Failed to create resume. Please try again.");
+      }
+
+      throw error;
+    }
   },
 
   // Update resume (with file upload)
   updateResume: async (id, resumeData) => {
-    const formData = new FormData();
-    Object.entries(resumeData).forEach(([key, value]) => {
-      if (key === "resumeFile" && value) {
-        formData.append("resumeFile", value);
-      } else if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value));
-      } else if (typeof value === "boolean") {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value);
+    try {
+      console.log("[Resume API] Updating resume with ID:", id);
+      console.log("[Resume API] Update data keys:", Object.keys(resumeData));
+
+      const formData = new FormData();
+
+      // Append text fields
+      if (resumeData.name) formData.append("name", resumeData.name);
+      if (resumeData.versionName) formData.append("versionName", resumeData.versionName);
+      if (resumeData.summary) formData.append("summary", resumeData.summary);
+      if (resumeData.forWhichPost) formData.append("forWhichPost", resumeData.forWhichPost);
+      if (resumeData.originalCreationDate)
+        formData.append("originalCreationDate", resumeData.originalCreationDate);
+      if (resumeData.textContent) formData.append("textContent", resumeData.textContent);
+
+      // Append arrays as JSON strings
+      if (resumeData.suitableFor)
+        formData.append("suitableFor", JSON.stringify(resumeData.suitableFor));
+      if (resumeData.tags) formData.append("tags", JSON.stringify(resumeData.tags));
+
+      // Append boolean
+      if (resumeData.isActive !== undefined)
+        formData.append("isActive", JSON.stringify(resumeData.isActive));
+
+      // Append files
+      if (resumeData.pdfFile) {
+        console.log("[Resume API] Adding PDF file:", resumeData.pdfFile.name);
+        formData.append("pdfFile", resumeData.pdfFile);
       }
-    });
-    const response = await api.put(`/api/resumes/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return response.data;
+      if (resumeData.docxFile) {
+        console.log("[Resume API] Adding DOCX file:", resumeData.docxFile.name);
+        formData.append("docxFile", resumeData.docxFile);
+      }
+      if (resumeData.videoFile) {
+        console.log("[Resume API] Adding Video file:", resumeData.videoFile.name);
+        formData.append("videoFile", resumeData.videoFile);
+      }
+
+      const response = await resumeApi.put(`/api/resumes/${id}`, formData);
+      console.log("[Resume API] Update response:", response.data);
+
+      // Show success toast
+      toast.success("✅ Resume updated successfully!");
+
+      return response.data;
+    } catch (error) {
+      console.error("[Resume API] Update error:", error);
+
+      // Show error toast
+      if (error.response?.data?.message) {
+        toast.error(`❌ Failed to update resume: ${error.response.data.message}`);
+      } else {
+        toast.error("❌ Failed to update resume. Please try again.");
+      }
+
+      throw error;
+    }
   },
 
   // Delete resume
   deleteResume: async id => {
-    const response = await api.delete(`/api/resumes/${id}`);
-    return response.data;
+    try {
+      const response = await api.delete(`/api/resumes/${id}`);
+
+      // Show success toast
+      toast.success("✅ Resume deleted successfully!");
+
+      return response.data;
+    } catch (error) {
+      console.error("[Resume API] Delete error:", error);
+
+      // Show error toast
+      if (error.response?.data?.message) {
+        toast.error(`❌ Failed to delete resume: ${error.response.data.message}`);
+      } else {
+        toast.error("❌ Failed to delete resume. Please try again.");
+      }
+
+      throw error;
+    }
   },
 
   // Toggle resume active status
   toggleResumeStatus: async id => {
-    const response = await api.patch(`/api/resumes/${id}/toggle-status`);
-    return response.data;
+    try {
+      const response = await api.patch(`/api/resumes/${id}/toggle-status`);
+
+      // Show success toast
+      toast.success("✅ Resume status updated successfully!");
+
+      return response.data;
+    } catch (error) {
+      console.error("[Resume API] Toggle status error:", error);
+
+      // Show error toast
+      if (error.response?.data?.message) {
+        toast.error(`❌ Failed to update resume status: ${error.response.data.message}`);
+      } else {
+        toast.error("❌ Failed to update resume status. Please try again.");
+      }
+
+      throw error;
+    }
   },
 };
 

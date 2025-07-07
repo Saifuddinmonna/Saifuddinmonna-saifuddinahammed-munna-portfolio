@@ -29,11 +29,38 @@ const DocxViewer = ({ url, className = "" }) => {
   }, [url]);
 
   if (!url) return <div className={className}>No file provided.</div>;
-  if (loading) return <div className={className}>Loading DOCX...</div>;
-  if (error) return <div className={className + " text-red-500"}>{error}</div>;
+
+  if (loading)
+    return (
+      <div className={`${className} flex items-center justify-center h-full`}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <p>Loading DOCX...</p>
+        </div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className={`${className} flex items-center justify-center h-full text-red-500`}>
+        <div className="text-center">
+          <p>Error: {error}</p>
+        </div>
+      </div>
+    );
+
   return (
     <div
-      className={className + " docx-viewer bg-white p-4 rounded shadow overflow-auto"}
+      className={`docx-viewer ${className}`}
+      style={{
+        height: "100%",
+        overflow: "auto",
+        padding: "20px",
+        backgroundColor: "white",
+        fontFamily: "Helvetica, Arial, sans-serif",
+        fontSize: "14px",
+        lineHeight: "1.6",
+      }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
