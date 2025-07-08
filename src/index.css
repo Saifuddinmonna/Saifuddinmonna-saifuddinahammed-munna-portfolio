@@ -401,3 +401,204 @@ select:focus {
 nav {
   transition: background-color 0.3s ease-in-out;
 }
+
+/* Resume Sidebar Header */
+.resume-sidebar-header {
+  background: var(--background-paper, #fff);
+  border-radius: var(--radius-md, 0.375rem) var(--radius-md, 0.375rem) 0 0;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+.resume-sidebar-title {
+  color: var(--text-primary, #1f2937);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Resume List Button */
+.resume-list-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md, 0.375rem);
+  background: var(--background-paper, #fff);
+  color: var(--text-primary, #1f2937);
+  border: 1px solid var(--border-main, #e5e7eb);
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 0.25rem;
+}
+.resume-list-btn:hover {
+  background: var(--background-elevated, #f9fafb);
+  color: var(--primary-main, #3b82f6);
+}
+.resume-list-btn.selected {
+  background: var(--primary-main, #3b82f6);
+  color: #fff;
+  border-color: var(--primary-main, #3b82f6);
+}
+
+/* Dark mode overrides */
+.dark .resume-sidebar-header {
+  background: var(--background-paper, #1e293b);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+.dark .resume-sidebar-title {
+  color: var(--text-primary, #f8fafc);
+}
+.dark .resume-list-btn {
+  background: var(--background-paper, #1e293b);
+  color: var(--text-primary, #f8fafc);
+  border-color: var(--border-main, #334155);
+}
+.dark .resume-list-btn:hover {
+  background: var(--background-elevated, #334155);
+  color: var(--primary-main, #38bdf8);
+}
+.dark .resume-list-btn.selected {
+  background: var(--primary-main, #38bdf8);
+  color: #fff;
+  border-color: var(--primary-main, #38bdf8);
+}
+
+/* PDF Viewer and Pager */
+.resume-pdf-document {
+  background: var(--background-paper, #fff);
+  border-radius: var(--radius-md, 0.375rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1rem 0;
+}
+.resume-pdf-page {
+  background: var(--background-paper, #fff);
+  color: var(--text-primary, #1f2937);
+  border-radius: var(--radius-md, 0.375rem);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  margin: 0 auto;
+}
+.resume-pager-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md, 0.375rem);
+  background: var(--primary-main, #3b82f6);
+  color: #fff;
+  font-weight: 500;
+  border: none;
+  transition: background 0.2s;
+  margin: 0 0.25rem;
+}
+.resume-pager-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.resume-pager-info {
+  color: var(--text-primary, #1f2937);
+  font-weight: 500;
+}
+
+/* Dark mode for PDF viewer and pager */
+.dark .resume-pdf-document {
+  background: var(--background-paper, #1e293b);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.dark .resume-pdf-page {
+  background: var(--background-paper, #1e293b);
+  color: var(--text-primary, #f8fafc);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+.dark .resume-pager-info {
+  color: var(--text-primary, #f8fafc);
+}
+
+/* PDF Zoom Percentage Buttons Fix */
+.resume-pdf-zoom-btn {
+  color: var(--text-primary, #1f2937);
+  background: transparent;
+  border: none;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm, 0.25rem);
+  transition: background 0.2s, color 0.2s;
+}
+.resume-pdf-zoom-btn.selected {
+  background: #fff;
+  color: var(--primary-main, #3b82f6);
+}
+.resume-pdf-zoom-btn:not(.selected):hover {
+  background: var(--background-elevated, #f9fafb);
+  color: var(--primary-main, #3b82f6);
+}
+.dark .resume-pdf-zoom-btn {
+  color: var(--text-primary, #f8fafc);
+  background: transparent;
+}
+.dark .resume-pdf-zoom-btn.selected {
+  background: #fff;
+  color: var(--primary-main, #38bdf8);
+}
+.dark .resume-pdf-zoom-btn:not(.selected):hover {
+  background: var(--background-elevated, #334155);
+  color: var(--primary-main, #38bdf8);
+}
+
+/* Resume Layout Root */
+.resume-layout-root {
+  background: var(--background-default, #f8fafc);
+  color: var(--text-primary, #1f2937);
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+}
+.dark .resume-layout-root {
+  background: var(--background-default, #0f172a);
+  color: var(--text-primary, #f8fafc);
+}
+
+/* Video Resume Section */
+.resume-video-description {
+  background: var(--background-paper, #fff);
+  color: var(--text-primary, #1f2937);
+  border-radius: var(--radius-md, 0.375rem);
+  padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.resume-video-title {
+  color: var(--text-primary, #1f2937);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.resume-video-text {
+  color: var(--text-secondary, #64748b);
+}
+.dark .resume-video-description {
+  background: var(--background-paper, #1e293b);
+  color: var(--text-primary, #f8fafc);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.dark .resume-video-title {
+  color: var(--text-primary, #f8fafc);
+}
+.dark .resume-video-text {
+  color: var(--text-secondary, #94a3b8);
+}
+
+/* DocxViewer Light/Dark Mode */
+.docx-viewer-root {
+  background: var(--background-paper, #fff);
+  color: var(--text-primary, #1f2937);
+  transition: background 0.2s, color 0.2s;
+}
+.dark .docx-viewer-root {
+  background: var(--background-paper, #1e293b);
+  color: var(--text-primary, #f8fafc);
+}
+
+/* TinyMCEViewer Light/Dark Mode */
+.tinymce-viewer-root {
+  background: var(--background-paper, #fff);
+  color: var(--text-primary, #1f2937);
+  transition: background 0.2s, color 0.2s;
+}
+.dark .tinymce-viewer-root {
+  background: var(--background-paper, #1e293b);
+  color: var(--text-primary, #f8fafc);
+}

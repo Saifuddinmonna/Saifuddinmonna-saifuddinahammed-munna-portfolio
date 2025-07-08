@@ -37,7 +37,7 @@ const TinyMCEViewer = ({ content = "", className = "", debug = false, ...props }
   const processedContent = processContent(content);
 
   return (
-    <div className={`tinymce-viewer-container ${className}`}>
+    <div className={`tinymce-viewer-root ${className}`}>
       {/* Debug Panel */}
       {showDebug && (
         <div className="debug-panel bg-gray-100 p-4 mb-4 border rounded">

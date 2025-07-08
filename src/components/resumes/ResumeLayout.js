@@ -3,7 +3,7 @@ import "./ResumeLayout.css";
 
 const ResumeLayout = ({ children }) => {
   return (
-    <div className="resume-container">
+    <div className="resume-container resume-layout-root">
       <div className="resume-content">{children}</div>
     </div>
   );

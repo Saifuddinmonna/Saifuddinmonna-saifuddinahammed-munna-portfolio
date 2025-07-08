@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense, useRef } from "react";
 import { motion } from "framer-motion";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,8 +11,24 @@ import DocxViewer from "../../ui/DocxViewer";
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 
+// Format date utility
+const formatDate = dateString => {
+  if (!dateString) return "N/A";
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  return (
+    new Date(dateString).toLocaleDateString(undefined, options) +
+    " " +
+    new Date(dateString).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+  );
+};
+
 const ResumeViewer = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const [resumes, setResumes] = useState([]);
   const [selectedResumeIdx, setSelectedResumeIdx] = useState(0);
@@ -24,6 +40,7 @@ const ResumeViewer = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const pageRefs = useRef([]);
 
   useEffect(() => {
     // Check system dark mode preference
@@ -63,6 +80,12 @@ const ResumeViewer = () => {
       setScale(1.0);
     }
   }, [selectedResumeIdx, resumes]);
+
+  useEffect(() => {
+    if (pageRefs.current[pageNumber - 1]) {
+      pageRefs.current[pageNumber - 1].scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [pageNumber]);
 
   const getFirstAvailableTab = resume => {
     if (!resume) return null;
@@ -114,11 +137,7 @@ const ResumeViewer = () => {
             {resumes.map((resume, idx) => (
               <button
                 key={resume._id}
-                className={`w-full text-left px-3 py-2 rounded transition-colors font-medium ${
-                  idx === selectedResumeIdx
-                    ? "bg-primary-main text-white"
-                    : "bg-gray-50 text-gray-700 hover:bg-blue-100"
-                }`}
+                className={`resume-list-btn${idx === selectedResumeIdx ? " selected" : ""}`}
                 onClick={() => setSelectedResumeIdx(idx)}
               >
                 {resume.name}{" "}
@@ -144,6 +163,22 @@ const ResumeViewer = () => {
             {selectedResume.summary && (
               <p>
                 <b>Summary:</b> {selectedResume.summary}
+              </p>
+            )}
+            {/* Date fields */}
+            {selectedResume.originalCreationDate && (
+              <p>
+                <b>First Uploaded:</b> {formatDate(selectedResume.originalCreationDate)}
+              </p>
+            )}
+            {selectedResume.createdAt && (
+              <p>
+                <b>Created At:</b> {formatDate(selectedResume.createdAt)}
+              </p>
+            )}
+            {selectedResume.updatedAt && (
+              <p>
+                <b>Last Updated:</b> {formatDate(selectedResume.updatedAt)}
               </p>
             )}
             <p>
@@ -205,44 +240,47 @@ const ResumeViewer = () => {
       {/* Main Content */}
       <div className="flex-1">
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {availableTabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg font-semibold"
-                  : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-300 hover:text-blue-500 hover:border-blue-500"
-              }`}
-            >
-              <span>{tab.title}</span>
-            </button>
-          ))}
+        <div className="flex flex-wrap gap-2 mb-6 items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            {availableTabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg font-semibold"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-300 hover:text-blue-500 hover:border-blue-500"
+                }`}
+              >
+                <span>{tab.title}</span>
+              </button>
+            ))}
+          </div>
+          {/* Download/View PDF buttons inline with tabs */}
+          {activeTab === "pdf" && selectedResume.pdfFile?.url && (
+            <div className="flex gap-2 ml-4">
+              <a
+                href={resumeApiPdf(selectedResume._id)}
+                download
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              >
+                Download PDF
+              </a>
+              <a
+                href={resumeApiPdf(selectedResume._id)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1 bg-primary-main text-white rounded hover:bg-primary-dark transition"
+              >
+                View PDF
+              </a>
+            </div>
+          )}
         </div>
         {/* Tab Content */}
         <div className="bg-background-default rounded-xl shadow-xl overflow-hidden relative">
           {/* Top right buttons */}
           <div className="absolute top-0 right-0 flex gap-2 p-4 z-10">
-            {activeTab === "pdf" && selectedResume.pdfFile?.url && (
-              <>
-                <a
-                  href={resumeApiPdf(selectedResume._id)}
-                  download
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                >
-                  Download PDF
-                </a>
-                <a
-                  href={resumeApiPdf(selectedResume._id)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1 bg-primary-main text-white rounded hover:bg-primary-dark transition"
-                >
-                  View PDF
-                </a>
-              </>
-            )}
             {activeTab === "docx" && selectedResume.docxFile?.url && (
               <>
                 <a
@@ -317,7 +355,8 @@ const ResumeViewer = () => {
             />
           )}
           {activeTab === "pdf" && selectedResume.pdfFile?.url && (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full">
+              {/* PDF Zoom Controls */}
               <div className="w-full bg-gradient-to-r from-primary-main to-secondary-main p-2 rounded-t-lg">
                 <div className="flex justify-between items-center">
                   <p className="text-sm text-white font-medium flex items-center">PDF Resume</p>
@@ -335,11 +374,7 @@ const ResumeViewer = () => {
                           <button
                             key={level}
                             onClick={() => setScale(level)}
-                            className={`px-1.5 py-0.5 text-xs rounded transition-colors ${
-                              scale === level
-                                ? "bg-white text-primary-main"
-                                : "text-white hover:bg-white/20"
-                            }`}
+                            className={`resume-pdf-zoom-btn${scale === level ? " selected" : ""}`}
                           >
                             {Math.round(level * 100)}%
                           </button>
@@ -361,21 +396,31 @@ const ResumeViewer = () => {
                   <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary-main"></div>
                 </div>
               )}
-              <div className="relative w-full flex justify-center mt-2">
+              <div className="relative w-full flex flex-col items-center mt-2 max-h-[800px] overflow-y-auto">
                 <Document
                   file={selectedResume.pdfFile.url}
                   onLoadSuccess={onDocumentLoadSuccess}
-                  className="relative"
+                  className="resume-pdf-document"
                   loading={null}
                 >
-                  <div className="relative">
-                    <Page
-                      pageNumber={pageNumber}
-                      renderTextLayer={true}
-                      renderAnnotationLayer={true}
-                      className="shadow-xl relative z-10"
-                      scale={scale}
-                    />
+                  <div className="relative w-full flex flex-col items-center">
+                    {Array.from({ length: numPages }, (_, idx) => {
+                      return (
+                        <div
+                          key={idx}
+                          ref={el => (pageRefs.current[idx] = el)}
+                          style={{ marginBottom: "2rem" }}
+                        >
+                          <Page
+                            pageNumber={idx + 1}
+                            renderTextLayer={true}
+                            renderAnnotationLayer={true}
+                            className="resume-pdf-page"
+                            scale={scale}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </Document>
               </div>
@@ -383,17 +428,17 @@ const ResumeViewer = () => {
                 <button
                   onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
                   disabled={pageNumber <= 1}
-                  className="px-3 py-1.5 text-sm bg-gradient-to-r from-primary-main to-secondary-main text-white rounded-lg disabled:opacity-50 hover:from-primary-dark hover:to-secondary-dark transition-all duration-300"
+                  className="resume-pager-btn"
                 >
                   Previous
                 </button>
-                <p className="text-sm text-text-primary font-medium">
+                <p className="resume-pager-info">
                   Page {pageNumber} of {numPages}
                 </p>
                 <button
                   onClick={() => setPageNumber(prev => Math.min(prev + 1, numPages))}
                   disabled={pageNumber >= numPages}
-                  className="px-3 py-1.5 text-sm bg-gradient-to-r from-primary-main to-secondary-main text-white rounded-lg disabled:opacity-50 hover:from-primary-dark hover:to-secondary-dark transition-all duration-300"
+                  className="resume-pager-btn"
                 >
                   Next
                 </button>
@@ -401,7 +446,7 @@ const ResumeViewer = () => {
             </div>
           )}
           {activeTab === "docx" && selectedResume.docxFile?.url && (
-            <div className="h-[800px] bg-white">
+            <div className="h-[800px] bg-white dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
               <DocxViewer url={selectedResume.docxFile.url} className="h-full" />
             </div>
           )}
@@ -413,7 +458,7 @@ const ResumeViewer = () => {
             />
           )}
           {activeTab === "text" && selectedResume.textContent && (
-            <div className="p-6 bg-white">
+            <div className="p-6 bg-white dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
               <TinyMCEViewer content={selectedResume.textContent} />
             </div>
           )}

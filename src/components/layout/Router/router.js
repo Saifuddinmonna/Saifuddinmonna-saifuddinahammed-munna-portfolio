@@ -71,6 +71,24 @@ const router = createBrowserRouter([
         errorElement: <ErrorFallback />,
       },
       {
+        path: "/resume",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ResumeViewer />
+          </Suspense>
+        ),
+        errorElement: <ErrorFallback />,
+      },
+      {
+        path: "/resume/:id",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ModernResumeViewer />
+          </Suspense>
+        ),
+        errorElement: <ErrorFallback />,
+      },
+      {
         path: "/portfolio",
         element: (
           <Suspense fallback={<LoadingSpinner />}>
@@ -147,24 +165,7 @@ const router = createBrowserRouter([
         element: <BlogPost />,
         errorElement: <ErrorFallback />,
       },
-      {
-        path: "/resume",
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <ResumeViewer />
-          </Suspense>
-        ),
-        errorElement: <ErrorFallback />,
-      },
-      {
-        path: "/resume/:id",
-        element: (
-          <Suspense fallback={<LoadingSpinner />}>
-            <ModernResumeViewer />
-          </Suspense>
-        ),
-        errorElement: <ErrorFallback />,
-      },
+
       {
         path: "/testimonials",
         element: (

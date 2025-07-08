@@ -51,12 +51,11 @@ const DocxViewer = ({ url, className = "" }) => {
 
   return (
     <div
-      className={`docx-viewer ${className}`}
+      className={`docx-viewer-root ${className}`}
       style={{
         height: "100%",
         overflow: "auto",
         padding: "20px",
-        backgroundColor: "white",
         fontFamily: "Helvetica, Arial, sans-serif",
         fontSize: "14px",
         lineHeight: "1.6",

@@ -15,6 +15,7 @@ import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./socketIo/SocketProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { initializeErrorHandling } from "./utils/errorHandler";
+import WhatsAppButton from "./components/ui/WhatsAppButton";
 const PerformanceMonitor = lazy(() => import("./components/features/PerformanceMonitor"));
 const PerformanceOptimizer = lazy(() => import("./components/features/PerformanceOptimizer"));
 
@@ -131,6 +132,7 @@ function App() {
                 />
                 <PerformanceMonitor />
                 <PerformanceOptimizer />
+                <WhatsAppButton />
               </div>
             </SocketProvider>
           </ThemeProvider>

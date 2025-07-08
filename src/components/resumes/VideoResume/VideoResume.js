@@ -14,9 +14,11 @@ const VideoResume = () => {
           allowFullScreen
         ></iframe>
       </div>
-      <div className="video-description">
-        <h2>My Video Resume</h2>
-        <p>Watch my video resume to learn more about my skills and experience.</p>
+      <div className="video-description resume-video-description">
+        <h2 className="resume-video-title">My Video Resume</h2>
+        <p className="resume-video-text">
+          Watch my video resume to learn more about my skills and experience.
+        </p>
       </div>
     </div>
   );
