@@ -61,10 +61,7 @@ const ResumeList = ({
         <thead>
           <tr className="bg-yellow-100 dark:bg-yellow-900">
             <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
-              Name
-            </th>
-            <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
-              Version
+              Name & Version
             </th>
             <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
               Files
@@ -88,22 +85,22 @@ const ResumeList = ({
             >
               <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-white">{resume.name}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    {resume.name}
+                    {resume.forWhichPost && (
+                      <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                        - {resume.forWhichPost}
+                      </span>
+                    )}
+                    {resume.versionName && (
+                      <span className="ml-2 text-xs text-primary-main">
+                        (v{resume.versionName})
+                      </span>
+                    )}
+                  </div>
                   {resume.summary && (
                     <div className="text-xs text-gray-600 dark:text-gray-400 truncate max-w-xs">
                       {resume.summary}
-                    </div>
-                  )}
-                </div>
-              </td>
-              <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
-                <div>
-                  <div className="font-medium text-gray-900 dark:text-white">
-                    {resume.versionName}
-                  </div>
-                  {resume.forWhichPost && (
-                    <div className="text-xs text-gray-600 dark:text-gray-400">
-                      {resume.forWhichPost}
                     </div>
                   )}
                 </div>

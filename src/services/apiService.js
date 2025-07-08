@@ -27,7 +27,7 @@ const uploadApi = axios.create({
 // Create axios instance for resume operations with medium timeout
 const resumeApi = axios.create({
   baseURL: baseURL,
-  timeout: 35000, // 13 seconds for resume operations
+  timeout: 45000, // 13 seconds for resume operations
   headers: {
     "Content-Type": "multipart/form-data",
   },
@@ -779,6 +779,20 @@ export const resumeAPI = {
       throw error;
     }
   },
+
+  // Download PDF for a resume
+  downloadResumePdf: id => {
+    // Returns the full URL for downloading the PDF
+    console.log("download pdf api call hosse ");
+    return `${BASE_API_URL}/api/resumes/${id}/download-pdf`;
+  },
+
+  // Download DOCX for a resume
+  downloadResumeDocx: id => {
+    // Returns the full URL for downloading the DOCX
+    console.log("download doxc api call hosse ");
+    return `${BASE_API_URL}/api/resumes/${id}/download-docx`;
+  },
 };
 
 // Dashboard API functions
@@ -831,5 +845,7 @@ export const getAllPortfolioProjects = myProjectWorksAPI.getAllProjectWorks;
 export const getPortfolioProject = myProjectWorksAPI.getProjectWork;
 export const getAllCategories = myProjectWorksAPI.getAllCategories;
 export const getProjectWork = myProjectWorksAPI.getProjectWork;
+export const resumeApiPdf = resumeAPI.downloadResumePdf;
+export const resumeApiDoxc = resumeAPI.downloadResumeDocx;
 
 export default api;

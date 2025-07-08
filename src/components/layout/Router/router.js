@@ -20,6 +20,7 @@ import AdminDashboardHome from "../../features/adminDashboard/AdminDashboardHome
 import { ErrorFallback, NotFoundError } from "../../ErrorBoundary";
 import LoadingSpinner from "../../LoadingSpinner";
 import AdminResumesManager from "../../features/adminDashboard/AdminResumesManager";
+import ModernResumeViewer from "../../features/adminDashboard/components/resume/ModernResumeViewer.js";
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
@@ -151,6 +152,15 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <ResumeViewer />
+          </Suspense>
+        ),
+        errorElement: <ErrorFallback />,
+      },
+      {
+        path: "/resume/:id",
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ModernResumeViewer />
           </Suspense>
         ),
         errorElement: <ErrorFallback />,
