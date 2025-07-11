@@ -22,6 +22,7 @@ import LoadingSpinner from "../../LoadingSpinner";
 import AdminResumesManager from "../../features/adminDashboard/AdminResumesManager";
 import ModernResumeViewer from "../../features/adminDashboard/components/resume/ModernResumeViewer.js";
 import AdminCategoryManager from "../../features/adminDashboard/pages/AdminCategoryManager";
+import AdminGalleryManager from "../../features/adminDashboard/pages/AdminGalleryManager";
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
@@ -285,7 +286,7 @@ const router = createBrowserRouter([
           },
           {
             path: "gallery",
-            element: <GalleryPage />,
+            element: <AdminGalleryManager />,
             errorElement: <ErrorFallback />,
           },
           {

@@ -27,12 +27,12 @@ const AdminResumesManager = () => {
       </div>
 
       {/* Info Card */}
-      <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <div className="mb-6 p-4 bg-[var(--background-paper)] border border-[var(--border-main)] rounded-lg">
         <div className="flex items-start gap-3">
-          <FaExclamationTriangle className="text-yellow-500 text-lg mt-0.5 flex-shrink-0" />
+          <FaExclamationTriangle className="text-[var(--primary-main)] text-lg mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="font-semibold text-yellow-800 mb-1">Admin Controls</h3>
-            <p className="text-yellow-700 text-sm">
+            <h3 className="font-semibold text-[var(--primary-main)] mb-1">Admin Controls</h3>
+            <p className="text-[var(--text-secondary)] text-sm">
               You can create, edit, activate/deactivate, or delete resumes. Only active resumes will
               be available for public viewing or download.
             </p>

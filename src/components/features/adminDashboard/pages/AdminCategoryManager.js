@@ -223,7 +223,24 @@ const AdminCategoryManager = () => {
               <tbody>
                 {categories.map(cat => (
                   <tr key={cat._id}>
-                    <td className="p-2 border">{cat.name}</td>
+                    <td className="p-2 border">
+                      <div>
+                        <span style={{ fontWeight: "bold", color: "#111" }}>Example Name</span>
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "#222",
+                            fontSize: "0.85em",
+                            marginLeft: 8,
+                          }}
+                        >
+                          v1.2.3
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "0.95em", color: "#444" }}>
+                        This is a summary example for the category.
+                      </div>
+                    </td>
                     <td className="p-2 border">
                       {cat.parent ? getCategoryNameById(cat.parent) : "-"}
                     </td>
