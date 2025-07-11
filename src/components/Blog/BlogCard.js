@@ -6,6 +6,14 @@ const BlogCard = memo(({ blog }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  // Get image URL - handle both object and string formats
+  const imageUrl = useMemo(() => {
+    if (!blog.image) return null;
+    if (typeof blog.image === "string") return blog.image;
+    if (blog.image && typeof blog.image === "object" && blog.image.url) return blog.image.url;
+    return null;
+  }, [blog.image]);
+
   // Memoize content processing for better performance
   const { plainText, truncatedText, hasMoreContent, displayText } = useMemo(() => {
     if (!blog.content) {
@@ -40,7 +48,7 @@ const BlogCard = memo(({ blog }) => {
   return (
     <div className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-[var(--border-color)] flex flex-col h-full">
       {/* Image Section */}
-      {blog.image && (
+      {imageUrl && (
         <div className="h-48 flex-shrink-0 relative overflow-hidden">
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
@@ -48,7 +56,7 @@ const BlogCard = memo(({ blog }) => {
             </div>
           )}
           <img
-            src={blog.image}
+            src={imageUrl}
             alt={blog.title || "Blog post image"}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               imageLoaded ? "opacity-100" : "opacity-0"

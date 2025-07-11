@@ -263,6 +263,47 @@ export const blogAPI = {
   },
 };
 
+// Create blog (multipart/form-data)
+export const createBlogMultipart = async formData => {
+  try {
+    console.log("=== CREATING BLOG MULTIPART ===");
+    console.log("FormData entries:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, typeof value === "object" ? `File: ${value.name}` : value);
+    }
+
+    // Create a separate axios instance for multipart requests
+    const multipartApi = axios.create({
+      baseURL: baseURL,
+      timeout: 30000,
+      // Do NOT set Content-Type header for FormData
+    });
+
+    // Add auth token to multipart requests
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      multipartApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+
+    console.log("=== REQUEST DETAILS ===");
+    console.log("URL:", `${baseURL}/api/blogs`);
+    console.log("Method: POST");
+    console.log("Content-Type will be set by browser for FormData");
+    console.log("========================");
+
+    const response = await multipartApi.post("/api/blogs", formData);
+
+    console.log("Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Blog creation error:", error);
+    console.error("Error response:", error.response?.data);
+    console.error("Error status:", error.response?.status);
+    console.error("Error headers:", error.response?.headers);
+    throw error;
+  }
+};
+
 // Testimonials API functions
 export const testimonialsAPI = {
   // Get all testimonials

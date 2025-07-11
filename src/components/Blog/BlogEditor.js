@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
-import { blogCategoryAPI } from "../../services/apiService";
+import { blogCategoryAPI, createBlogMultipart } from "../../services/apiService";
 import { useAuth } from "../../auth/context/AuthContext";
 import TinyMCEEditor from "../ui/TinyMCEEditor";
 import Select, { components } from "react-select";
@@ -23,6 +23,7 @@ const BlogEditor = () => {
     content: "",
     category: "",
     image: "",
+    readTime: "",
     author: {
       name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
       email: user?.email || "",
@@ -32,6 +33,12 @@ const BlogEditor = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [categories, setCategories] = useState([]);
+  // Add state for image mode, file, preview, upload progress
+  const [imageMode, setImageMode] = useState("url"); // "url" or "upload"
+  const [imageUrl, setImageUrl] = useState(formData.image || "");
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
+  const fileInputRef = useRef();
 
   // Debug useEffect to monitor formData changes
   useEffect(() => {
@@ -91,11 +98,15 @@ const BlogEditor = () => {
           const authorData = actualData.author || {};
           console.log("Author data after safe access:", authorData);
 
+          // Handle image - extract URL from image object or use string
+          const imageUrl = actualData.image?.url || actualData.image || "";
+
           const formDataToSet = {
             title: actualData.title || "",
             content: actualData.content || "",
             category: actualData.category || "",
-            image: actualData.image || "",
+            image: imageUrl,
+            readTime: actualData.readTime || "",
             author: {
               name:
                 authorData.name || user?.displayName || user?.email?.split("@")[0] || "Anonymous",
@@ -111,6 +122,8 @@ const BlogEditor = () => {
           console.log("Form data image:", formDataToSet.image);
 
           setFormData(formDataToSet);
+          setImageUrl(imageUrl); // Set image URL for preview
+          setImageMode(imageUrl ? "url" : "upload"); // Set mode based on existing image
           setShowAuthorInfo(!authorData.isHidden);
           setIsDataLoaded(true);
 
@@ -262,8 +275,8 @@ const BlogEditor = () => {
     },
   });
 
-  const handleSave = async e => {
-    e.preventDefault(); // Prevent default form submission
+  const handleSubmit = async e => {
+    e.preventDefault();
 
     if (!formData.title.trim()) {
       toast.error("Please enter a title");
@@ -284,30 +297,106 @@ const BlogEditor = () => {
 
     setIsSaving(true);
     try {
-      const postData = {
-        ...formData,
-        date: new Date().toISOString(),
-        readTime: `${Math.ceil(formData.content.split(" ").length / 200)} min read`,
-        author: {
-          ...formData.author,
-          isHidden: !showAuthorInfo,
-        },
-      };
+      console.log("=== SUBMIT DEBUG ===");
+      console.log("imageMode:", imageMode);
+      console.log("imageFile:", imageFile);
+      console.log("imageUrl:", imageUrl);
+      console.log("imageFile instanceof File:", imageFile instanceof File);
 
-      console.log("Sending data to server:", postData); // Debug log
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("content", formData.content);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("authorName", formData.author.name);
+      formDataToSend.append("authorEmail", formData.author.email);
+      formDataToSend.append("authorPhone", formData.author.phone);
+      formDataToSend.append("authorIsHidden", !showAuthorInfo);
+      formDataToSend.append("readTime", formData.readTime);
 
-      if (id) {
-        await updateMutation.mutateAsync({ id, data: postData });
-      } else {
-        await createMutation.mutateAsync(postData);
+      if (imageMode === "upload" && imageFile) {
+        console.log("=== IMAGE FILE DEBUG ===");
+        console.log("imageFile type:", typeof imageFile);
+        console.log("imageFile instanceof File:", imageFile instanceof File);
+        console.log("imageFile name:", imageFile.name);
+        console.log("imageFile size:", imageFile.size);
+        console.log("imageFile type (mime):", imageFile.type);
+        console.log("========================");
+
+        formDataToSend.append("image", imageFile); // Send the actual file
+
+        // Log FormData entries
+        console.log("=== FORMDATA ENTRIES ===");
+        for (let [key, value] of formDataToSend.entries()) {
+          console.log(`${key}:`, typeof value === "object" ? `File: ${value.name}` : value);
+        }
+        console.log("=========================");
+      } else if (imageMode === "url" && imageUrl) {
+        formDataToSend.append("image", imageUrl); // Send the URL string
+        console.log("Sending image URL:", imageUrl);
       }
+
+      console.log("=== FINAL FORMDATA CHECK ===");
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, typeof value === "object" ? `File: ${value.name}` : value);
+      }
+      console.log("===========================");
+
+      await createBlogMultipart(formDataToSend);
+
+      toast.success("Blog post created successfully!");
+      navigate("/blog");
     } catch (error) {
-      console.error("Save error:", error);
+      console.error("Submit error:", error);
       toast.error(error.response?.data?.message || "Failed to save blog post");
     } finally {
       setIsSaving(false);
     }
   };
+
+  // Drag and drop handlers
+  const handleDrop = e => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileChange(e.dataTransfer.files[0]);
+    }
+  };
+  const handleDragOver = e => e.preventDefault();
+
+  // File input handler
+  const handleFileChange = file => {
+    console.log("=== FILE CHANGE DEBUG ===");
+    console.log("Received file:", file);
+    console.log("File type:", typeof file);
+    console.log("File instanceof File:", file instanceof File);
+    console.log("File name:", file?.name);
+    console.log("File size:", file?.size);
+
+    if (!file) {
+      console.log("No file received");
+      return;
+    }
+
+    setImageFile(file);
+    const fileUrl = URL.createObjectURL(file);
+    setImageUrl(fileUrl); // For preview
+    setFormData(prev => ({ ...prev, image: fileUrl })); // Update formData.image too
+    setUploadError(null);
+
+    console.log("=== AFTER SETTING STATE ===");
+    console.log("imageFile will be set to:", file);
+    console.log("imageUrl will be set to:", fileUrl);
+    console.log("===========================");
+  };
+
+  // Add this useEffect to monitor imageFile state
+  useEffect(() => {
+    console.log("=== IMAGEFILE STATE CHANGED ===");
+    console.log("imageFile:", imageFile);
+    console.log("imageFile type:", typeof imageFile);
+    console.log("imageFile instanceof File:", imageFile instanceof File);
+    console.log("imageFile name:", imageFile?.name);
+    console.log("===============================");
+  }, [imageFile]);
 
   return (
     <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
@@ -351,7 +440,7 @@ const BlogEditor = () => {
           </div>
         )}
 
-        <form onSubmit={handleSave} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="mb-6">
             <input
               type="text"
@@ -379,15 +468,76 @@ const BlogEditor = () => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Read Time (e.g., 5 min read)</label>
             <input
               type="text"
-              name="image"
-              value={formData.image}
+              name="readTime"
+              value={formData.readTime}
               onChange={handleInputChange}
-              placeholder="Enter image URL"
-              className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
+              placeholder="Enter read time (e.g., 5 min read)"
+              className="w-full border rounded p-2"
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Blog Image</label>
+            <div className="flex gap-4 mb-2">
+              <button
+                type="button"
+                className={`px-3 py-1 rounded ${
+                  imageMode === "url" ? "bg-indigo-500 text-white" : "bg-gray-200"
+                }`}
+                onClick={() => setImageMode("url")}
+              >
+                Image URL
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 rounded ${
+                  imageMode === "upload" ? "bg-indigo-500 text-white" : "bg-gray-200"
+                }`}
+                onClick={() => setImageMode("upload")}
+              >
+                Upload Image
+              </button>
+            </div>
+            {imageMode === "url" ? (
+              <input
+                type="text"
+                className="w-full border rounded p-2"
+                placeholder="Paste image URL..."
+                value={imageUrl}
+                onChange={e => setImageUrl(e.target.value)}
+              />
+            ) : (
+              <div
+                className="w-full border-2 border-dashed rounded p-4 text-center cursor-pointer bg-gray-50 hover:bg-gray-100"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onClick={() => fileInputRef.current?.click()}
+                style={{ minHeight: 120 }}
+              >
+                {imageUrl ? (
+                  <img src={imageUrl} alt="Preview" className="mx-auto max-h-32" />
+                ) : (
+                  <div>Drag & drop or click to select an image</div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  onChange={e => handleFileChange(e.target.files[0])}
+                />
+                {uploadError && <div className="text-red-500 mt-2">{uploadError}</div>}
+              </div>
+            )}
+            {imageUrl && (
+              <div className="mt-2">
+                <img src={imageUrl} alt="Selected" className="max-h-32 rounded shadow mx-auto" />
+              </div>
+            )}
           </div>
 
           <div className="mb-6">
@@ -532,6 +682,7 @@ const BlogEditor = () => {
                             content: actualData.content || "",
                             category: actualData.category || "",
                             image: actualData.image || "",
+                            readTime: actualData.readTime || "",
                             author: {
                               name:
                                 actualData.author?.name ||

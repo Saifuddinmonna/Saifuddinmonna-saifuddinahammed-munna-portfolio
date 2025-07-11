@@ -23,6 +23,7 @@ import AdminResumesManager from "../../features/adminDashboard/AdminResumesManag
 import ModernResumeViewer from "../../features/adminDashboard/components/resume/ModernResumeViewer.js";
 import AdminCategoryManager from "../../features/adminDashboard/pages/AdminCategoryManager";
 import AdminGalleryManager from "../../features/adminDashboard/pages/AdminGalleryManager";
+import ResumeFormModal from "../../features/adminDashboard/components/resume/ResumeFormModal";
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
@@ -297,6 +298,11 @@ const router = createBrowserRouter([
           {
             path: "categories",
             element: <AdminCategoryManager />,
+            errorElement: <ErrorFallback />,
+          },
+          {
+            path: "resumes/edit/:id",
+            element: <ResumeFormModal isEdit={true} />, // Replace with your actual edit page if needed
             errorElement: <ErrorFallback />,
           },
         ],

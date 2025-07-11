@@ -4,6 +4,7 @@ import { resumeAPI } from "../../../../../services/apiService";
 import ResumeFormModal from "./ResumeFormModal";
 import ModernResumeViewer from "./ModernResumeViewer";
 import ResumeList from "./ResumeList";
+import { useNavigate } from "react-router-dom";
 
 const ResumeAdminDashboard = () => {
   const [resumes, setResumes] = useState([]);
@@ -13,6 +14,8 @@ const ResumeAdminDashboard = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [viewData, setViewData] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchResumes();
@@ -77,6 +80,19 @@ const ResumeAdminDashboard = () => {
     fetchResumes();
   };
 
+  // Handler to go to edit page
+  const handleEditPage = resume => {
+    if (resume && resume._id) {
+      navigate(`/admin/dashboard/resumes/edit/${resume._id}`);
+      setViewModalOpen(false);
+    }
+  };
+
+  // Handler to go back (close viewer)
+  const handleBack = () => {
+    setViewModalOpen(false);
+  };
+
   return (
     <div className="bg-[var(--background-paper)] rounded-lg shadow p-4 border border-[var(--border-main)]">
       <ResumeFormModal
@@ -91,6 +107,8 @@ const ResumeAdminDashboard = () => {
         open={viewModalOpen}
         onClose={() => setViewModalOpen(false)}
         resume={viewData}
+        onEdit={viewData && viewData._id ? handleEditPage : undefined}
+        onBack={handleBack}
       />
 
       <div className="flex items-center justify-between mb-4">
