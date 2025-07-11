@@ -21,6 +21,7 @@ import { ErrorFallback, NotFoundError } from "../../ErrorBoundary";
 import LoadingSpinner from "../../LoadingSpinner";
 import AdminResumesManager from "../../features/adminDashboard/AdminResumesManager";
 import ModernResumeViewer from "../../features/adminDashboard/components/resume/ModernResumeViewer.js";
+import AdminCategoryManager from "../../features/adminDashboard/pages/AdminCategoryManager";
 
 // Lazy load components
 const MainLayout = lazy(() => import("../MainLayouts/MainLayout.js"));
@@ -290,6 +291,11 @@ const router = createBrowserRouter([
           {
             path: "resumes",
             element: <AdminResumesManager />,
+            errorElement: <ErrorFallback />,
+          },
+          {
+            path: "categories",
+            element: <AdminCategoryManager />,
             errorElement: <ErrorFallback />,
           },
         ],

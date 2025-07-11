@@ -841,11 +841,39 @@ export const apiUtils = {
   },
 };
 
+// Blog Category API functions
+export const blogCategoryAPI = {
+  // Get all categories (flat)
+  getAllCategories: async () => {
+    const response = await api.get("/api/categories");
+    return response.data;
+  },
+  // Get all categories as tree
+  getCategoryTree: async () => {
+    const response = await api.get("/api/categories/tree");
+    return response.data;
+  },
+  // Create category
+  createCategory: async data => {
+    const response = await api.post("/api/categories", data);
+    return response.data;
+  },
+  // Update category
+  updateCategory: async (id, data) => {
+    const response = await api.put(`/api/categories/${id}`, data);
+    return response.data;
+  },
+  // Delete category
+  deleteCategory: async id => {
+    const response = await api.delete(`/api/categories/${id}`);
+    return response.data;
+  },
+};
+
+export default api;
 export const getAllPortfolioProjects = myProjectWorksAPI.getAllProjectWorks;
 export const getPortfolioProject = myProjectWorksAPI.getProjectWork;
 export const getAllCategories = myProjectWorksAPI.getAllCategories;
 export const getProjectWork = myProjectWorksAPI.getProjectWork;
 export const resumeApiPdf = resumeAPI.downloadResumePdf;
 export const resumeApiDoxc = resumeAPI.downloadResumeDocx;
-
-export default api;

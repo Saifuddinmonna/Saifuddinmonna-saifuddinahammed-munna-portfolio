@@ -11,6 +11,7 @@ import {
   FaBars,
   FaTimes,
   FaFileAlt,
+  FaSitemap,
 } from "react-icons/fa";
 import { useAuth } from "../../../auth/context/AuthContext";
 
@@ -56,6 +57,12 @@ const AdminDashboardLayout = () => {
       icon: FaFileAlt,
       path: "/admin/dashboard/resumes",
       color: "from-yellow-500 to-yellow-600",
+    },
+    {
+      name: "Category Manager",
+      icon: FaSitemap,
+      path: "/admin/dashboard/categories",
+      color: "from-pink-500 to-pink-600",
     },
   ];
 

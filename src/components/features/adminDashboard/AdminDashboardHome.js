@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FaTachometerAlt, FaChartLine, FaUsers, FaCog, FaFileAlt } from "react-icons/fa";
+import { FaTachometerAlt, FaChartLine, FaUsers, FaCog, FaFileAlt, FaSitemap } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AdminDashboardHome = () => {
   const stats = [
@@ -96,6 +97,13 @@ const AdminDashboardHome = () => {
               <FaCog className="text-2xl mb-2" />
               <span className="font-medium">Gallery</span>
             </button>
+            <Link
+              to="/admin/dashboard/categories"
+              className="p-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300 flex flex-col items-center justify-center"
+            >
+              <FaSitemap className="text-2xl mb-2" />
+              <span className="font-medium">Manage Categories</span>
+            </Link>
           </div>
         </div>
       </motion.div>
