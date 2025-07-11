@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useState, useMemo, useEffect } from "react";
 import { blogCategoryAPI } from "../../../../services/apiService";
 import { toast } from "react-toastify";
 import { FaPlus, FaEdit, FaTrash, FaSitemap, FaListUl } from "react-icons/fa";
@@ -8,6 +7,10 @@ import { FaPlus, FaEdit, FaTrash, FaSitemap, FaListUl } from "react-icons/fa";
 const CategoryForm = ({ initial, onSubmit, onCancel, allCategories }) => {
   const [name, setName] = useState(initial?.name || "");
   const [parent, setParent] = useState(initial?.parent || "");
+  useEffect(() => {
+    setName(initial?.name || "");
+    setParent(initial?.parent || "");
+  }, [initial]);
   return (
     <form
       onSubmit={e => {
@@ -69,27 +72,48 @@ const CategoryTree = ({ nodes, onEdit, onDelete }) => (
 );
 
 const AdminCategoryManager = () => {
-  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
   const [view, setView] = useState("flat"); // or "tree"
+  const [categories, setCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch categories for display (flat or tree)
-  const {
-    data: categories = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["blog-categories", view],
-    queryFn: () =>
-      view === "tree" ? blogCategoryAPI.getCategoryTree() : blogCategoryAPI.getAllCategories(),
-  });
+  const fetchCategories = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      let data;
+      if (view === "tree") {
+        data = await blogCategoryAPI.getCategoryTree();
+      } else {
+        data = await blogCategoryAPI.getAllCategories();
+      }
+      setCategories(data || []);
+    } catch (err) {
+      setError(err.message || "Failed to fetch categories");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch all categories (flat) for parent dropdown
-  const { data: allCategories = [] } = useQuery({
-    queryKey: ["blog-categories", "flat"],
-    queryFn: blogCategoryAPI.getAllCategories,
-  });
+  const fetchAllCategories = async () => {
+    try {
+      const data = await blogCategoryAPI.getAllCategories();
+      setAllCategories(data || []);
+    } catch (err) {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchAllCategories();
+    // eslint-disable-next-line
+  }, [view]);
 
   // Helper to get category name by id
   const getCategoryNameById = useMemo(() => {
@@ -100,33 +124,7 @@ const AdminCategoryManager = () => {
     return id => map[id] || "-";
   }, [allCategories]);
 
-  // Mutations
-  const createMutation = useMutation(blogCategoryAPI.createCategory, {
-    onSuccess: () => {
-      toast.success("Category created");
-      queryClient.invalidateQueries(["blog-categories"]);
-      setShowForm(false);
-    },
-    onError: err => toast.error(err?.response?.data?.error || "Create failed"),
-  });
-  const updateMutation = useMutation(({ id, data }) => blogCategoryAPI.updateCategory(id, data), {
-    onSuccess: () => {
-      toast.success("Category updated");
-      queryClient.invalidateQueries(["blog-categories"]);
-      setEditCategory(null);
-      setShowForm(false);
-    },
-    onError: err => toast.error(err?.response?.data?.error || "Update failed"),
-  });
-  const deleteMutation = useMutation(blogCategoryAPI.deleteCategory, {
-    onSuccess: () => {
-      toast.success("Category deleted");
-      queryClient.invalidateQueries(["blog-categories"]);
-    },
-    onError: err => toast.error(err?.response?.data?.error || "Delete failed"),
-  });
-
-  // Handlers
+  // CRUD handlers
   const handleAdd = () => {
     setEditCategory(null);
     setShowForm(true);
@@ -135,16 +133,39 @@ const AdminCategoryManager = () => {
     setEditCategory(cat);
     setShowForm(true);
   };
-  const handleDelete = id => {
+  const handleDelete = async id => {
     if (window.confirm("Delete this category?")) {
-      deleteMutation.mutate(id);
+      setLoading(true);
+      try {
+        await blogCategoryAPI.deleteCategory(id);
+        toast.success("Category deleted");
+        fetchCategories();
+        fetchAllCategories();
+      } catch (err) {
+        toast.error(err?.response?.data?.error || "Delete failed");
+      } finally {
+        setLoading(false);
+      }
     }
   };
-  const handleFormSubmit = data => {
-    if (editCategory) {
-      updateMutation.mutate({ id: editCategory._id, data });
-    } else {
-      createMutation.mutate(data);
+  const handleFormSubmit = async data => {
+    setLoading(true);
+    try {
+      if (editCategory) {
+        await blogCategoryAPI.updateCategory(editCategory._id, data);
+        toast.success("Category updated");
+      } else {
+        await blogCategoryAPI.createCategory(data);
+        toast.success("Category created");
+      }
+      setShowForm(false);
+      setEditCategory(null);
+      fetchCategories();
+      fetchAllCategories();
+    } catch (err) {
+      toast.error(err?.response?.data?.error || "Save failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -186,9 +207,9 @@ const AdminCategoryManager = () => {
           allCategories={allCategories}
         />
       )}
-      {isLoading && <div>Loading...</div>}
-      {error && <div className="text-red-600">Error: {error.message}</div>}
-      {!isLoading && !error && (
+      {loading && <div>Loading...</div>}
+      {error && <div className="text-red-600">Error: {error}</div>}
+      {!loading && !error && (
         <div>
           {view === "flat" ? (
             <table className="w-full border mt-4">

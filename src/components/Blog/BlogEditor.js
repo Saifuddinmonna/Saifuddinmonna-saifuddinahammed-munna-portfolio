@@ -3,8 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
+import { blogCategoryAPI } from "../../services/apiService";
 import { useAuth } from "../../auth/context/AuthContext";
 import TinyMCEEditor from "../ui/TinyMCEEditor";
+import Select, { components } from "react-select";
 
 const BlogEditor = () => {
   const { id } = useParams();
@@ -29,6 +31,7 @@ const BlogEditor = () => {
     },
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   // Debug useEffect to monitor formData changes
   useEffect(() => {
@@ -128,6 +131,91 @@ const BlogEditor = () => {
       fetchPost();
     }
   }, [id, navigate, user]);
+
+  // Fetch categories from server
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await blogCategoryAPI.getAllCategories();
+        setCategories(data || []);
+      } catch (err) {
+        toast.error("Failed to load categories");
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Replace the groupedCategoryOptions logic with a recursive tree builder and flattener
+  const buildCategoryTree = categories => {
+    const map = {};
+    categories.forEach(cat => {
+      map[cat._id] = { ...cat, children: [] };
+    });
+    const roots = [];
+    categories.forEach(cat => {
+      if (cat.parent && map[cat.parent]) {
+        map[cat.parent].children.push(map[cat._id]);
+      } else {
+        roots.push(map[cat._id]);
+      }
+    });
+    return roots;
+  };
+
+  // Flatten the tree for react-select, preserving depth
+  const flattenCategories = (nodes, depth = 0) => {
+    let result = [];
+    nodes.forEach(node => {
+      result.push({
+        value: node._id,
+        label: node.name + (node.children.length > 0 ? ` (${node.children.length})` : ""),
+        depth,
+        isParent: node.children.length > 0,
+        node,
+      });
+      if (node.children.length > 0) {
+        result = result.concat(flattenCategories(node.children, depth + 1));
+      }
+    });
+    return result;
+  };
+
+  const categoryTree = React.useMemo(() => buildCategoryTree(categories), [categories]);
+  const flatCategoryOptions = React.useMemo(() => flattenCategories(categoryTree), [categoryTree]);
+
+  const groupedCategoryOptions = React.useMemo(
+    () => [
+      {
+        label: "Categories",
+        options: flatCategoryOptions,
+      },
+    ],
+    [flatCategoryOptions]
+  );
+
+  // Update Option component to indent by depth and bold parents
+  const Option = props => (
+    <components.Option {...props}>
+      <span
+        style={{
+          fontWeight: props.data.isParent ? "bold" : "normal",
+          paddingLeft: 16 * (props.data.depth || 0),
+          opacity: props.data.isParent ? 1 : 0.85,
+        }}
+      >
+        {props.label}
+      </span>
+    </components.Option>
+  );
+
+  // Find selected option for react-select (by id)
+  const selectedCategoryOption = React.useMemo(() => {
+    return (
+      groupedCategoryOptions
+        .flatMap(group => group.options)
+        .find(option => option.value === formData.category) || null
+    );
+  }, [formData.category, groupedCategoryOptions]);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -275,20 +363,20 @@ const BlogEditor = () => {
             />
           </div>
 
-          <div className="mb-6">
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
-            >
-              <option value="">Select Category</option>
-              <option value="Web Development">Web Development</option>
-              <option value="JavaScript">JavaScript</option>
-              <option value="React">React</option>
-              <option value="Node.js">Node.js</option>
-              <option value="Database">Database</option>
-            </select>
+          <div>
+            <label className="block text-[var(--text-primary)] mb-2">Category *</label>
+            <Select
+              options={groupedCategoryOptions}
+              value={selectedCategoryOption}
+              onChange={option =>
+                setFormData(prev => ({ ...prev, category: option ? option.value : "" }))
+              }
+              isSearchable
+              placeholder="Select a category"
+              classNamePrefix="react-select"
+              required
+              components={{ Option }}
+            />
           </div>
 
           <div className="mb-6">

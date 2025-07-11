@@ -126,3 +126,40 @@
     page-break-inside: avoid;
   }
 }
+
+/* --- Category Dropdown CSS Cheat Sheet --- */
+/* Use with classNamePrefix="react-select" on the Select component */
+
+.react-select__option {
+  /* Base option style */
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.react-select__option--is-focused {
+  background: #e0e7ff;
+}
+.react-select__option--is-selected {
+  background: #6366f1;
+  color: #fff;
+}
+/* Indent by depth using inline style, but you can also target nth-child for custom levels */
+/* Example: */
+/* .react-select__option.depth-1 { padding-left: 16px; } */
+/* .react-select__option.depth-2 { padding-left: 32px; } */
+
+/* Bold for parent categories (see Option component for fontWeight) */
+
+/* Add a left border for parent categories */
+.react-select__option.is-parent {
+  border-left: 3px solid #6366f1;
+  background: #f3f4f6;
+}
+
+/* Subtle color for children */
+.react-select__option.is-child {
+  background: #f9fafb;
+}
+
+/* You can add more custom styles for deeper levels if needed */
+
+/* --- End Category Dropdown CSS Cheat Sheet --- */
