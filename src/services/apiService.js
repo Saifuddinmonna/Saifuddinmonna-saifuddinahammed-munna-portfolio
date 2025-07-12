@@ -261,6 +261,14 @@ export const blogAPI = {
     const response = await api.delete(`/api/blogs/${id}`);
     return response.data;
   },
+
+  // Delete blog image
+  deleteBlogImage: async (id, imageObject) => {
+    const response = await api.put(`/api/blogs/${id}/delete-image`, {
+      image: imageObject,
+    });
+    return response.data;
+  },
 };
 
 // Create blog (multipart/form-data)
@@ -918,3 +926,4 @@ export const getAllCategories = myProjectWorksAPI.getAllCategories;
 export const getProjectWork = myProjectWorksAPI.getProjectWork;
 export const resumeApiPdf = resumeAPI.downloadResumePdf;
 export const resumeApiDoxc = resumeAPI.downloadResumeDocx;
+export const deleteBlogImage = blogAPI.deleteBlogImage;

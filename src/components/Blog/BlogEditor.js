@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
-import { blogCategoryAPI, createBlogMultipart } from "../../services/apiService";
+import { blogCategoryAPI, createBlogMultipart, deleteBlogImage } from "../../services/apiService";
 import { useAuth } from "../../auth/context/AuthContext";
 import TinyMCEEditor from "../ui/TinyMCEEditor";
 import Select, { components } from "react-select";
@@ -38,6 +38,7 @@ const BlogEditor = () => {
   const [imageUrl, setImageUrl] = useState(formData.image || "");
   const [imageFile, setImageFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
+  const [originalImageObject, setOriginalImageObject] = useState(null); // Store original image object for deletion
   const fileInputRef = useRef();
 
   // Debug useEffect to monitor formData changes
@@ -101,6 +102,10 @@ const BlogEditor = () => {
           // Handle image - extract URL from image object or use string
           const imageUrl = actualData.image?.url || actualData.image || "";
 
+          // Store original image object for deletion
+          const originalImage =
+            actualData.image && typeof actualData.image === "object" ? actualData.image : null;
+
           const formDataToSet = {
             title: actualData.title || "",
             content: actualData.content || "",
@@ -120,10 +125,12 @@ const BlogEditor = () => {
           console.log("Form data title:", formDataToSet.title);
           console.log("Form data category:", formDataToSet.category);
           console.log("Form data image:", formDataToSet.image);
+          console.log("Original image object:", originalImage);
 
           setFormData(formDataToSet);
           setImageUrl(imageUrl); // Set image URL for preview
           setImageMode(imageUrl ? "url" : "upload"); // Set mode based on existing image
+          setOriginalImageObject(originalImage); // Store original image object
           setShowAuthorInfo(!authorData.isHidden);
           setIsDataLoaded(true);
 
@@ -275,6 +282,24 @@ const BlogEditor = () => {
     },
   });
 
+  // Delete image mutation
+  const deleteImageMutation = useMutation({
+    mutationFn: ({ blogId, imageObject }) => deleteBlogImage(blogId, imageObject),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blogs"]);
+      queryClient.invalidateQueries(["admin-blogs"]);
+      toast.success("Image deleted successfully!");
+      // Clear the image from the form
+      setImageUrl("");
+      setImageFile(null);
+      setOriginalImageObject(null);
+      setFormData(prev => ({ ...prev, image: "" }));
+    },
+    onError: error => {
+      toast.error(error.response?.data?.message || "Failed to delete image");
+    },
+  });
+
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -397,6 +422,25 @@ const BlogEditor = () => {
     console.log("imageFile name:", imageFile?.name);
     console.log("===============================");
   }, [imageFile]);
+
+  // Handle image deletion
+  const handleDeleteImage = async () => {
+    if (!id || !originalImageObject) {
+      toast.error("No image to delete");
+      return;
+    }
+
+    if (window.confirm("Are you sure you want to delete this image?")) {
+      try {
+        await deleteImageMutation.mutateAsync({
+          blogId: id,
+          imageObject: originalImageObject,
+        });
+      } catch (error) {
+        console.error("Delete image error:", error);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
@@ -535,7 +579,29 @@ const BlogEditor = () => {
             )}
             {imageUrl && (
               <div className="mt-2">
-                <img src={imageUrl} alt="Selected" className="max-h-32 rounded shadow mx-auto" />
+                <div className="relative inline-block">
+                  <img src={imageUrl} alt="Selected" className="max-h-32 rounded shadow mx-auto" />
+                  {/* Delete button - only show for existing blogs with original image object */}
+                  {id && originalImageObject && (
+                    <button
+                      type="button"
+                      onClick={handleDeleteImage}
+                      disabled={deleteImageMutation.isPending}
+                      className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Delete image"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+                {/* Show delete button info for existing blogs */}
+                {id && originalImageObject && (
+                  <div className="text-center mt-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Click the red × button to delete this image
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
