@@ -203,7 +203,17 @@ const BlogPost = () => {
       <div className="max-w-4xl mx-auto">
         <article className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg">
           {post.image && (
-            <img src={post.image} alt={post.title} className="w-full h-96 object-cover" />
+            <img
+              src={
+                typeof post.image === "object" && post.image.url && post.image.url !== null
+                  ? post.image.url
+                  : typeof post.image === "string"
+                  ? post.image
+                  : ""
+              }
+              alt={post.title}
+              className="w-full h-96 object-cover"
+            />
           )}
           <div className="p-8">
             <div className="flex justify-between items-start mb-6">

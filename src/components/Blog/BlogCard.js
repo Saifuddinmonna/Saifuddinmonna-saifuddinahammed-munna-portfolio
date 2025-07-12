@@ -7,12 +7,25 @@ const BlogCard = memo(({ blog }) => {
   const [imageError, setImageError] = useState(false);
 
   // Get image URL - handle both object and string formats
+  // Also handle cases where image object has null values
   const imageUrl = useMemo(() => {
     if (!blog.image) return null;
     if (typeof blog.image === "string") return blog.image;
-    if (blog.image && typeof blog.image === "object" && blog.image.url) return blog.image.url;
+    if (blog.image && typeof blog.image === "object" && blog.image.url && blog.image.url !== null) {
+      return blog.image.url;
+    }
     return null;
   }, [blog.image]);
+
+  // Get category name - handle both populated object and ID
+  const categoryName = useMemo(() => {
+    if (!blog.category) return "General";
+    if (typeof blog.category === "string") return blog.category;
+    if (blog.category && typeof blog.category === "object" && blog.category.name) {
+      return blog.category.name;
+    }
+    return blog.category || "General";
+  }, [blog.category]);
 
   // Memoize content processing for better performance
   const { plainText, truncatedText, hasMoreContent, displayText } = useMemo(() => {
@@ -70,10 +83,10 @@ const BlogCard = memo(({ blog }) => {
 
       {/* Content Section - Fixed height to prevent footer movement */}
       <div className="p-4 sm:p-6 flex-1 flex flex-col">
-        {/* Tags and Read Time */}
+        {/* Category and Read Time */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="px-2 py-1 bg-[var(--primary-light)] text-[var(--primary-main)] rounded-full text-xs font-medium">
-            {blog.tags?.[0] || "General"}
+          <span className="px-4 py-2 bg-[var(--primary-dark)] text-white rounded-full text-sm font-extrabold shadow-lg border-2 border-white/20">
+            {categoryName}
           </span>
           {blog.readTime && (
             <span className="text-[var(--text-secondary)] text-xs">{blog.readTime}</span>
@@ -131,7 +144,7 @@ const BlogCard = memo(({ blog }) => {
               {hasMoreContent && (
                 <button
                   onClick={() => setShowFullContent(!showFullContent)}
-                  className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300 text-sm font-medium px-3 py-1 rounded-md hover:bg-[var(--primary-light)]"
+                  className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300 text-sm font-medium px-3 py-2 rounded-lg hover:bg-[var(--primary-light)]"
                 >
                   {showFullContent ? "Show Less" : "Read More"}
                 </button>
@@ -139,10 +152,10 @@ const BlogCard = memo(({ blog }) => {
             </div>
             <Link
               to={`/blog/${blog._id}`}
-              className="text-[var(--primary-main)] hover:text-[var(--primary-dark)] transition-colors duration-300 text-sm font-medium px-3 py-1 rounded-md hover:bg-[var(--primary-light)] flex items-center gap-1 flex-shrink-0"
+              className="bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 flex-shrink-0"
             >
               Full Post
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

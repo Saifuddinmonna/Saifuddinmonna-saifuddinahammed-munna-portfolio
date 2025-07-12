@@ -30,7 +30,13 @@ const AdminBlogListCard = ({ post, onDelete, onLike, onEdit, onView, isAdmin }) 
         {post.image && (
           <div className="relative w-32 h-24 flex-shrink-0">
             <img
-              src={post.image}
+              src={
+                typeof post.image === "object" && post.image.url && post.image.url !== null
+                  ? post.image.url
+                  : typeof post.image === "string"
+                  ? post.image
+                  : ""
+              }
               alt={post.title}
               className="w-full h-full object-cover rounded-lg"
             />

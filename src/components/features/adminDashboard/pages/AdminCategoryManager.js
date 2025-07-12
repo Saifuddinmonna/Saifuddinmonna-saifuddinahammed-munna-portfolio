@@ -56,13 +56,22 @@ const CategoryTree = ({ nodes, onEdit, onDelete }) => (
   <ul className="ml-4 border-l pl-2">
     {nodes.map(cat => (
       <li key={cat._id} className="mb-1">
-        <span className="font-medium">{cat.name}</span>
-        <button className="ml-2 text-xs text-blue-600" onClick={() => onEdit(cat)}>
-          Edit
-        </button>
-        <button className="ml-2 text-xs text-red-600" onClick={() => onDelete(cat._id)}>
-          Delete
-        </button>
+        <div className="flex items-center gap-2">
+          <span className="font-medium">{cat.name}</span>
+          <span className="text-xs text-gray-500">({cat.children?.length || 0} children)</span>
+          <button
+            className="ml-2 text-xs text-blue-600 hover:text-blue-800"
+            onClick={() => onEdit(cat)}
+          >
+            Edit
+          </button>
+          <button
+            className="ml-2 text-xs text-red-600 hover:text-red-800"
+            onClick={() => onDelete(cat._id)}
+          >
+            Delete
+          </button>
+        </div>
         {cat.children && cat.children.length > 0 && (
           <CategoryTree nodes={cat.children} onEdit={onEdit} onDelete={onDelete} />
         )}
@@ -207,9 +216,23 @@ const AdminCategoryManager = () => {
           allCategories={allCategories}
         />
       )}
-      {loading && <div>Loading...</div>}
-      {error && <div className="text-red-600">Error: {error}</div>}
-      {!loading && !error && (
+      {loading && (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2">Loading categories...</span>
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <div className="text-red-600">Error: {error}</div>
+        </div>
+      )}
+      {!loading && !error && categories.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          No categories found. Create your first category!
+        </div>
+      )}
+      {!loading && !error && categories.length > 0 && (
         <div>
           {view === "flat" ? (
             <table className="w-full border mt-4">
@@ -225,7 +248,7 @@ const AdminCategoryManager = () => {
                   <tr key={cat._id}>
                     <td className="p-2 border">
                       <div>
-                        <span style={{ fontWeight: "bold", color: "#111" }}>Example Name</span>
+                        <span style={{ fontWeight: "bold", color: "#111" }}>{cat.name}</span>
                         <span
                           style={{
                             fontWeight: "bold",
@@ -234,11 +257,11 @@ const AdminCategoryManager = () => {
                             marginLeft: 8,
                           }}
                         >
-                          v1.2.3
+                          ID: {cat._id.slice(-6)}
                         </span>
                       </div>
                       <div style={{ fontSize: "0.95em", color: "#444" }}>
-                        This is a summary example for the category.
+                        {cat.description || "No description available"}
                       </div>
                     </td>
                     <td className="p-2 border">

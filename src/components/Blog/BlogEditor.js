@@ -100,11 +100,24 @@ const BlogEditor = () => {
           console.log("Author data after safe access:", authorData);
 
           // Handle image - extract URL from image object or use string
-          const imageUrl = actualData.image?.url || actualData.image || "";
+          // Also handle cases where image object has null values
+          const imageUrl =
+            actualData.image?.url && actualData.image.url !== null
+              ? actualData.image.url
+              : typeof actualData.image === "string"
+              ? actualData.image
+              : "";
 
-          // Store original image object for deletion
+          // Store original image object for deletion - handle null/undefined cases
           const originalImage =
-            actualData.image && typeof actualData.image === "object" ? actualData.image : null;
+            actualData.image &&
+            typeof actualData.image === "object" &&
+            actualData.image.url &&
+            actualData.image.url !== null &&
+            actualData.image.public_id &&
+            actualData.image.public_id !== null
+              ? actualData.image
+              : null;
 
           const formDataToSet = {
             title: actualData.title || "",
@@ -120,6 +133,13 @@ const BlogEditor = () => {
               isHidden: authorData.isHidden || false,
             },
           };
+
+          console.log("=== FORM DATA SETTING DEBUG ===");
+          console.log("Original category from server:", actualData.category);
+          console.log("Category type:", typeof actualData.category);
+          console.log("Category value:", actualData.category);
+          console.log("Final category in formData:", formDataToSet.category);
+          console.log("=================================");
 
           console.log("Setting form data:", formDataToSet);
           console.log("Form data title:", formDataToSet.title);
@@ -164,6 +184,25 @@ const BlogEditor = () => {
     };
     fetchCategories();
   }, []);
+
+  // Ensure category is properly set when both blog data and categories are loaded
+  useEffect(() => {
+    if (isDataLoaded && categories.length > 0 && formData.category) {
+      console.log("=== CATEGORY SYNC DEBUG ===");
+      console.log("Blog data loaded:", isDataLoaded);
+      console.log("Categories loaded:", categories.length);
+      console.log("Current category:", formData.category);
+      console.log(
+        "Available category IDs:",
+        categories.map(cat => cat._id)
+      );
+      console.log(
+        "Category exists:",
+        categories.some(cat => cat._id === formData.category)
+      );
+      console.log("===========================");
+    }
+  }, [isDataLoaded, categories, formData.category]);
 
   // Replace the groupedCategoryOptions logic with a recursive tree builder and flattener
   const buildCategoryTree = categories => {
@@ -230,11 +269,23 @@ const BlogEditor = () => {
 
   // Find selected option for react-select (by id)
   const selectedCategoryOption = React.useMemo(() => {
-    return (
-      groupedCategoryOptions
-        .flatMap(group => group.options)
-        .find(option => option.value === formData.category) || null
+    console.log("=== CATEGORY SELECTION DEBUG ===");
+    console.log("formData.category:", formData.category);
+    console.log("categories loaded:", categories.length);
+    console.log("flatCategoryOptions:", flatCategoryOptions.length);
+    console.log(
+      "Available options:",
+      flatCategoryOptions.map(opt => ({ value: opt.value, label: opt.label }))
     );
+
+    const found = groupedCategoryOptions
+      .flatMap(group => group.options)
+      .find(option => option.value === formData.category);
+
+    console.log("Found option:", found);
+    console.log("================================");
+
+    return found || null;
   }, [formData.category, groupedCategoryOptions]);
 
   const handleInputChange = e => {
@@ -425,8 +476,13 @@ const BlogEditor = () => {
 
   // Handle image deletion
   const handleDeleteImage = async () => {
-    if (!id || !originalImageObject) {
-      toast.error("No image to delete");
+    if (!id) {
+      toast.error("Blog ID not found");
+      return;
+    }
+
+    if (!originalImageObject || !originalImageObject.url || !originalImageObject.public_id) {
+      toast.error("No valid image to delete");
       return;
     }
 
@@ -509,28 +565,115 @@ const BlogEditor = () => {
               classNamePrefix="react-select"
               required
               components={{ Option }}
+              styles={{
+                control: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: "var(--background-paper)",
+                  borderColor: state.isFocused ? "var(--primary-main)" : "var(--border-main)",
+                  borderWidth: "1px",
+                  borderRadius: "8px",
+                  minHeight: "44px",
+                  boxShadow: state.isFocused ? "0 0 0 2px var(--primary-main)" : "none",
+                  "&:hover": {
+                    borderColor: "var(--primary-main)",
+                  },
+                }),
+                menu: provided => ({
+                  ...provided,
+                  backgroundColor: "var(--background-paper)",
+                  border: "1px solid var(--border-main)",
+                  borderRadius: "8px",
+                  boxShadow:
+                    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                }),
+                option: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: state.isSelected
+                    ? "var(--primary-main)"
+                    : state.isFocused
+                    ? "var(--background-default)"
+                    : "transparent",
+                  color: state.isSelected ? "white" : "var(--text-primary)",
+                  "&:hover": {
+                    backgroundColor: state.isSelected
+                      ? "var(--primary-dark)"
+                      : "var(--background-default)",
+                  },
+                }),
+                singleValue: provided => ({
+                  ...provided,
+                  color: "var(--text-primary)",
+                }),
+                input: provided => ({
+                  ...provided,
+                  color: "var(--text-primary)",
+                }),
+                placeholder: provided => ({
+                  ...provided,
+                  color: "var(--text-secondary)",
+                }),
+                indicatorSeparator: provided => ({
+                  ...provided,
+                  backgroundColor: "var(--border-main)",
+                }),
+                dropdownIndicator: provided => ({
+                  ...provided,
+                  color: "var(--text-secondary)",
+                  "&:hover": {
+                    color: "var(--text-primary)",
+                  },
+                }),
+                clearIndicator: provided => ({
+                  ...provided,
+                  color: "var(--text-secondary)",
+                  "&:hover": {
+                    color: "var(--text-primary)",
+                  },
+                }),
+              }}
             />
+            {/* Debug info for category selection */}
+            {process.env.NODE_ENV === "development" && (
+              <div className="mt-2 text-xs text-[var(--text-secondary)] bg-[var(--background-paper)] p-3 rounded-lg border border-[var(--border-main)]">
+                <p className="mb-1">
+                  <strong>Current category ID:</strong> {formData.category || "None"}
+                </p>
+                <p className="mb-1">
+                  <strong>Selected option:</strong>{" "}
+                  {selectedCategoryOption ? selectedCategoryOption.label : "None"}
+                </p>
+                <p>
+                  <strong>Categories loaded:</strong> {categories.length}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="mb-4">
-            <label className="block font-semibold mb-1">Read Time (e.g., 5 min read)</label>
+            <label className="block text-[var(--text-primary)] font-semibold mb-2">
+              Read Time (e.g., 5 min read)
+            </label>
             <input
               type="text"
               name="readTime"
               value={formData.readTime}
               onChange={handleInputChange}
               placeholder="Enter read time (e.g., 5 min read)"
-              className="w-full border rounded p-2"
+              className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block font-semibold mb-1">Blog Image</label>
-            <div className="flex gap-4 mb-2">
+            <label className="block text-[var(--text-primary)] font-semibold mb-2">
+              Blog Image
+            </label>
+            <div className="flex gap-4 mb-3">
               <button
                 type="button"
-                className={`px-3 py-1 rounded ${
-                  imageMode === "url" ? "bg-indigo-500 text-white" : "bg-gray-200"
+                className={`px-4 py-2 rounded-lg transition-colors duration-200 font-medium ${
+                  imageMode === "url"
+                    ? "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
+                    : "bg-[var(--background-paper)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--background-default)]"
                 }`}
                 onClick={() => setImageMode("url")}
               >
@@ -538,8 +681,10 @@ const BlogEditor = () => {
               </button>
               <button
                 type="button"
-                className={`px-3 py-1 rounded ${
-                  imageMode === "upload" ? "bg-indigo-500 text-white" : "bg-gray-200"
+                className={`px-4 py-2 rounded-lg transition-colors duration-200 font-medium ${
+                  imageMode === "upload"
+                    ? "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
+                    : "bg-[var(--background-paper)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--background-default)]"
                 }`}
                 onClick={() => setImageMode("upload")}
               >
@@ -549,23 +694,33 @@ const BlogEditor = () => {
             {imageMode === "url" ? (
               <input
                 type="text"
-                className="w-full border rounded p-2"
+                className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
                 placeholder="Paste image URL..."
                 value={imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
               />
             ) : (
               <div
-                className="w-full border-2 border-dashed rounded p-4 text-center cursor-pointer bg-gray-50 hover:bg-gray-100"
+                className="w-full border-2 border-dashed border-[var(--border-main)] rounded-lg p-6 text-center cursor-pointer bg-[var(--background-paper)] hover:bg-[var(--background-default)] transition-colors duration-200"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onClick={() => fileInputRef.current?.click()}
                 style={{ minHeight: 120 }}
               >
                 {imageUrl ? (
-                  <img src={imageUrl} alt="Preview" className="mx-auto max-h-32" />
+                  <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="mx-auto max-h-32 rounded-lg shadow-lg"
+                  />
                 ) : (
-                  <div>Drag & drop or click to select an image</div>
+                  <div className="text-[var(--text-secondary)]">
+                    <div className="text-lg mb-2">📁</div>
+                    <div className="font-medium text-[var(--text-primary)] mb-1">
+                      Drag & drop or click to select an image
+                    </div>
+                    <div className="text-sm">Supports: JPG, PNG, GIF, WebP</div>
+                  </div>
                 )}
                 <input
                   type="file"
@@ -574,34 +729,48 @@ const BlogEditor = () => {
                   style={{ display: "none" }}
                   onChange={e => handleFileChange(e.target.files[0])}
                 />
-                {uploadError && <div className="text-red-500 mt-2">{uploadError}</div>}
+                {uploadError && (
+                  <div className="text-red-500 mt-3 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded">
+                    {uploadError}
+                  </div>
+                )}
               </div>
             )}
             {imageUrl && (
-              <div className="mt-2">
+              <div className="mt-4">
                 <div className="relative inline-block">
-                  <img src={imageUrl} alt="Selected" className="max-h-32 rounded shadow mx-auto" />
-                  {/* Delete button - only show for existing blogs with original image object */}
-                  {id && originalImageObject && (
-                    <button
-                      type="button"
-                      onClick={handleDeleteImage}
-                      disabled={deleteImageMutation.isPending}
-                      className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Delete image"
-                    >
-                      ×
-                    </button>
-                  )}
+                  <img
+                    src={imageUrl}
+                    alt="Selected"
+                    className="max-h-32 rounded-lg shadow-lg mx-auto border border-[var(--border-main)]"
+                  />
+                  {/* Delete button - only show for existing blogs with valid original image object */}
+                  {id &&
+                    originalImageObject &&
+                    originalImageObject.url &&
+                    originalImageObject.public_id && (
+                      <button
+                        type="button"
+                        onClick={handleDeleteImage}
+                        disabled={deleteImageMutation.isPending}
+                        className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Delete image"
+                      >
+                        ×
+                      </button>
+                    )}
                 </div>
-                {/* Show delete button info for existing blogs */}
-                {id && originalImageObject && (
-                  <div className="text-center mt-2">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Click the red × button to delete this image
-                    </p>
-                  </div>
-                )}
+                {/* Show delete button info for existing blogs with valid image object */}
+                {id &&
+                  originalImageObject &&
+                  originalImageObject.url &&
+                  originalImageObject.public_id && (
+                    <div className="text-center mt-3">
+                      <p className="text-sm text-[var(--text-secondary)] bg-[var(--background-paper)] p-2 rounded-lg border border-[var(--border-main)]">
+                        Click the red × button to delete this image
+                      </p>
+                    </div>
+                  )}
               </div>
             )}
           </div>

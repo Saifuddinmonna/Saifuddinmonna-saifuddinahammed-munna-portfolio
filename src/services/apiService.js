@@ -859,6 +859,111 @@ export const dashboardAPI = {
   },
 };
 
+// Statistics API functions
+export const statsAPI = {
+  // Get all available statistics endpoints
+  getStatsEndpoints: async () => {
+    console.log("🔍 [Stats API] Calling getStatsEndpoints...");
+    try {
+      const response = await api.get("/api/stats");
+      console.log("✅ [Stats API] getStatsEndpoints Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ [Stats API] getStatsEndpoints Error:", error);
+      throw error;
+    }
+  },
+
+  // Get all collections document counts
+  getAllCounts: async () => {
+    console.log("🔍 [Stats API] Calling getAllCounts...");
+    try {
+      const response = await api.get("/api/stats/counts");
+      console.log("✅ [Stats API] getAllCounts Response:", response.data);
+      console.log("📊 [Stats API] Response structure:", {
+        success: response.data.success,
+        message: response.data.message,
+        hasData: !!response.data.data,
+        dataKeys: response.data.data ? Object.keys(response.data.data) : [],
+        collections: response.data.data?.collections
+          ? Object.keys(response.data.data.collections)
+          : [],
+      });
+
+      // Fix: Handle different response structures
+      let processedData = response.data;
+
+      // If response has data property, use it
+      if (response.data.data) {
+        processedData = {
+          success: response.data.success,
+          message: response.data.message,
+          data: response.data.data,
+        };
+      }
+      // If response is direct data (no data wrapper)
+      else if (response.data.success === undefined) {
+        processedData = {
+          success: true,
+          message: "Statistics retrieved successfully",
+          data: {
+            totalCollections: Object.keys(response.data).length,
+            collections: response.data,
+            timestamp: new Date().toISOString(),
+          },
+        };
+      }
+
+      console.log("🔧 [Stats API] Processed data:", processedData);
+      return processedData;
+    } catch (error) {
+      console.error("❌ [Stats API] getAllCounts Error:", error);
+      console.error("❌ [Stats API] Error response:", error.response?.data);
+      console.error("❌ [Stats API] Error status:", error.response?.status);
+      throw error;
+    }
+  },
+
+  // Get simple counts (main collections only)
+  getSimpleCounts: async () => {
+    console.log("🔍 [Stats API] Calling getSimpleCounts...");
+    try {
+      const response = await api.get("/api/stats/simple");
+      console.log("✅ [Stats API] getSimpleCounts Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ [Stats API] getSimpleCounts Error:", error);
+      throw error;
+    }
+  },
+
+  // Get detailed statistics with additional info
+  getDetailedStats: async () => {
+    console.log("🔍 [Stats API] Calling getDetailedStats...");
+    try {
+      const response = await api.get("/api/stats/detailed");
+      console.log("✅ [Stats API] getDetailedStats Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ [Stats API] getDetailedStats Error:", error);
+      throw error;
+    }
+  },
+
+  // Get real-time statistics
+  getRealTimeStats: async () => {
+    console.log("🔍 [Stats API] Calling getRealTimeStats...");
+    try {
+      const response = await api.get("/api/stats/realtime");
+      console.log("✅ [Stats API] getRealTimeStats Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ [Stats API] getRealTimeStats Error:", error);
+      throw error;
+    }
+  },
+};
+
 // Utility functions
 export const apiUtils = {
   // Handle file upload
@@ -927,3 +1032,67 @@ export const getProjectWork = myProjectWorksAPI.getProjectWork;
 export const resumeApiPdf = resumeAPI.downloadResumePdf;
 export const resumeApiDoxc = resumeAPI.downloadResumeDocx;
 export const deleteBlogImage = blogAPI.deleteBlogImage;
+
+// Dashboard data functions
+export const getBlogs = async () => {
+  console.log("🔍 [Dashboard API] Calling getBlogs...");
+  try {
+    const response = await api.get("/api/blogs");
+    console.log("✅ [Dashboard API] getBlogs Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.warn("❌ [Dashboard API] Blogs API error:", error.message);
+    console.warn("❌ [Dashboard API] Blogs error details:", error.response?.data);
+    // Return empty data instead of throwing error
+    return { data: [] };
+  }
+};
+
+export const getTestimonials = async () => {
+  console.log("🔍 [Dashboard API] Calling getTestimonials...");
+  try {
+    const response = await api.get("/api/testimonials/admin/all");
+    console.log("✅ [Dashboard API] getTestimonials Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.warn("❌ [Dashboard API] Testimonials API error:", error.message);
+    console.warn("❌ [Dashboard API] Testimonials error details:", error.response?.data);
+    // Return empty data instead of throwing error
+    return { data: [] };
+  }
+};
+
+export const getCategories = async () => {
+  console.log("🔍 [Dashboard API] Calling getCategories...");
+  try {
+    const response = await api.get("/api/categories");
+    console.log("✅ [Dashboard API] getCategories Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.warn("❌ [Dashboard API] Categories API error:", error.message);
+    console.warn("❌ [Dashboard API] Categories error details:", error.response?.data);
+    // Return empty data instead of throwing error
+    return { data: [] };
+  }
+};
+
+export const getResumes = async () => {
+  console.log("🔍 [Dashboard API] Calling getResumes...");
+  try {
+    const response = await api.get("/api/resumes");
+    console.log("✅ [Dashboard API] getResumes Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.warn("❌ [Dashboard API] Resumes API error:", error.message);
+    console.warn("❌ [Dashboard API] Resumes error details:", error.response?.data);
+    // Return empty data instead of throwing error
+    return { data: [] };
+  }
+};
+
+// Stats convenience functions
+export const getStatsEndpoints = statsAPI.getStatsEndpoints;
+export const getAllCounts = statsAPI.getAllCounts;
+export const getSimpleCounts = statsAPI.getSimpleCounts;
+export const getDetailedStats = statsAPI.getDetailedStats;
+export const getRealTimeStats = statsAPI.getRealTimeStats;
