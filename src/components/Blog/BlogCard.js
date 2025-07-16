@@ -1,6 +1,6 @@
 import React, { useState, useMemo, memo } from "react";
 import { Link } from "react-router-dom";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaEdit } from "react-icons/fa";
 
 const BlogCard = memo(({ blog, handleLike, user }) => {
   const [showFullContent, setShowFullContent] = useState(false);
@@ -55,9 +55,14 @@ const BlogCard = memo(({ blog, handleLike, user }) => {
 
   // Check if user liked this post
   const hasLiked = useMemo(() => {
-    if (!user || !blog.likes) return false;
-    return blog.likes.some(like => like.email === user.email);
+    if (!user) return false;
+    return (blog.likes || []).some(like => like.email === user.email);
   }, [user, blog.likes]);
+
+  // Permission logic for edit button
+  const isAdmin = user?.role === "admin";
+  const isAuthor = user?.email && blog.author?.email && user.email === blog.author.email;
+  const canEdit = isAdmin || isAuthor;
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -178,22 +183,33 @@ const BlogCard = memo(({ blog, handleLike, user }) => {
               title={hasLiked ? "Unlike this post" : "Like this post"}
             >
               {hasLiked ? <FaHeart /> : <FaRegHeart />}
-              <span>{blog.likes?.length || 0}</span>
+              <span>{(blog.likes || []).length}</span>
             </button>
-            <Link
-              to={`/blog/${blog._id}`}
-              className="bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 flex-shrink-0"
-            >
-              Full Post
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Link>
+            <div className="flex items-center gap-2">
+              {canEdit && (
+                <Link
+                  to={`/blog/edit/${blog._id}`}
+                  className="text-yellow-500 hover:text-yellow-600 p-2 rounded-full transition-colors duration-200"
+                  title="Edit this post"
+                >
+                  <FaEdit size={18} />
+                </Link>
+              )}
+              <Link
+                to={`/blog/${blog._id}`}
+                className="bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 flex-shrink-0"
+              >
+                Full Post
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

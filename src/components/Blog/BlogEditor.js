@@ -48,13 +48,33 @@ const BlogEditor = () => {
 
   // Handle tag input
   const handleTagInputChange = e => {
-    setTagInput(e.target.value);
+    const value = e.target.value;
+    // যদি শেষ ক্যারেক্টার কমা হয়, তখনই ট্যাগ যোগ করো
+    if (value.endsWith(",")) {
+      const newTags = value
+        .slice(0, -1) // শেষের কমা বাদ
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag && !tags.includes(tag));
+      if (newTags.length > 0) {
+        setTags([...tags, ...newTags]);
+      }
+      setTagInput(""); // ইনপুট ক্লিয়ার
+    } else {
+      setTagInput(value);
+    }
   };
 
-  // Add tag
+  // Add tag (handles comma-separated input)
   const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
+    if (tagInput.trim()) {
+      const newTags = tagInput
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag && !tags.includes(tag));
+      if (newTags.length > 0) {
+        setTags([...tags, ...newTags]);
+      }
       setTagInput("");
     }
   };
@@ -64,7 +84,7 @@ const BlogEditor = () => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  // Handle tag input key press
+  // Handle tag input key press (Enter adds all tags)
   const handleTagKeyPress = e => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -423,52 +443,43 @@ const BlogEditor = () => {
 
     setIsSaving(true);
     try {
-      console.log("=== SUBMIT DEBUG ===");
-      console.log("imageMode:", imageMode);
-      console.log("imageFile:", imageFile);
-      console.log("imageUrl:", imageUrl);
-      console.log("imageFile instanceof File:", imageFile instanceof File);
+      // Utility function to flatten deeply nested arrays
+      const flatten = arr =>
+        arr.reduce(
+          (flat, toFlatten) =>
+            flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten),
+          []
+        );
+      // Slug generator from title
+      const generateSlug = title =>
+        title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)+/g, "");
 
       const formDataToSend = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("content", formData.content);
-
-      // Handle categories as array
       formData.categories.forEach(categoryId => {
         formDataToSend.append("categories", categoryId);
       });
-
-      // Handle tags as array
-      tags.forEach(tag => {
+      // Flatten tags and only append string values
+      const flatTags = flatten(tags).filter(tag => typeof tag === "string");
+      flatTags.forEach(tag => {
         formDataToSend.append("tags", tag);
       });
-
+      // Add slug
+      const slug = generateSlug(formData.title);
+      formDataToSend.append("slug", slug);
       formDataToSend.append("authorName", formData.author.name);
       formDataToSend.append("authorEmail", formData.author.email);
       formDataToSend.append("authorPhone", formData.author.phone);
       formDataToSend.append("status", formData.status);
       formDataToSend.append("readTime", formData.readTime);
-
       if (imageMode === "upload" && imageFile) {
-        console.log("=== IMAGE FILE DEBUG ===");
-        console.log("imageFile type:", typeof imageFile);
-        console.log("imageFile instanceof File:", imageFile instanceof File);
-        console.log("imageFile name:", imageFile.name);
-        console.log("imageFile size:", imageFile.size);
-        console.log("imageFile type (mime):", imageFile.type);
-        console.log("========================");
-
-        formDataToSend.append("image", imageFile); // Send the actual file
-
-        // Log FormData entries
-        console.log("=== FORMDATA ENTRIES ===");
-        for (let [key, value] of formDataToSend.entries()) {
-          console.log(`${key}:`, typeof value === "object" ? `File: ${value.name}` : value);
-        }
-        console.log("=========================");
+        formDataToSend.append("image", imageFile);
       } else if (imageMode === "url" && imageUrl) {
-        formDataToSend.append("image", imageUrl); // Send the URL string
-        console.log("Sending image URL:", imageUrl);
+        formDataToSend.append("image", imageUrl);
       }
 
       console.log("=== FINAL FORMDATA CHECK ===");
@@ -477,9 +488,15 @@ const BlogEditor = () => {
       }
       console.log("===========================");
 
-      await createBlogMultipart(formDataToSend);
-
-      toast.success("Blog post created successfully!");
+      if (id) {
+        // Update mode
+        await blogService.updateBlog(id, formDataToSend);
+        toast.success("Blog post updated successfully!");
+      } else {
+        // Create mode
+        await createBlogMultipart(formDataToSend);
+        toast.success("Blog post created successfully!");
+      }
       navigate("/blog");
     } catch (error) {
       console.error("Submit error:", error);
