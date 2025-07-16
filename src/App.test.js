@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
 // Mock canvas context
 const mockContext = {
@@ -35,9 +35,9 @@ const mockContext = {
 HTMLCanvasElement.prototype.getContext = jest.fn(() => mockContext);
 
 // Mock ReactConfetti
-jest.mock('react-confetti', () => () => null);
+jest.mock("react-confetti", () => () => null);
 
-test('renders portfolio website', () => {
+test("renders portfolio website", () => {
   render(<App />);
   const nameElement = screen.getByText(/Saifuddin Ahammed Munna/i);
   expect(nameElement).toBeInTheDocument();

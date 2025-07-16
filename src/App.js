@@ -1,10 +1,23 @@
-import { lazy, Suspense, createContext, useContext } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createContext } from "react";
+import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import ReactConfetti from "react-confetti";
 import { theme } from "./theme/theme";
-import PortfolioLayou from "../src/components/MyPortfolios/MyPortfolioLayout/PortfolioLayout.js";
+import router from "./components/layout/Router/router";
+
+import { AuthProvider } from "./auth/context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
+
+// Import SocketProvider directly
+import { SocketProvider } from "./socketIo/SocketProvider";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { initializeErrorHandling } from "./utils/errorHandler";
+import WhatsAppButton from "./components/ui/WhatsAppButton";
+const PerformanceMonitor = lazy(() => import("./components/features/PerformanceMonitor"));
+const PerformanceOptimizer = lazy(() => import("./components/features/PerformanceOptimizer"));
 
 // Create Theme Context
 export const ThemeContext = createContext();
@@ -40,6 +53,12 @@ const ThemeProvider = ({ children }) => {
         }
       });
     });
+
+    // Update meta theme-color
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute("content", isDarkMode ? "#1f2937" : "#ffffff");
+    }
   }, [isDarkMode]);
 
   const toggleTheme = () => {
@@ -51,137 +70,31 @@ const ThemeProvider = ({ children }) => {
   );
 };
 
-// Lazy load components
-const MainLayout = lazy(() => import("./components/MainLayouts/MainLayout.js"));
-const HomeLayout = lazy(() => import("./components/MainLayouts/HomeLayout"));
-const About = lazy(() => import("./components/About/About"));
-const ContactPage = lazy(() => import("./pages/ContactPage"));
-const MyPortfolios = lazy(() => import("./components/MyPortfolios/MyPortfolios"));
-const Blog = lazy(() => import("./components/Blog/Blog"));
-const ProjectPage = lazy(() => import("./pages/ProjectPage"));
-const PortfolioLayout = lazy(() =>
-  import("./components/MyPortfolios/MyPortfolioLayout/PortfolioLayout")
-);
-const MyportfolioImage = lazy(() => import("./components/MyPortfolios/MyportfolioImage"));
-const GalleryPage = lazy(() => import("./pages/GalleryPage"));
-
+// Enhanced QueryClient configuration for v5
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 10 * 60 * 1000, // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime in v5)
+      retry: (failureCount, error) => {
+        // Don't retry on 4xx errors
+        if (error?.response?.status >= 400 && error?.response?.status < 500) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      refetchOnMount: true,
+    },
+    mutations: {
+      retry: 1,
     },
   },
 });
 
-// Loading component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
-    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
-  </div>
-);
-
 function App() {
   const [confettiStart, setConfettiStart] = useState(true);
-
-  const router = createBrowserRouter([
-    {
-      path: "/projects/:projectName",
-      element: (
-        <Suspense fallback={<LoadingSpinner />}>
-          <ProjectPage />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/",
-      element: (
-        <Suspense fallback={<LoadingSpinner />}>
-          <MainLayout />
-        </Suspense>
-      ),
-      children: [
-        {
-          path: "/",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <HomeLayout />
-            </Suspense>
-          ),
-        },
-        {
-          path: "/about",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <About />
-            </Suspense>
-          ),
-        },
-        {
-          path: "/about",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              {" "}
-              <PortfolioLayou />{" "}
-            </Suspense>
-          ),
-        },
-        {
-          path: "/gallery",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <GalleryPage />
-            </Suspense>
-          ),
-        },
-        {
-          path: "/contractMe",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <ContactPage />
-            </Suspense>
-          ),
-        },
-        {
-          path: "/mywork",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <MyPortfolios />
-            </Suspense>
-          ),
-        },
-        {
-          path: "/blog",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <Blog />
-            </Suspense>
-          ),
-        },
-      ],
-    },
-    {
-      path: "/portfoliolayout",
-      element: (
-        <Suspense fallback={<LoadingSpinner />}>
-          <PortfolioLayout />
-        </Suspense>
-      ),
-      children: [
-        {
-          path: "/portfoliolayout/:UsedPhone",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <MyportfolioImage />
-            </Suspense>
-          ),
-          loader: () => {
-            return fetch("portfolios.json");
-          },
-        },
-      ],
-    },
-  ]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -190,15 +103,42 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Initialize error handling
+  useEffect(() => {
+    initializeErrorHandling();
+  }, []);
+
   return (
-    <ThemeProvider>
+    <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <div className=" bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200  App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-          {confettiStart && <ReactConfetti />}
-          <RouterProvider router={router} />
-        </div>
+        <AuthProvider>
+          <ThemeProvider>
+            <Toaster position="top-right" />
+            <SocketProvider>
+              <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
+                {confettiStart && <ReactConfetti />}
+                <RouterProvider router={router} />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
+                />
+                <PerformanceMonitor />
+                <PerformanceOptimizer />
+                <WhatsAppButton />
+              </div>
+            </SocketProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </QueryClientProvider>
-    </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

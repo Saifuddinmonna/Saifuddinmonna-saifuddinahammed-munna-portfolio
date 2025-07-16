@@ -1,0 +1,124 @@
+/* Resume Layout Styles */
+.resume-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.resume-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.resume-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resume-header p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.resume-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.resume-section {
+  background: var(--background-paper);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resume-section h2 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Responsive Styles for Mobile Devices */
+/* Portrait Mode (412px) */
+@media screen and (max-width: 412px) {
+  .resume-container {
+    padding: 8px;
+  }
+
+  .resume-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .resume-header p {
+    font-size: 0.9rem;
+  }
+
+  .resume-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .resume-section {
+    flex: 1 1 45%;
+    min-width: 150px;
+    padding: 0.8rem;
+  }
+
+  .resume-section h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Landscape Mode (915px) */
+@media screen and (min-width: 413px) and (max-width: 915px) {
+  .resume-container {
+    padding: 15px;
+  }
+
+  .resume-header h1 {
+    font-size: 2rem;
+  }
+
+  .resume-header p {
+    font-size: 1.1rem;
+  }
+
+  .resume-content,
+  .rusumeViewerContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .resume-section {
+    flex: 1 1 45%;
+    min-width: 200px;
+    padding: 1.2rem;
+  }
+
+  .resume-section h2 {
+    font-size: 1.4rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .resume-container {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .resume-section {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}

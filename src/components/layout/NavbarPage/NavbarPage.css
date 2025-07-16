@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Titillium Web", sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 1rem;
+  background: var(--primary-main); /* Use theme's primary color for background */
+  color: rgb(255, 255, 255); /* White text for good contrast on primary background */
+  padding: 1.5rem;
+  border-radius: 10px;
+  z-index: 20;
+}
+
+nav a {
+  margin: 0 1rem;
+  color: rgb(255, 255, 255); /* White text for nav links on primary background */
+  text-decoration: none;
+  transition: ease;
+  transition-duration: 1s;
+}
+
+nav a:hover {
+  color: rgba(255, 255, 255, 0.8); /* Slightly transparent white on hover */
+}
+
+header .nav-btn {
+  padding: 5px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255); /* White icon */
+  visibility: hidden;
+  opacity: 0;
+  font-size: 1.8rem;
+}
+
+header div,
+nav {
+  display: flex;
+  align-items: center;
+}
+
+@media only screen and (max-width: 1024px) {
+  header .nav-btn {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  header nav {
+    position: fixed;
+    top: 10px;
+    left: 0;
+    height: 30%;
+    width: 20%;
+    min-width: 200px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: var(--background-elevated); /* Theme-aware background for mobile menu */
+    transition: 1s;
+    transform: translatey(-100vh);
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  header .responsive_nav {
+    transform: none;
+  }
+
+  /* Styles for links and close button inside the mobile/responsive navigation menu */
+  header nav a {
+    font-size: 1.5rem;
+    color: var(--text-primary); /* Theme-aware text color for mobile menu links */
+  }
+
+  header nav a:hover {
+    color: var(--primary-main); /* Or var(--primary-dark) for a different hover effect */
+  }
+
+  header nav .nav-close-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    color: var(--text-primary); /* Theme-aware color for close button */
+  }
+  header nav .nav-close-btn:hover {
+    color: var(--primary-main); /* Or var(--primary-dark) */
+  }
+}

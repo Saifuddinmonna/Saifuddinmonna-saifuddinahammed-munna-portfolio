@@ -1,0 +1,245 @@
+.resumeViewerContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.resumeViewerContent {
+  flex: 1 1 45%;
+  min-width: 200px;
+  background: var(--background-paper);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resumeViewerHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.resumeViewerHeader h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resumeViewerHeader p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+/* Portrait Mode (412px) */
+@media screen and (max-width: 412px) {
+  .resumeViewerContainer {
+    padding: 8px;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .resumeViewerContainer > div {
+    width: 100%;
+  }
+
+  .resumeViewerContainer .flex-1 {
+    flex: 1 1 100%;
+  }
+
+  .resumeViewerContent {
+    padding: 0.8rem;
+    min-width: 150px;
+  }
+
+  .resumeViewerHeader h1 {
+    font-size: 1.6rem;
+  }
+
+  .resumeViewerHeader p {
+    font-size: 0.9rem;
+  }
+
+  /* Make tab buttons stack vertically on mobile */
+  .resumeViewerContainer .flex-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resumeViewerContainer .flex-wrap button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Download buttons grid for mobile */
+  .resumeViewerContainer .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Landscape Mode (915px) */
+@media screen and (min-width: 413px) and (max-width: 776px) {
+  .resumeViewerContainer {
+    padding: 15px;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .resumeViewerContainer > div {
+    width: 100%;
+  }
+
+  .resumeViewerContainer .flex-1 {
+    flex: 1 1 100%;
+  }
+
+  /* Make buttons stack vertically on mobile */
+  .resumeViewerContainer .flex-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resumeViewerContainer .flex-wrap button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Adjust sidebar layout */
+  .resumeViewerContainer .bg-background-default {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .resumeViewerHeader h1 {
+    font-size: 2rem;
+  }
+
+  .resumeViewerHeader p {
+    font-size: 1.1rem;
+  }
+
+  /* Download buttons grid for tablet */
+  .resumeViewerContainer .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Desktop Mode (777px and above) */
+@media screen and (min-width: 777px) {
+  .resumeViewerContainer {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .resumeViewerContainer .flex-1 {
+    flex: 1;
+  }
+
+  /* Download buttons grid for desktop */
+  .resumeViewerContainer .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Tab buttons in row for desktop */
+  .resumeViewerContainer .flex-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .resumeViewerContainer .flex-wrap button {
+    width: auto;
+    margin-bottom: 0;
+  }
+}
+
+/* Tab Button Styles */
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.tab-button.active {
+  background: linear-gradient(
+    to right,
+    var(--primary-main, #3b82f6),
+    var(--secondary-main, #06b6d4)
+  );
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+  border-color: var(--primary-main, #3b82f6);
+}
+
+.tab-button.active span,
+.tab-button.active svg {
+  color: white !important;
+  fill: white !important;
+  stroke: white !important;
+}
+
+/* Ensure text is always visible in active state */
+.tab-button.active * {
+  color: white !important;
+}
+
+.tab-button:not(.active) {
+  background: var(--background-paper, #ffffff);
+  color: var(--text-primary, #1f2937);
+  border-color: var(--border-main, #e5e7eb);
+}
+
+.tab-button:not(.active):hover {
+  background: var(--background-elevated, #f9fafb);
+  color: var(--primary-main, #3b82f6);
+  border-color: var(--primary-main, #3b82f6);
+  transform: translateY(-1px);
+}
+
+/* Download Button Styles */
+.download-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.3s;
+  width: 100%;
+  background: var(--primary-light, #dbeafe);
+  color: var(--text-primary, #1f2937);
+  border: 1px solid var(--border-main, #e5e7eb);
+}
+
+.download-button:hover {
+  background: var(--primary-main, #3b82f6);
+  color: white;
+}
+
+.download-button svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.25rem;
+}
+
+/* Print Styles */
+@media print {
+  .resumeViewerContainer {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .resumeViewerContent {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}
