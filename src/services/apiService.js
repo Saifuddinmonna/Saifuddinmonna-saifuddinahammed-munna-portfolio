@@ -9,7 +9,7 @@ const baseURL = BASE_API_URL;
 // Create axios instance
 const api = axios.create({
   baseURL: baseURL,
-  timeout: 7000, // Default timeout for regular requests
+  timeout: 10000, // Default timeout for regular requests
   headers: {
     "Content-Type": "application/json",
   },

@@ -41,7 +41,7 @@ const HomePageHero = () => {
             transition={{ type: "spring", stiffness: 300 }}
           >
             <img
-              src="images/profile1.png"
+              src="android-chrome-512x512.png"
               className="mask mask-hexagon w-full h-full object-cover rounded-lg shadow-2xl border-4 border-white/20"
               alt="Saifuddin Ahammed Munna"
               loading="eager"

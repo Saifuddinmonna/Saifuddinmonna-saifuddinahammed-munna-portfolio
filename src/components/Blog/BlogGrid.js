@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import BlogCard from "./BlogCard";
 
-const BlogGrid = memo(({ blogs }) => {
-  console.log("📊 [BlogGrid] from BlogGrid.js blogs:", blogs);
+const BlogGrid = memo(({ blogs, handleLike, user }) => {
+  console.log("\uD83D\uDCCA [BlogGrid] from BlogGrid.js blogs:", blogs);
 
   if (!blogs || blogs.length === 0) {
     return (
@@ -19,7 +19,7 @@ const BlogGrid = memo(({ blogs }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
       {blogs.map(blog => (
         <div key={blog._id} className="flex">
-          <BlogCard blog={blog} />
+          <BlogCard blog={blog} handleLike={handleLike} user={user} />
         </div>
       ))}
     </div>

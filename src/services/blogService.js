@@ -165,4 +165,46 @@ export const blogService = {
       throw new Error(error.response?.data?.message || "Failed to toggle like");
     }
   },
+
+  // Get blogs by category ID
+  getBlogsByCategory: async (categoryId, { page = 1, limit = 10, search = "" } = {}) => {
+    try {
+      console.log("Fetching blogs for category:", categoryId);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        category: categoryId,
+      });
+
+      if (search) params.append("search", search);
+
+      const response = await api.get(`/api/blogs?${params.toString()}`);
+      console.log("Blogs by category response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching blogs by category:", error);
+      throw new Error(error.response?.data?.message || "Failed to fetch blogs by category");
+    }
+  },
+
+  // Get blogs by category ID with pagination
+  getBlogsByCategoryPaginated: async (categoryId, page = 1, limit = 10) => {
+    try {
+      console.log("Fetching paginated blogs for category:", categoryId, "page:", page);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        category: categoryId,
+      });
+
+      const response = await api.get(`/api/blogs?${params.toString()}`);
+      console.log("Paginated blogs by category response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching paginated blogs by category:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch paginated blogs by category"
+      );
+    }
+  },
 };

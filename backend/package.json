@@ -20,7 +20,11 @@
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["portfolio", "backend", "api"],
+  "keywords": [
+    "portfolio",
+    "backend",
+    "api"
+  ],
   "author": "Saifuddin Ahammed Monna",
   "license": "MIT"
 }

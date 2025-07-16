@@ -1,7 +1,8 @@
 import React, { useState, useMemo, memo } from "react";
 import { Link } from "react-router-dom";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-const BlogCard = memo(({ blog }) => {
+const BlogCard = memo(({ blog, handleLike, user }) => {
   const [showFullContent, setShowFullContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -17,15 +18,20 @@ const BlogCard = memo(({ blog }) => {
     return null;
   }, [blog.image]);
 
-  // Get category name - handle both populated object and ID
-  const categoryName = useMemo(() => {
-    if (!blog.category) return "General";
-    if (typeof blog.category === "string") return blog.category;
-    if (blog.category && typeof blog.category === "object" && blog.category.name) {
-      return blog.category.name;
+  // Get categories - support array of objects
+  const categoryBadges = useMemo(() => {
+    if (Array.isArray(blog.categories) && blog.categories.length > 0) {
+      return blog.categories.map(cat =>
+        typeof cat === "object" && cat.name ? cat.name : typeof cat === "string" ? cat : "General"
+      );
     }
-    return blog.category || "General";
-  }, [blog.category]);
+    // fallback for old data
+    if (blog.category) {
+      if (typeof blog.category === "object" && blog.category.name) return [blog.category.name];
+      if (typeof blog.category === "string") return [blog.category];
+    }
+    return ["General"];
+  }, [blog.categories, blog.category]);
 
   // Memoize content processing for better performance
   const { plainText, truncatedText, hasMoreContent, displayText } = useMemo(() => {
@@ -46,6 +52,12 @@ const BlogCard = memo(({ blog }) => {
 
     return { plainText, truncatedText, hasMoreContent, displayText };
   }, [blog.content, showFullContent]);
+
+  // Check if user liked this post
+  const hasLiked = useMemo(() => {
+    if (!user || !blog.likes) return false;
+    return blog.likes.some(like => like.email === user.email);
+  }, [user, blog.likes]);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -85,9 +97,14 @@ const BlogCard = memo(({ blog }) => {
       <div className="p-4 sm:p-6 flex-1 flex flex-col">
         {/* Category and Read Time */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="px-4 py-2 bg-[var(--primary-dark)] text-white rounded-full text-sm font-extrabold shadow-lg border-2 border-white/20">
-            {categoryName}
-          </span>
+          {categoryBadges.map((cat, idx) => (
+            <span
+              key={cat + idx}
+              className="px-4 py-2 bg-[var(--primary-dark)] text-white rounded-full text-sm font-extrabold shadow-lg border-2 border-white/20 category-badge"
+            >
+              {cat}
+            </span>
+          ))}
           {blog.readTime && (
             <span className="text-[var(--text-secondary)] text-xs">{blog.readTime}</span>
           )}
@@ -139,7 +156,7 @@ const BlogCard = memo(({ blog }) => {
           </div>
 
           {/* Action Buttons - Fixed at bottom */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 mt-2">
             <div className="flex-1">
               {hasMoreContent && (
                 <button
@@ -150,6 +167,19 @@ const BlogCard = memo(({ blog }) => {
                 </button>
               )}
             </div>
+            {/* Like Button */}
+            <button
+              onClick={() => handleLike && handleLike(blog._id)}
+              className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
+                hasLiked
+                  ? "text-red-500 hover:text-red-600"
+                  : "text-[var(--text-secondary)] hover:text-[var(--primary-main)]"
+              }`}
+              title={hasLiked ? "Unlike this post" : "Like this post"}
+            >
+              {hasLiked ? <FaHeart /> : <FaRegHeart />}
+              <span>{blog.likes?.length || 0}</span>
+            </button>
             <Link
               to={`/blog/${blog._id}`}
               className="bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 flex-shrink-0"

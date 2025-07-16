@@ -14,6 +14,8 @@ const BlogPost = () => {
   const [comment, setComment] = useState("");
   const [editingComment, setEditingComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
+  // For copy-to-clipboard feedback per badge
+  const [copiedIdx, setCopiedIdx] = useState(null);
 
   const {
     data: response,
@@ -29,6 +31,26 @@ const BlogPost = () => {
   });
 
   const post = response?.data || response;
+
+  // Get categories - show only name, fallback to ID, fallback to 'General'
+  let categoryBadges = [{ name: "General" }];
+  if (post) {
+    if (Array.isArray(post.categories) && post.categories.length > 0) {
+      categoryBadges = post.categories.map(cat => {
+        if (typeof cat === "object") {
+          return { name: cat.name || cat._id || "General" };
+        }
+        if (typeof cat === "string") return { name: cat };
+        return { name: "General" };
+      });
+    } else if (post.category) {
+      if (typeof post.category === "object") {
+        categoryBadges = [{ name: post.category.name || post.category._id || "General" }];
+      } else if (typeof post.category === "string") {
+        categoryBadges = [{ name: post.category }];
+      }
+    }
+  }
 
   const likeMutation = useMutation({
     mutationFn: () =>
@@ -201,6 +223,21 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate("/blog")}
+          className="mb-6 flex items-center gap-2 px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Back to Blog
+        </button>
         <article className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg">
           {post.image && (
             <img
@@ -234,6 +271,16 @@ const BlogPost = () => {
             </div>
 
             <div className="flex items-center text-sm text-[var(--text-secondary)] mb-8">
+              {/* Category badges - stacked name and ID */}
+              {categoryBadges.map((cat, idx) => (
+                <span
+                  key={cat.name + idx}
+                  className="px-3 py-1 bg-[var(--primary-dark)] text-white rounded-full text-xs font-bold shadow border-white/20 mr-2 category-badge flex flex-col items-center"
+                  style={{ minWidth: 80 }}
+                >
+                  <span className="font-bold">{cat.name}</span>
+                </span>
+              ))}
               <span>By {post.author?.name || "Anonymous"}</span>
               <span className="mx-2">•</span>
               <span>{new Date(post.createdAt).toLocaleDateString()}</span>

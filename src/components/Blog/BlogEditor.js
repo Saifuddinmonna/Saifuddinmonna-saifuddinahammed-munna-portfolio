@@ -21,15 +21,16 @@ const BlogEditor = () => {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    category: "",
+    categories: [], // Changed from category to categories array
+    tags: [], // Added tags array
     image: "",
     readTime: "",
     author: {
       name: user?.displayName || user?.email?.split("@")[0] || "Anonymous",
       email: user?.email || "",
       phone: "",
-      isHidden: false,
     },
+    status: "published", // Added status field
   });
   const [isSaving, setIsSaving] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -40,6 +41,36 @@ const BlogEditor = () => {
   const [uploadError, setUploadError] = useState(null);
   const [originalImageObject, setOriginalImageObject] = useState(null); // Store original image object for deletion
   const fileInputRef = useRef();
+
+  // Add state for tags
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState([]);
+
+  // Handle tag input
+  const handleTagInputChange = e => {
+    setTagInput(e.target.value);
+  };
+
+  // Add tag
+  const handleAddTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  // Remove tag
+  const handleRemoveTag = tagToRemove => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  // Handle tag input key press
+  const handleTagKeyPress = e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
 
   // Debug useEffect to monitor formData changes
   useEffect(() => {
@@ -83,7 +114,8 @@ const BlogEditor = () => {
           console.log("Data structure:", {
             title: data.title,
             content: data.content,
-            category: data.category,
+            categories: data.categories,
+            tags: data.tags,
             image: data.image,
             author: data.author,
             hasAuthor: !!data.author,
@@ -122,32 +154,35 @@ const BlogEditor = () => {
           const formDataToSet = {
             title: actualData.title || "",
             content: actualData.content || "",
-            category: actualData.category || "",
+            categories: actualData.categories || [], // Changed to array
+            tags: actualData.tags || [], // Added tags
             image: imageUrl,
             readTime: actualData.readTime || "",
+            status: actualData.status || "published", // Added status
             author: {
               name:
                 authorData.name || user?.displayName || user?.email?.split("@")[0] || "Anonymous",
               email: authorData.email || user?.email || "",
               phone: authorData.phone || "",
-              isHidden: authorData.isHidden || false,
             },
           };
 
           console.log("=== FORM DATA SETTING DEBUG ===");
-          console.log("Original category from server:", actualData.category);
-          console.log("Category type:", typeof actualData.category);
-          console.log("Category value:", actualData.category);
-          console.log("Final category in formData:", formDataToSet.category);
+          console.log("Original categories from server:", actualData.categories);
+          console.log("Categories type:", typeof actualData.categories);
+          console.log("Categories value:", actualData.categories);
+          console.log("Final categories in formData:", formDataToSet.categories);
+          console.log("Tags:", formDataToSet.tags);
           console.log("=================================");
 
           console.log("Setting form data:", formDataToSet);
           console.log("Form data title:", formDataToSet.title);
-          console.log("Form data category:", formDataToSet.category);
+          console.log("Form data categories:", formDataToSet.categories);
           console.log("Form data image:", formDataToSet.image);
           console.log("Original image object:", originalImage);
 
           setFormData(formDataToSet);
+          setTags(formDataToSet.tags); // Set tags state
           setImageUrl(imageUrl); // Set image URL for preview
           setImageMode(imageUrl ? "url" : "upload"); // Set mode based on existing image
           setOriginalImageObject(originalImage); // Store original image object
@@ -288,6 +323,21 @@ const BlogEditor = () => {
     return found || null;
   }, [formData.category, groupedCategoryOptions]);
 
+  // Update category selection to handle array
+  const handleCategoryChange = selectedOptions => {
+    if (Array.isArray(selectedOptions)) {
+      // Multiple selection
+      const categoryIds = selectedOptions.map(option => option.value);
+      setFormData(prev => ({ ...prev, categories: categoryIds }));
+    } else if (selectedOptions) {
+      // Single selection
+      setFormData(prev => ({ ...prev, categories: [selectedOptions.value] }));
+    } else {
+      // No selection
+      setFormData(prev => ({ ...prev, categories: [] }));
+    }
+  };
+
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
     if (name.startsWith("author.")) {
@@ -362,8 +412,8 @@ const BlogEditor = () => {
       toast.error("Please enter some content");
       return;
     }
-    if (!formData.category.trim()) {
-      toast.error("Please select a category");
+    if (!formData.categories.length) {
+      toast.error("Please select at least one category");
       return;
     }
     if (!formData.author.name.trim()) {
@@ -382,11 +432,21 @@ const BlogEditor = () => {
       const formDataToSend = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("content", formData.content);
-      formDataToSend.append("category", formData.category);
+
+      // Handle categories as array
+      formData.categories.forEach(categoryId => {
+        formDataToSend.append("categories", categoryId);
+      });
+
+      // Handle tags as array
+      tags.forEach(tag => {
+        formDataToSend.append("tags", tag);
+      });
+
       formDataToSend.append("authorName", formData.author.name);
       formDataToSend.append("authorEmail", formData.author.email);
       formDataToSend.append("authorPhone", formData.author.phone);
-      formDataToSend.append("authorIsHidden", !showAuthorInfo);
+      formDataToSend.append("status", formData.status);
       formDataToSend.append("readTime", formData.readTime);
 
       if (imageMode === "upload" && imageFile) {
@@ -553,18 +613,21 @@ const BlogEditor = () => {
           </div>
 
           <div>
-            <label className="block text-[var(--text-primary)] mb-2">Category *</label>
+            <label className="block text-[var(--text-primary)] mb-2">
+              Categories <span className="text-red-500">*</span>
+            </label>
             <Select
               options={groupedCategoryOptions}
-              value={selectedCategoryOption}
-              onChange={option =>
-                setFormData(prev => ({ ...prev, category: option ? option.value : "" }))
-              }
+              value={flatCategoryOptions.filter(option =>
+                formData.categories.includes(option.value)
+              )}
+              onChange={handleCategoryChange}
               isSearchable
-              placeholder="Select a category"
+              placeholder="Select one or more categories (required)"
               classNamePrefix="react-select"
               required
               components={{ Option }}
+              isMulti // Enable multiple selection
               styles={{
                 control: (provided, state) => ({
                   ...provided,
@@ -600,6 +663,22 @@ const BlogEditor = () => {
                       : "var(--background-default)",
                   },
                 }),
+                multiValue: provided => ({
+                  ...provided,
+                  backgroundColor: "var(--primary-light)",
+                }),
+                multiValueLabel: provided => ({
+                  ...provided,
+                  color: "var(--primary-dark)",
+                }),
+                multiValueRemove: provided => ({
+                  ...provided,
+                  color: "var(--primary-dark)",
+                  "&:hover": {
+                    backgroundColor: "var(--primary-main)",
+                    color: "white",
+                  },
+                }),
                 singleValue: provided => ({
                   ...provided,
                   color: "var(--text-primary)",
@@ -632,21 +711,78 @@ const BlogEditor = () => {
                 }),
               }}
             />
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              Please select <b>at least one category</b>. You can select multiple categories by
+              clicking or holding Ctrl (Windows) or Cmd (Mac) while selecting.
+            </p>
+            {formData.categories.length === 0 && (
+              <p className="text-xs text-red-500 mt-1">At least one category is required.</p>
+            )}
             {/* Debug info for category selection */}
             {process.env.NODE_ENV === "development" && (
               <div className="mt-2 text-xs text-[var(--text-secondary)] bg-[var(--background-paper)] p-3 rounded-lg border border-[var(--border-main)]">
                 <p className="mb-1">
-                  <strong>Current category ID:</strong> {formData.category || "None"}
+                  <strong>Selected category IDs:</strong> {formData.categories.join(", ") || "None"}
                 </p>
                 <p className="mb-1">
-                  <strong>Selected option:</strong>{" "}
-                  {selectedCategoryOption ? selectedCategoryOption.label : "None"}
+                  <strong>Selected options:</strong>{" "}
+                  {flatCategoryOptions
+                    .filter(option => formData.categories.includes(option.value))
+                    .map(opt => opt.label)
+                    .join(", ") || "None"}
                 </p>
                 <p>
                   <strong>Categories loaded:</strong> {categories.length}
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Tags Input */}
+          <div className="mb-4">
+            <label className="block text-[var(--text-primary)] font-semibold mb-2">Tags</label>
+            <div className="space-y-2">
+              {/* Tag Input */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={tagInput}
+                  onChange={handleTagInputChange}
+                  onKeyPress={handleTagKeyPress}
+                  placeholder="Add a tag and press Enter"
+                  className="flex-1 px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddTag}
+                  disabled={!tagInput.trim()}
+                  className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* Tags Display */}
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-[var(--primary-light)] text-[var(--primary-dark)] rounded-full text-sm"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(tag)}
+                        className="ml-1 hover:text-red-500 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="mb-4">
@@ -804,7 +940,7 @@ const BlogEditor = () => {
                   name="author.email"
                   value={formData.author.email}
                   onChange={handleInputChange}
-                  placeholder="Author Email (Optional)"
+                  placeholder="Author Email (Required)"
                   className="w-full px-4 py-2 bg-[var(--background-paper)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)]"
                 />
                 <input

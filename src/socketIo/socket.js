@@ -208,137 +208,218 @@ class SocketService {
     if (!this.socket) return;
     this.socket.on("userJoined", callback);
   }
+  offUserJoined(callback) {
+    if (!this.socket) return;
+    this.socket.off("userJoined", callback);
+  }
 
   onUserLeft(callback) {
     if (!this.socket) return;
     this.socket.on("userLeft", callback);
+  }
+  offUserLeft(callback) {
+    if (!this.socket) return;
+    this.socket.off("userLeft", callback);
   }
 
   onUsersList(callback) {
     if (!this.socket) return;
     this.socket.on("usersList", callback);
   }
+  offUsersList(callback) {
+    if (!this.socket) return;
+    this.socket.off("usersList", callback);
+  }
 
   onMessage(callback) {
     if (!this.socket) return;
-    console.log("Setting up message listener");
-    this.socket.on("message", data => {
-      console.log("Socket received message event:", data);
-      callback(data);
-    });
-    // Also listen for publicMessage event
-    this.socket.on("publicMessage", data => {
-      console.log("Socket received publicMessage event:", data);
-      callback(data);
-    });
+    this.socket.on("message", callback);
+    this.socket.on("publicMessage", callback);
+  }
+  offMessage(callback) {
+    if (!this.socket) return;
+    this.socket.off("message", callback);
+    this.socket.off("publicMessage", callback);
   }
 
   onPrivateMessage(callback) {
     if (!this.socket) return;
-    console.log("Setting up private message listener");
-    this.socket.on("privateMessage", data => {
-      console.log("Socket received private message event:", data);
-      callback(data);
-    });
+    this.socket.on("privateMessage", callback);
+  }
+  offPrivateMessage(callback) {
+    if (!this.socket) return;
+    this.socket.off("privateMessage", callback);
   }
 
   onRoomMessage(callback) {
     if (!this.socket) return;
-    console.log("Setting up room message listener");
-    this.socket.on("roomMessage", data => {
-      console.log("Socket received room message event:", data);
-      callback(data);
-    });
+    this.socket.on("roomMessage", callback);
+  }
+  offRoomMessage(callback) {
+    if (!this.socket) return;
+    this.socket.off("roomMessage", callback);
   }
 
   onPublicMessage(callback) {
     if (!this.socket) return;
     this.socket.on("publicMessage", callback);
   }
+  offPublicMessage(callback) {
+    if (!this.socket) return;
+    this.socket.off("publicMessage", callback);
+  }
 
   onMessageHistory(callback) {
     if (!this.socket) return;
     this.socket.on("messageHistory", callback);
+  }
+  offMessageHistory(callback) {
+    if (!this.socket) return;
+    this.socket.off("messageHistory", callback);
   }
 
   onPrivateMessageHistory(callback) {
     if (!this.socket) return;
     this.socket.on("privateMessageHistory", callback);
   }
+  offPrivateMessageHistory(callback) {
+    if (!this.socket) return;
+    this.socket.off("privateMessageHistory", callback);
+  }
 
   onRoomMessageHistory(callback) {
     if (!this.socket) return;
     this.socket.on("roomMessageHistory", callback);
+  }
+  offRoomMessageHistory(callback) {
+    if (!this.socket) return;
+    this.socket.off("roomMessageHistory", callback);
   }
 
   onPublicMessageHistory(callback) {
     if (!this.socket) return;
     this.socket.on("publicMessageHistory", callback);
   }
+  offPublicMessageHistory(callback) {
+    if (!this.socket) return;
+    this.socket.off("publicMessageHistory", callback);
+  }
 
   onUserTyping(callback) {
     if (!this.socket) return;
     this.socket.on("userTyping", callback);
+  }
+  offUserTyping(callback) {
+    if (!this.socket) return;
+    this.socket.off("userTyping", callback);
   }
 
   onMessageRead(callback) {
     if (!this.socket) return;
     this.socket.on("messageRead", callback);
   }
+  offMessageRead(callback) {
+    if (!this.socket) return;
+    this.socket.off("messageRead", callback);
+  }
 
   onAllMessagesRead(callback) {
     if (!this.socket) return;
     this.socket.on("allMessagesRead", callback);
+  }
+  offAllMessagesRead(callback) {
+    if (!this.socket) return;
+    this.socket.off("allMessagesRead", callback);
   }
 
   onMessageDelivered(callback) {
     if (!this.socket) return;
     this.socket.on("messageDelivered", callback);
   }
+  offMessageDelivered(callback) {
+    if (!this.socket) return;
+    this.socket.off("messageDelivered", callback);
+  }
 
   onMessageEdited(callback) {
     if (!this.socket) return;
     this.socket.on("messageEdited", callback);
+  }
+  offMessageEdited(callback) {
+    if (!this.socket) return;
+    this.socket.off("messageEdited", callback);
   }
 
   onMessageDeleted(callback) {
     if (!this.socket) return;
     this.socket.on("messageDeleted", callback);
   }
+  offMessageDeleted(callback) {
+    if (!this.socket) return;
+    this.socket.off("messageDeleted", callback);
+  }
 
   onUnreadCounts(callback) {
     if (!this.socket) return;
     this.socket.on("unreadCounts", callback);
+  }
+  offUnreadCounts(callback) {
+    if (!this.socket) return;
+    this.socket.off("unreadCounts", callback);
   }
 
   onRoomJoined(callback) {
     if (!this.socket) return;
     this.socket.on("roomJoined", callback);
   }
+  offRoomJoined(callback) {
+    if (!this.socket) return;
+    this.socket.off("roomJoined", callback);
+  }
 
   onRoomLeft(callback) {
     if (!this.socket) return;
     this.socket.on("roomLeft", callback);
+  }
+  offRoomLeft(callback) {
+    if (!this.socket) return;
+    this.socket.off("roomLeft", callback);
   }
 
   onUserJoinedRoom(callback) {
     if (!this.socket) return;
     this.socket.on("userJoinedRoom", callback);
   }
+  offUserJoinedRoom(callback) {
+    if (!this.socket) return;
+    this.socket.off("userJoinedRoom", callback);
+  }
 
   onUserLeftRoom(callback) {
     if (!this.socket) return;
     this.socket.on("userLeftRoom", callback);
+  }
+  offUserLeftRoom(callback) {
+    if (!this.socket) return;
+    this.socket.off("userLeftRoom", callback);
   }
 
   onTokenRefreshed(callback) {
     if (!this.socket) return;
     this.socket.on("tokenRefreshed", callback);
   }
+  offTokenRefreshed(callback) {
+    if (!this.socket) return;
+    this.socket.off("tokenRefreshed", callback);
+  }
 
   onError(callback) {
     if (!this.socket) return;
     this.socket.on("error", callback);
+  }
+  offError(callback) {
+    if (!this.socket) return;
+    this.socket.off("error", callback);
   }
 
   // Group event listeners
@@ -346,30 +427,54 @@ class SocketService {
     if (!this.socket) return;
     this.socket.on("groupsList", callback);
   }
+  offGroupsList(callback) {
+    if (!this.socket) return;
+    this.socket.off("groupsList", callback);
+  }
 
   onGroupCreated(callback) {
     if (!this.socket) return;
     this.socket.on("groupCreated", callback);
+  }
+  offGroupCreated(callback) {
+    if (!this.socket) return;
+    this.socket.off("groupCreated", callback);
   }
 
   onGroupJoined(callback) {
     if (!this.socket) return;
     this.socket.on("groupJoined", callback);
   }
+  offGroupJoined(callback) {
+    if (!this.socket) return;
+    this.socket.off("groupJoined", callback);
+  }
 
   onGroupLeft(callback) {
     if (!this.socket) return;
     this.socket.on("groupLeft", callback);
+  }
+  offGroupLeft(callback) {
+    if (!this.socket) return;
+    this.socket.off("groupLeft", callback);
   }
 
   onUserAddedToGroup(callback) {
     if (!this.socket) return;
     this.socket.on("userAddedToGroup", callback);
   }
+  offUserAddedToGroup(callback) {
+    if (!this.socket) return;
+    this.socket.off("userAddedToGroup", callback);
+  }
 
   onUserRemovedFromGroup(callback) {
     if (!this.socket) return;
     this.socket.on("userRemovedFromGroup", callback);
+  }
+  offUserRemovedFromGroup(callback) {
+    if (!this.socket) return;
+    this.socket.off("userRemovedFromGroup", callback);
   }
 }
 

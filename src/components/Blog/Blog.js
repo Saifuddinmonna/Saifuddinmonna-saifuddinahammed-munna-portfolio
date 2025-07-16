@@ -15,6 +15,7 @@ import BlogPagination from "./BlogPagination";
 import BlogSearch from "./BlogSearch";
 import BlogCategories from "./BlogCategories";
 import BlogTabs from "./BlogTabs";
+import MemoizedBlogGrid from "./MemoizedBlogGrid";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -27,7 +28,7 @@ const Blog = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState([]); // Now an array for multi-select
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showEmpty, setShowEmpty] = useState(false);
@@ -40,7 +41,11 @@ const Blog = () => {
         page: currentPage,
         limit,
         search: debouncedSearchQuery,
-        category: selectedCategory === "All" ? "" : selectedCategory,
+        // If selectedCategory is array, join as comma-separated string, else send as is
+        category:
+          Array.isArray(selectedCategory) && selectedCategory.length > 0
+            ? selectedCategory.join(",")
+            : "",
       }),
     {
       staleTime: 0,
@@ -113,8 +118,8 @@ const Blog = () => {
   };
 
   const handleCategoryChange = useCallback(
-    category => {
-      setSelectedCategory(category);
+    categories => {
+      setSelectedCategory(categories);
       setCurrentPage(1);
       setActiveTab("category");
     },
@@ -202,7 +207,7 @@ const Blog = () => {
         {Array.isArray(blogs) && blogs.length === 0 && showEmpty ? (
           <div className="text-center text-[var(--text-secondary)]">No post available</div>
         ) : (
-          <BlogGrid blogs={blogs} />
+          <MemoizedBlogGrid blogs={blogs} handleLike={handleLike} user={user} />
         )}
 
         {/* Pagination always visible */}
