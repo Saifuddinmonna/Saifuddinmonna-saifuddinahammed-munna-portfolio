@@ -228,56 +228,6 @@ const GalleryPage = () => {
         }}
       />
 
-<<<<<<< HEAD
-          {/* Instructions Section */}
-          <div className="    bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 rounded-lg p-3 mb-4 shadow-md">
-            <h2 className="text-xl font-semibold mb-2 text-gray-300 dark:text-white">
-              How to Use the Gallery
-            </h2>
-            <div className="space-y-2 text-gray-700 dark:text-gray-300">
-              <div className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-blue-500 text-white rounded-full text-sm">
-                  1
-                </span>
-                <p className="text-sm">
-                  Browse through the project images in the grid below. Each image represents a
-                  different project.
-                </p>
-              </div>
-              <div className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-blue-500 text-white rounded-full text-sm">
-                  2
-                </span>
-                <p className="text-sm">
-                  Hover over any image to see project details including description and technology
-                  stack.
-                </p>
-              </div>
-              <div className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-blue-500 text-white rounded-full text-sm">
-                  3
-                </span>
-                <p className="text-sm">
-                  Click on an image to view it in full size with additional project information.
-                </p>
-              </div>
-              <div className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-blue-500 text-white rounded-full text-sm">
-                  4
-                </span>
-                <p className="text-sm">
-                  Use the "Live Website" link at the bottom of each image to visit the project
-                  directly.
-                </p>
-              </div>
-              <div className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-blue-500 text-white rounded-full text-sm">
-                  5
-                </span>
-                <p className="text-sm">
-                  Access the GitHub repository and technology details by hovering over the image.
-                </p>
-=======
       <main className="flex-grow bg-[var(--background-default)] pt-20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row gap-6">
@@ -312,7 +262,6 @@ const GalleryPage = () => {
                     </button>
                   ))}
                 </div>
->>>>>>> testimonialPage
               </div>
             </div>
 

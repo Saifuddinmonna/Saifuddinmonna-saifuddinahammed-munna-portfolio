@@ -1,7 +1,6 @@
 # 🚀 Saifuddin Ahammed Monna - Portfolio with Live Chat
 
 <div align="center">
-<<<<<<< HEAD
   <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=28&pause=1000&color=3B82F6&center=true&vCenter=true&width=600&height=100&lines=Saifuddin+Ahammed+Monna;Full-Stack+Developer;Portfolio+with+Live+Chat" alt="Saifuddin Ahammed Monna" />
 </div>
 
@@ -62,6 +61,59 @@
 - [📞 Contact](#-contact)
 
 </details>
+
+---
+
+## 📁 Project Structure
+
+A modern, scalable folder structure separates frontend (React) and backend (Node.js/Express) for maintainability and growth.
+
+```
+portpolio-with-liveChat/
+├── backend/      # Node.js/Express/MongoDB backend
+├── public/       # Static assets
+├── src/          # React frontend source code
+├── ...           # Config, docs, etc.
+```
+
+See [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) for a detailed breakdown.
+
+---
+
+## 🖥️ Backend / Frontend Split
+
+```mermaid
+graph TD;
+  A[Frontend (React, src/)] --API, WebSocket--> B[Backend (Node.js/Express, backend/)]
+  B --DB--> C[(MongoDB)]
+  B --Auth--> D[(Firebase Auth)]
+  A --Static Assets--> E[public/]
+```
+
+---
+
+## 📚 Documentation & Guides
+- [Project Structure](./PROJECT_STRUCTURE.md)
+- [Server Group Implementation Guide](./SERVER_GROUP_IMPLEMENTATION_GUIDE.md)
+- [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md)
+- [Frontend-Server Integration Guide](./FRONTEND_SERVER_INTEGRATION_GUIDE.md)
+
+---
+
+## 🚀 Quick Start
+
+### 1. Backend
+```bash
+cd backend
+npm install
+npm start
+```
+
+### 2. Frontend
+```bash
+npm install
+npm start
+```
 
 ---
 
@@ -228,7 +280,8 @@
 ## 🌐 Live Demo
 
 <div align="center">
-<<<<<<< HEAD
+  <h3>🎨 Frontend Technologies</h3>
+</div>
 
 | Feature                  | Demo Link                                                                          | Status         |
 | ------------------------ | ---------------------------------------------------------------------------------- | -------------- |
@@ -304,58 +357,6 @@ graph TB
 
 <details>
 <summary><b>📋 Prerequisites</b></summary>
-=======
-| Feature | Demo Link | Status |
-|---------|-----------|--------|
-| 🌐 **Portfolio Website** | [https://saifuddinahammed-monna.web.app/](https://saifuddinahammed-monna.web.app/) | ✅ Live |
-| 💬 **Live Chat Demo** | [Chat Demo](#) | 🚧 Coming Soon |
-| ⚙️ **Admin Panel** | [Admin Demo](#) | 🔒 Private |
-</div>
-
----
-
-## 🏗 Architecture
-
-```
-📁 src/
-├── 🔐 auth/                 # Authentication system
-│   ├── 📱 components/       # Sign in/up forms with validation
-│   ├── 🎯 context/         # Auth context provider with state
-│   ├── 🪝 hooks/           # Custom authentication hooks
-│   ├── 🔧 services/        # Firebase auth services
-│   └── 🛠 utils/           # Auth utility functions
-├── 💬 socketIo/            # Real-time chat system
-│   ├── 🧩 components/      # Chat UI components
-│   │   ├── ChatWindowComponents/  # Modular chat components
-│   │   └── PrivateChatHistory.js  # Private chat management
-│   ├── 🎯 contexts/        # Socket context and providers
-│   └── 🔌 SocketProvider.js # Socket connection management
-├── 🧩 components/          # Reusable UI components
-│   ├── 👤 About/          # About page with skills and experience
-│   ├── 📝 Blog/           # Blog system with editor and viewer
-│   ├── ⭐ Testimonials/   # Testimonials with admin dashboard
-│   ├── 🖼️ Gallery/        # Project gallery with lightbox
-│   ├── 📄 resumes/        # Resume viewer with PDF support
-│   ├── 🔧 CommonComponents/ # Shared components
-│   ├── 🎨 ui/             # UI components (buttons, cards, etc.)
-│   ├── 📐 layout/         # Layout components and routing
-│   ├── 🚀 features/       # Feature-specific components
-│   │   └── adminDashboard/ # Admin dashboard components
-│   └── 📐 MainLayouts/    # Layout components
-├── 📄 pages/              # Page components and routing
-├── 🔧 services/           # API services and data fetching
-├── 🎨 theme/              # Theme configuration and variables
-├── 🛠 utils/              # Utility functions and helpers
-├── 🪝 hooks/              # Custom React hooks
-└── 🎯 contexts/           # Global context providers
-```
-
----
-
-## 🚀 Getting Started
-
-### 📋 Prerequisites
->>>>>>> testimonialPage
 
 - **Node.js** (v18 or higher) 🟢
 - **npm** or **yarn** package manager 📦
@@ -363,11 +364,9 @@ graph TB
 - **MongoDB** database (Atlas or local) 🍃
 - **Git** for version control 📝
 
-<<<<<<< HEAD
 </details>
-=======
+
 ### ⚡ Quick Start
->>>>>>> testimonialPage
 
 <details>
 <summary><b>🚀 Installation Steps</b></summary>
@@ -400,13 +399,8 @@ graph TB
    REACT_APP_FIREBASE_APP_ID=your_app_id
 
    # Backend API Configuration
-<<<<<<< HEAD
    REACT_APP_API_URL=http://localhost:5000 || API_URL
    REACT_APP_SOCKET_URL=http://localhost:5000 ||REACT_APP_API_API_URL
-=======
-   REACT_APP_API_URL=http://localhost:5000
-   REACT_APP_SOCKET_URL=http://localhost:5000
->>>>>>> testimonialPage
 
    # EmailJS Configuration (for contact form)
    REACT_APP_EMAILJS_SERVICE_ID=your_service_id
@@ -428,26 +422,8 @@ graph TB
    yarn start
    ```
 
-<<<<<<< HEAD
-5. **Build for production**
-
-   ```bash
-   npm run build
-   # or
-   yarn build
-   ```
-
-6. **Run tests**
-
-   ```bash
-   npm test
-   # or
-   yarn test
-   ```
-=======
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
->>>>>>> testimonialPage
 
 </details>
 
@@ -455,56 +431,6 @@ graph TB
 
 ## 🛠 Tech Stack
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>🎨 Frontend Technologies</h3>
-</div>
-
-| Technology                                                                                                         | Version | Purpose                                                   |
-| ------------------------------------------------------------------------------------------------------------------ | ------- | --------------------------------------------------------- |
-| ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat-square&logo=react)                            | 18.2.0  | Modern React with hooks, context, and concurrent features |
-| ![React Router](https://img.shields.io/badge/React%20Router-6.4.5-CA4245?style=flat-square&logo=react-router)      | 6.4.5   | Client-side routing with data loading                     |
-| ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.17-38B2AC?style=flat-square&logo=tailwind-css)           | 3.4.17  | Utility-first CSS framework with custom design system     |
-| ![Framer Motion](https://img.shields.io/badge/Framer%20Motion-9.1.7-0055FF?style=flat-square&logo=framer)          | 9.1.7   | Animation library for smooth transitions                  |
-| ![React Query](https://img.shields.io/badge/React%20Query-4.39.2-FF4154?style=flat-square&logo=react-query)        | 4.39.2  | Server state management with caching and synchronization  |
-| ![Socket.IO Client](https://img.shields.io/badge/Socket.IO%20Client-4.8.1-010101?style=flat-square&logo=socket.io) | 4.8.1   | Real-time bidirectional communication                     |
-
-<div align="center">
-  <h3>🔧 Backend & Services</h3>
-</div>
-
-| Technology                                                                                          | Version | Purpose                                     |
-| --------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------- |
-| ![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js)          | 18+     | Server runtime with ES modules              |
-| ![Express.js](https://img.shields.io/badge/Express.js-Latest-000000?style=flat-square&logo=express) | Latest  | Web framework for RESTful APIs              |
-| ![Socket.IO](https://img.shields.io/badge/Socket.IO-4.8.1-010101?style=flat-square&logo=socket.io)  | 4.8.1   | Real-time bidirectional communication       |
-| ![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-47A248?style=flat-square&logo=mongodb)         | 5.0+    | NoSQL database with Mongoose ODM            |
-| ![Firebase](https://img.shields.io/badge/Firebase-9.23.0-FFCA28?style=flat-square&logo=firebase)    | 9.23.0  | Authentication, hosting, and cloud services |
-
-<div align="center">
-  <h3>🛠 Development Tools</h3>
-</div>
-
-| Tool                                                                                         | Version | Purpose                                      |
-| -------------------------------------------------------------------------------------------- | ------- | -------------------------------------------- |
-| ![ESLint](https://img.shields.io/badge/ESLint-8.57.1-4B32C3?style=flat-square&logo=eslint)   | 8.57.1  | Code linting and formatting                  |
-| ![PostCSS](https://img.shields.io/badge/PostCSS-8.5.5-DD3A0A?style=flat-square&logo=postcss) | 8.5.5   | CSS processing and optimization              |
-| ![Webpack](https://img.shields.io/badge/Webpack-5-8DD6F9?style=flat-square&logo=webpack)     | 5       | Module bundler with code splitting           |
-| ![Babel](https://img.shields.io/badge/Babel-7-F9DC3E?style=flat-square&logo=babel)           | 7       | JavaScript compiler with modern features     |
-| ![Jest](https://img.shields.io/badge/Jest-Latest-C21325?style=flat-square&logo=jest)         | Latest  | Testing framework with React Testing Library |
-
-<div align="center">
-  <h3>📚 Additional Libraries</h3>
-</div>
-
-| Library                                                                                             | Version | Purpose                         |
-| --------------------------------------------------------------------------------------------------- | ------- | ------------------------------- |
-| ![TinyMCE](https://img.shields.io/badge/TinyMCE-6.2.1-2299C8?style=flat-square)                     | 6.2.1   | Rich text editor for blog posts |
-| ![React PDF](https://img.shields.io/badge/React%20PDF-9.2.1-FF0000?style=flat-square)               | 9.2.1   | PDF viewer for resumes          |
-| ![Emoji Picker](https://img.shields.io/badge/Emoji%20Picker-4.12.2-FFD700?style=flat-square)        | 4.12.2  | Emoji selection for chat        |
-| ![React Hot Toast](https://img.shields.io/badge/React%20Hot%20Toast-2.5.2-FF6B6B?style=flat-square) | 2.5.2   | Toast notifications             |
-| ![React Confetti](https://img.shields.io/badge/React%20Confetti-6.4.0-FFD700?style=flat-square)     | 6.4.0   | Celebration animations          |
-=======
 ### Frontend
 
 - **React 18.2.0** - Modern React with hooks and concurrent features
@@ -543,52 +469,11 @@ graph TB
 - **React Photo View 1.2.3** - Image lightbox
 - **TinyMCE React 6.2.1** - Rich text editor
 - **EmailJS Browser 3.12.1** - Email service integration
->>>>>>> testimonialPage
 
 ---
 
 ## 📱 Key Features Demo
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>💬 Live Chat System</h3>
-</div>
-
-| Feature                      | Description                                     | Status |
-| ---------------------------- | ----------------------------------------------- | ------ |
-| 🔄 **Real-time messaging**   | Typing indicators and read receipts             | ✅     |
-| 📢 **Multi-channel support** | Public, private, groups with seamless switching | ✅     |
-| ✏️ **Message management**    | Edit, delete, reply with user permissions       | ✅     |
-| 👤 **User presence**         | Online/offline status tracking                  | ✅     |
-| 📁 **File sharing**          | Drag-and-drop support                           | 🚧     |
-| 🔍 **Search functionality**  | Across chat history                             | ✅     |
-
-<div align="center">
-  <h3>📝 Blog Management</h3>
-</div>
-
-| Feature                         | Description                    | Status |
-| ------------------------------- | ------------------------------ | ------ |
-| ✍️ **Rich text editing**        | TinyMCE with custom toolbar    | ✅     |
-| 🏷️ **Category filtering**       | Advanced search with tags      | ✅     |
-| ❤️ **Like system**              | User engagement and analytics  | ✅     |
-| ⚙️ **Admin content management** | Moderation tools               | ✅     |
-| 📈 **SEO optimization**         | Meta tags and structured data  | ✅     |
-| 💬 **Comment system**           | Moderation and spam protection | 🚧     |
-
-<div align="center">
-  <h3>⭐ Testimonials System</h3>
-</div>
-
-| Feature                    | Description                                   | Status |
-| -------------------------- | --------------------------------------------- | ------ |
-| 📝 **User submission**     | Rating system and validation                  | ✅     |
-| ✅ **Admin approval**      | Workflow with email notifications             | ✅     |
-| 👤 **Rich display**        | Client info and project links                 | ✅     |
-| 🔄 **Status management**   | Pending, approved, rejected with bulk actions | ✅     |
-| 📊 **Analytics dashboard** | Statistics and insights                       | ✅     |
-| 🛡️ **Moderation tools**    | Spam detection                                | 🚧     |
-=======
 ### 💬 Live Chat System
 
 - **Real-time messaging** with Socket.IO
@@ -620,55 +505,31 @@ graph TB
 - **Protected routes** with route guards
 - **Session management** with persistent login
 - **Password recovery** functionality
+
+### 📱 **Portfolio Features**
+
+- **🖼️ Project Gallery** - Interactive project showcase with filtering
+- **📄 Resume Viewer** - PDF resume display with download and print
+- **📊 Skills Visualization** - Animated skill charts and progress bars
+- **📧 Contact Form** - EmailJS integration with spam protection
+- **🔗 Social Links** - Professional social media integration
+- **⬇️ Download CV** - Multiple format support (PDF, DOCX)
+
+### 🛠 **Technical Features**
+
+- **⚡ State Management** - React Query for server state with caching
+- **🛡️ Error Handling** - Comprehensive error boundaries and fallbacks
+- **⏳ Loading States** - Skeleton loaders and spinners with progress
+- **🔔 Toast Notifications** - User feedback system with different types
+- **📈 SEO Optimization** - Meta tags, structured data, and performance
+- **📱 PWA Support** - Progressive Web App capabilities
+- **🔌 Offline Support** - Service worker for offline functionality
 >>>>>>> testimonialPage
 
 ---
 
 ## 🎯 Interview Highlights
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>🏆 Technical Achievements</h3>
-</div>
-
-| Achievement                   | Description                                                              | Impact                                     |
-| ----------------------------- | ------------------------------------------------------------------------ | ------------------------------------------ |
-| 🚀 **Full-Stack Development** | Complete frontend and backend implementation with modern architecture    | Demonstrates end-to-end development skills |
-| ⚡ **Real-Time Features**     | Socket.IO integration for live chat with scalability considerations      | Shows real-time application expertise      |
-| 🔐 **Authentication System**  | Firebase Auth with role-based access control and security                | Proves security implementation knowledge   |
-| 📊 **State Management**       | React Query for efficient data fetching with caching and synchronization | Demonstrates modern state management       |
-| 📱 **Responsive Design**      | Mobile-first approach with Tailwind CSS and accessibility                | Shows UI/UX expertise                      |
-
-<div align="center">
-  <h3>🧠 Problem-Solving Skills</h3>
-</div>
-
-- **🔄 Real-time synchronization** across multiple users with conflict resolution
-- **📈 Scalable architecture** with modular components and lazy loading
-- **🛡️ Error handling** and user feedback systems with graceful degradation
-- **⚡ Performance optimization** with code splitting, caching, and bundle optimization
-- **🔒 Security implementation** with input validation, XSS protection, and CSRF tokens
-
-<div align="center">
-  <h3>🎯 Modern Development Practices</h3>
-</div>
-
-- **🧩 Component-based architecture** with reusable and maintainable code
-- **🪝 Custom hooks** for reusable logic and state management
-- **🎯 Context API** for global state management without external libraries
-- **🔧 Environment configuration** with secure variable management
-- **📦 Code splitting** and lazy loading for optimal performance
-- **📝 TypeScript-ready** codebase with proper type definitions
-
-<div align="center">
-  <h3>🗄️ Database Design</h3>
-</div>
-
-- **🍃 MongoDB schema design** with proper indexing and relationships
-- **✅ Data validation** with Mongoose schemas and middleware
-- **🔍 Query optimization** with aggregation pipelines and indexing
-- **🔄 Data migration** strategies for schema evolution
-=======
 ### Technical Achievements
 
 - **Full-stack development** with modern JavaScript ecosystem
@@ -692,26 +553,11 @@ graph TB
 - **Documentation** and code organization
 - **Testing** and quality assurance
 - **Deployment** and DevOps practices
->>>>>>> testimonialPage
 
 ---
 
 ## 📊 Performance Metrics
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>🏆 Performance Overview</h3>
-</div>
-
-| Metric                   | Score                         | Status       |
-| ------------------------ | ----------------------------- | ------------ |
-| 🏆 **Lighthouse Score**  | 95+                           | 🟢 Excellent |
-| 📦 **Bundle Size**       | < 500KB initial load          | 🟢 Optimized |
-| ⚡ **Loading Time**      | < 3 seconds on 3G             | 🟢 Fast      |
-| 💬 **Real-time Latency** | < 100ms for chat messages     | 🟢 Excellent |
-| 📈 **Core Web Vitals**   | All metrics in green zone     | 🟢 Perfect   |
-| 🔍 **SEO Score**         | 100/100 with proper meta tags | 🟢 Perfect   |
-=======
 ### Frontend Performance
 
 - **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
@@ -735,43 +581,11 @@ graph TB
 - **Bundle Size** optimization with tree shaking
 - **Caching Strategy** with React Query
 - **Service Worker** for offline support
->>>>>>> testimonialPage
 
 ---
 
 ## 🔧 Customization
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>🎨 Theme Configuration</h3>
-</div>
-
-The theme system uses CSS variables for easy customization:
-
-```css
-:root {
-  --primary-main: #3b82f6;
-  --primary-dark: #1d4ed8;
-  --primary-light: #60a5fa;
-  --background-default: #ffffff;
-  --background-paper: #f8fafc;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border-main: #e5e7eb;
-}
-```
-
-<div align="center">
-  <h3>🚀 Adding New Features</h3>
-</div>
-
-1. **🧩 Create components** in appropriate directories following the established pattern
-2. **🛣️ Add routes** in `src/components/Router/router.js` with lazy loading
-3. **🧭 Update navigation** in header components with proper accessibility
-4. **🔧 Add API services** with error handling and validation
-5. **📊 Implement state management** with React Query for data fetching
-6. **🧪 Add comprehensive testing** with Jest and React Testing Library
-=======
 ### Theme Customization
 
 ```css
@@ -801,32 +615,14 @@ The theme system uses CSS variables for easy customization:
 - **Dynamic content** loading
 - **Localization** support structure
 - **SEO optimization** tools
->>>>>>> testimonialPage
 
 ---
 
 ## 🚀 Deployment
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>🔥 Firebase Hosting</h3>
-</div>
-
-```bash
-# Install Firebase CLI
-npm install -g firebase-tools
-
-# Login to Firebase
-firebase login
-
-# Initialize Firebase (if not already done)
-firebase init hosting
-
-=======
 ### Firebase Hosting
 
 ```bash
->>>>>>> testimonialPage
 # Build the project
 npm run build
 
@@ -834,21 +630,6 @@ npm run build
 firebase deploy
 ```
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>⚙️ Environment Variables for Production</h3>
-</div>
-
-- **🔧 Set up environment variables** in Firebase Console
-- **🌐 Configure custom domain** and SSL certificates
-- **🔄 Set up CI/CD pipeline** with GitHub Actions
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-=======
 ### Environment Variables
 
 - **Production environment** configuration
@@ -864,33 +645,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Build optimization** and caching
 - **Security scanning** and vulnerability checks
 - **Performance monitoring** and alerts
->>>>>>> testimonialPage
 
 ---
 
 ## 🤝 Contributing
 
-<<<<<<< HEAD
-<div align="center">
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-[![Contributors](https://img.shields.io/github/contributors/yourusername/portfolio-with-livechat?style=for-the-badge)](https://github.com/yourusername/portfolio-with-livechat/graphs/contributors)
-[![Forks](https://img.shields.io/github/forks/yourusername/portfolio-with-livechat?style=for-the-badge)](https://github.com/yourusername/portfolio-with-livechat/network/members)
-[![Stars](https://img.shields.io/github/stars/yourusername/portfolio-with-livechat?style=for-the-badge)](https://github.com/yourusername/portfolio-with-livechat/stargazers)
-
-</div>
-
-<div align="center">
-  <h3>📋 Development Guidelines</h3>
-</div>
-
-- **🎨 Follow the existing code style** and conventions
-- **🧪 Add comprehensive tests** for new features
-- **📚 Update documentation** for any API changes
-- **♿ Ensure accessibility compliance** with WCAG guidelines
-- **📱 Test on multiple devices** and browsers
-=======
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ### Development Setup
@@ -908,62 +667,23 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 - **TypeScript** support (optional)
 - **Testing** with Jest and React Testing Library
 - **Documentation** with JSDoc comments
->>>>>>> testimonialPage
 
 ---
 
 ## 📞 Contact
 
-<<<<<<< HEAD
-<div align="center">
-  <h3>🔗 Get In Touch</h3>
-</div>
-
-| Platform         | Link                       | Status |
-| ---------------- | -------------------------- | ------ |
-| 🌐 **Portfolio** | [Your Portfolio URL](#)    | 🔗     |
-| 💼 **LinkedIn**  | [Your LinkedIn Profile](#) | 🔗     |
-| 🐙 **GitHub**    | [Your GitHub Profile](#)   | 🔗     |
-| 📧 **Email**     | [Your Email Address](#)    | 📧     |
-| 📄 **Resume**    | [Your Resume Download](#)  | 📥     |
-
----
-
-## 🙏 Acknowledgments
-
-<div align="center">
-  <h3>🌟 Thanks to all the amazing open-source projects!</h3>
-</div>
-
-| Project                                                                                           | Purpose                    |
-| ------------------------------------------------------------------------------------------------- | -------------------------- |
-| ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react)                  | Amazing framework          |
-| ![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css) | Utility-first approach     |
-| ![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=flat-square&logo=socket.io)      | Real-time capabilities     |
-| ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase)         | Authentication and hosting |
-=======
 - **Portfolio**: [https://saifuddinahammed-monna.web.app/](https://saifuddinahammed-monna.web.app/)
 - **Email**: [your-email@example.com](mailto:your-email@example.com)
 - **LinkedIn**: [Your LinkedIn Profile](#)
 - **GitHub**: [Your GitHub Profile](#)
->>>>>>> testimonialPage
 
 ---
 
 <div align="center">
-<<<<<<< HEAD
-
-⭐ **Star this repository if you found it helpful!**
-
-[🌐 Live Demo](https://saifuddinahammed-monna.web.app/) • [📖 Documentation](#) • [🐛 Report Issues](#)
-
-**Made with ❤️ by Saifuddin Ahammed Monna**
-=======
 Made with ❤️ by Saifuddin Ahammed Monna
 
 [![GitHub stars](https://img.shields.io/github/stars/yourusername/portfolio-with-livechat?style=social)](https://github.com/yourusername/portfolio-with-livechat)
 [![GitHub forks](https://img.shields.io/github/forks/yourusername/portfolio-with-livechat?style=social)](https://github.com/yourusername/portfolio-with-livechat)
 [![GitHub issues](https://img.shields.io/github/issues/yourusername/portfolio-with-livechat)](https://github.com/yourusername/portfolio-with-livechat/issues)
->>>>>>> testimonialPage
 
 </div>

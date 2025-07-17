@@ -292,16 +292,12 @@ select:focus {
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
     color-scheme: light;
-<<<<<<< HEAD
-=======
-
     /* Footer Light Mode Variables - Added automatically */
     --footer-background-light: #5b21b6; /* Example Violet */
     --footer-text-light: #ffffff; /* White */
     --footer-heading-light: #ffffff; /* White */
     --footer-link-light: #0ea5e9; /* Example Sky Blue */
     --footer-link-hover-light: #38bdf8; /* Example Lighter Sky Blue */
->>>>>>> testimonialPage
   }
 
   .dark {
@@ -326,6 +322,14 @@ select:focus {
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
     color-scheme: dark;
+  }
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -355,24 +359,6 @@ select:focus {
 /* Shadow overrides */
 @layer base {
   * {
-<<<<<<< HEAD
-    @apply border-gray-200;
-    transition-property: background-color, border-color, color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-  }
-
-  .dark * {
-    @apply border-gray-700;
-  }
-
-  body {
-    @apply bg-white text-gray-900;
-  }
-
-  .dark body {
-    @apply bg-gray-900 text-gray-100;
-=======
     @apply border-gray-200 dark:border-gray-700;
   }
 
@@ -380,7 +366,6 @@ select:focus {
     @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100; /* Updated light mode text color */
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
->>>>>>> testimonialPage
   }
 }
 
@@ -390,34 +375,16 @@ select:focus {
 }
 
 /* ===== THEME SPECIFIC STYLES ===== */
-<<<<<<< HEAD
-.dark {
-  color-scheme: dark;
-}
-
-.dark nav {
-  background-color: rgb(17, 24, 39) !important; /* dark:bg-gray-900 */
-}
-
-/* Light mode specific styles */
-:root {
-=======
 .light {
->>>>>>> testimonialPage
   color-scheme: light;
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }
 
-<<<<<<< HEAD
-nav {
-  background-color: rgb(255, 255, 255) !important; /* bg-white */
-=======
 .dark {
   color-scheme: dark;
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
->>>>>>> testimonialPage
 }
 
 /* ===== ACCESSIBILITY ===== */

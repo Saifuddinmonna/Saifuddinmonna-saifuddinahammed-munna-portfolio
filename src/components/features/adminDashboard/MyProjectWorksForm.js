@@ -8,7 +8,16 @@ import { myProjectWorksAPI } from "../../../services/apiService";
 import TinyMCEEditor from "../../ui/TinyMCEEditor";
 import MarkdownEditor from "../../ui/MarkdownEditor";
 import { motion } from "framer-motion";
-import { FaEye, FaEyeSlash, FaCopy, FaUpload, FaFileUpload, FaArrowLeft } from "react-icons/fa";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaCopy,
+  FaUpload,
+  FaFileUpload,
+  FaArrowLeft,
+  FaArrowUp,
+  FaArrowDown,
+} from "react-icons/fa";
 
 // Validation schema based on mongoose model
 const validationSchema = yup.object().shape({
@@ -63,13 +72,16 @@ const validationSchema = yup.object().shape({
   liveWebsiteRepo: yup.string().trim().url("Must be a valid URL").nullable(),
   liveServersite: yup.string().trim().url("Must be a valid URL").nullable(),
   liveServersiteRepo: yup.string().trim().url("Must be a valid URL").nullable(),
-  mdDocumentation: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Documentation title is required").trim(),
-      content: yup.string().required("Documentation content is required").trim(),
-      slug: yup.string().trim(),
-    })
-  ),
+  mdDocumentation: yup
+    .array()
+    .of(
+      yup.object().shape({
+        title: yup.string().required("Documentation title is required").trim(),
+        content: yup.string().required("Documentation content is required").trim(),
+        slug: yup.string().trim(),
+      })
+    )
+    .notRequired(), // <-- make optional
 });
 
 // Predefined categories
@@ -127,6 +139,7 @@ const MyProjectWorksForm = () => {
 
   const [existingImages, setExistingImages] = useState([]); // { _id, url }
   const [existingDocs, setExistingDocs] = useState([]); // { _id, title, content, slug }
+  const [keptExistingDocs, setKeptExistingDocs] = useState([]); // Track which existing docs to keep
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -134,6 +147,19 @@ const MyProjectWorksForm = () => {
   const existingMdFileInputRef = useRef();
   const [isDragActive, setIsDragActive] = useState(false);
   const [showMdPreview, setShowMdPreview] = useState({}); // Track preview state for each doc
+  const [activeButton, setActiveButton] = useState(null); // Track which button is active (show-all, hide-all)
+  const formRef = useRef();
+  const topRef = useRef();
+  const bottomRef = useRef();
+  // Add refs for each doc for scrolling
+  const docRefs = useRef({});
+
+  // Helper to scroll to a doc
+  const scrollToDoc = key => {
+    if (docRefs.current[key]) {
+      docRefs.current[key].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   // React Hook Form setup
   const {
@@ -238,6 +264,8 @@ const MyProjectWorksForm = () => {
           // Set existing data
           setExistingImages(projectData?.images || []);
           setExistingDocs(projectData?.mdDocumentation || []);
+          // Initialize kept existing docs (all existing docs are kept initially)
+          setKeptExistingDocs(projectData?.mdDocumentation || []);
 
           // Initialize preview states for existing docs
           const previewStates = {};
@@ -264,7 +292,9 @@ const MyProjectWorksForm = () => {
       reset(createFormData);
       setExistingImages([]);
       setExistingDocs([]);
+      setKeptExistingDocs([]);
       setShowMdPreview({});
+      setActiveButton(null);
     }
   }, [id, isEdit, reset]);
 
@@ -366,90 +396,99 @@ const MyProjectWorksForm = () => {
   // Toggle markdown preview
   const toggleMdPreview = (docType, idx) => {
     const key = `${docType}-${idx}`;
-    setShowMdPreview(prev => ({ ...prev, [key]: !prev[key] }));
+    console.log(`[DEBUG] Toggling preview for ${key}, current state:`, showMdPreview[key]);
+    setShowMdPreview(prev => {
+      const newState = { ...prev, [key]: !prev[key] };
+      console.log(`[DEBUG] New preview state for ${key}:`, newState[key]);
+      return newState;
+    });
   };
 
-  // Handle multiple markdown file upload
+  // Updated handleMultipleMdFileUpload
   const handleMultipleMdFileUpload = (e, docType = "new") => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
-
     // Filter only .md files
     const mdFiles = files.filter(file => file.name.endsWith(".md"));
     if (mdFiles.length === 0) {
       toast.error("Please select .md files only");
       return;
     }
-
     if (mdFiles.length !== files.length) {
       toast.warning(`${files.length - mdFiles.length} non-.md files were ignored`);
     }
-
-    console.log(`📁 [MD Upload] Processing ${mdFiles.length} markdown files`);
-
-    // Process each file
+    // Read all files and add to mdDocumentation at once
+    const newDocs = [];
+    let filesProcessed = 0;
     mdFiles.forEach((file, index) => {
       const reader = new FileReader();
       reader.onload = event => {
         const content = event.target.result;
         const fileName = file.name.replace(".md", "");
-
-        if (docType === "new") {
-          // Add to new docs section
-          const newDoc = { title: fileName, content: content, slug: "" };
-          const newDocs = [...formValues.mdDocumentation, newDoc];
-          setValue("mdDocumentation", newDocs, { shouldValidate: true });
-
-          // Initialize preview state for new doc and auto-show preview
-          const newIdx = newDocs.length - 1;
-          setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: true }));
-        } else if (docType === "existing") {
-          // Add to new docs section (since we can't modify existing docs directly)
-          const newDoc = { title: fileName, content: content, slug: "" };
-          const newDocs = [...formValues.mdDocumentation, newDoc];
-          setValue("mdDocumentation", newDocs, { shouldValidate: true });
-
-          // Initialize preview state for new doc and auto-show preview
-          const newIdx = newDocs.length - 1;
-          setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: true }));
-        }
-
-        // Show success message for each file
-        if (index === mdFiles.length - 1) {
-          // Last file processed
+        newDocs.push({ title: fileName, content: content, slug: "" });
+        filesProcessed++;
+        if (filesProcessed === mdFiles.length) {
+          // Add all at once
+          const updatedDocs = [...formValues.mdDocumentation, ...newDocs];
+          setValue("mdDocumentation", updatedDocs, { shouldValidate: true });
+          // Set preview state to hidden for all new docs (don't auto-show)
+          const newPreviewState = { ...showMdPreview };
+          for (let i = formValues.mdDocumentation.length; i < updatedDocs.length; i++) {
+            newPreviewState[`new-${i}`] = false; // Start with hidden preview
+          }
+          setShowMdPreview(newPreviewState);
           toast.success(
-            `${mdFiles.length} markdown files uploaded successfully! All previews enabled.`
+            `${mdFiles.length} markdown files uploaded! Use Show/Hide buttons to manage previews.`
           );
         }
       };
       reader.readAsText(file);
     });
-
-    // Clear the input
     e.target.value = "";
   };
 
-  // Toggle all previews
+  // Updated Show All / Hide All logic for both new and existing docs
   const toggleAllPreviews = () => {
-    const allPreviews = {};
+    const allPreviews = { ...showMdPreview };
     formValues.mdDocumentation.forEach((_, idx) => {
       allPreviews[`new-${idx}`] = true;
     });
+    keptExistingDocs.forEach((_, idx) => {
+      allPreviews[`existing-${idx}`] = true;
+    });
     setShowMdPreview(allPreviews);
+    setActiveButton("show-all");
+    setTimeout(() => {
+      setActiveButton(null);
+    }, 1000);
   };
-
-  // Hide all previews
   const hideAllPreviews = () => {
-    const allPreviews = {};
+    const allPreviews = { ...showMdPreview };
     formValues.mdDocumentation.forEach((_, idx) => {
       allPreviews[`new-${idx}`] = false;
     });
+    keptExistingDocs.forEach((_, idx) => {
+      allPreviews[`existing-${idx}`] = false;
+    });
     setShowMdPreview(allPreviews);
+    setActiveButton("hide-all");
+    setTimeout(() => {
+      setActiveButton(null);
+    }, 1000);
   };
 
-  // Check if all previews are shown
+  // Check if all previews are shown (both new and existing)
   const areAllPreviewsShown = () => {
-    return formValues.mdDocumentation.every((_, idx) => showMdPreview[`new-${idx}`]);
+    const newDocsShown = formValues.mdDocumentation.every((_, idx) => showMdPreview[`new-${idx}`]);
+    const existingDocsShown = keptExistingDocs.every((_, idx) => showMdPreview[`existing-${idx}`]);
+    return newDocsShown && existingDocsShown;
+  };
+
+  // Check if any previews are shown
+  const areAnyPreviewsShown = () => {
+    const newDocsShown = formValues.mdDocumentation.some((_, idx) => showMdPreview[`new-${idx}`]);
+    const existingDocsShown = keptExistingDocs.some((_, idx) => showMdPreview[`existing-${idx}`]);
+    return newDocsShown || existingDocsShown;
   };
 
   // Handle single markdown file upload (existing function - keep for backward compatibility)
@@ -508,9 +547,39 @@ const MyProjectWorksForm = () => {
     try {
       await myProjectWorksAPI.deleteProjectWorkDoc(id, docId);
       setExistingDocs(prev => prev.filter(doc => doc._id !== docId));
+      // Also remove from kept existing docs
+      setKeptExistingDocs(prev => prev.filter(doc => doc._id !== docId));
       toast.success("Documentation deleted");
     } catch {
       toast.error("Failed to delete documentation");
+    }
+  };
+
+  // Remove markdown doc (handles both backend and unsaved docs)
+  const removeMdDocument = async docId => {
+    // If docId is falsy, it's a new/unsaved doc, just remove from state
+    if (!docId) {
+      toast.info("Removed unsaved markdown doc from form");
+      console.log("[DEBUG] Removed unsaved markdown doc from form");
+      setValue(
+        "mdDocumentation",
+        formValues.mdDocumentation.filter((doc, idx) => idx !== docId),
+        { shouldValidate: true }
+      );
+      return;
+    }
+    if (!window.confirm("Delete this markdown documentation?")) return;
+    try {
+      console.log(`[DEBUG] Attempting to delete markdown doc with _id: ${docId}`);
+      await myProjectWorksAPI.deleteMdDocument(id, docId);
+      setExistingDocs(prev => prev.filter(doc => doc._id !== docId));
+      // Also remove from kept existing docs
+      setKeptExistingDocs(prev => prev.filter(doc => doc._id !== docId));
+      toast.success("Markdown documentation deleted");
+      console.log(`[DEBUG] Successfully deleted markdown doc with _id: ${docId}`);
+    } catch (err) {
+      toast.error("Failed to delete markdown documentation");
+      console.error("[DEBUG] Failed to delete markdown doc", err);
     }
   };
 
@@ -618,9 +687,30 @@ const MyProjectWorksForm = () => {
         formData.append("existingImages", JSON.stringify(existingImages.map(img => img.public_id)));
       }
 
-      // Add markdown documentation
+      // Combine kept existing docs and new docs into a single array
+      let allMdDocumentation = [];
+
+      // Add kept existing docs (with their original _id)
+      if (keptExistingDocs && keptExistingDocs.length > 0) {
+        allMdDocumentation = [...keptExistingDocs];
+      }
+
+      // Add new docs (without _id, they will get new _id from backend)
       if (data.mdDocumentation && data.mdDocumentation.length > 0) {
-        formData.append("mdDocumentation", JSON.stringify(data.mdDocumentation));
+        allMdDocumentation = [...allMdDocumentation, ...data.mdDocumentation];
+      }
+
+      // Send the combined array as mdDocumentation
+      if (allMdDocumentation.length > 0) {
+        formData.append("mdDocumentation", JSON.stringify(allMdDocumentation));
+        console.log("📤 [Form] Sending combined mdDocumentation:", {
+          keptExistingDocs: keptExistingDocs.length,
+          newDocs: data.mdDocumentation.length,
+          totalDocs: allMdDocumentation.length,
+          combinedDocs: allMdDocumentation,
+        });
+      } else {
+        console.log("📤 [Form] No mdDocumentation to send");
       }
 
       let response;
@@ -643,6 +733,42 @@ const MyProjectWorksForm = () => {
     }
   };
 
+  // Delete markdown doc from state or backend+state, with debug logs and toast
+  const handleDeleteMdDoc = async (doc, idx) => {
+    if (doc._id) {
+      // Database doc: remove from kept existing docs (will be deleted on update)
+      if (!window.confirm("Delete this markdown documentation?")) return;
+      try {
+        console.log(`[DEBUG] Removing markdown doc with _id: ${doc._id} from kept existing docs`);
+        setKeptExistingDocs(prev => prev.filter(d => d._id !== doc._id));
+        setExistingDocs(prev => prev.filter(d => d._id !== doc._id));
+        toast.success("Markdown documentation will be deleted on save");
+        console.log(
+          `[DEBUG] Successfully removed markdown doc with _id: ${doc._id} from kept existing docs`
+        );
+      } catch (err) {
+        toast.error("Failed to remove markdown documentation");
+        console.error("[DEBUG] Failed to remove markdown doc", err);
+      }
+    } else {
+      // Unsaved doc: delete from state only
+      setValue(
+        "mdDocumentation",
+        formValues.mdDocumentation.filter((_, i) => i !== idx),
+        { shouldValidate: true }
+      );
+      toast.info("Removed unsaved markdown doc from form");
+      console.log(`[DEBUG] Removed unsaved markdown doc at index ${idx} from form`);
+    }
+  };
+
+  // Example: clear a field (e.g., title) of a markdown doc
+  const clearMdDocField = (idx, field) => {
+    handleMdDocChange(idx, field, "");
+    toast.info(`Cleared ${field} of doc at index ${idx}`);
+    console.log(`[DEBUG] Cleared ${field} of doc at index ${idx}`);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -652,7 +778,8 @@ const MyProjectWorksForm = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6" ref={formRef}>
+      <div ref={topRef}></div>
       {/* Header with Back Button */}
       <div className="mb-6">
         <Link
@@ -697,6 +824,18 @@ const MyProjectWorksForm = () => {
             </div>
             <div>
               Loading: <span className="font-mono">{loading ? "true" : "false"}</span>
+            </div>
+            <div>
+              New Docs: <span className="font-mono">{formValues.mdDocumentation?.length || 0}</span>
+            </div>
+            <div>
+              Kept Existing Docs: <span className="font-mono">{keptExistingDocs?.length || 0}</span>
+            </div>
+            <div>
+              Total Docs to Send:{" "}
+              <span className="font-mono">
+                {(formValues.mdDocumentation?.length || 0) + (keptExistingDocs?.length || 0)}
+              </span>
             </div>
           </div>
         </div>
@@ -1000,7 +1139,7 @@ const MyProjectWorksForm = () => {
               {formValues.mdDocumentation.length > 0 && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm bg-[var(--primary-main)] text-white px-2 py-1 rounded">
-                    {formValues.mdDocumentation.length} file
+                    {formValues.mdDocumentation.length} new file
                     {formValues.mdDocumentation.length !== 1 ? "s" : ""}
                   </span>
                   <span className="text-xs text-[var(--text-secondary)]">
@@ -1017,14 +1156,27 @@ const MyProjectWorksForm = () => {
                   </span>
                 </div>
               )}
+              {keptExistingDocs.length > 0 && (
+                <div className="flex items-center gap-2 ml-2">
+                  <span className="text-sm bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] px-2 py-1 rounded">
+                    {keptExistingDocs.length} kept existing file
+                    {keptExistingDocs.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {formValues.mdDocumentation.length > 0 && (
+            {/* Show All / Hide All buttons - show if there are any docs (new or existing) */}
+            {(formValues.mdDocumentation.length > 0 || keptExistingDocs.length > 0) && (
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={toggleAllPreviews}
-                  className="px-3 py-1 bg-[var(--primary-main)] text-white rounded-lg text-sm hover:bg-[var(--primary-dark)] transition-colors duration-200 flex items-center gap-1"
+                  className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 flex items-center gap-1 ${
+                    activeButton === "show-all" || areAllPreviewsShown()
+                      ? "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)] shadow-md"
+                      : "bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--background-default)]"
+                  }`}
                   title="Show all previews"
                 >
                   <FaEye className="text-xs" />
@@ -1033,7 +1185,12 @@ const MyProjectWorksForm = () => {
                 <button
                   type="button"
                   onClick={hideAllPreviews}
-                  className="px-3 py-1 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg text-sm hover:bg-[var(--background-default)] transition-colors duration-200 flex items-center gap-1"
+                  className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 flex items-center gap-1 ${
+                    activeButton === "hide-all" ||
+                    (!areAnyPreviewsShown() && activeButton !== "show-all")
+                      ? "bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)] shadow-md"
+                      : "bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--background-default)]"
+                  }`}
                   title="Hide all previews"
                 >
                   <FaEyeSlash className="text-xs" />
@@ -1092,6 +1249,7 @@ const MyProjectWorksForm = () => {
               {existingDocs.map((doc, idx) => (
                 <div
                   key={doc._id}
+                  ref={el => (docRefs.current[`existing-${idx}`] = el)}
                   className="border border-[var(--border-main)] rounded-lg p-3 mb-3 bg-[var(--background-elevated)] relative"
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -1115,11 +1273,30 @@ const MyProjectWorksForm = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => removeExistingDoc(doc._id)}
+                        onClick={() => {
+                          console.log(`[DEBUG] removeMdDocument called for doc._id: ${doc._id}`);
+                          removeMdDocument(doc._id);
+                        }}
                         className="p-1 text-red-600 hover:text-red-700 transition-colors"
                         title="Delete"
                       >
-                        ×
+                        🗑️
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollToDoc(`existing-${idx}`)}
+                        className="p-1 text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors hover:scale-110"
+                        title="Scroll to this doc"
+                      >
+                        <FaArrowUp className="text-sm" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => bottomRef.current?.scrollIntoView({ behavior: "smooth" })}
+                        className="p-1 text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors hover:scale-110"
+                        title="Scroll to bottom"
+                      >
+                        <FaArrowDown className="text-sm" />
                       </button>
                     </div>
                   </div>
@@ -1140,12 +1317,13 @@ const MyProjectWorksForm = () => {
           {formValues.mdDocumentation.map((doc, idx) => (
             <div
               key={idx}
-              className="border border-[var(--border-main)] rounded-lg p-3 mb-3 bg-[var(--background-elevated)] relative"
+              ref={el => (docRefs.current[`new-${idx}`] = el)}
+              className="border border-[var(--border-main)] rounded-lg p-3-[var(--background-elevated)] relative"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <h4 className="font-bold text-[var(--text-primary)]">Documentation {idx + 1}</h4>
-                  <span className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded">
+                  <span className="text-xs bg-[var(--primary-main)] text-white px-2">
                     {doc.title || "Untitled"}
                   </span>
                 </div>
@@ -1186,15 +1364,17 @@ const MyProjectWorksForm = () => {
 
                             // Initialize preview state for new doc
                             const newIdx = newDocs.length - 1;
-                            setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: true }));
-                            toast.success("Markdown file uploaded successfully! Preview enabled.");
+                            setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: false })); // Start hidden
+                            toast.success(
+                              "Markdown file uploaded successfully! Use Show/Hide buttons to manage previews."
+                            );
                           };
                           reader.readAsText(file);
                         }
                       };
                       tempInput.click();
                     }}
-                    className="px-4 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--background-default)] transition-colors duration-200 font-medium flex items-center gap-2"
+                    className="px-4 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--background-default)] transition-colors duration-200 flex items-center gap-2"
                   >
                     <FaFileUpload className="text-sm" />
                     Upload Single .md File
@@ -1217,45 +1397,67 @@ const MyProjectWorksForm = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => removeMdDoc(idx)}
+                    onClick={() => {
+                      console.log(`[DEBUG] removeMdDoc called for idx: ${idx}`);
+                      removeMdDoc(idx);
+                    }}
                     className="p-1 text-red-600 hover:text-red-700 transition-colors"
-                    title="Remove"
+                    title="Remove (removeMdDoc)"
                   >
-                    ×
+                    🗑️
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollToDoc(`new-${idx}`)}
+                    className="p-1 text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors hover:scale-110"
+                    title="Scroll to this doc"
+                  >
+                    <FaArrowUp className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => bottomRef.current?.scrollIntoView({ behavior: "smooth" })}
+                    className="p-1 text-[var(--text-secondary)] hover:text-[var(--primary-main)] transition-colors hover:scale-110"
+                    title="Scroll to bottom"
+                  >
+                    <FaArrowDown className="text-sm" />
                   </button>
                 </div>
               </div>
 
-              <input
-                type="text"
-                value={doc.title}
-                onChange={e => handleMdDocChange(idx, "title", e.target.value)}
-                placeholder="Documentation Title (required)"
-                className="w-full border border-[var(--border-main)] rounded-lg px-3 py-2 mb-2 bg-[var(--background-default)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
-              />
-              <input
-                type="text"
-                value={doc.slug}
-                onChange={e => handleMdDocChange(idx, "slug", e.target.value)}
-                placeholder="Slug (optional)"
-                className="w-full border border-[var(--border-main)] rounded-lg px-3 py-2 mb-2 bg-[var(--background-default)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
-              />
-              <div className="border border-[var(--border-main)] rounded-lg overflow-hidden">
-                <MarkdownEditor
-                  value={doc.content}
-                  onChange={val => handleMdDocChange(idx, "content", val)}
-                />
-              </div>
+              {/* Show full content only when preview is enabled */}
               {showMdPreview[`new-${idx}`] && (
-                <div className="mt-2 border border-[var(--border-main)] rounded-lg overflow-hidden">
-                  <div className="p-2 bg-[var(--background-default)] border-b border-[var(--border-main)] text-sm font-medium text-[var(--text-primary)] flex items-center justify-between">
-                    <span>Preview: {doc.title || "Untitled"}</span>
-                    <span className="text-xs text-[var(--text-secondary)]">
-                      {doc.content.length} characters
-                    </span>
+                <>
+                  <input
+                    type="text"
+                    value={doc.title}
+                    onChange={e => handleMdDocChange(idx, "title", e.target.value)}
+                    placeholder="Documentation Title (required)"
+                    className="w-full border border-[var(--border-main)] rounded-lg px-3 py-2 bg-[var(--background-default)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
+                  />
+                  <input
+                    type="text"
+                    value={doc.slug}
+                    onChange={e => handleMdDocChange(idx, "slug", e.target.value)}
+                    placeholder="Slug (optional)"
+                    className="w-full border border-[var(--border-main)] rounded-lg px-3 py-2 bg-[var(--background-default)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] transition-colors duration-200"
+                  />
+                  <div className="border border-[var(--border-main)] rounded-lg overflow-hidden">
+                    <MarkdownEditor
+                      value={doc.content}
+                      onChange={val => handleMdDocChange(idx, "content", val)}
+                    />
                   </div>
-                  <MarkdownEditor value={doc.content} readOnly />
-                </div>
+                  <div className="mt-2 border border-[var(--border-main)] rounded-lg overflow-hidden">
+                    <div className="p-2 bg-[var(--background-default)] border-b border-[var(--border-main)] text-sm font-medium text-[var(--text-primary)] flex items-center justify-between">
+                      <span>Preview: {doc.title || "Untitled"}</span>
+                      <span className="text-xs text-[var(--text-secondary)]">
+                        {doc.content.length} characters
+                      </span>
+                    </div>
+                    <MarkdownEditor value={doc.content} readOnly />
+                  </div>
+                </>
               )}
             </div>
           ))}
@@ -1304,8 +1506,10 @@ const MyProjectWorksForm = () => {
 
                       // Initialize preview state for new doc
                       const newIdx = newDocs.length - 1;
-                      setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: true }));
-                      toast.success("Markdown file uploaded successfully! Preview enabled.");
+                      setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: false })); // Start hidden
+                      toast.success(
+                        "Markdown file uploaded successfully! Use Show/Hide buttons to manage previews."
+                      );
                     };
                     reader.readAsText(file);
                   }
@@ -1321,7 +1525,7 @@ const MyProjectWorksForm = () => {
             {formValues.mdDocumentation.length > 0 && (
               <div className="flex items-center gap-2 ml-4">
                 <span className="text-sm text-[var(--text-secondary)]">
-                  📁 {formValues.mdDocumentation.length} file
+                  📁 {formValues.mdDocumentation.length} new file
                   {formValues.mdDocumentation.length !== 1 ? "s" : ""} uploaded
                 </span>
                 <span className="text-sm text-[var(--text-secondary)]">
@@ -1339,11 +1543,21 @@ const MyProjectWorksForm = () => {
                 </span>
               </div>
             )}
+            {(formValues.mdDocumentation.length > 0 || keptExistingDocs.length > 0) && (
+              <div className="flex items-center gap-2 ml-4">
+                <span className="text-sm text-[var(--text-secondary)] font-medium">
+                  🎯 Total to save: {formValues.mdDocumentation.length + keptExistingDocs.length}{" "}
+                  file
+                  {formValues.mdDocumentation.length + keptExistingDocs.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
           </div>
 
           <p className="text-xs text-[var(--text-secondary)] mt-2">
             💡 Tip: You can upload multiple .md files at once or add them individually. Use "Show
-            All" / "Hide All" buttons to manage previews.
+            All" / "Hide All" buttons to manage previews. When you save, new files will be added to
+            existing ones.
           </p>
         </div>
         {/* Submit */}
@@ -1379,6 +1593,29 @@ const MyProjectWorksForm = () => {
           )}
         </div>
       </form>
+      {/* Scroll to Top/Bottom Buttons */}
+      <div ref={bottomRef}></div>
+      <div
+        className="fixed right-4 z-50 flex flex-col gap-2"
+        style={{ top: "50%", transform: "translateY(-50%)" }}
+      >
+        <button
+          type="button"
+          className="p-3 bg-[var(--primary-main)] text-white rounded-full shadow-lg hover:bg-[var(--primary-dark)] transition-all duration-200 hover:scale-110 hover:shadow-xl"
+          onClick={() => topRef.current?.scrollIntoView({ behavior: "smooth" })}
+          title="Scroll to Top"
+        >
+          <FaArrowUp className="text-lg" />
+        </button>
+        <button
+          type="button"
+          className="p-3 bg-[var(--primary-main)] text-white rounded-full shadow-lg hover:bg-[var(--primary-dark)] transition-all duration-200 hover:scale-110 hover:shadow-xl"
+          onClick={() => bottomRef.current?.scrollIntoView({ behavior: "smooth" })}
+          title="Scroll to Bottom"
+        >
+          <FaArrowDown className="text-lg" />
+        </button>
+      </div>
     </div>
   );
 };

@@ -14,6 +14,14 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+// Create axios instance
+const myProjectWorksApi = axios.create({
+  baseURL: baseURL,
+  timeout: 300000, // Default timeout for regular requests
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 // Create axios instance for file uploads with longer timeout
 const uploadApi = axios.create({
@@ -141,6 +149,17 @@ api.interceptors.response.use(
     }
     return Promise.reject(error);
   }
+);
+
+myProjectWorksApi.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
 );
 
 // Auth API functions
@@ -563,7 +582,7 @@ export const myProjectWorksAPI = {
       console.log("🔍 [API] Calling createProjectWork");
       console.log("🔍 [API] Project data keys:", Object.keys(projectData));
 
-      const response = await api.post("/api/my-project-works", projectData, {
+      const response = await myProjectWorksApi.post("/api/my-project-works", projectData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -583,7 +602,7 @@ export const myProjectWorksAPI = {
       console.log("🔍 [API] Calling updateProjectWork with ID:", id);
       console.log("🔍 [API] Project data keys:", Object.keys(projectData));
 
-      const response = await api.put(`/api/my-project-works/${id}`, projectData, {
+      const response = await myProjectWorksApi.put(`/api/my-project-works/${id}`, projectData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -635,6 +654,22 @@ export const myProjectWorksAPI = {
     } catch (error) {
       console.error("❌ [API] deleteProjectWorkDoc Error:", error);
       console.error("❌ [API] Error response:", error.response);
+      throw error;
+    }
+  },
+
+  // Delete single markdown document from project work (new route)
+  deleteMdDocument: async (projectId, docId) => {
+    try {
+      console.log("[API] Calling deleteMdDocument:", { projectId, docId });
+      const response = await myProjectWorksApi.patch(
+        `/api/my-project-works/${projectId}/document/${docId}`
+      );
+      console.log("[API] deleteMdDocument Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("[API] deleteMdDocument Error:", error);
+      console.error("[API] Error response:", error.response);
       throw error;
     }
   },
