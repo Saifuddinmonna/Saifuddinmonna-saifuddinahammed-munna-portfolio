@@ -290,10 +290,10 @@ export const blogAPI = {
   },
 };
 
-// Create blog (multipart/form-data)
-export const createBlogMultipart = async formData => {
+// Create or update blog (multipart/form-data)
+export const createBlogMultipart = async (formData, id = null) => {
   try {
-    console.log("=== CREATING BLOG MULTIPART ===");
+    console.log("=== BLOG MULTIPART ===");
     console.log("FormData entries:");
     for (let [key, value] of formData.entries()) {
       console.log(`${key}:`, typeof value === "object" ? `File: ${value.name}` : value);
@@ -312,18 +312,25 @@ export const createBlogMultipart = async formData => {
       multipartApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
 
-    console.log("=== REQUEST DETAILS ===");
-    console.log("URL:", `${baseURL}/api/blogs`);
-    console.log("Method: POST");
-    console.log("Content-Type will be set by browser for FormData");
-    console.log("========================");
-
-    const response = await multipartApi.post("/api/blogs", formData);
+    let response;
+    if (id) {
+      // Update blog (PUT)
+      console.log("=== REQUEST DETAILS ===");
+      console.log("URL:", `${baseURL}/api/blogs/${id}`);
+      console.log("Method: PUT");
+      response = await multipartApi.put(`/api/blogs/${id}`, formData);
+    } else {
+      // Create blog (POST)
+      console.log("=== REQUEST DETAILS ===");
+      console.log("URL:", `${baseURL}/api/blogs`);
+      console.log("Method: POST");
+      response = await multipartApi.post("/api/blogs", formData);
+    }
 
     console.log("Response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Blog creation error:", error);
+    console.error("Blog create/update error:", error);
     console.error("Error response:", error.response?.data);
     console.error("Error status:", error.response?.status);
     console.error("Error headers:", error.response?.headers);

@@ -609,3 +609,544 @@ nav {
   background: var(--background-paper, #1e293b);
   color: var(--text-primary, #f8fafc);
 }
+
+/* ========================================
+   ADMIN DASHBOARD RESPONSIVE STYLES
+   ======================================== */
+
+/* Admin Dashboard Layout - Mobile First */
+.admin-dashboard-layout {
+  @apply flex h-screen bg-[var(--background-default)] overflow-hidden;
+}
+
+/* Sidebar - Mobile Responsive */
+.admin-sidebar {
+  @apply w-64 lg:w-60 xl:w-64 flex-shrink-0 bg-[var(--background-paper)] border-r border-[var(--border-color)] shadow-xl ml-[5%];
+}
+
+/* Mobile Sidebar Toggle */
+.admin-sidebar-toggle {
+  @apply lg:hidden fixed top-4 left-4 z-50 p-2 bg-[var(--primary-main)] text-white rounded-lg shadow-lg;
+}
+
+/* Mobile Sidebar Overlay */
+.admin-sidebar-overlay {
+  @apply lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40;
+}
+
+/* Mobile Sidebar */
+@media (max-width: 1023px) {
+  .admin-sidebar {
+    @apply fixed left-0 top-0 h-full w-64 z-50 transform transition-transform duration-300 ease-in-out;
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar {
+    @apply ml-0;
+  }
+}
+
+/* Main Content Area - Mobile Responsive */
+.admin-main-content {
+  @apply flex-1 flex flex-col overflow-hidden min-w-0;
+}
+
+@media (max-width: 1023px) {
+  .admin-main-content {
+    @apply w-full;
+  }
+}
+
+/* Top Bar - Mobile Responsive */
+.admin-top-bar {
+  @apply bg-[var(--background-paper)] border-b border-[var(--border-color)] p-2.5 flex items-center justify-between flex-shrink-0;
+}
+
+@media (max-width: 640px) {
+  .admin-top-bar {
+    @apply p-2;
+  }
+
+  .admin-top-bar h2 {
+    @apply text-sm;
+  }
+}
+
+/* Content Area - Mobile Responsive */
+.admin-content-area {
+  @apply flex-1 overflow-auto p-4 lg:p-6;
+}
+
+@media (max-width: 640px) {
+  .admin-content-area {
+    @apply p-2;
+  }
+}
+
+/* Dashboard Stats Cards - Mobile Responsive */
+.admin-stats-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6;
+}
+
+@media (max-width: 640px) {
+  .admin-stats-grid {
+    @apply grid-cols-1 gap-3;
+  }
+}
+
+.admin-stat-card {
+  @apply bg-[var(--background-paper)] rounded-xl p-4 border border-[var(--border-main)] shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+@media (max-width: 640px) {
+  .admin-stat-card {
+    @apply p-3;
+  }
+
+  .admin-stat-card h3 {
+    @apply text-sm;
+  }
+
+  .admin-stat-card .stat-value {
+    @apply text-2xl;
+  }
+}
+
+/* Blog Cards Grid - Mobile Responsive */
+.admin-blog-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+}
+
+@media (max-width: 640px) {
+  .admin-blog-grid {
+    @apply grid-cols-1 gap-3;
+  }
+}
+
+/* Blog Card - Mobile Responsive */
+.admin-blog-card {
+  @apply bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg border border-[var(--border-main)] hover:shadow-xl transition-all duration-300;
+}
+
+@media (max-width: 640px) {
+  .admin-blog-card {
+    @apply mx-2;
+  }
+
+  .admin-blog-card .card-content {
+    @apply p-3;
+  }
+
+  .admin-blog-card h3 {
+    @apply text-base;
+  }
+
+  .admin-blog-card .meta-info {
+    @apply flex-col gap-2;
+  }
+
+  .admin-blog-card .actions {
+    @apply flex-col gap-2;
+  }
+}
+
+/* Form Layouts - Mobile Responsive */
+.admin-form-container {
+  @apply max-w-4xl mx-auto;
+}
+
+@media (max-width: 640px) {
+  .admin-form-container {
+    @apply px-2;
+  }
+}
+
+.admin-form-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+}
+
+@media (max-width: 1023px) {
+  .admin-form-grid {
+    @apply grid-cols-1 gap-4;
+  }
+}
+
+/* Form Fields - Mobile Responsive */
+.admin-form-field {
+  @apply mb-4;
+}
+
+@media (max-width: 640px) {
+  .admin-form-field {
+    @apply mb-3;
+  }
+
+  .admin-form-field label {
+    @apply text-sm;
+  }
+
+  .admin-form-field input,
+  .admin-form-field textarea,
+  .admin-form-field select {
+    @apply text-sm;
+  }
+}
+
+/* Button Groups - Mobile Responsive */
+.admin-button-group {
+  @apply flex gap-2;
+}
+
+@media (max-width: 640px) {
+  .admin-button-group {
+    @apply flex-col gap-2;
+  }
+
+  .admin-button-group button {
+    @apply w-full;
+  }
+}
+
+/* Navigation Menu - Mobile Responsive */
+.admin-nav-menu {
+  @apply p-2 space-y-0.5 flex-1;
+}
+
+@media (max-width: 1023px) {
+  .admin-nav-menu {
+    @apply p-1 space-y-1;
+  }
+
+  .admin-nav-menu button {
+    @apply text-sm py-2;
+  }
+}
+
+/* Search and Filter - Mobile Responsive */
+.admin-search-filter {
+  @apply flex gap-4 mb-6;
+}
+
+@media (max-width: 640px) {
+  .admin-search-filter {
+    @apply flex-col gap-3;
+  }
+
+  .admin-search-filter input {
+    @apply w-full;
+  }
+}
+
+/* Pagination - Mobile Responsive */
+.admin-pagination {
+  @apply flex justify-center items-center gap-2 mt-6;
+}
+
+@media (max-width: 640px) {
+  .admin-pagination {
+    @apply flex-wrap gap-1;
+  }
+
+  .admin-pagination button {
+    @apply text-sm px-2 py-1;
+  }
+}
+
+/* Modal and Overlay - Mobile Responsive */
+.admin-modal {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+}
+
+.admin-modal-content {
+  @apply bg-[var(--background-paper)] rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+@media (max-width: 640px) {
+  .admin-modal-content {
+    @apply max-w-full mx-2;
+  }
+}
+
+/* Table Responsive - Mobile */
+.admin-table-container {
+  @apply overflow-x-auto;
+}
+
+.admin-table {
+  @apply min-w-full;
+}
+
+@media (max-width: 640px) {
+  .admin-table {
+    @apply text-sm;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    @apply px-2 py-1;
+  }
+}
+
+/* Image Upload Area - Mobile Responsive */
+.admin-image-upload {
+  @apply border-2 border-dashed border-[var(--border-main)] rounded-lg p-6 text-center;
+}
+
+@media (max-width: 640px) {
+  .admin-image-upload {
+    @apply p-4;
+  }
+}
+
+/* Category Badges - Mobile Responsive */
+.admin-category-badges {
+  @apply flex flex-wrap gap-2;
+}
+
+@media (max-width: 640px) {
+  .admin-category-badges {
+    @apply gap-1;
+  }
+
+  .admin-category-badges span {
+    @apply text-xs px-2 py-1;
+  }
+}
+
+/* Action Buttons - Mobile Responsive */
+.admin-action-buttons {
+  @apply flex items-center gap-2;
+}
+
+@media (max-width: 640px) {
+  .admin-action-buttons {
+    @apply flex-col gap-2 w-full;
+  }
+
+  .admin-action-buttons button {
+    @apply w-full justify-center;
+  }
+}
+
+/* Status Indicators - Mobile Responsive */
+.admin-status-indicator {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+@media (max-width: 640px) {
+  .admin-status-indicator {
+    @apply text-xs px-1 py-0.5;
+  }
+}
+
+/* Loading States - Mobile Responsive */
+.admin-loading {
+  @apply flex items-center justify-center p-8;
+}
+
+@media (max-width: 640px) {
+  .admin-loading {
+    @apply p-4;
+  }
+}
+
+/* Error States - Mobile Responsive */
+.admin-error {
+  @apply bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg;
+}
+
+@media (max-width: 640px) {
+  .admin-error {
+    @apply px-3 py-2 text-sm;
+  }
+}
+
+/* Success States - Mobile Responsive */
+.admin-success {
+  @apply bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg;
+}
+
+@media (max-width: 640px) {
+  .admin-success {
+    @apply px-3 py-2 text-sm;
+  }
+}
+
+/* Tooltip and Popover - Mobile Responsive */
+.admin-tooltip {
+  @apply absolute z-50 px-2 py-1 text-xs bg-gray-900 text-white rounded shadow-lg;
+}
+
+@media (max-width: 640px) {
+  .admin-tooltip {
+    @apply text-xs;
+  }
+}
+
+/* Dropdown Menus - Mobile Responsive */
+.admin-dropdown {
+  @apply absolute z-50 mt-1 bg-[var(--background-paper)] border border-[var(--border-main)] rounded-lg shadow-lg;
+}
+
+@media (max-width: 640px) {
+  .admin-dropdown {
+    @apply w-full;
+  }
+}
+
+/* File Upload - Mobile Responsive */
+.admin-file-upload {
+  @apply relative;
+}
+
+@media (max-width: 640px) {
+  .admin-file-upload input[type="file"] {
+    @apply text-sm;
+  }
+}
+
+/* Rich Text Editor - Mobile Responsive */
+.admin-rich-editor {
+  @apply border border-[var(--border-main)] rounded-lg;
+}
+
+@media (max-width: 640px) {
+  .admin-rich-editor {
+    @apply text-sm;
+  }
+
+  .admin-rich-editor .tox-toolbar {
+    @apply flex-wrap;
+  }
+}
+
+/* Chart and Graph Containers - Mobile Responsive */
+.admin-chart-container {
+  @apply bg-[var(--background-paper)] rounded-lg p-4 border border-[var(--border-main)];
+}
+
+@media (max-width: 640px) {
+  .admin-chart-container {
+    @apply p-2;
+  }
+}
+
+/* Notification System - Mobile Responsive */
+.admin-notification {
+  @apply fixed top-4 right-4 z-50 max-w-sm;
+}
+
+@media (max-width: 640px) {
+  .admin-notification {
+    @apply top-2 right-2 left-2 max-w-none;
+  }
+}
+
+/* Print Styles for Admin Dashboard */
+@media print {
+  .admin-sidebar,
+  .admin-top-bar,
+  .admin-action-buttons {
+    @apply hidden;
+  }
+
+  .admin-main-content {
+    @apply w-full;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .admin-dashboard-layout {
+    @apply border-2 border-black;
+  }
+
+  .admin-sidebar {
+    @apply border-2 border-black;
+  }
+
+  .admin-blog-card {
+    @apply border-2 border-black;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .admin-dashboard-layout * {
+    @apply transition-none;
+  }
+
+  .admin-sidebar {
+    @apply transition-none;
+  }
+
+  .admin-blog-card {
+    @apply transition-none;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.admin-sidebar button:focus,
+.admin-blog-card button:focus,
+.admin-form-field input:focus,
+.admin-form-field textarea:focus {
+  @apply outline-none ring-2 ring-[var(--primary-main)] ring-offset-2;
+}
+
+/* Dark Mode Specific Admin Styles */
+.dark .admin-sidebar {
+  @apply bg-gray-900 border-gray-700;
+}
+
+.dark .admin-top-bar {
+  @apply bg-gray-900 border-gray-700;
+}
+
+.dark .admin-blog-card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark .admin-stat-card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark .admin-modal-content {
+  @apply bg-gray-900 border-gray-700;
+}
+
+.dark .admin-dropdown {
+  @apply bg-gray-900 border-gray-700;
+}
+
+/* Custom Scrollbar for Admin Dashboard */
+.admin-content-area::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.admin-content-area::-webkit-scrollbar-track {
+  @apply bg-gray-200 rounded-full;
+}
+
+.admin-content-area::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+
+.admin-content-area::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+.dark .admin-content-area::-webkit-scrollbar-track {
+  @apply bg-gray-700;
+}
+
+.dark .admin-content-area::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+.dark .admin-content-area::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}

@@ -185,7 +185,7 @@ const BlogCard = memo(({ blog, handleLike, user }) => {
               {hasLiked ? <FaHeart /> : <FaRegHeart />}
               <span>{(blog.likes || []).length}</span>
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {canEdit && (
                 <Link
                   to={`/blog/edit/${blog._id}`}
@@ -197,7 +197,7 @@ const BlogCard = memo(({ blog, handleLike, user }) => {
               )}
               <Link
                 to={`/blog/${blog._id}`}
-                className="bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 flex-shrink-0"
+                className="bg-[var(--primary-main)] hover:bg-[var(--primary-dark)] text-white transition-colors duration-300 text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-2"
               >
                 Full Post
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

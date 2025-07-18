@@ -37,7 +37,7 @@ const AdminBlogCard = ({ post, onDelete, onLike, onEdit, onView, isAdmin }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[var(--background-paper)] rounded-xl overflow-hidden shadow-lg border border-[var(--border-main)] hover:shadow-xl transition-all duration-300"
+      className="admin-blog-card"
     >
       {/* Image */}
       {post.image && (
@@ -81,7 +81,7 @@ const AdminBlogCard = ({ post, onDelete, onLike, onEdit, onView, isAdmin }) => {
       )}
 
       {/* Content */}
-      <div className="p-6">
+      <div className="card-content p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-lg font-bold text-[var(--text-primary)] line-clamp-2 flex-1">
@@ -90,7 +90,7 @@ const AdminBlogCard = ({ post, onDelete, onLike, onEdit, onView, isAdmin }) => {
         </div>
 
         {/* Meta Info */}
-        <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)] mb-3">
+        <div className="meta-info flex items-center gap-4 text-sm text-[var(--text-secondary)] mb-3">
           <div className="flex items-center gap-1">
             <FaUser className="text-xs" />
             <span>{post.author?.name || "Anonymous"}</span>
@@ -119,7 +119,7 @@ const AdminBlogCard = ({ post, onDelete, onLike, onEdit, onView, isAdmin }) => {
         />
 
         {/* Actions */}
-        <div className="flex items-center justify-between">
+        <div className="actions flex items-center justify-between">
           <button
             onClick={() => onLike(post._id)}
             className={`flex items-center gap-1 text-sm transition-colors ${
@@ -130,7 +130,7 @@ const AdminBlogCard = ({ post, onDelete, onLike, onEdit, onView, isAdmin }) => {
             <span>{post.likes?.length || 0}</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="admin-action-buttons">
             <button
               onClick={onView}
               className="px-3 py-1 text-xs bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"

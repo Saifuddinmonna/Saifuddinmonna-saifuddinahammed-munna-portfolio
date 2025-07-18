@@ -175,13 +175,13 @@ const PortfolioCard = ({
           project.images.length > 0 && (
             <>
               {viewMode === VIEW_MODES.GRID_1 && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
               )}
               {viewMode === VIEW_MODES.GRID_2 && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
               )}
               {viewMode === VIEW_MODES.GRID_3 && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
               )}
             </>
           )}
@@ -193,11 +193,21 @@ const PortfolioCard = ({
         </h3>
         <p className={`text-sm md:text-base mb-3 ${styleClasses.category}`}>{project.category}</p>
         <p className={`text-sm md:text-base line-clamp-3 mb-4 ${styleClasses.description}`}>
-          {project.overview[0]}
+          {Array.isArray(project.overview)
+            ? project.overview[0]
+            : typeof project.overview === "string"
+            ? project.overview.split(/\r?\n|\. /)[0]
+            : ""}
         </p>
         {viewMode === VIEW_MODES.LIST && (
           <PortfolioOverview
-            overview={project.overview}
+            overview={
+              Array.isArray(project.overview)
+                ? project.overview
+                : typeof project.overview === "string"
+                ? project.overview.split(/\r?\n|\. /).filter(Boolean)
+                : []
+            }
             showMore={showMore}
             setShowMore={setShowMore}
           />

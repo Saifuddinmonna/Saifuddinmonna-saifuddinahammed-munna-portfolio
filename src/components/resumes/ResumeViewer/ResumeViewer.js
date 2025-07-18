@@ -160,6 +160,11 @@ const ResumeViewer = () => {
                 <b>Version:</b> {selectedResume.versionName}
               </p>
             )}
+            {selectedResume.forWhichPost && (
+              <p>
+                <b>Post For :</b> {selectedResume.forWhichPost}
+              </p>
+            )}
             {selectedResume.summary && (
               <p>
                 <b>Summary:</b> {selectedResume.summary}

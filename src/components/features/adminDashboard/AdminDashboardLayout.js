@@ -16,7 +16,7 @@ import {
 import { useAuth } from "../../../auth/context/AuthContext";
 
 const AdminDashboardLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Changed to false for mobile
   const { logOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,10 +79,32 @@ const AdminDashboardLayout = () => {
     return location.pathname === path;
   };
 
+  const handleMenuClick = path => {
+    navigate(path);
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-[var(--background-default)] overflow-hidden">
-      {/* Sidebar - Always visible with 5% left margin */}
-      <div className="w-64 lg:w-60 xl:w-64 flex-shrink-0 bg-[var(--background-paper)] border-r border-[var(--border-color)] shadow-xl ml-[5%]">
+    <div className="admin-dashboard-layout">
+      {/* Mobile Sidebar Toggle */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="admin-sidebar-toggle"
+        aria-label="Toggle sidebar"
+      >
+        {sidebarOpen ? <FaTimes /> : <FaBars />}
+      </button>
+
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div className="admin-sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* Sidebar */}
+      <div className={`admin-sidebar ${sidebarOpen ? "open" : ""}`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-2.5 border-b border-[var(--border-color)]">
           <div className="flex items-center gap-2">
@@ -94,10 +116,17 @@ const AdminDashboardLayout = () => {
               <p className="text-xs text-[var(--text-secondary)]">Dashboard</p>
             </div>
           </div>
+          {/* Close button for mobile */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          >
+            <FaTimes />
+          </button>
         </div>
 
         {/* Navigation Menu */}
-        <nav className="p-2 space-y-0.5 flex-1">
+        <nav className="admin-nav-menu">
           {menuItems.map((item, index) => (
             <motion.div
               key={item.path}
@@ -106,7 +135,7 @@ const AdminDashboardLayout = () => {
               transition={{ delay: index * 0.1 }}
             >
               <button
-                onClick={() => navigate(item.path)}
+                onClick={() => handleMenuClick(item.path)}
                 className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg transition-all duration-300 group ${
                   isActive(item.path)
                     ? `bg-gradient-to-r ${item.color} text-white shadow-lg`
@@ -145,9 +174,9 @@ const AdminDashboardLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <div className="admin-main-content">
         {/* Top Bar */}
-        <div className="bg-[var(--background-paper)] border-b border-[var(--border-color)] p-2.5 flex items-center justify-between flex-shrink-0">
+        <div className="admin-top-bar">
           <div className="flex items-center gap-3">
             <h2 className="text-base font-semibold text-[var(--text-primary)]">
               {menuItems.find(item => isActive(item.path))?.name || "Dashboard"}
@@ -162,7 +191,7 @@ const AdminDashboardLayout = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto p-4 lg:p-6">
+        <div className="admin-content-area">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

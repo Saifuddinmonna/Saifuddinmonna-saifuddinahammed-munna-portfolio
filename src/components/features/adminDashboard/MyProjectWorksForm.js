@@ -1220,22 +1220,6 @@ const MyProjectWorksForm = () => {
                     <FaUpload className="text-xs" />
                     Upload Multiple .md
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const tempInput = document.createElement("input");
-                      tempInput.type = "file";
-                      tempInput.accept = ".md";
-                      tempInput.multiple = true;
-                      tempInput.onchange = e => handleMultipleMdFileUpload(e, "existing");
-                      tempInput.click();
-                    }}
-                    className="px-3 py-1 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg text-sm hover:bg-[var(--background-default)] transition-colors duration-200 flex items-center gap-1"
-                    title="Upload single .md file"
-                  >
-                    <FaUpload className="text-xs" />
-                    Upload Single .md
-                  </button>
                 </div>
               </div>
               <input
@@ -1485,41 +1469,6 @@ const MyProjectWorksForm = () => {
             >
               <FaUpload className="text-sm" />
               Upload Multiple .md Files
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                const tempInput = document.createElement("input");
-                tempInput.type = "file";
-                tempInput.accept = ".md";
-                tempInput.onchange = e => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = event => {
-                      const content = event.target.result;
-                      const fileName = file.name.replace(".md", "");
-                      const newDoc = { title: fileName, content: content, slug: "" };
-                      const newDocs = [...formValues.mdDocumentation, newDoc];
-                      setValue("mdDocumentation", newDocs, { shouldValidate: true });
-
-                      // Initialize preview state for new doc
-                      const newIdx = newDocs.length - 1;
-                      setShowMdPreview(prev => ({ ...prev, [`new-${newIdx}`]: false })); // Start hidden
-                      toast.success(
-                        "Markdown file uploaded successfully! Use Show/Hide buttons to manage previews."
-                      );
-                    };
-                    reader.readAsText(file);
-                  }
-                };
-                tempInput.click();
-              }}
-              className="px-4 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--background-default)] transition-colors duration-200 font-medium flex items-center gap-2"
-            >
-              <FaFileUpload className="text-sm" />
-              Upload Single .md File
             </button>
 
             {formValues.mdDocumentation.length > 0 && (

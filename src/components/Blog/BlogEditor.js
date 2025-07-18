@@ -476,6 +476,7 @@ const BlogEditor = () => {
       formDataToSend.append("authorPhone", formData.author.phone);
       formDataToSend.append("status", formData.status);
       formDataToSend.append("readTime", formData.readTime);
+      // Always prioritize uploaded image file over URL
       if (imageMode === "upload" && imageFile) {
         formDataToSend.append("image", imageFile);
       } else if (imageMode === "url" && imageUrl) {
@@ -488,9 +489,10 @@ const BlogEditor = () => {
       }
       console.log("===========================");
 
+      // Always use createBlogMultipart for both create and update
       if (id) {
-        // Update mode
-        await blogService.updateBlog(id, formDataToSend);
+        // Update mode - pass id as second argument
+        await createBlogMultipart(formDataToSend, id);
         toast.success("Blog post updated successfully!");
       } else {
         // Create mode

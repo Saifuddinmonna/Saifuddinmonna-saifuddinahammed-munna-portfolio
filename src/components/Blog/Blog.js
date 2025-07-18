@@ -157,26 +157,34 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--background-default)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] sm:text-5xl md:text-6xl">
-            <span className="block">Web Development</span>
-            <span className="block text-[var(--primary-main)]">Blog & Insights</span>
-          </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-[var(--text-secondary)] sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Stay updated with the latest trends, tips, and insights in web development
-          </p>
-          {user && (
-            <Link
-              to="/blog/new"
-              className="mt-6 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors duration-300"
-            >
-              Write New Post
-            </Link>
-          )}
-        </div>
+        {/* Redesigned Header Section */}
+        <section className="relative mb-16">
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-[var(--primary-light)]/30 to-[var(--primary-main)]/10 rounded-3xl blur-sm -z-10"
+            style={{ height: "100%", width: "100%" }}
+          ></div>
+          <div className="text-center py-12 px-4 sm:px-8 rounded-3xl shadow-lg border border-[var(--border-main)] bg-[var(--background-paper)]/80">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[var(--text-primary)] mb-4">
+              <span className="block">Web Development</span>
+              <span className="block text-[var(--primary-main)] drop-shadow-lg">
+                Blog & Insights
+              </span>
+            </h1>
+            <p className="mt-3 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-[var(--text-secondary)] font-medium">
+              Stay updated with the latest trends, tips, and insights in web development
+            </p>
+            {user && (
+              <Link
+                to="/blog/new"
+                className="inline-block mt-8 px-8 py-3 bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)] text-white text-lg font-bold rounded-full shadow-lg hover:from-[var(--primary-dark)] hover:to-[var(--primary-main)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:ring-offset-2"
+              >
+                Write New Post
+              </Link>
+            )}
+          </div>
+        </section>
 
         {/* Tabs and Search Section */}
         <div className="mb-8">
