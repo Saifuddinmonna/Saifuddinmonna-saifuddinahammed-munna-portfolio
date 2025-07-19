@@ -3,7 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { myProjectWorksAPI } from "../../../services/apiService";
 import { motion } from "framer-motion";
-import { FaEdit, FaEye, FaTrash, FaPlus, FaSearch, FaSpinner, FaArrowLeft } from "react-icons/fa";
+import {
+  FaEdit,
+  FaEye,
+  FaTrash,
+  FaPlus,
+  FaSearch,
+  FaSpinner,
+  FaArrowLeft,
+  FaThLarge,
+  FaList,
+  FaTable,
+} from "react-icons/fa";
 import { useDataFetching } from "../../../hooks/useDataFetching";
 import { useIsAdmin } from "../../../utils/adminUtils";
 
@@ -46,6 +57,8 @@ const MyProjectWorksList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 20;
   const isAdmin = useIsAdmin();
+  // View mode state
+  const [viewMode, setViewMode] = useState("card"); // 'card' | 'list' | 'table'
 
   // Use the new custom hook for better data handling
   const {
@@ -232,6 +245,42 @@ const MyProjectWorksList = () => {
               ))}
             </select>
           </div>
+          {/* View Mode Switcher */}
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={() => setViewMode("card")}
+              className={`p-2 rounded border ${
+                viewMode === "card"
+                  ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                  : "border-[var(--border-main)] bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+              }`}
+              title="Card/Grid View"
+            >
+              <FaThLarge />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`p-2 rounded border ${
+                viewMode === "list"
+                  ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                  : "border-[var(--border-main)] bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+              }`}
+              title="List View"
+            >
+              <FaList />
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`p-2 rounded border ${
+                viewMode === "table"
+                  ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                  : "border-[var(--border-main)] bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+              }`}
+              title="Table View"
+            >
+              <FaTable />
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -304,108 +353,274 @@ const MyProjectWorksList = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects
-                .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
-                .map((project, index) => (
-                  <motion.div
-                    key={project._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="bg-[var(--background-paper)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-[var(--primary-main)]"
-                  >
-                    {/* Project Images */}
-                    {project.images && project.images.length > 0 && (
-                      <div className="mb-3 relative">
-                        <img
-                          src={
-                            project.images[0].thumbnailUrl ||
-                            project.images[0].fullImageUrl ||
-                            project.images[0].url
-                          }
-                          alt={project.name}
-                          className="w-full h-32 object-cover rounded-lg"
-                          loading="lazy"
-                        />
-                        {project.images.length > 1 && (
-                          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                            +{project.images.length - 1}
-                          </div>
-                        )}
+            {/* Card/Grid View */}
+            {viewMode === "card" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProjects
+                  .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
+                  .map((project, index) => (
+                    <motion.div
+                      key={project._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="bg-[var(--background-paper)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-[var(--primary-main)]"
+                    >
+                      {/* Project Images */}
+                      {project.images && project.images.length > 0 && (
+                        <div className="mb-3 relative">
+                          <img
+                            src={
+                              project.images[0].thumbnailUrl ||
+                              project.images[0].fullImageUrl ||
+                              project.images[0].url
+                            }
+                            alt={project.name}
+                            className="w-full h-32 object-cover rounded-lg"
+                            loading="lazy"
+                          />
+                          {project.images.length > 1 && (
+                            <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                              +{project.images.length - 1}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {/* Project Info */}
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-bold text-[var(--text-primary)] text-lg truncate">
+                          {project.name}
+                        </h3>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded">
+                            {project.category}
+                          </span>
+                          {project.categoryType && (
+                            <span className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded">
+                              {project.categoryType === "predefined" ? "Predefined" : "Custom"}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
-
-                    {/* Project Info */}
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold text-[var(--text-primary)] text-lg truncate">
-                        {project.name}
-                      </h3>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded">
+                      <p className="text-[var(--text-secondary)] text-sm line-clamp-2 mb-2">
+                        {project.overview}
+                      </p>
+                      {/* Technologies */}
+                      {project.technology && project.technology.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {project.technology.slice(0, 3).map((tech, idx) => (
+                            <span
+                              key={idx}
+                              className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {project.technology.length > 3 && (
+                            <span className="text-xs text-[var(--text-secondary)]">
+                              +{project.technology.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Link
+                          to={`detail/${project._id}`}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--primary-main)] text-white rounded text-sm font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
+                          title="View"
+                        >
+                          <FaEye className="text-xs" />
+                        </Link>
+                        <Link
+                          to={`edit/${project._id}`}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded text-sm font-medium hover:bg-[var(--background-default)] transition-colors duration-200"
+                          title="Edit"
+                        >
+                          <FaEdit className="text-xs" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(project._id)}
+                          disabled={deleteLoading === project._id}
+                          className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors duration-200 disabled:opacity-50"
+                          title="Delete"
+                        >
+                          {deleteLoading === project._id ? (
+                            <FaSpinner className="text-xs animate-spin" />
+                          ) : (
+                            <FaTrash className="text-xs" />
+                          )}
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+              </div>
+            )}
+            {/* List View */}
+            {viewMode === "list" && (
+              <div className="divide-y divide-[var(--border-main)] bg-[var(--background-paper)] rounded-lg overflow-hidden">
+                {filteredProjects
+                  .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
+                  .map((project, index) => (
+                    <div
+                      key={project._id}
+                      className="flex flex-col md:flex-row items-center md:items-stretch gap-4 p-4"
+                    >
+                      <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2">
+                        <div className="font-bold text-[var(--text-primary)] text-lg md:w-1/4 truncate">
+                          {project.name}
+                        </div>
+                        <div className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded md:w-1/6 text-center">
                           {project.category}
-                        </span>
-                        {project.categoryType && (
-                          <span className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded">
-                            {project.categoryType === "predefined" ? "Predefined" : "Custom"}
-                          </span>
-                        )}
+                        </div>
+                        <div className="text-[var(--text-secondary)] text-sm md:w-1/2 line-clamp-2">
+                          {project.overview}
+                        </div>
+                        <div className="flex flex-wrap gap-1 md:w-1/4">
+                          {project.technology &&
+                            project.technology.slice(0, 3).map((tech, idx) => (
+                              <span
+                                key={idx}
+                                className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          {project.technology && project.technology.length > 3 && (
+                            <span className="text-xs text-[var(--text-secondary)]">
+                              +{project.technology.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 md:items-center md:justify-end">
+                        <Link
+                          to={`detail/${project._id}`}
+                          className="p-2 rounded bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
+                          title="View"
+                        >
+                          <FaEye />
+                        </Link>
+                        <Link
+                          to={`edit/${project._id}`}
+                          className="p-2 rounded bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--background-default)]"
+                          title="Edit"
+                        >
+                          <FaEdit />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(project._id)}
+                          disabled={deleteLoading === project._id}
+                          className="p-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                          title="Delete"
+                        >
+                          {deleteLoading === project._id ? (
+                            <FaSpinner className="animate-spin" />
+                          ) : (
+                            <FaTrash />
+                          )}
+                        </button>
                       </div>
                     </div>
-                    <p className="text-[var(--text-secondary)] text-sm line-clamp-2 mb-2">
-                      {project.overview}
-                    </p>
-
-                    {/* Technologies */}
-                    {project.technology && project.technology.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {project.technology.slice(0, 3).map((tech, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                        {project.technology.length > 3 && (
-                          <span className="text-xs text-[var(--text-secondary)]">
-                            +{project.technology.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
-                      <Link
-                        to={`detail/${project._id}`}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--primary-main)] text-white rounded text-sm font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
-                      >
-                        <FaEye className="text-xs" />
-                        View
-                      </Link>
-                      <Link
-                        to={`edit/${project._id}`}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded text-sm font-medium hover:bg-[var(--background-default)] transition-colors duration-200"
-                      >
-                        <FaEdit className="text-xs" />
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(project._id)}
-                        disabled={deleteLoading === project._id}
-                        className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors duration-200 disabled:opacity-50"
-                      >
-                        {deleteLoading === project._id ? (
-                          <FaSpinner className="text-xs animate-spin" />
-                        ) : (
-                          <FaTrash className="text-xs" />
-                        )}
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-            </div>
+                  ))}
+              </div>
+            )}
+            {/* Table View */}
+            {viewMode === "table" && (
+              <div className="overflow-x-auto bg-[var(--background-paper)] rounded-lg">
+                <table className="min-w-full table-auto border border-[var(--border-main)]">
+                  <thead>
+                    <tr className="bg-[var(--background-elevated)]">
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-primary)] border-b border-[var(--border-main)]">
+                        Name
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-primary)] border-b border-[var(--border-main)]">
+                        Category
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-primary)] border-b border-[var(--border-main)]">
+                        Overview
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-primary)] border-b border-[var(--border-main)]">
+                        Tech
+                      </th>
+                      <th className="px-4 py-2 text-center text-xs font-semibold text-[var(--text-primary)] border-b border-[var(--border-main)]">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProjects
+                      .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
+                      .map(project => (
+                        <tr
+                          key={project._id}
+                          className="border-b border-[var(--border-main)] hover:bg-[var(--background-elevated)]"
+                        >
+                          <td className="px-4 py-2 font-bold text-[var(--text-primary)] truncate max-w-[180px]">
+                            {project.name}
+                          </td>
+                          <td className="px-4 py-2">
+                            <span className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded">
+                              {project.category}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2 text-[var(--text-secondary)] text-sm line-clamp-2 max-w-[300px]">
+                            {project.overview}
+                          </td>
+                          <td className="px-4 py-2">
+                            <div className="flex flex-wrap gap-1">
+                              {project.technology &&
+                                project.technology.slice(0, 3).map((tech, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                              {project.technology && project.technology.length > 3 && (
+                                <span className="text-xs text-[var(--text-secondary)]">
+                                  +{project.technology.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-2 text-center">
+                            <div className="flex gap-2 justify-center">
+                              <Link
+                                to={`detail/${project._id}`}
+                                className="p-2 rounded bg-[var(--primary-main)] text-white hover:bg-[var(--primary-dark)]"
+                                title="View"
+                              >
+                                <FaEye />
+                              </Link>
+                              <Link
+                                to={`edit/${project._id}`}
+                                className="p-2 rounded bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--background-default)]"
+                                title="Edit"
+                              >
+                                <FaEdit />
+                              </Link>
+                              <button
+                                onClick={() => handleDelete(project._id)}
+                                disabled={deleteLoading === project._id}
+                                className="p-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                                title="Delete"
+                              >
+                                {deleteLoading === project._id ? (
+                                  <FaSpinner className="animate-spin" />
+                                ) : (
+                                  <FaTrash />
+                                )}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {/* Pagination Bar */}
             <div className="flex justify-center items-center mt-8 gap-2">
               <button
