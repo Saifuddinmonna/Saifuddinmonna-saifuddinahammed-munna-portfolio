@@ -5,6 +5,8 @@ import { blogService } from "../../services/blogService";
 import { useAuth } from "../../auth/context/AuthContext";
 import { toast } from "react-hot-toast";
 import { FaHeart, FaRegHeart, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
+import { useRef, useEffect } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -16,6 +18,26 @@ const BlogPost = () => {
   const [editCommentText, setEditCommentText] = useState("");
   // For copy-to-clipboard feedback per badge
   const [copiedIdx, setCopiedIdx] = useState(null);
+  const contentRef = useRef(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      setShowScrollTop(scrollY > 200);
+      setShowScrollBottom(scrollY + windowHeight < docHeight - 200);
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToBottom = () =>
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
 
   const {
     data: response,
@@ -31,6 +53,47 @@ const BlogPost = () => {
   });
 
   const post = response?.data || response;
+
+  // Add scroll buttons for tables
+  useEffect(() => {
+    if (!contentRef.current) return;
+    // Find all tables in the rendered HTML
+    const tables = contentRef.current.querySelectorAll("table");
+    tables.forEach(table => {
+      table.classList.add("blog-table-scrollable");
+      // Wrap table in a div if not already wrapped
+      if (!table.parentElement.classList.contains("blog-table-wrapper")) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "blog-table-wrapper";
+        table.parentElement.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      }
+      const wrapper = table.parentElement;
+      // Remove old arrows if any
+      const oldLeft = wrapper.querySelector(".blog-table-arrow.left");
+      const oldRight = wrapper.querySelector(".blog-table-arrow.right");
+      if (oldLeft) oldLeft.remove();
+      if (oldRight) oldRight.remove();
+      // Add left arrow
+      const leftArrow = document.createElement("button");
+      leftArrow.className = "blog-table-arrow left";
+      leftArrow.type = "button";
+      leftArrow.innerHTML = `<svg width='18' height='18' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M15 19l-7-7 7-7'/></svg>`;
+      leftArrow.onclick = () => {
+        wrapper.scrollTo({ left: 0, behavior: "smooth" });
+      };
+      wrapper.appendChild(leftArrow);
+      // Add right arrow
+      const rightArrow = document.createElement("button");
+      rightArrow.className = "blog-table-arrow right";
+      rightArrow.type = "button";
+      rightArrow.innerHTML = `<svg width='18' height='18' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M9 5l7 7-7 7'/></svg>`;
+      rightArrow.onclick = () => {
+        wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: "smooth" });
+      };
+      wrapper.appendChild(rightArrow);
+    });
+  }, [post?.content]);
 
   // Get categories - show only name, fallback to ID, fallback to 'General'
   let categoryBadges = [{ name: "General" }];
@@ -221,8 +284,27 @@ const BlogPost = () => {
   const hasLiked = post.likes?.some(like => like.email === user?.email);
 
   return (
-    <div className="min-h-screen bg-[var(--background-default)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[var(--background-default)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      {/* Scroll to Top/Bottom Floating Buttons */}
+      {showScrollTop && (
+        <button
+          className="fixed bottom-8 right-8 z-50 blog-scroll-arrow"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+        >
+          <FaArrowLeft style={{ transform: "rotate(-90deg)" }} size={24} />
+        </button>
+      )}
+      {showScrollBottom && (
+        <button
+          className="fixed top-24 right-8 z-50 blog-scroll-arrow"
+          onClick={scrollToBottom}
+          aria-label="Scroll to bottom"
+        >
+          <FaArrowLeft style={{ transform: "rotate(90deg)" }} size={24} />
+        </button>
+      )}
+      <div className="blog-main-window max-w-7xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate("/blog")}
@@ -295,7 +377,8 @@ const BlogPost = () => {
             </div>
 
             <div
-              className="prose prose-lg max-w-none text-[var(--text-primary)] mb-8"
+              ref={contentRef}
+              className="prose prose-lg max-w-none text-[var(--text-primary)] mb-8 blog-content-with-scroll"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 

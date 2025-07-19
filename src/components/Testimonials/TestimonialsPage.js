@@ -15,7 +15,7 @@ const TestimonialsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const testimonialsPerPage = 9;
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
 
   // Determine which testimonial fetching function to use based on user role
   const getTestimonials = async () => {
@@ -163,7 +163,7 @@ const TestimonialsPage = () => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
+  console.log("isadmin form testimonila page ", isAdmin);
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Debug Info - Remove in production */}

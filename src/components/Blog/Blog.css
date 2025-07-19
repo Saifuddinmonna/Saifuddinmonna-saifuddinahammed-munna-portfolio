@@ -163,3 +163,105 @@
 /* You can add more custom styles for deeper levels if needed */
 
 /* --- End Category Dropdown CSS Cheat Sheet --- */
+
+/* Blog post table scroll styles */
+.blog-table-wrapper {
+  position: relative;
+  overflow-x: auto;
+  margin: 2rem auto;
+  padding-bottom: 1.5rem;
+  max-width: 130vw;
+  box-sizing: border-box;
+}
+.blog-table-scrollable {
+  width: 100%;
+  max-width: 130vw;
+  min-width: 0;
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+.blog-content-with-scroll table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 130vw;
+  font-size: min(1.1rem, max(0.7rem, 1.2vw));
+  word-break: break-word;
+  box-sizing: border-box;
+}
+.blog-content-with-scroll th,
+.blog-content-with-scroll td {
+  padding: 0.5em 1vw;
+  text-align: left;
+  font-size: min(1rem, max(0.65rem, 1.5vw));
+  max-width: 30vw;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+.blog-table-arrow {
+  position: absolute;
+  top: 0.5rem;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  transition: background 0.2s;
+}
+.blog-table-arrow.left {
+  left: 0.5rem;
+}
+.blog-table-arrow.right {
+  right: 0.5rem;
+}
+.blog-table-arrow:hover {
+  background: #f3f4f6;
+}
+
+.blog-scroll-arrow {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 2.7rem;
+  height: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.13);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.blog-scroll-arrow:hover {
+  background: #f3f4f6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 900px) {
+  .blog-table-scrollable {
+    width: 100%;
+    min-width: 0;
+  }
+  .blog-content-with-scroll th,
+  .blog-content-with-scroll td {
+    font-size: clamp(0.7rem, 2.5vw, 0.95rem);
+    padding: 0.4em 0.5vw;
+  }
+}
+@media (max-width: 600px) {
+  .blog-table-scrollable {
+    width: 100%;
+    min-width: 0;
+  }
+  .blog-content-with-scroll th,
+  .blog-content-with-scroll td {
+    font-size: clamp(0.7rem, 3vw, 0.9rem);
+    padding: 0.3em 0.3vw;
+  }
+}

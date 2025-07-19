@@ -37,8 +37,8 @@ const MainLayout = () => {
       <main className="flex-grow pt-16">
         <Outlet />
       </main>
-      <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} />
-      <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} />
+      {/* <ChatBubble onToggleChat={toggleChat} isChatOpen={isChatOpen} /> */}
+      {/* <ChatWindow isChatOpen={isChatOpen} onCloseChat={toggleChat} /> */}
       <Footer />
     </div>
   );
