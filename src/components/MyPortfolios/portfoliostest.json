@@ -20,7 +20,11 @@
 			"❖ Seller Access (seller: seller4@gmail.com password: 123456Use#)",
 			"❖ Buyer Access (Buyer : buyer4@gmail.com password: 123456Use#)"
 		],
-		"image": ["1.JPG", "2.JPG", "3.JPG"]
+		"image": [
+			"1.JPG",
+			"2.JPG",
+			"3.JPG"
+		]
 	},
 	{
 		"id": 2,
@@ -39,7 +43,12 @@
 			"❖ Users can see their review on  page or can add more services.",
 			"❖ Users can comment on receiving their services."
 		],
-		"image": ["r1.JPG", "r12.JPG", "r123.JPG", "r1234.JPG"]
+		"image": [
+			"r1.JPG",
+			"r12.JPG",
+			"r123.JPG",
+			"r1234.JPG"
+		]
 	},
 	{
 		"id": 3,
@@ -71,13 +80,20 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/GoExam",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": ["React, Vercel, Tailwind."],
+		"technology": [
+			"React, Vercel, Tailwind."
+		],
 		"overview": [
 			" ❖ GoExam is an online based learning platform for taking MCQ examination.",
 			" ❖ One can take MCQ test here.",
 			" ❖ It is a pure JavaScript website."
 		],
-		"image": ["goexam.JPG", "goexam1.JPG", "goexam2.JPG", "goexam3.JPG"]
+		"image": [
+			"goexam.JPG",
+			"goexam1.JPG",
+			"goexam2.JPG",
+			"goexam3.JPG"
+		]
 	},
 	{
 		"id": 5,
@@ -112,13 +128,22 @@
 		"name": "myactivityservice",
 		"liveWebsite": "https://myactivityservice.netlify.app/",
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/myactivityservice",
-		"technology": ["HTML", "CSS", "Bootstrap", "Javacipt ", "Reat"],
+		"technology": [
+			"HTML",
+			"CSS",
+			"Bootstrap",
+			"Javacipt ",
+			"Reat"
+		],
 		"overview": [
 			" ❖‘munnatype’ an online based learning platform for type speedy and correctly.",
 			"I work with ‘munnatype’ projects for error fixing  and debugging on various issues.",
 			" ❖‘munnatype’ is used for free  purposes built with HTML, CSS and Bootstrap-5 and pure Javascript."
 		],
-		"image": ["activityservice.JPG", "activityservice.JPG"]
+		"image": [
+			"activityservice.JPG",
+			"activityservice.JPG"
+		]
 	},
 	{
 		"id": 7,
@@ -126,13 +151,21 @@
 		"name": "munnatype",
 		"liveWebsite": "https://munnatype.netlify.app/index.html",
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/typespeedtester",
-		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"technology": [
+			"HTML",
+			" CSS",
+			" Bootstrap",
+			" JavaScript "
+		],
 		"overview": [
 			" ❖ ‘munnatype’ an online based learning platform for type speedy and correctly",
 			"I work with ‘munnatype’ projects for error fixing  and debugging on various issues",
 			" ❖‘munnatype’ is used for free learning purposes built with HTML, CSS and Bootstrap-5 and pure Javascrip"
 		],
-		"image": ["munnatype.JPG", "munnatype1.JPG"]
+		"image": [
+			"munnatype.JPG",
+			"munnatype1.JPG"
+		]
 	},
 	{
 		"id": 8,
@@ -140,7 +173,12 @@
 		"name": "my-team-selection",
 		"liveWebsite": "https://my-team-selection.netlify.app/",
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/my-team-selection",
-		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"technology": [
+			"HTML",
+			" CSS",
+			" Bootstrap",
+			" JavaScript "
+		],
 		"overview": [
 			" ❖ ‘my-team-selection’ an online based team management app",
 			"  ❖my-team-selection’ can be  used for calculating cost of players, coaches and manegers"
@@ -157,7 +195,12 @@
 		"name": "thenewsportal",
 		"liveWebsite": "https://thenewsportal.netlify.app/",
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/munnanews",
-		"technology": ["HTML", " CSS", " Bootstrap", " JavaScript "],
+		"technology": [
+			"HTML",
+			" CSS",
+			" Bootstrap",
+			" JavaScript "
+		],
 		"overview": [
 			"❖‘thenewsportal’ an online based news  platform",
 			"❖ ‘ thenewsportal  ’ is used for reading news  purposes built with HTML, CSS and Bootstrap-5  and pure JavaScript",
@@ -179,7 +222,9 @@
 		"liveWebsiteRepo": "",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": ["HTML, CSS, Bootstrap"],
+		"technology": [
+			"HTML, CSS, Bootstrap"
+		],
 		"overview": [
 			"❖ 'englishclub’ an online based learning platform",
 			"❖ ‘englishclub’ is used for free learning purposes built with HTML, CSS and Bootstrap-5"
@@ -201,7 +246,9 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/donate-today",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": ["HTML, CSS"],
+		"technology": [
+			"HTML, CSS"
+		],
 		"overview": [
 			"❖ ‘donate-today ’ is simple website built from figma Jpg.",
 			"❖ ‘donate-today ’ is built for free learning purposes built with HTML, CSS."
@@ -221,7 +268,9 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/world-cup",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": ["HTML, CSS"],
+		"technology": [
+			"HTML, CSS"
+		],
 		"overview": [
 			"❖‘world-cup’ is simple website built with html CSS ",
 			"❖  ‘world-cup’  is fully responsive website with pure CSS"
@@ -241,12 +290,17 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/Temperaturecounter",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": ["HTML, CSS, Bootstrap , JavaScript"],
+		"technology": [
+			"HTML, CSS, Bootstrap , JavaScript"
+		],
 		"overview": [
 			"❖ ‘munnatemperature”  is an online based weather app.",
 			"❖‘munnatemperature” is used for knowing update temperature humidity  and rain with HTML, CSS and Bootstrap-5 and pure JavaScript."
 		],
-		"image": ["munnatemperature.JPG", "munnatemperature1.JPG"]
+		"image": [
+			"munnatemperature.JPG",
+			"munnatemperature1.JPG"
+		]
 	},
 	{
 		"id": 14,
@@ -256,12 +310,18 @@
 		"liveWebsiteRepo": "https://github.com/Saifuddinmonna/rim-shoping",
 		"liveServersite": "",
 		"liveServersiteRepo": "",
-		"technology": ["HTML, CSS, Bootstrap , JavaScript, React"],
+		"technology": [
+			"HTML, CSS, Bootstrap , JavaScript, React"
+		],
 		"overview": [
 			"❖  ‘rim-shoping’ is simple e-commerce projects built with html CSS ,HTML, Bootstrap,JavaScript, React",
 			"❖ ‘rim-shoping’  is fully responsive website.",
 			"❖It very simple design and less code"
 		],
-		"image": ["rim-shoping.JPG", "rim-shoping1.JPG", "rim-shoping2.JPG"]
+		"image": [
+			"rim-shoping.JPG",
+			"rim-shoping1.JPG",
+			"rim-shoping2.JPG"
+		]
 	}
 ]

@@ -28,6 +28,12 @@ const ProjectSkeleton = () => (
   </div>
 );
 
+// Pagination utility
+const getPageNumbers = (total, perPage) => {
+  const totalPages = Math.ceil(total / perPage);
+  return Array.from({ length: totalPages }, (_, i) => i + 1);
+};
+
 const MyProjectWorksList = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
@@ -36,6 +42,9 @@ const MyProjectWorksList = () => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [filterCategory, setFilterCategory] = useState("");
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 20;
   const isAdmin = useIsAdmin();
 
   // Use the new custom hook for better data handling
@@ -90,6 +99,7 @@ const MyProjectWorksList = () => {
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredProjects(projects);
+      setCurrentPage(1);
       return;
     }
 
@@ -100,7 +110,20 @@ const MyProjectWorksList = () => {
         project.technology?.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredProjects(filtered);
+    setCurrentPage(1);
   }, [searchTerm, projects]);
+
+  // Category filter
+  useEffect(() => {
+    if (!filterCategory) {
+      setFilteredProjects(projects);
+      setCurrentPage(1);
+      return;
+    }
+    const filtered = projects.filter(p => p.category === filterCategory);
+    setFilteredProjects(filtered);
+    setCurrentPage(1);
+  }, [filterCategory, projects]);
 
   // Delete project with loading state
   const handleDelete = async id => {
@@ -257,62 +280,63 @@ const MyProjectWorksList = () => {
       )}
 
       {/* Projects Grid */}
-      {!loading && (
-        <>
-          {filteredProjects.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4 text-[var(--text-secondary)]">📁</div>
-              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                {searchTerm ? "No projects found" : "No projects yet"}
-              </h3>
-              <p className="text-[var(--text-secondary)] mb-6">
-                {searchTerm
-                  ? "Try adjusting your search terms"
-                  : "Get started by creating your first project"}
-              </p>
-              {!searchTerm && (
-                <Link
-                  to="create"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
-                >
-                  <FaPlus />
-                  Create First Project
-                </Link>
-              )}
-            </div>
-          ) : (
+      <>
+        {filteredProjects.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4 text-[var(--text-secondary)]">📁</div>
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+              {searchTerm ? "No projects found" : "No projects yet"}
+            </h3>
+            <p className="text-[var(--text-secondary)] mb-6">
+              {searchTerm
+                ? "Try adjusting your search terms"
+                : "Get started by creating your first project"}
+            </p>
+            {!searchTerm && (
+              <Link
+                to="create"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--primary-main)] text-white rounded-lg font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
+              >
+                <FaPlus />
+                Create First Project
+              </Link>
+            )}
+          </div>
+        ) : (
+          <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project, index) => (
-                <motion.div
-                  key={project._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="bg-[var(--background-paper)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-[var(--primary-main)]"
-                >
-                  {/* Project Images */}
-                  {project.images && project.images.length > 0 && (
-                    <div className="mb-3 relative">
-                      <img
-                        src={
-                          project.images[0].thumbnailUrl ||
-                          project.images[0].fullImageUrl ||
-                          project.images[0].url
-                        }
-                        alt={project.name}
-                        className="w-full h-32 object-cover rounded-lg"
-                        loading="lazy"
-                      />
-                      {project.images.length > 1 && (
-                        <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                          +{project.images.length - 1}
-                        </div>
-                      )}
-                    </div>
-                  )}
+              {filteredProjects
+                .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
+                .map((project, index) => (
+                  <motion.div
+                    key={project._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="bg-[var(--background-paper)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-[var(--primary-main)]"
+                  >
+                    {/* Project Images */}
+                    {project.images && project.images.length > 0 && (
+                      <div className="mb-3 relative">
+                        <img
+                          src={
+                            project.images[0].thumbnailUrl ||
+                            project.images[0].fullImageUrl ||
+                            project.images[0].url
+                          }
+                          alt={project.name}
+                          className="w-full h-32 object-cover rounded-lg"
+                          loading="lazy"
+                        />
+                        {project.images.length > 1 && (
+                          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                            +{project.images.length - 1}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                  {/* Project Info */}
-                  <div className="mb-3">
+                    {/* Project Info */}
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-bold text-[var(--text-primary)] text-lg truncate">
                         {project.name}
@@ -331,61 +355,96 @@ const MyProjectWorksList = () => {
                     <p className="text-[var(--text-secondary)] text-sm line-clamp-2 mb-2">
                       {project.overview}
                     </p>
-                  </div>
 
-                  {/* Technologies */}
-                  {project.technology && project.technology.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {project.technology.slice(0, 3).map((tech, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {project.technology.length > 3 && (
-                        <span className="text-xs text-[var(--text-secondary)]">
-                          +{project.technology.length - 3}
-                        </span>
-                      )}
+                    {/* Technologies */}
+                    {project.technology && project.technology.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {project.technology.slice(0, 3).map((tech, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs bg-[var(--background-elevated)] text-[var(--text-secondary)] px-2 py-1 rounded"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.technology.length > 3 && (
+                          <span className="text-xs text-[var(--text-secondary)]">
+                            +{project.technology.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <Link
+                        to={`detail/${project._id}`}
+                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--primary-main)] text-white rounded text-sm font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
+                      >
+                        <FaEye className="text-xs" />
+                        View
+                      </Link>
+                      <Link
+                        to={`edit/${project._id}`}
+                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded text-sm font-medium hover:bg-[var(--background-default)] transition-colors duration-200"
+                      >
+                        <FaEdit className="text-xs" />
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(project._id)}
+                        disabled={deleteLoading === project._id}
+                        className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors duration-200 disabled:opacity-50"
+                      >
+                        {deleteLoading === project._id ? (
+                          <FaSpinner className="text-xs animate-spin" />
+                        ) : (
+                          <FaTrash className="text-xs" />
+                        )}
+                      </button>
                     </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <Link
-                      to={`detail/${project._id}`}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--primary-main)] text-white rounded text-sm font-medium hover:bg-[var(--primary-dark)] transition-colors duration-200"
-                    >
-                      <FaEye className="text-xs" />
-                      View
-                    </Link>
-                    <Link
-                      to={`edit/${project._id}`}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[var(--background-elevated)] text-[var(--text-primary)] border border-[var(--border-main)] rounded text-sm font-medium hover:bg-[var(--background-default)] transition-colors duration-200"
-                    >
-                      <FaEdit className="text-xs" />
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(project._id)}
-                      disabled={deleteLoading === project._id}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors duration-200 disabled:opacity-50"
-                    >
-                      {deleteLoading === project._id ? (
-                        <FaSpinner className="text-xs animate-spin" />
-                      ) : (
-                        <FaTrash className="text-xs" />
-                      )}
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
             </div>
-          )}
-        </>
-      )}
+            {/* Pagination Bar */}
+            <div className="flex justify-center items-center mt-8 gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 rounded border border-[var(--border-main)] bg-[var(--background-paper)] text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Prev
+              </button>
+              {getPageNumbers(filteredProjects.length, projectsPerPage).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-2 rounded border ${
+                    page === currentPage
+                      ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                      : "border-[var(--border-main)] bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() =>
+                  setCurrentPage(p =>
+                    Math.min(getPageNumbers(filteredProjects.length, projectsPerPage).length, p + 1)
+                  )
+                }
+                disabled={
+                  currentPage === getPageNumbers(filteredProjects.length, projectsPerPage).length
+                }
+                className="px-3 py-2 rounded border border-[var(--border-main)] bg-[var(--background-paper)] text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
+      </>
 
       {isAdmin && <DebugPanel />}
     </div>

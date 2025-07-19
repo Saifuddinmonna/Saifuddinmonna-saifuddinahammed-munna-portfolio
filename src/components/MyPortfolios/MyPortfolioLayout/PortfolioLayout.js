@@ -43,6 +43,12 @@ import {
   getStyleClasses,
 } from "./utils";
 
+// Pagination utility
+const getPageNumbers = (total, perPage) => {
+  const totalPages = Math.ceil(total / perPage);
+  return Array.from({ length: totalPages }, (_, i) => i + 1);
+};
+
 // =======================
 // Main PortfolioLayout Component
 // =======================
@@ -64,6 +70,10 @@ const PortfolioLayout = () => {
   const [allCategories, setAllCategories] = useState();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentStyle, setCurrentStyle] = useState(STYLE_OPTIONS.DEFAULT);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 9;
 
   // ===== Fetch categories =====
   useEffect(() => {
@@ -95,6 +105,7 @@ const PortfolioLayout = () => {
 
         const response = await getAllPortfolioProjects(params);
         setDatasServer(response.data);
+        setCurrentPage(1); // Reset to first page on new data
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
         setDatasServer([]);
@@ -174,57 +185,100 @@ const PortfolioLayout = () => {
                 commonButtonStyles={commonButtonStyles}
               />
 
-              {/* Portfolio Grid/List */}
+              {/* Portfolio Grid/List with Pagination */}
               {isLoading ? (
                 <LoadingSkeleton />
               ) : Array.isArray(datasServer) && datasServer.length > 0 ? (
-                <PhotoProvider
-                  maskOpacity={0.8}
-                  maskClosable={true}
-                  photoClosable={true}
-                  bannerVisible={false}
-                  overlayRender={({ overlay, index }) => (
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
-                      {index + 1} / {datasServer.length}
-                    </div>
-                  )}
-                >
-                  <motion.div
-                    className={`grid gap-6 md:gap-8 lg:gap-10 ${
-                      viewMode === VIEW_MODES.GRID_1
-                        ? "grid-cols-1"
-                        : viewMode === VIEW_MODES.GRID_2
-                        ? "grid-cols-1 md:grid-cols-2"
-                        : viewMode === VIEW_MODES.GRID_3
-                        ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                        : "grid-cols-1"
-                    }`}
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
+                <>
+                  <PhotoProvider
+                    maskOpacity={0.8}
+                    maskClosable={true}
+                    photoClosable={true}
+                    bannerVisible={false}
+                    overlayRender={({ overlay, index }) => (
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+                        {index + 1} / {datasServer.length}
+                      </div>
+                    )}
                   >
-                    {(datasServer || []).map(project => {
-                      const styleClasses = getStyleClasses(currentStyle);
+                    <motion.div
+                      className={`grid gap-6 md:gap-8 lg:gap-10 ${
+                        viewMode === VIEW_MODES.GRID_1
+                          ? "grid-cols-1"
+                          : viewMode === VIEW_MODES.GRID_2
+                          ? "grid-cols-1 md:grid-cols-2"
+                          : viewMode === VIEW_MODES.GRID_3
+                          ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                          : "grid-cols-1"
+                      }`}
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                    >
+                      {(datasServer || [])
+                        .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
+                        .map(project => {
+                          const styleClasses = getStyleClasses(currentStyle);
 
-                      return (
-                        <PortfolioCard
-                          key={project.name}
-                          project={project}
-                          viewMode={viewMode}
-                          currentStyle={currentStyle}
-                          styleClasses={styleClasses}
-                          isDarkMode={isDarkMode}
-                          showMore={showMore}
-                          setShowMore={setShowMore}
-                          commonButtonStyles={commonButtonStyles}
-                          buttonVariants={buttonVariants}
-                          cardVariants={cardVariants}
-                          VIEW_MODES={VIEW_MODES}
-                        />
-                      );
-                    })}
-                  </motion.div>
-                </PhotoProvider>
+                          return (
+                            <PortfolioCard
+                              key={project.name}
+                              project={project}
+                              viewMode={viewMode}
+                              currentStyle={currentStyle}
+                              styleClasses={styleClasses}
+                              isDarkMode={isDarkMode}
+                              showMore={showMore}
+                              setShowMore={setShowMore}
+                              commonButtonStyles={commonButtonStyles}
+                              buttonVariants={buttonVariants}
+                              cardVariants={cardVariants}
+                              VIEW_MODES={VIEW_MODES}
+                            />
+                          );
+                        })}
+                    </motion.div>
+                  </PhotoProvider>
+                  {/* Pagination Bar */}
+                  <div className="flex justify-center items-center mt-8 gap-2">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-2 rounded border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Prev
+                    </button>
+                    {getPageNumbers(datasServer.length, projectsPerPage).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-2 rounded border ${
+                          page === currentPage
+                            ? "bg-[var(--primary-main)] text-white border-[var(--primary-main)]"
+                            : "border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] hover:bg-[var(--background-elevated)]"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() =>
+                        setCurrentPage(p =>
+                          Math.min(
+                            getPageNumbers(datasServer.length, projectsPerPage).length,
+                            p + 1
+                          )
+                        )
+                      }
+                      disabled={
+                        currentPage === getPageNumbers(datasServer.length, projectsPerPage).length
+                      }
+                      className="px-3 py-2 rounded border border-[var(--border-color)] bg-[var(--background-paper)] text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </>
               ) : (
                 // No projects found
                 <motion.p
