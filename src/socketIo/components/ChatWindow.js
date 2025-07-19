@@ -31,6 +31,7 @@ import ChatTabs from "./ChatWindowComponents/ChatTabs";
 import ChatSidebar from "./ChatWindowComponents/ChatSidebar";
 import ChatArea from "./ChatWindowComponents/ChatArea";
 import { useSocket } from "../SocketProvider";
+import { useIsAdminSync } from "../../utils/adminUtils";
 
 const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   const {
@@ -88,7 +89,6 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   // State declarations
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [activeChatTab, setActiveChatTab] = useState("public");
   const [selectedPrivateChatUser, setSelectedPrivateChatUser] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [editingMessage, setEditingMessage] = useState(null);
@@ -112,22 +112,55 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const currentTheme = isDarkMode ? theme.dark : theme.light;
+  const isAdmin = useIsAdminSync();
 
   // Filtered users and groups based on search
   const filteredUsers = useMemo(() => {
     if (!users) return [];
 
-    // De-duplicate users to prevent the same user from appearing multiple times in the list.
-    // It creates a Map using a unique key (id or uid) to store only the last unique user object.
-    const uniqueUsers = Array.from(
-      new Map(users.map(user => [user.id || user.uid, user])).values()
-    );
+    // Better deduplication logic to prevent same user appearing multiple times
+    const userMap = new Map();
 
-    return uniqueUsers.filter(
-      user =>
+    users.forEach(user => {
+      // Use email or name as primary unique identifier to prevent duplicates from multiple browser sessions
+      const uniqueKey =
+        user.email?.toLowerCase() || user.name?.toLowerCase() || user.id || user.uid || user._id;
+
+      if (uniqueKey) {
+        // If user already exists, keep the one with more complete data
+        const existingUser = userMap.get(uniqueKey);
+        if (
+          !existingUser ||
+          (user.name && !existingUser.name) ||
+          (user.email && !existingUser.email) ||
+          (user.role && !existingUser.role)
+        ) {
+          userMap.set(uniqueKey, user);
+        }
+      }
+    });
+
+    const uniqueUsers = Array.from(userMap.values());
+
+    return uniqueUsers.filter(user => {
+      // Check if user is admin (multiple ways)
+      const isUserAdmin =
+        (user.role === "admin" && user.isAdmin === true) ||
+        user.role === "admin" ||
+        (user.email && user.email.includes("admin")) ||
+        (user.name && user.name.toLowerCase().includes("admin"));
+
+      // For admin users, only search by "admin" text
+      if (isUserAdmin) {
+        return "admin".toLowerCase().includes((searchQuery || "").toLowerCase());
+      }
+
+      // For normal users, search by name and email
+      return (
         user.name?.toLowerCase().includes((searchQuery || "").toLowerCase()) ||
         user.email?.toLowerCase().includes((searchQuery || "").toLowerCase())
-    );
+      );
+    });
   }, [users, searchQuery]);
 
   const filteredGroups = useMemo(() => {
@@ -141,30 +174,18 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Get messages for current chat
   const currentMessages = useMemo(() => {
-    if (activeChatTab === "private" && selectedPrivateChatUser) {
+    if (activeTab === "private" && selectedPrivateChatUser) {
       // Sort private messages by timestamp ascending
       const msgs = privateMessages[selectedPrivateChatUser.uid] || [];
       return [...msgs].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    } else if (activeChatTab === "public") {
-      // Split messages into two columns for public chat
-      const publicMessages = messages || [];
-      const midPoint = Math.ceil(publicMessages.length / 2);
-      return {
-        left: publicMessages.slice(0, midPoint),
-        right: publicMessages.slice(midPoint),
-      };
-    } else if (activeChatTab === "group" && selectedGroup) {
+    } else if (activeTab === "public") {
+      // Return the array directly for public chat
+      return messages || [];
+    } else if (activeTab === "group" && selectedGroup) {
       return roomMessages[selectedGroup.id] || [];
     }
-    return activeChatTab === "public" ? { left: [], right: [] } : [];
-  }, [
-    activeChatTab,
-    selectedPrivateChatUser,
-    selectedGroup,
-    messages,
-    privateMessages,
-    roomMessages,
-  ]);
+    return [];
+  }, [activeTab, selectedPrivateChatUser, selectedGroup, messages, privateMessages, roomMessages]);
 
   // Scroll to bottom when messages change
   const scrollToBottom = useCallback(() => {
@@ -175,13 +196,13 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Load temporary groups from localStorage on mount
   useEffect(() => {
-    if (activeChatTab === "group" && groups.length === 0) {
+    if (activeTab === "group" && groups.length === 0) {
       const storedGroups = JSON.parse(localStorage.getItem("tempGroups") || "[]");
       if (storedGroups.length > 0) {
         setGroups(storedGroups);
       }
     }
-  }, [activeChatTab, groups.length, setGroups]);
+  }, [activeTab, groups.length, setGroups]);
 
   // Handle connection status
   useEffect(() => {
@@ -224,12 +245,15 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Message rendering function
   const renderMessages = column => {
-    const messagesToRender =
-      activeChatTab === "public"
-        ? column === "left"
-          ? currentMessages.left
-          : currentMessages.right
-        : currentMessages;
+    let messagesToRender;
+
+    if (activeTab === "public") {
+      // For public chat, use left/right columns
+      messagesToRender = column === "left" ? currentMessages.left : currentMessages.right;
+    } else {
+      // For private and group chat, use the array directly
+      messagesToRender = currentMessages;
+    }
 
     if (!messagesToRender || messagesToRender.length === 0) {
       return (
@@ -237,10 +261,23 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
           <div className="text-center">
             <FaUsers className="mx-auto mb-2 text-2xl opacity-50" />
             <p className="text-sm">
-              {activeChatTab === "group" && selectedGroup
+              {activeTab === "group" && selectedGroup
                 ? `No messages in ${selectedGroup.name} yet`
-                : activeChatTab === "private" && selectedPrivateChatUser
-                ? `No messages with ${selectedPrivateChatUser.name} yet`
+                : activeTab === "private" && selectedPrivateChatUser
+                ? (() => {
+                    // Check if selected user is admin
+                    const isUserAdmin =
+                      (selectedPrivateChatUser?.role === "admin" &&
+                        selectedPrivateChatUser?.isAdmin === true) ||
+                      selectedPrivateChatUser?.role === "admin" ||
+                      (selectedPrivateChatUser?.email &&
+                        selectedPrivateChatUser?.email.includes("admin")) ||
+                      (selectedPrivateChatUser?.name &&
+                        selectedPrivateChatUser?.name.toLowerCase().includes("admin"));
+
+                    const displayName = isUserAdmin ? "admin" : selectedPrivateChatUser.name;
+                    return `No messages with ${displayName} yet`;
+                  })()
                 : "No messages yet"}
             </p>
             <p className="text-xs mt-1 opacity-75">Start a conversation!</p>
@@ -257,12 +294,30 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
           u.id === message.sender?.id ||
           u._id === message.sender?._id
       );
-      const senderName = message.senderName || senderUser?.name || message.sender?.name || "User";
+
+      // Check if current user first
       const isCurrentUser =
         message.sender?.uid === currentUserId || message.senderId === currentUserId;
+
+      // Check if sender is admin
+      const isSenderAdmin =
+        (senderUser?.role === "admin" && senderUser?.isAdmin === true) ||
+        senderUser?.role === "admin" ||
+        (senderUser?.email && senderUser?.email.includes("admin")) ||
+        (senderUser?.name && senderUser?.name.toLowerCase().includes("admin"));
+
+      // Check if current user is admin (for their own messages)
+      const isCurrentUserAdmin = isAdmin && isCurrentUser;
+
+      // Show "admin" for admin users, otherwise show normal name
+      const senderName =
+        isSenderAdmin || isCurrentUserAdmin
+          ? "admin"
+          : message.senderName || senderUser?.name || message.sender?.name || "User";
+
       // For private chat, always show sender info and time for each message
       const showSenderInfo =
-        activeChatTab === "private"
+        activeTab === "private"
           ? true
           : index === 0 || messagesToRender[index - 1].senderId !== message.senderId;
       // For Messenger style, show name only for other user, and only at the start of a group
@@ -347,14 +402,33 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
     setIsSending(true);
     try {
-      if (activeChatTab === "private" && selectedPrivateChatUser) {
-        sendPrivateMessage({
+      if (activeTab === "private" && selectedPrivateChatUser) {
+        // Create message object with proper structure for private chat
+        const messageData = {
           receiverId: selectedPrivateChatUser.uid,
           text: inputValue.trim(),
           type: "text",
-        });
-        toast.success(`Message sent to ${selectedPrivateChatUser.name}`);
-      } else if (activeChatTab === "group" && selectedGroup) {
+          sender: {
+            uid: currentUserId,
+            name: dbUser?.data?.name || dbUser?.data?.email || "User",
+            avatar: dbUser?.data?.photoURL || "",
+          },
+          timestamp: new Date().toISOString(),
+        };
+
+        sendPrivateMessage(messageData);
+        // Check if selected user is admin for toast message
+        const isUserAdmin =
+          (selectedPrivateChatUser?.role === "admin" &&
+            selectedPrivateChatUser?.isAdmin === true) ||
+          selectedPrivateChatUser?.role === "admin" ||
+          (selectedPrivateChatUser?.email && selectedPrivateChatUser?.email.includes("admin")) ||
+          (selectedPrivateChatUser?.name &&
+            selectedPrivateChatUser?.name.toLowerCase().includes("admin"));
+
+        const displayName = isUserAdmin ? "admin" : selectedPrivateChatUser.name;
+        toast.success(`Message sent to ${displayName}`);
+      } else if (activeTab === "group" && selectedGroup) {
         await sendRoomMessage({
           roomId: selectedGroup.id,
           text: inputValue.trim(),
@@ -371,6 +445,7 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
       setInputValue("");
       scrollToBottom();
     } catch (error) {
+      console.error("Error sending message:", error);
       toast.error("Failed to send message");
     } finally {
       setIsSending(false);
@@ -379,15 +454,71 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   const handleInputChange = e => {
     setInputValue(e.target.value);
-    // Handle typing status
-    if (!typingTimeoutRef.current) {
-      sendTypingStatus(true);
-    }
-    clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
-      sendTypingStatus(false);
+
+    // Only send typing status if there's actual input AND user is actively typing
+    if (e.target.value.trim()) {
+      // Send typing status based on current chat context
+      if (activeTab === "private" && selectedPrivateChatUser) {
+        sendTypingStatus(true, {
+          type: "private",
+          receiverId: selectedPrivateChatUser.uid,
+        });
+      } else if (activeTab === "group" && selectedGroup) {
+        sendTypingStatus(true, {
+          type: "group",
+          roomId: selectedGroup.id,
+        });
+      } else if (activeTab === "public") {
+        sendTypingStatus(true, {
+          type: "public",
+        });
+      }
+
+      // Clear existing timeout
+      clearTimeout(typingTimeoutRef.current);
+
+      // Set new timeout to stop typing after 1 second of inactivity
+      typingTimeoutRef.current = setTimeout(() => {
+        // Stop typing status
+        if (activeTab === "private" && selectedPrivateChatUser) {
+          sendTypingStatus(false, {
+            type: "private",
+            receiverId: selectedPrivateChatUser.uid,
+          });
+        } else if (activeTab === "group" && selectedGroup) {
+          sendTypingStatus(false, {
+            type: "group",
+            roomId: selectedGroup.id,
+          });
+        } else if (activeTab === "public") {
+          sendTypingStatus(false, {
+            type: "public",
+          });
+        }
+        typingTimeoutRef.current = null;
+      }, 1000); // 1 second delay
+    } else {
+      // If input is empty, clear typing status immediately
+      clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = null;
-    }, 1000);
+
+      // Stop typing status
+      if (activeTab === "private" && selectedPrivateChatUser) {
+        sendTypingStatus(false, {
+          type: "private",
+          receiverId: selectedPrivateChatUser.uid,
+        });
+      } else if (activeTab === "group" && selectedGroup) {
+        sendTypingStatus(false, {
+          type: "group",
+          roomId: selectedGroup.id,
+        });
+      } else if (activeTab === "public") {
+        sendTypingStatus(false, {
+          type: "public",
+        });
+      }
+    }
   };
 
   const handleKeyDown = e => {
@@ -399,8 +530,49 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
   // Emoji selection handler
   const handleEmojiSelect = emojiData => {
-    setInputValue(prev => prev + emojiData.emoji);
+    const newValue = inputValue + emojiData.emoji;
+    setInputValue(newValue);
     setShowEmojiPicker(false);
+
+    // Trigger typing status since emoji selection is user input
+    if (newValue.trim()) {
+      if (activeTab === "private" && selectedPrivateChatUser) {
+        sendTypingStatus(true, {
+          type: "private",
+          receiverId: selectedPrivateChatUser.uid,
+        });
+      } else if (activeTab === "group" && selectedGroup) {
+        sendTypingStatus(true, {
+          type: "group",
+          roomId: selectedGroup.id,
+        });
+      } else if (activeTab === "public") {
+        sendTypingStatus(true, {
+          type: "public",
+        });
+      }
+
+      // Clear existing timeout and set new one
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        if (activeTab === "private" && selectedPrivateChatUser) {
+          sendTypingStatus(false, {
+            type: "private",
+            receiverId: selectedPrivateChatUser.uid,
+          });
+        } else if (activeTab === "group" && selectedGroup) {
+          sendTypingStatus(false, {
+            type: "group",
+            roomId: selectedGroup.id,
+          });
+        } else if (activeTab === "public") {
+          sendTypingStatus(false, {
+            type: "public",
+          });
+        }
+        typingTimeoutRef.current = null;
+      }, 1000);
+    }
   };
 
   // Message editing handlers
@@ -456,7 +628,24 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
   // Handlers
   const handleSelectPrivateChatUser = user => {
     if (!user) return;
-    setSelectedPrivateChatUser(user);
+
+    // Create a modified user object for admin users
+    let selectedUser = user;
+    const isUserAdmin =
+      (user.role === "admin" && user.isAdmin === true) ||
+      user.role === "admin" ||
+      (user.email && user.email.includes("admin")) ||
+      (user.name && user.name.toLowerCase().includes("admin"));
+
+    if (isUserAdmin) {
+      selectedUser = {
+        ...user,
+        name: "admin",
+        email: "", // Hide email for admin users
+      };
+    }
+
+    setSelectedPrivateChatUser(selectedUser);
     setActiveTab("private");
 
     // Fetch history only if it hasn't been fetched before for this user
@@ -741,6 +930,34 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
     }
   };
 
+  const handleInputFocus = () => {
+    // Don't send typing status on focus, only when actually typing
+    // The typing status will only be sent when the user actually types (in handleInputChange)
+  };
+
+  const handleInputBlur = () => {
+    // Clear typing status when input loses focus
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = null;
+
+    // Stop typing status when input loses focus
+    if (activeTab === "private" && selectedPrivateChatUser) {
+      sendTypingStatus(false, {
+        type: "private",
+        receiverId: selectedPrivateChatUser.uid,
+      });
+    } else if (activeTab === "group" && selectedGroup) {
+      sendTypingStatus(false, {
+        type: "group",
+        roomId: selectedGroup.id,
+      });
+    } else if (activeTab === "public") {
+      sendTypingStatus(false, {
+        type: "public",
+      });
+    }
+  };
+
   // Delay chat window loading
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -749,6 +966,42 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Cleanup typing status when component unmounts or tab changes
+  useEffect(() => {
+    return () => {
+      // Clear typing status when component unmounts
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+
+      // Only stop typing status if we were actually typing
+      if (inputValue.trim()) {
+        if (activeTab === "private" && selectedPrivateChatUser) {
+          sendTypingStatus(false, {
+            type: "private",
+            receiverId: selectedPrivateChatUser.uid,
+          });
+        } else if (activeTab === "group" && selectedGroup) {
+          sendTypingStatus(false, {
+            type: "group",
+            roomId: selectedGroup.id,
+          });
+        } else if (activeTab === "public") {
+          sendTypingStatus(false, {
+            type: "public",
+          });
+        }
+      }
+    };
+  }, [activeTab, selectedPrivateChatUser, selectedGroup, sendTypingStatus, inputValue]);
+
+  useEffect(() => {
+    if (isChatOpen && activeTab === "public" && requestPublicHistory) {
+      requestPublicHistory();
+    }
+  }, [isChatOpen, activeTab, requestPublicHistory]);
 
   // Don't render anything until visible
   if (!isVisible) {
@@ -839,6 +1092,8 @@ const ChatWindow = ({ isChatOpen, onCloseChat }) => {
                 inputValue={inputValue}
                 handleInputChange={handleInputChange}
                 handleKeyDown={handleKeyDown}
+                handleInputFocus={handleInputFocus}
+                handleInputBlur={handleInputBlur}
                 isSending={isSending}
                 showEmojiPicker={showEmojiPicker}
                 setShowEmojiPicker={setShowEmojiPicker}

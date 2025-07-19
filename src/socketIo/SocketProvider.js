@@ -50,7 +50,35 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onUsersList(usersList => {
-        setUsers(usersList);
+        // Deduplicate users to prevent same user appearing multiple times
+        const userMap = new Map();
+
+        usersList.forEach(user => {
+          // Use email or name as primary unique identifier to prevent duplicates from multiple browser sessions
+          const uniqueKey =
+            user.email?.toLowerCase() ||
+            user.name?.toLowerCase() ||
+            user.id ||
+            user.uid ||
+            user._id;
+
+          if (uniqueKey) {
+            // If user already exists, keep the one with more complete data
+            const existingUser = userMap.get(uniqueKey);
+            if (
+              !existingUser ||
+              (user.name && !existingUser.name) ||
+              (user.email && !existingUser.email) ||
+              (user.role && !existingUser.role)
+            ) {
+              userMap.set(uniqueKey, user);
+            }
+          }
+        });
+
+        const deduplicatedUsers = Array.from(userMap.values());
+        console.log("Deduplicated users:", deduplicatedUsers.length, "from", usersList.length);
+        setUsers(deduplicatedUsers);
       });
 
       socketService.onMessage(message => {
@@ -81,18 +109,34 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onPrivateMessageHistory(history => {
+        console.log("Received private message history:", history);
         if (!history || history.length === 0) return;
 
         // Identify the chat partner from the first message
         const currentUserId = user.uid;
         const firstMsg = history[0];
+
+        // Improved partnerId resolution with fallbacks
         const partnerId =
-          firstMsg.sender.uid === currentUserId ? firstMsg.receiverId : firstMsg.sender.uid;
+          firstMsg.sender?.uid === currentUserId
+            ? firstMsg.receiverId || firstMsg.receiver?.uid || firstMsg.receiverId
+            : firstMsg.sender?.uid || firstMsg.senderId;
+
+        console.log("Partner ID resolved:", partnerId, "from message:", firstMsg);
 
         if (partnerId) {
+          const formattedHistory = history.map(msg => ({
+            ...msg,
+            timestamp: msg.timestamp || msg.createdAt || new Date().toISOString(),
+            senderName: msg.senderName || msg.sender?.name || "Unknown",
+            senderId: msg.senderId || msg.sender?.uid || "unknown",
+          }));
+
           setPrivateMessages(prev => ({
             ...prev,
-            [partnerId]: history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+            [partnerId]: formattedHistory.sort(
+              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+            ),
           }));
         }
       });
@@ -160,10 +204,61 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketService.onUserTyping(data => {
-        setTypingUsers(prev => ({
-          ...prev,
-          [data.userId]: data.isTyping,
-        }));
+        console.log("Received typing status:", data);
+
+        // Only process typing status if it's from a different user
+        if (data.userId === user.uid) {
+          return; // Ignore own typing status
+        }
+
+        // Handle typing status based on context
+        if (data.type === "private" && data.receiverId) {
+          // For private chat, only show typing if it's from the selected user
+          if (data.receiverId === user.uid) {
+            setTypingUsers(prev => ({
+              ...prev,
+              [data.userId]: data.isTyping,
+            }));
+          }
+        } else if (data.type === "group" && data.roomId) {
+          // For group chat, show typing from all group members
+          setTypingUsers(prev => ({
+            ...prev,
+            [data.userId]: data.isTyping,
+          }));
+        } else if (data.type === "public") {
+          // For public chat, show typing from all users
+          setTypingUsers(prev => ({
+            ...prev,
+            [data.userId]: data.isTyping,
+          }));
+        } else {
+          // Fallback for backward compatibility
+          setTypingUsers(prev => ({
+            ...prev,
+            [data.userId]: data.isTyping,
+          }));
+        }
+
+        // Auto-clear typing status after 3 seconds if user stops typing
+        if (data.isTyping) {
+          setTimeout(() => {
+            setTypingUsers(prev => {
+              const newState = { ...prev };
+              if (newState[data.userId] === true) {
+                delete newState[data.userId];
+              }
+              return newState;
+            });
+          }, 3000);
+        } else {
+          // Immediately clear typing status when user stops typing
+          setTypingUsers(prev => {
+            const newState = { ...prev };
+            delete newState[data.userId];
+            return newState;
+          });
+        }
       });
 
       socketService.onUnreadCounts(counts => {
@@ -230,19 +325,23 @@ export const SocketProvider = ({ children }) => {
     };
   }, []);
 
-  const sendPrivateMessage = ({ receiverId, text, type }) => {
+  const sendPrivateMessage = ({ receiverId, text, type, sender, timestamp }) => {
     const message = {
       receiverId,
       text,
       type,
-      sender: {
+      sender: sender || {
         uid: user.uid,
         name: user.displayName,
         avatar: user.photoURL,
       },
-      timestamp: new Date().toISOString(),
+      timestamp: timestamp || new Date().toISOString(),
     };
+
+    console.log("Sending private message:", message);
     socketService.sendPrivateMessage(message);
+
+    // Add to local state for immediate UI update
     setPrivateMessages(prev => ({
       ...prev,
       [receiverId]: [...(prev[receiverId] || []), message],

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { FaPaperPlane, FaTimes, FaSmile, FaCheck, FaUsers } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
 import { ThemeContext } from "../../../App";
+import { useIsAdminSync } from "../../../utils/adminUtils";
 
 const ChatArea = ({
   connected,
@@ -22,6 +23,8 @@ const ChatArea = ({
   inputValue,
   handleInputChange,
   handleKeyDown,
+  handleInputFocus,
+  handleInputBlur,
   isSending,
   showEmojiPicker,
   setShowEmojiPicker,
@@ -33,6 +36,7 @@ const ChatArea = ({
   currentUserId,
 }) => {
   const { isDarkMode } = useContext(ThemeContext);
+  const isAdmin = useIsAdminSync();
 
   const renderMessages = () => {
     const messagesToRender = Array.isArray(currentMessages) ? currentMessages : [];
@@ -46,7 +50,20 @@ const ChatArea = ({
               {activeChatTab === "group" && selectedGroup
                 ? `No messages in ${selectedGroup.name} yet`
                 : activeChatTab === "private" && selectedPrivateChatUser
-                ? `No messages with ${selectedPrivateChatUser.name} yet`
+                ? (() => {
+                    // Check if selected user is admin
+                    const isUserAdmin =
+                      (selectedPrivateChatUser?.role === "admin" &&
+                        selectedPrivateChatUser?.isAdmin === true) ||
+                      selectedPrivateChatUser?.role === "admin" ||
+                      (selectedPrivateChatUser?.email &&
+                        selectedPrivateChatUser?.email.includes("admin")) ||
+                      (selectedPrivateChatUser?.name &&
+                        selectedPrivateChatUser?.name.toLowerCase().includes("admin"));
+
+                    const displayName = isUserAdmin ? "admin" : selectedPrivateChatUser.name;
+                    return `No messages with ${displayName} yet`;
+                  })()
                 : "No messages yet"}
             </p>
             <p className="text-xs mt-1 opacity-75">Start a conversation!</p>
@@ -62,9 +79,26 @@ const ChatArea = ({
           u.id === message.sender?.id ||
           u._id === message.sender?._id
       );
-      const senderName = message.senderName || senderUser?.name || message.sender?.name || "User";
+
+      // Check if current user first
       const isCurrentUser =
         message.sender?.uid === currentUserId || message.senderId === currentUserId;
+
+      // Check if sender is admin
+      const isSenderAdmin =
+        (senderUser?.role === "admin" && senderUser?.isAdmin === true) ||
+        senderUser?.role === "admin" ||
+        (senderUser?.email && senderUser?.email.includes("admin")) ||
+        (senderUser?.name && senderUser?.name.toLowerCase().includes("admin"));
+
+      // Check if current user is admin (for their own messages)
+      const isCurrentUserAdmin = isAdmin && isCurrentUser;
+
+      // Show "admin" for admin users, otherwise show normal name
+      const senderName =
+        isSenderAdmin || isCurrentUserAdmin
+          ? "admin"
+          : message.senderName || senderUser?.name || message.sender?.name || "User";
 
       const showNameAbove =
         !isCurrentUser &&
@@ -226,9 +260,24 @@ const ChatArea = ({
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   onClick={onTextAreaClick}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
                   placeholder={
                     activeChatTab === "private" && selectedPrivateChatUser
-                      ? `Message ${selectedPrivateChatUser.name}...`
+                      ? (() => {
+                          // Check if selected user is admin
+                          const isUserAdmin =
+                            (selectedPrivateChatUser?.role === "admin" &&
+                              selectedPrivateChatUser?.isAdmin === true) ||
+                            selectedPrivateChatUser?.role === "admin" ||
+                            (selectedPrivateChatUser?.email &&
+                              selectedPrivateChatUser?.email.includes("admin")) ||
+                            (selectedPrivateChatUser?.name &&
+                              selectedPrivateChatUser?.name.toLowerCase().includes("admin"));
+
+                          const displayName = isUserAdmin ? "admin" : selectedPrivateChatUser.name;
+                          return `Message ${displayName}...`;
+                        })()
                       : activeChatTab === "group" && selectedGroup
                       ? `Message ${selectedGroup.name}...`
                       : "Type a message..."
@@ -269,24 +318,91 @@ const ChatArea = ({
               </div>
             </form>
           )}
-          {typingUsers.length > 0 && (
-            <div className="mt-2 text-xs text-[var(--text-secondary)] flex items-center gap-1">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"></div>
-                <div
-                  className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
-                  style={{ animationDelay: "0.1s" }}
-                ></div>
-                <div
-                  className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
-                  style={{ animationDelay: "0.2s" }}
-                ></div>
-              </div>
-              <span>
-                {typingUsers.join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing...
-              </span>
-            </div>
-          )}
+          {/* Typing Indicator */}
+          {(() => {
+            // Get typing users for current chat context
+            let currentTypingUsers = [];
+
+            if (activeChatTab === "private" && selectedPrivateChatUser) {
+              // For private chat, show typing from the selected user
+              const isTyping = typingUsers[selectedPrivateChatUser.uid];
+              if (isTyping) {
+                // Check if selected user is admin
+                const isUserAdmin =
+                  (selectedPrivateChatUser?.role === "admin" &&
+                    selectedPrivateChatUser?.isAdmin === true) ||
+                  selectedPrivateChatUser?.role === "admin" ||
+                  (selectedPrivateChatUser?.email &&
+                    selectedPrivateChatUser?.email.includes("admin")) ||
+                  (selectedPrivateChatUser?.name &&
+                    selectedPrivateChatUser?.name.toLowerCase().includes("admin"));
+
+                const displayName = isUserAdmin
+                  ? "admin"
+                  : selectedPrivateChatUser.name || "Someone";
+                currentTypingUsers.push(displayName);
+              }
+            } else if (activeChatTab === "group" && selectedGroup) {
+              // For group chat, show typing from group members
+              const typingGroupMembers = Object.entries(typingUsers)
+                .filter(([userId, isTyping]) => isTyping && userId !== currentUserId)
+                .map(([userId]) => {
+                  const user = users.find(u => u.uid === userId || u.id === userId);
+                  if (!user) return "Someone";
+
+                  // Check if user is admin
+                  const isUserAdmin =
+                    (user?.role === "admin" && user?.isAdmin === true) ||
+                    user?.role === "admin" ||
+                    (user?.email && user?.email.includes("admin")) ||
+                    (user?.name && user?.name.toLowerCase().includes("admin"));
+
+                  return isUserAdmin ? "admin" : user.name || "Someone";
+                });
+              currentTypingUsers = typingGroupMembers;
+            } else if (activeChatTab === "public") {
+              // For public chat, show typing from all users except current user
+              const typingPublicUsers = Object.entries(typingUsers)
+                .filter(([userId, isTyping]) => isTyping && userId !== currentUserId)
+                .map(([userId]) => {
+                  const user = users.find(u => u.uid === userId || u.id === userId);
+                  if (!user) return "Someone";
+
+                  // Check if user is admin
+                  const isUserAdmin =
+                    (user?.role === "admin" && user?.isAdmin === true) ||
+                    user?.role === "admin" ||
+                    (user?.email && user?.email.includes("admin")) ||
+                    (user?.name && user?.name.toLowerCase().includes("admin"));
+
+                  return isUserAdmin ? "admin" : user.name || "Someone";
+                });
+              currentTypingUsers = typingPublicUsers;
+            }
+
+            if (currentTypingUsers.length > 0) {
+              return (
+                <div className="mt-2 text-xs text-[var(--text-secondary)] flex items-center gap-1 animate-pulse">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"></div>
+                    <div
+                      className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
+                      style={{ animationDelay: "0.1s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-[var(--primary-main)] rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
+                  </div>
+                  <span className="transition-opacity duration-300">
+                    {currentTypingUsers.join(", ")} {currentTypingUsers.length === 1 ? "is" : "are"}{" "}
+                    typing...
+                  </span>
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
       </>
     );

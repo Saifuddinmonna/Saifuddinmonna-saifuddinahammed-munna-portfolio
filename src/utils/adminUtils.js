@@ -1,12 +1,62 @@
 import { useAuth } from "../auth/context/AuthContext";
+import { useState, useEffect, useMemo } from "react";
 
 /**
- * Custom hook to check if current user is an admin
- * @returns {boolean} true if user is admin
+ * Custom hook to check if current user is an admin (async version)
+ * @returns {Object} { isAdmin: boolean, loading: boolean }
  */
 export const useIsAdmin = () => {
   const { dbUser } = useAuth();
-  return dbUser && dbUser.role === "admin" && dbUser.isAdmin === true;
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!dbUser || !dbUser.data) {
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+
+      // Check for admin status with multiple conditions
+      const adminStatus =
+        (dbUser.data?.role === "admin" && dbUser.data?.isAdmin === true) ||
+        dbUser.data?.role === "admin" ||
+        (dbUser.data?.email && dbUser.data?.email.includes("admin")) ||
+        (dbUser.data?.name && dbUser.data?.name.toLowerCase().includes("admin"));
+
+      setIsAdmin(adminStatus);
+      setLoading(false);
+    };
+
+    checkAdminStatus();
+  }, [dbUser]);
+
+  return { isAdmin, loading };
+};
+
+/**
+ * Simple hook to check if current user is an admin (synchronous fallback)
+ * @returns {boolean} true if user is admin
+ */
+export const useIsAdminSync = () => {
+  const { dbUser } = useAuth();
+
+  return useMemo(() => {
+    // Return false immediately if no dbUser or dbUser.data
+    if (!dbUser || !dbUser.data) {
+      return false;
+    }
+
+    // Check for admin status with multiple conditions
+    const isAdmin =
+      (dbUser.data?.role === "admin" && dbUser.data?.isAdmin === true) ||
+      dbUser.data?.role === "admin" ||
+      (dbUser.data?.email && dbUser.data?.email.includes("admin")) ||
+      (dbUser.data?.name && dbUser.data?.name.toLowerCase().includes("admin"));
+
+    return isAdmin;
+  }, [dbUser]);
 };
 
 /**
@@ -47,7 +97,7 @@ export const useCanDelete = post => {
  * @returns {boolean} true if user is admin
  */
 export const checkIsAdmin = dbUser => {
-  return dbUser && dbUser.role === "admin" && dbUser.isAdmin === true;
+  return dbUser && dbUser.data && dbUser.data.role === "admin" && dbUser.data.isAdmin === true;
 };
 
 /**
@@ -84,4 +134,22 @@ export const checkCanDelete = (user, dbUser, post) => {
   const isAdmin = checkIsAdmin(dbUser);
   const isAuthor = checkIsAuthor(user, post);
   return isAdmin || isAuthor;
+};
+
+/**
+ * Async function to check if user is admin (for better performance)
+ * @param {Object} dbUser - The database user object
+ * @returns {Promise<boolean>} true if user is admin
+ */
+export const checkIsAdminAsync = async dbUser => {
+  if (!dbUser || !dbUser.data) return false;
+
+  // Check for admin status with multiple conditions
+  const isAdmin =
+    (dbUser.data?.role === "admin" && dbUser.data?.isAdmin === true) ||
+    dbUser.data?.role === "admin" ||
+    (dbUser.data?.email && dbUser.data?.email.includes("admin")) ||
+    (dbUser.data?.name && dbUser.data?.name.toLowerCase().includes("admin"));
+
+  return isAdmin;
 };

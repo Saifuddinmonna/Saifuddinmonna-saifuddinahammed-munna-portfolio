@@ -7,6 +7,7 @@ class SocketService {
   constructor() {
     this.socket = null;
     this.initialized = false;
+    this.lastTypingStatus = {}; // Added to track last sent typing status
   }
 
   connect(token) {
@@ -162,9 +163,30 @@ class SocketService {
   }
 
   // Typing indicators
-  sendTypingStatus(data) {
+  sendTypingStatus(isTyping, context = {}) {
     if (!this.socket) return;
-    this.socket.emit("typing", data);
+
+    // Don't send typing status if it's the same as last sent
+    const typingKey = `${context.type}_${context.receiverId || context.roomId || "public"}`;
+    const lastTypingStatus = this.lastTypingStatus?.[typingKey];
+
+    if (lastTypingStatus === isTyping) {
+      return; // Don't send duplicate typing status
+    }
+
+    const typingData = {
+      isTyping,
+      ...context,
+    };
+
+    // Store last typing status
+    if (!this.lastTypingStatus) {
+      this.lastTypingStatus = {};
+    }
+    this.lastTypingStatus[typingKey] = isTyping;
+
+    console.log("Sending typing status:", typingData);
+    this.socket.emit("typing", typingData);
   }
 
   // Message status

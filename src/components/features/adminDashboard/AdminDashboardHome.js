@@ -27,6 +27,7 @@ import {
   getCategories,
   getResumes,
 } from "../../../services/apiService";
+import { useIsAdmin } from "../../../utils/adminUtils";
 
 const AdminDashboardHome = () => {
   const [stats, setStats] = useState({
@@ -41,6 +42,7 @@ const AdminDashboardHome = () => {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [dataSource, setDataSource] = useState("stats-api"); // Track which API was used
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -509,7 +511,7 @@ const AdminDashboardHome = () => {
         </div>
 
         {/* Debug Section - Remove in production */}
-        {process.env.NODE_ENV === "development" && (
+        {isAdmin && (
           <div className="bg-[var(--background-paper)] rounded-lg p-6 shadow-lg border border-[var(--border-color)] mt-6">
             <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">🔧 Debug Info</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

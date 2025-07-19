@@ -18,6 +18,7 @@ import {
   FaArrowUp,
   FaArrowDown,
 } from "react-icons/fa";
+import { useIsAdmin } from "../../../utils/adminUtils";
 
 // Validation schema based on mongoose model
 const validationSchema = yup.object().shape({
@@ -132,6 +133,7 @@ const MyProjectWorksForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const isAdmin = useIsAdmin();
 
   console.log("🔄 [Form] Component rendered");
   console.log("🔄 [Form] URL params:", { id });
@@ -808,7 +810,7 @@ const MyProjectWorksForm = () => {
       </div>
 
       {/* Debug Panel (Development Only) */}
-      {process.env.NODE_ENV === "development" && (
+      {isAdmin && (
         <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border">
           <h4 className="font-bold text-sm mb-2">🔍 Debug Info:</h4>
           <div className="text-xs space-y-1">

@@ -5,6 +5,7 @@ import { myProjectWorksAPI } from "../../../services/apiService";
 import { motion } from "framer-motion";
 import { FaEdit, FaEye, FaTrash, FaPlus, FaSearch, FaSpinner, FaArrowLeft } from "react-icons/fa";
 import { useDataFetching } from "../../../hooks/useDataFetching";
+import { useIsAdmin } from "../../../utils/adminUtils";
 
 // Skeleton Loading Component
 const ProjectSkeleton = () => (
@@ -35,6 +36,7 @@ const MyProjectWorksList = () => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [filterCategory, setFilterCategory] = useState("");
+  const isAdmin = useIsAdmin();
 
   // Use the new custom hook for better data handling
   const {
@@ -385,7 +387,7 @@ const MyProjectWorksList = () => {
         </>
       )}
 
-      <DebugPanel />
+      {isAdmin && <DebugPanel />}
     </div>
   );
 };

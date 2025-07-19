@@ -179,26 +179,30 @@ const AdminCategoryManager = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center gap-4 mb-4">
-        <h1 className="text-2xl font-bold">Blog Category Manager</h1>
+    <div className="p-8 bg-[var(--background-paper)] dark:bg-[var(--background-paper)] min-h-screen">
+      <div className="flex flex-row flex-wrap items-center gap-4 mb-4 sm:flex-col sm:items-stretch sm:gap-2">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Blog Category Manager</h1>
         <button
-          className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded"
+          className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded w-auto sm:w-full"
           onClick={handleAdd}
         >
           <FaPlus /> Add Category
         </button>
         <button
-          className={`flex items-center gap-1 px-3 py-1 rounded border ${
-            view === "flat" ? "bg-blue-600 text-white" : "bg-white"
+          className={`flex items-center gap-1 px-3 py-1 rounded border transition-colors duration-200 w-auto sm:w-full ${
+            view === "flat"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-main)] dark:bg-gray-800 dark:text-[var(--text-primary)] dark:border-gray-700"
           }`}
           onClick={() => setView("flat")}
         >
           <FaListUl /> Flat View
         </button>
         <button
-          className={`flex items-center gap-1 px-3 py-1 rounded border ${
-            view === "tree" ? "bg-blue-600 text-white" : "bg-white"
+          className={`flex items-center gap-1 px-3 py-1 rounded border transition-colors duration-200 w-auto sm:w-full ${
+            view === "tree"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-[var(--background-default)] text-[var(--text-primary)] border-[var(--border-main)] dark:bg-gray-800 dark:text-[var(--text-primary)] dark:border-gray-700"
           }`}
           onClick={() => setView("tree")}
         >
@@ -219,59 +223,58 @@ const AdminCategoryManager = () => {
       {loading && (
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2">Loading categories...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading categories...</span>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-          <div className="text-red-600">Error: {error}</div>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4 mb-4">
+          <div className="text-red-600 dark:text-red-300">Error: {error}</div>
         </div>
       )}
       {!loading && !error && categories.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
           No categories found. Create your first category!
         </div>
       )}
       {!loading && !error && categories.length > 0 && (
         <div>
           {view === "flat" ? (
-            <table className="w-full border mt-4">
+            <table className="w-full border mt-4 bg-[var(--background-default)] dark:bg-gray-900 text-[var(--text-primary)] dark:text-[var(--text-primary)]">
               <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-2 border">Name</th>
-                  <th className="p-2 border">Parent</th>
-                  <th className="p-2 border">Actions</th>
+                <tr className="bg-gray-100 dark:bg-gray-800">
+                  <th className="p-2 border dark:border-gray-700">Name</th>
+                  <th className="p-2 border dark:border-gray-700">Parent</th>
+                  <th className="p-2 border dark:border-gray-700">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {categories.map(cat => (
-                  <tr key={cat._id}>
-                    <td className="p-2 border">
+                  <tr key={cat._id} className="border-b dark:border-gray-800">
+                    <td className="p-2 border dark:border-gray-700">
                       <div>
-                        <span style={{ fontWeight: "bold", color: "#111" }}>{cat.name}</span>
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "#222",
-                            fontSize: "0.85em",
-                            marginLeft: 8,
-                          }}
-                        >
+                        <span className="font-bold text-[var(--text-primary)]">{cat.name}</span>
+                        <span className="font-bold text-xs ml-2 text-[var(--text-secondary)]">
                           ID: {cat._id.slice(-6)}
                         </span>
                       </div>
-                      <div style={{ fontSize: "0.95em", color: "#444" }}>
+                      <div className="text-xs text-[var(--text-secondary)]">
                         {cat.description || "No description available"}
                       </div>
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border dark:border-gray-700 text-[var(--text-secondary)]">
                       {cat.parent ? getCategoryNameById(cat.parent) : "-"}
                     </td>
-                    <td className="p-2 border">
-                      <button className="text-blue-600 mr-2" onClick={() => handleEdit(cat)}>
+                    <td className="p-2 border dark:border-gray-700">
+                      <button
+                        className="text-blue-600 dark:text-blue-400 mr-2"
+                        onClick={() => handleEdit(cat)}
+                      >
                         <FaEdit />
                       </button>
-                      <button className="text-red-600" onClick={() => handleDelete(cat._id)}>
+                      <button
+                        className="text-red-600 dark:text-red-400"
+                        onClick={() => handleDelete(cat._id)}
+                      >
                         <FaTrash />
                       </button>
                     </td>

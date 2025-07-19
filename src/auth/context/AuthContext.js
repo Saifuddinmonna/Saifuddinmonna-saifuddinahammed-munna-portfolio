@@ -69,6 +69,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
   const [tokenReady, setTokenReady] = useState(false);
+  const [localDbUser, setLocalDbUser] = useState(null); // Local state for dbUser
   const queryClient = useQueryClient();
 
   // Function to get and store the token
@@ -93,6 +94,22 @@ export const AuthProvider = ({ children }) => {
     error: userDataError,
     refetch: refetchUserData,
   } = useUserData(token, tokenReady && !!user);
+
+  // Update local dbUser when server data changes
+  useEffect(() => {
+    if (dbUser) {
+      console.log("✅ Updating local dbUser with server data:", dbUser);
+      setLocalDbUser(dbUser);
+    }
+  }, [dbUser]);
+
+  // Clear local dbUser when user signs out
+  useEffect(() => {
+    if (!user) {
+      console.log("❌ Clearing local dbUser - user signed out");
+      setLocalDbUser(null);
+    }
+  }, [user]);
 
   // Function to refresh token
   const refreshToken = async () => {
@@ -128,8 +145,33 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setTokenReady(false);
         localStorage.removeItem("authToken");
-        // Clear user data from cache
+
+        // Clear user data from cache and reset state
         queryClient.removeQueries({ queryKey: ["userData"] });
+        queryClient.clear(); // Clear all queries to ensure fresh state
+
+        // Clear all localStorage items
+        localStorage.clear();
+
+        // Clear sessionStorage
+        sessionStorage.clear();
+
+        // Clear all cookies
+        document.cookie.split(";").forEach(function (c) {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        // Clear browser cache (if supported)
+        if ("caches" in window) {
+          try {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+          } catch (error) {
+            console.log("Cache clearing not supported:", error);
+          }
+        }
       }
       setUser(currentUser);
       setLoading(false);
@@ -148,7 +190,7 @@ export const AuthProvider = ({ children }) => {
 
       // Create user profile on server
       try {
-        await axios.post(
+        const response = await axios.post(
           `${BASE_API_URL}/api/auth/register`,
           {
             email: firebaseUser.email,
@@ -162,6 +204,11 @@ export const AuthProvider = ({ children }) => {
             },
           }
         );
+
+        // Immediately set local dbUser with created user data
+        const createdUser = response.data.data;
+        console.log("✅ Setting local dbUser after signup:", createdUser);
+        setLocalDbUser(createdUser);
       } catch (serverError) {
         console.error("Error creating user profile on server:", serverError);
         // Continue even if server profile creation fails
@@ -203,7 +250,7 @@ export const AuthProvider = ({ children }) => {
 
       // Create or update user profile on server
       try {
-        await axios.post(
+        const response = await axios.post(
           `${BASE_API_URL}/api/auth/google`,
           {
             email: firebaseUser.email,
@@ -218,6 +265,11 @@ export const AuthProvider = ({ children }) => {
             },
           }
         );
+
+        // Immediately set local dbUser with user data
+        const userData = response.data.data;
+        console.log("✅ Setting local dbUser after Google signin:", userData);
+        setLocalDbUser(userData);
       } catch (serverError) {
         console.error("Error creating/updating user profile on server:", serverError);
         // Continue even if server profile creation fails
@@ -240,8 +292,39 @@ export const AuthProvider = ({ children }) => {
       setTokenReady(false);
       localStorage.removeItem("authToken");
 
-      // Clear user data from cache
+      // Clear user data from cache and reset state
       queryClient.removeQueries({ queryKey: ["userData"] });
+      queryClient.clear(); // Clear all queries to ensure fresh state
+
+      // Clear all localStorage items
+      localStorage.clear();
+
+      // Clear sessionStorage
+      sessionStorage.clear();
+
+      // Clear all cookies
+      document.cookie.split(";").forEach(function (c) {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+
+      // Force clear any remaining user data
+      setUser(null);
+      setLocalDbUser(null); // Clear local dbUser immediately
+
+      // Clear browser cache (if supported)
+      if ("caches" in window) {
+        try {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+        } catch (error) {
+          console.log("Cache clearing not supported:", error);
+        }
+      }
+
+      // Reload the page to ensure complete cache clear
+      window.location.reload();
 
       toast.success("Signed out successfully!");
     } catch (error) {
@@ -252,21 +335,48 @@ export const AuthProvider = ({ children }) => {
 
   // Handle user data errors
   useEffect(() => {
-    if (userDataError) {
-      console.error("User data error:", userDataError);
-      if (userDataError.message === "Authentication failed") {
-        // Handle authentication failure
-        setToken(null);
-        setTokenReady(false);
-        localStorage.removeItem("authToken");
-        queryClient.removeQueries({ queryKey: ["userData"] });
+    const handleUserDataError = async () => {
+      if (userDataError) {
+        console.error("User data error:", userDataError);
+        if (userDataError.message === "Authentication failed") {
+          // Handle authentication failure
+          setToken(null);
+          setTokenReady(false);
+          localStorage.removeItem("authToken");
+          queryClient.removeQueries({ queryKey: ["userData"] });
+
+          // Clear all localStorage items
+          localStorage.clear();
+
+          // Clear sessionStorage
+          sessionStorage.clear();
+
+          // Clear all cookies
+          document.cookie.split(";").forEach(function (c) {
+            document.cookie = c
+              .replace(/^ +/, "")
+              .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+          });
+
+          // Clear browser cache (if supported)
+          if ("caches" in window) {
+            try {
+              const cacheNames = await caches.keys();
+              await Promise.all(cacheNames.map(name => caches.delete(name)));
+            } catch (error) {
+              console.log("Cache clearing not supported:", error);
+            }
+          }
+        }
       }
-    }
+    };
+
+    handleUserDataError();
   }, [userDataError, queryClient]);
 
   const value = {
     user,
-    dbUser,
+    dbUser: localDbUser ? { data: localDbUser } : null, // Use local dbUser for immediate availability
     token,
     signUp,
     signIn,

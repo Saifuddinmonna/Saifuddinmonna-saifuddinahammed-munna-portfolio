@@ -8,12 +8,14 @@ import TestimonialAdminDashboard from "./TestimonialAdminDashboard";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPlus, FaMinus, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { useIsAdmin } from "../../utils/adminUtils";
 
 const TestimonialsPage = () => {
   const { user, dbUser } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const testimonialsPerPage = 9;
+  const isAdmin = useIsAdmin();
 
   // Determine which testimonial fetching function to use based on user role
   const getTestimonials = async () => {
@@ -165,7 +167,7 @@ const TestimonialsPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Debug Info - Remove in production */}
-      {process.env.NODE_ENV === "development" && (
+      {isAdmin && (
         <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
           <h4 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Debug Info:</h4>
           <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">

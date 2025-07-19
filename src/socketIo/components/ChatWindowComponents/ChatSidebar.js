@@ -1,6 +1,7 @@
 import React from "react";
 import { FaUsers, FaChevronLeft } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { useIsAdminSync } from "../../../utils/adminUtils";
 
 const ChatSidebar = ({
   activeChatTab,
@@ -20,6 +21,8 @@ const ChatSidebar = ({
   handleLeaveGroup,
   toggleSidebar,
 }) => {
+  const isAdmin = useIsAdminSync();
+
   return (
     <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r overflow-y-auto custom-scrollbar relative">
       <button
@@ -31,6 +34,14 @@ const ChatSidebar = ({
       </button>
       {activeChatTab === "private" && (
         <div className="p-2">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm font-medium text-[var(--text-primary)]">Users</span>
+            {dbUser?.data?.role === "admin" && (
+              <span className="text-xs bg-[var(--primary-main)] text-white px-2 py-1 rounded-full">
+                Admin
+              </span>
+            )}
+          </div>
           <input
             type="text"
             value={searchQuery}
@@ -38,6 +49,33 @@ const ChatSidebar = ({
             placeholder="Search users..."
             className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] bg-transparent"
           />
+          <div className="mt-2 text-xs text-[var(--text-secondary)]">
+            {(() => {
+              // Count unique users by email or name to avoid duplicates from multiple browser sessions
+              const uniqueUserEmails = new Set();
+              const uniqueUserNames = new Set();
+              let uniqueCount = 0;
+
+              filteredUsers.forEach(user => {
+                const userEmail = user.email?.toLowerCase();
+                const userName = user.name?.toLowerCase();
+
+                // Check if this user is already counted
+                if (userEmail && !uniqueUserEmails.has(userEmail)) {
+                  uniqueUserEmails.add(userEmail);
+                  uniqueCount++;
+                } else if (userName && !uniqueUserNames.has(userName)) {
+                  uniqueUserNames.add(userName);
+                  uniqueCount++;
+                } else if (!userEmail && !userName) {
+                  // Fallback for users without email or name
+                  uniqueCount++;
+                }
+              });
+
+              return `${uniqueCount} user${uniqueCount !== 1 ? "s" : ""} available`;
+            })()}
+          </div>
         </div>
       )}
       {activeChatTab === "group" && (
@@ -77,56 +115,96 @@ const ChatSidebar = ({
       )}
       <div className="divide-y">
         {activeChatTab === "private" &&
-          filteredUsers.map(user => (
-            <button
-              key={user.id}
-              onClick={() => handleSelectPrivateChatUser(user)}
-              className={`w-full p-2 sm:p-3 text-left hover:bg-[var(--background-hover)] transition-colors border-b border-[var(--border-main)] ${
-                selectedPrivateChatUser?.id === user.id ? "bg-[var(--primary-main)] text-white" : ""
-              }`}
-            >
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0 ${
+          (() => {
+            // Additional deduplication at render level - use email/name based deduplication
+            const seenUserEmails = new Set();
+            const seenUserNames = new Set();
+            const uniqueFilteredUsers = filteredUsers.filter(user => {
+              const userEmail = user.email?.toLowerCase();
+              const userName = user.name?.toLowerCase();
+
+              // Check if this user is already shown
+              if (userEmail && !seenUserEmails.has(userEmail)) {
+                seenUserEmails.add(userEmail);
+                return true;
+              } else if (userName && !seenUserNames.has(userName)) {
+                seenUserNames.add(userName);
+                return true;
+              } else if (!userEmail && !userName) {
+                // Fallback for users without email or name
+                return true;
+              }
+              return false;
+            });
+
+            return uniqueFilteredUsers.map(user => {
+              // Check if user is admin (multiple ways)
+              const isUserAdmin =
+                (user.role === "admin" && user.isAdmin === true) ||
+                user.role === "admin" ||
+                (user.email && user.email.includes("admin")) ||
+                (user.name && user.name.toLowerCase().includes("admin"));
+
+              // Use consistent name display
+              const displayName = isUserAdmin ? "admin" : user.name || user.email || "User";
+              const displayEmail = isUserAdmin ? "" : user.email || "";
+
+              return (
+                <button
+                  key={user.id || user.uid || user._id || user.email || user.name}
+                  onClick={() => handleSelectPrivateChatUser(user)}
+                  className={`w-full p-2 sm:p-3 text-left hover:bg-[var(--background-hover)] transition-colors border-b border-[var(--border-main)] ${
                     selectedPrivateChatUser?.id === user.id
-                      ? "bg-white text-[var(--primary-main)]"
-                      : "bg-[var(--primary-main)]"
+                      ? "bg-[var(--primary-main)] text-white"
+                      : ""
                   }`}
                 >
-                  {user.name?.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={`font-semibold text-sm truncate ${
-                      selectedPrivateChatUser?.id === user.id ? "text-white" : ""
-                    }`}
-                  >
-                    {user.name}
-                  </p>
-                  <p
-                    className={`text-xs truncate ${
-                      selectedPrivateChatUser?.id === user.id
-                        ? "text-white opacity-75"
-                        : "text-[var(--text-secondary)]"
-                    }`}
-                  >
-                    {user.email}
-                  </p>
-                </div>
-                {unreadCounts[user.id] > 0 && (
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      selectedPrivateChatUser?.id === user.id
-                        ? "bg-white text-[var(--primary-main)]"
-                        : "bg-[var(--primary-main)] text-white"
-                    }`}
-                  >
-                    {unreadCounts[user.id]}
-                  </span>
-                )}
-              </div>
-            </button>
-          ))}
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0 ${
+                        selectedPrivateChatUser?.id === user.id
+                          ? "bg-white text-[var(--primary-main)]"
+                          : "bg-[var(--primary-main)]"
+                      }`}
+                    >
+                      {isUserAdmin ? "A" : displayName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className={`font-semibold text-sm truncate ${
+                          selectedPrivateChatUser?.id === user.id ? "text-white" : ""
+                        }`}
+                      >
+                        {displayName}
+                      </p>
+                      {displayEmail && (
+                        <p
+                          className={`text-xs truncate ${
+                            selectedPrivateChatUser?.id === user.id
+                              ? "text-white opacity-75"
+                              : "text-[var(--text-secondary)]"
+                          }`}
+                        >
+                          {displayEmail}
+                        </p>
+                      )}
+                    </div>
+                    {unreadCounts[user.id] > 0 && (
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          selectedPrivateChatUser?.id === user.id
+                            ? "bg-white text-[var(--primary-main)]"
+                            : "bg-[var(--primary-main)] text-white"
+                        }`}
+                      >
+                        {unreadCounts[user.id]}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            });
+          })()}
         {activeChatTab === "group" && (
           <>
             {filteredGroups.length === 0 ? (

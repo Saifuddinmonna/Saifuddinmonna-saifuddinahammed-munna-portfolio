@@ -1,5 +1,13 @@
 import axios from "axios";
 import { BASE_API_URL } from "../../utils/apiConfig";
+import { auth, authReady } from "../../config/firebase.config";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+// Sign-in function that ensures persistence is set before signing in
+export async function handleSignIn(email, password) {
+  await authReady;
+  return signInWithEmailAndPassword(auth, email, password);
+}
 
 const authService = {
   async login(email, password) {

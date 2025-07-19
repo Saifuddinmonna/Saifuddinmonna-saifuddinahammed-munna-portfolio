@@ -1,22 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaCog, FaShieldAlt } from "react-icons/fa";
-import { useIsAdmin } from "../../../utils/adminUtils";
+import { useIsAdminSync } from "../../../utils/adminUtils";
+import { useAuth } from "../../../auth/context/AuthContext";
 
 const AdminDashboardButton = () => {
-  // Use the utility hook for admin check
-  const isAdmin = useIsAdmin();
+  // Use the synchronous hook for admin check
+  const isAdmin = useIsAdminSync();
+  const { loading, dbUser, user } = useAuth();
+  const [shouldShow, setShouldShow] = useState(false);
 
-  console.log("🔍 AdminDashboardButton Debug:");
-  console.log("  - isAdmin result:", isAdmin);
+  // Handle state changes
+  useEffect(() => {
+    // Wait for user data to load and check admin status
+    const showButton = !loading && user && dbUser && isAdmin;
+    setShouldShow(showButton);
+  }, [loading, user, dbUser, isAdmin]);
 
-  if (!isAdmin) {
-    console.log("❌ AdminDashboardButton: Not showing - user is not admin");
-    return null;
+  // Show loading spinner while waiting for user data
+  if (loading) {
+    return (
+      <div className="ml-2 px-3 py-1.5 bg-gray-300 text-gray-600 text-sm font-medium flex items-center rounded-md">
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+        <span>Loading...</span>
+      </div>
+    );
   }
 
-  console.log("✅ AdminDashboardButton: Showing - user is admin");
+  // Don't render if should not show
+  if (!shouldShow) {
+    return null;
+  }
 
   return (
     <Link to="/admin/dashboard">
