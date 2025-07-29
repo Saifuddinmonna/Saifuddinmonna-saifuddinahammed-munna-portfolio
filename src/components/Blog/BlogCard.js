@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaHeart, FaRegHeart, FaEdit } from "react-icons/fa";
 
 const BlogCard = memo(({ blog, handleLike, user }) => {
+  console.log("🔄 BlogCard re-rendered for blog:", blog._id);
   const [showFullContent, setShowFullContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);

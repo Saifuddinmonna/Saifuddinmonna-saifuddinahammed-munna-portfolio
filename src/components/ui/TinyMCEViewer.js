@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./TinyMCEViewer.css";
 
 /**
@@ -9,6 +9,7 @@ import "./TinyMCEViewer.css";
  */
 const TinyMCEViewer = ({ content = "", className = "", debug = false, ...props }) => {
   const [showDebug, setShowDebug] = useState(debug);
+  const contentRef = useRef(null);
 
   // Process content to ensure it's properly formatted HTML
   const processContent = rawContent => {
@@ -35,6 +36,31 @@ const TinyMCEViewer = ({ content = "", className = "", debug = false, ...props }
   };
 
   const processedContent = processContent(content);
+
+  // Anchor scroll-to logic (listen to hashchange)
+  useEffect(() => {
+    const scrollToHash = () => {
+      if (window.location.hash) {
+        const id = window.location.hash.replace("#", "");
+        const el = contentRef.current?.querySelector(`#${CSS.escape(id)}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          el.style.backgroundColor = "#ffffcc";
+          setTimeout(() => {
+            el.style.backgroundColor = "";
+          }, 2000);
+        }
+      }
+    };
+    // Scroll on mount/content change
+    scrollToHash();
+    // Listen to hashchange event
+    window.addEventListener("hashchange", scrollToHash);
+    // Cleanup
+    return () => {
+      window.removeEventListener("hashchange", scrollToHash);
+    };
+  }, [content]);
 
   return (
     <div className={`tinymce-viewer-root ${className}`}>
@@ -74,6 +100,7 @@ const TinyMCEViewer = ({ content = "", className = "", debug = false, ...props }
 
       {/* Main Content Viewer */}
       <div
+        ref={contentRef}
         className="tinymce-viewer"
         dangerouslySetInnerHTML={{ __html: processedContent }}
         {...props}

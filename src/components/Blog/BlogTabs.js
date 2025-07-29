@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 
 const BlogTabs = memo(({ activeTab, setActiveTab, setSelectedCategory, setSearchQuery }) => {
+  console.log("🔄 BlogTabs re-rendered with activeTab:", activeTab);
   const handleTabClick = tab => {
     setActiveTab(tab);
     if (tab === "all") {

@@ -16,6 +16,10 @@ import BlogSearch from "./BlogSearch";
 import BlogCategories from "./BlogCategories";
 import BlogTabs from "./BlogTabs";
 import MemoizedBlogGrid from "./MemoizedBlogGrid";
+import BlogViewControls from "./BlogViewControls";
+import BlogListView from "./BlogListView";
+import BlogTableView from "./BlogTableView";
+import BlogDetailsView from "./BlogDetailsView";
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -33,6 +37,20 @@ const Blog = () => {
   const queryClient = useQueryClient();
   const [showEmpty, setShowEmpty] = useState(false);
   const limit = 10;
+
+  // New view control states
+  const [showHeader, setShowHeader] = useState(true);
+  const [cardColumns, setCardColumns] = useState(3);
+  const [viewMode, setViewMode] = useState("grid");
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Custom Load states
+  const [isShowingCustom, setIsShowingCustom] = useState(false);
+  const [isShowingAll, setIsShowingAll] = useState(false);
+  const [isLoadingAll, setIsLoadingAll] = useState(false);
+  const [customBlogs, setCustomBlogs] = useState([]);
+  const [allBlogs, setAllBlogs] = useState([]);
+  const [customLoadCount, setCustomLoadCount] = useState(10);
 
   const { data, isLoading, error, refetch } = useDataFetching(
     ["blogs", currentPage, debouncedSearchQuery, selectedCategory],
@@ -76,21 +94,105 @@ const Blog = () => {
     setSelectedArticle(null);
   };
 
-  const handlePageChange = page => {
-    setCurrentPage(page);
-  };
-
   const handleSearch = useCallback(
     e => {
       e.preventDefault();
+      console.log("🔍 Search triggered with query:", searchQuery);
       setCurrentPage(1);
+      // Trigger immediate search without debounce
+      setDebouncedSearchQuery(searchQuery);
     },
-    [setCurrentPage]
+    [searchQuery, setCurrentPage]
   );
 
   const handleEdit = post => {
     navigate(`/blog/edit/${post.id}`);
   };
+
+  // View control handlers
+  const handleToggleHeader = useCallback(() => {
+    setShowHeader(prev => !prev);
+  }, []);
+
+  const handleCardColumnsChange = useCallback(columns => {
+    setCardColumns(columns);
+  }, []);
+
+  const handleViewModeChange = useCallback(mode => {
+    setViewMode(mode);
+  }, []);
+
+  const handleItemsPerPageChange = useCallback(
+    items => {
+      setItemsPerPage(items);
+      setCurrentPage(1); // Reset to first page when changing items per page
+    },
+    [setCurrentPage]
+  );
+
+  // Custom Load handler
+  const handleLoadCustom = useCallback(async () => {
+    if (isShowingCustom) {
+      // Switch back to paginated view
+      setIsShowingCustom(false);
+      setCustomBlogs([]);
+      return;
+    }
+
+    setIsLoadingAll(true);
+    try {
+      // Load custom number of blogs
+      const response = await blogService.getAllBlogs({
+        page: 1,
+        limit: customLoadCount,
+        search: debouncedSearchQuery,
+        category:
+          Array.isArray(selectedCategory) && selectedCategory.length > 0
+            ? selectedCategory.join(",")
+            : "",
+      });
+
+      setCustomBlogs(response.data || []);
+      setIsShowingCustom(true);
+    } catch (error) {
+      console.error("❌ Error loading custom blogs:", error);
+      toast.error("Failed to load posts");
+    } finally {
+      setIsLoadingAll(false);
+    }
+  }, [isShowingCustom, customLoadCount, debouncedSearchQuery, selectedCategory]);
+
+  // Load All handler
+  const handleLoadAll = useCallback(async () => {
+    if (isShowingAll) {
+      // Switch back to paginated view
+      setIsShowingAll(false);
+      setAllBlogs([]);
+      return;
+    }
+
+    setIsLoadingAll(true);
+    try {
+      // Load all blogs (up to 200)
+      const response = await blogService.getAllBlogs({
+        page: 1,
+        limit: 200,
+        search: debouncedSearchQuery,
+        category:
+          Array.isArray(selectedCategory) && selectedCategory.length > 0
+            ? selectedCategory.join(",")
+            : "",
+      });
+
+      setAllBlogs(response.data || []);
+      setIsShowingAll(true);
+    } catch (error) {
+      console.error("❌ Error loading all blogs:", error);
+      toast.error("Failed to load all posts");
+    } finally {
+      setIsLoadingAll(false);
+    }
+  }, [isShowingAll, debouncedSearchQuery, selectedCategory]);
 
   const handleDelete = async postId => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -104,6 +206,23 @@ const Blog = () => {
     }
   };
 
+  const handleSearchQueryChange = useCallback(e => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleCategoryChange = useCallback(
+    categories => {
+      setSelectedCategory(categories);
+      setCurrentPage(1);
+      setActiveTab("category");
+    },
+    [setSelectedCategory, setCurrentPage, setActiveTab]
+  );
+
+  const handlePageChange = useCallback(page => {
+    setCurrentPage(page);
+  }, []);
+
   const handleLike = async postId => {
     try {
       await blogService.toggleLike(postId, {
@@ -116,19 +235,6 @@ const Blog = () => {
       toast.error("Failed to update like");
     }
   };
-
-  const handleCategoryChange = useCallback(
-    categories => {
-      setSelectedCategory(categories);
-      setCurrentPage(1);
-      setActiveTab("category");
-    },
-    [setSelectedCategory, setCurrentPage, setActiveTab]
-  );
-
-  const handleSearchQueryChange = useCallback(e => {
-    setSearchQuery(e.target.value);
-  }, []);
 
   // Debounce search query to prevent too many API calls
   useEffect(() => {
@@ -148,6 +254,18 @@ const Blog = () => {
     }
   }, [blogs]);
 
+  // Reset "Custom Load" and "Load All" mode when search or category changes
+  useEffect(() => {
+    if (isShowingCustom) {
+      setIsShowingCustom(false);
+      setCustomBlogs([]);
+    }
+    if (isShowingAll) {
+      setIsShowingAll(false);
+      setAllBlogs([]);
+    }
+  }, [debouncedSearchQuery, selectedCategory]);
+
   if (isLoading) {
     return <BlogLoading />;
   }
@@ -159,72 +277,140 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-[var(--background-default)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Redesigned Header Section */}
-        <section className="relative mb-16">
-          <div
-            className="absolute inset-0 bg-gradient-to-r from-[var(--primary-light)]/30 to-[var(--primary-main)]/10 rounded-3xl blur-sm -z-10"
-            style={{ height: "100%", width: "100%" }}
-          ></div>
-          <div className="text-center py-12 px-4 sm:px-8 rounded-3xl shadow-lg border border-[var(--border-main)] bg-[var(--background-paper)]/80">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[var(--text-primary)] mb-4">
-              <span className="block">Web Development</span>
-              <span className="block text-[var(--primary-main)] drop-shadow-lg">
-                Blog & Insights
-              </span>
-            </h1>
-            <p className="mt-3 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-[var(--text-secondary)] font-medium">
-              Stay updated with the latest trends, tips, and insights in web development
-            </p>
-            {user && (
-              <Link
-                to="/blog/new"
-                className="inline-block mt-8 px-8 py-3 bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)] text-white text-lg font-bold rounded-full shadow-lg hover:from-[var(--primary-dark)] hover:to-[var(--primary-main)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:ring-offset-2"
-              >
-                Write New Post
-              </Link>
-            )}
-          </div>
-        </section>
-
-        {/* Tabs and Search Section */}
-        <div className="mb-8">
-          <BlogTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            setSelectedCategory={setSelectedCategory}
-            setSearchQuery={setSearchQuery}
-          />
-
-          {/* Search Form */}
-          <BlogSearch
-            searchQuery={searchQuery}
-            handleSearchQueryChange={handleSearchQueryChange}
-            handleSearch={handleSearch}
-            activeTab={activeTab}
-          />
-
-          {/* Categories */}
-          <BlogCategories
-            selectedCategory={selectedCategory}
-            handleCategoryChange={handleCategoryChange}
-            activeTab={activeTab}
-          />
-        </div>
-
-        {/* Blog Posts Grid */}
-        {Array.isArray(blogs) && blogs.length === 0 && showEmpty ? (
-          <div className="text-center text-[var(--text-secondary)]">No post available</div>
-        ) : (
-          <MemoizedBlogGrid blogs={blogs} handleLike={handleLike} user={user} />
+        {/* Redesigned Header Section (Conditional) */}
+        {showHeader && (
+          <section className="relative mb-16">
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-[var(--primary-light)]/30 to-[var(--primary-main)]/10 rounded-3xl blur-sm -z-10"
+              style={{ height: "100%", width: "100%" }}
+            ></div>
+            <div className="text-center py-12 px-4 sm:px-8 rounded-3xl shadow-lg border border-[var(--border-main)] bg-[var(--background-paper)]/80">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[var(--text-primary)] mb-4">
+                <span className="block">Web Development</span>
+                <span className="block text-[var(--primary-main)] drop-shadow-lg">
+                  Blog & Insights
+                </span>
+              </h1>
+              <p className="mt-3 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-[var(--text-secondary)] font-medium">
+                Stay updated with the latest trends, tips, and insights in web development
+              </p>
+              {user && (
+                <Link
+                  to="/blog/new"
+                  className="inline-block mt-8 px-8 py-3 bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)] text-white text-lg font-bold rounded-full shadow-lg hover:from-[var(--primary-dark)] hover:to-[var(--primary-main)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--primary-main)] focus:ring-offset-2"
+                >
+                  Write New Post
+                </Link>
+              )}
+            </div>
+          </section>
         )}
+
+        {/* View Controls */}
+        <BlogViewControls
+          showHeader={showHeader}
+          onToggleHeader={handleToggleHeader}
+          cardColumns={cardColumns}
+          onCardColumnsChange={handleCardColumnsChange}
+          viewMode={viewMode}
+          onViewModeChange={handleViewModeChange}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          totalItems={totalBlogs}
+        />
+
+        {/* Header Section (Conditional) */}
+        {showHeader && (
+          <div className="mb-8">
+            <BlogTabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              setSelectedCategory={setSelectedCategory}
+              setSearchQuery={setSearchQuery}
+            />
+
+            {/* Search Form */}
+            <BlogSearch
+              searchQuery={searchQuery}
+              handleSearchQueryChange={handleSearchQueryChange}
+              handleSearch={handleSearch}
+            />
+
+            {/* Categories */}
+            <BlogCategories
+              selectedCategory={selectedCategory}
+              handleCategoryChange={handleCategoryChange}
+              activeTab={activeTab}
+            />
+          </div>
+        )}
+
+        {/* Blog Posts - Conditional Rendering based on View Mode */}
+        {(() => {
+          const displayBlogs = isShowingCustom ? customBlogs : isShowingAll ? allBlogs : blogs;
+          const hasBlogs = Array.isArray(displayBlogs) && displayBlogs.length > 0;
+
+          if (!hasBlogs && showEmpty) {
+            return (
+              <div className="text-center text-[var(--text-secondary)]">No post available</div>
+            );
+          }
+
+          if (!hasBlogs) {
+            return (
+              <div className="text-center py-12">
+                <div className="text-[var(--text-secondary)] text-lg mb-4">
+                  {isShowingCustom
+                    ? "No posts found in custom load"
+                    : isShowingAll
+                    ? "No posts found in all results"
+                    : "No posts found"}
+                </div>
+                <div className="text-[var(--text-secondary)] text-sm">
+                  Try adjusting your search or category filters.
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <>
+              {viewMode === "grid" && (
+                <BlogGrid
+                  blogs={displayBlogs}
+                  handleLike={handleLike}
+                  user={user}
+                  columns={cardColumns}
+                />
+              )}
+              {viewMode === "list" && (
+                <BlogListView blogs={displayBlogs} handleLike={handleLike} user={user} />
+              )}
+              {viewMode === "table" && (
+                <BlogTableView blogs={displayBlogs} handleLike={handleLike} user={user} />
+              )}
+              {viewMode === "details" && (
+                <BlogDetailsView blogs={displayBlogs} handleLike={handleLike} user={user} />
+              )}
+            </>
+          );
+        })()}
 
         {/* Pagination always visible */}
         <BlogPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
-          blogs={blogs}
+          blogs={isShowingCustom ? customBlogs : isShowingAll ? allBlogs : blogs}
           totalPosts={totalBlogs}
+          onLoadCustom={handleLoadCustom}
+          onLoadAll={handleLoadAll}
+          isLoadingAll={isLoadingAll}
+          isShowingCustom={isShowingCustom}
+          isShowingAll={isShowingAll}
+          customLoadCount={customLoadCount}
+          setCustomLoadCount={setCustomLoadCount}
+          customBlogs={customBlogs}
         />
 
         {/* Newsletter Section */}

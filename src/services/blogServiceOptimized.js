@@ -23,51 +23,53 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor for logging
-// api.interceptors.response.use(
-//   response => {
-//     console.log("API Response:", response.data);
-//     return response.data;
-//   },
-//   error => {
-//     console.error("API Error:", error.response?.data || error.message);
-//     return Promise.reject(error);
-//   }
-// );
-
-export const blogService = {
+export const blogServiceOptimized = {
   // Get all blogs with pagination and filters
-  getAllBlogs: async ({ page = 1, limit = 10, search = "", category = "" }) => {
+  getAllBlogs: async ({
+    page = 1,
+    limit = 10,
+    search = "",
+    category = "",
+    tag = "",
+    status = "published",
+  }) => {
     try {
-      console.log(
-        "🔍 API Call - page:",
-        page,
-        "limit:",
-        limit,
-        "search:",
-        search,
-        "category:",
-        category
-      );
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
+        status,
       });
 
-      if (search && search.trim()) {
-        params.append("search", search.trim());
-        console.log("🔍 Adding search parameter:", search.trim());
-      }
-      if (category && category.trim()) {
-        params.append("category", category.trim());
-        console.log("🔍 Adding category parameter:", category.trim());
-      }
+      if (search) params.append("search", search);
+      if (category) params.append("category", category);
+      if (tag) params.append("tag", tag);
 
       const response = await api.get(`/api/blogs?${params.toString()}`);
-      console.log("🔍 API Response:", response.data);
       return response.data;
     } catch (error) {
-      console.error("❌ Error fetching blogs:", error);
+      console.error("Error fetching blogs:", error);
+      throw new Error(error.response?.data?.message || "Failed to fetch blogs");
+    }
+  },
+
+  // Get all blogs without pagination (for featured/recent)
+  getAllBlogsWithoutPagination: async ({
+    search = "",
+    category = "",
+    tag = "",
+    status = "published",
+  }) => {
+    try {
+      const params = new URLSearchParams({ status });
+
+      if (search) params.append("search", search);
+      if (category) params.append("category", category);
+      if (tag) params.append("tag", tag);
+
+      const response = await api.get(`/api/blogs/all?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching blogs without pagination:", error);
       throw new Error(error.response?.data?.message || "Failed to fetch blogs");
     }
   },
@@ -76,14 +78,9 @@ export const blogService = {
   getBlog: async id => {
     try {
       const response = await api.get(`/api/blogs/${id}`);
-      console.log("Raw API response:", response);
-      console.log("Response data:", response.data);
-
-      // Return the actual data, not the full response
       return response.data;
     } catch (error) {
       console.error("Error fetching blog:", error);
-      console.error("Error response:", error.response);
       throw new Error(error.response?.data?.message || "Failed to fetch blog");
     }
   },
@@ -121,6 +118,17 @@ export const blogService = {
     }
   },
 
+  // Like/Unlike blog
+  toggleLike: async (blogId, user) => {
+    try {
+      const response = await api.post(`/api/blogs/${blogId}/like`, { user });
+      return response.data;
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      throw new Error(error.response?.data?.message || "Failed to toggle like");
+    }
+  },
+
   // Add comment to blog
   addComment: async (blogId, comment) => {
     try {
@@ -132,6 +140,7 @@ export const blogService = {
     }
   },
 
+  // Update comment
   updateComment: async (blogId, commentId, commentData, userData) => {
     try {
       const response = await api.put(`/api/blogs/${blogId}/comments/${commentId}`, {
@@ -148,6 +157,7 @@ export const blogService = {
     }
   },
 
+  // Delete comment
   deleteComment: async (blogId, commentId, userData) => {
     try {
       const response = await api.delete(`/api/blogs/${blogId}/comments/${commentId}`, {
@@ -162,59 +172,6 @@ export const blogService = {
     } catch (error) {
       console.error("Error deleting comment:", error);
       throw new Error(error.response?.data?.message || "Failed to delete comment");
-    }
-  },
-
-  // Like/Unlike blog
-  toggleLike: async (blogId, user) => {
-    try {
-      const response = await api.post(`/api/blogs/${blogId}/like`, { user });
-      return response.data;
-    } catch (error) {
-      console.error("Error toggling like:", error);
-      throw new Error(error.response?.data?.message || "Failed to toggle like");
-    }
-  },
-
-  // Get blogs by category ID
-  getBlogsByCategory: async (categoryId, { page = 1, limit = 10, search = "" } = {}) => {
-    try {
-      console.log("Fetching blogs for category:", categoryId);
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        category: categoryId,
-      });
-
-      if (search) params.append("search", search);
-
-      const response = await api.get(`/api/blogs?${params.toString()}`);
-      console.log("Blogs by category response:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching blogs by category:", error);
-      throw new Error(error.response?.data?.message || "Failed to fetch blogs by category");
-    }
-  },
-
-  // Get blogs by category ID with pagination
-  getBlogsByCategoryPaginated: async (categoryId, page = 1, limit = 10) => {
-    try {
-      console.log("Fetching paginated blogs for category:", categoryId, "page:", page);
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        category: categoryId,
-      });
-
-      const response = await api.get(`/api/blogs?${params.toString()}`);
-      console.log("Paginated blogs by category response:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching paginated blogs by category:", error);
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch paginated blogs by category"
-      );
     }
   },
 };

@@ -12,9 +12,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Import routes
 const testimonialsRouter = require("./routes/testimonials");
+const blogRouter = require("./routes/blogs");
 
 // Use routes
 app.use("/api/testimonials", testimonialsRouter);
+app.use("/api/blogs", blogRouter);
 
 // Basic health check route
 app.get("/api/health", (req, res) => {
