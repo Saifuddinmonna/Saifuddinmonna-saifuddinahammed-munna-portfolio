@@ -1,0 +1,488 @@
+/* Blog Pagination Styles - Professional PDF-like Design */
+.blog-pagination {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Fixed Pagination Styles */
+.blog-pagination.fixed-pagination {
+  background: transparent;
+}
+
+.blog-pagination.fixed-pagination .flex.items-center.justify-between {
+  background: var(--background-paper);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Professional Button Styles */
+.blog-pagination button {
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.blog-pagination button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.blog-pagination button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Page number buttons */
+.blog-pagination button[data-page] {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+
+/* Current page button */
+.blog-pagination button[data-current="true"] {
+  background: var(--primary-main);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+/* Navigation buttons */
+.blog-pagination button[data-nav] {
+  padding: 0.5rem;
+  border-radius: 6px;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Page input styles */
+.blog-pagination input[type="number"] {
+  text-align: center;
+  font-weight: 500;
+}
+
+.blog-pagination input[type="number"]:focus {
+  border-color: var(--primary-main);
+  box-shadow: 0 0 0 2px rgba(var(--primary-main-rgb, 0, 0, 0), 0.1);
+}
+
+/* Progress bar animation */
+.blog-pagination .progress-bar {
+  background: linear-gradient(90deg, var(--primary-main), var(--primary-dark));
+  background-size: 200% 100%;
+  animation: progress-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Loading state */
+.blog-pagination .loading-indicator {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .blog-pagination {
+    padding: 0;
+  }
+
+  .blog-pagination button[data-page] {
+    min-width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .blog-pagination button[data-nav] {
+    padding: 0.375rem;
+    min-width: 28px;
+    height: 28px;
+  }
+
+  /* Hide some page numbers on mobile */
+  .blog-pagination .flex.items-center.gap-1 {
+    gap: 0.25rem;
+  }
+
+  /* Floating indicator adjustments */
+  .floating-page-indicator {
+    right: 1rem;
+    padding: 0.75rem;
+    min-width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .blog-pagination button[data-page] {
+    min-width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .blog-pagination button[data-nav] {
+    min-width: 24px;
+    height: 24px;
+    padding: 0.25rem;
+  }
+
+  .floating-page-indicator {
+    right: 0.5rem;
+    padding: 0.5rem;
+    min-width: 60px;
+  }
+
+  /* Mobile sticky adjustments */
+  .sticky-progress-bar {
+    top: 60px; /* Adjust for mobile header */
+    padding: 0.75rem;
+  }
+
+  .sticky-pagination-container {
+    padding: 0.75rem;
+  }
+
+  .blog-pagination.sticky-pagination .flex.items-center.justify-between {
+    padding: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .blog-pagination {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .blog-pagination button:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Floating page indicator styles - Professional */
+.floating-page-indicator {
+  backdrop-filter: blur(12px);
+  background: rgba(var(--background-paper-rgb, 255, 255, 255), 0.95);
+  border: 1px solid rgba(var(--border-main-rgb, 0, 0, 0), 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  min-width: 80px;
+  transition: all 0.3s ease;
+}
+
+.floating-page-indicator:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .floating-page-indicator {
+    background: rgba(var(--background-paper-rgb, 0, 0, 0), 0.95);
+    border: 1px solid rgba(var(--border-main-rgb, 255, 255, 255), 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Smooth transitions for page changes */
+.blog-content-viewer {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.blog-content-viewer.loading {
+  opacity: 0.7;
+}
+
+/* Fixed Progress Bar Styles */
+.fixed-progress-bar {
+  position: fixed !important;
+  top: 80px !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
+  backdrop-filter: blur(12px);
+  background: rgba(var(--background-default-rgb, 255, 255, 255), 0.95);
+  border-bottom: 1px solid var(--border-main);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  padding: 1rem 2rem;
+}
+
+/* Make progress bar width 60% wider than content */
+.fixed-progress-bar .flex {
+  max-width: 104rem !important; /* 65rem * 1.6 = 104rem (60% wider) */
+  margin: 0 auto !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fixed-progress-bar {
+    background: rgba(var(--background-default-rgb, 0, 0, 0), 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Fixed Pagination Container */
+.fixed-pagination-container {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
+  backdrop-filter: blur(12px);
+  background: rgba(var(--background-default-rgb, 255, 255, 255), 0.95);
+  border-top: 1px solid var(--border-main);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Pagination Content */
+.pagination-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 70% !important; /* 70% of view width */
+  max-width: 70vw !important; /* 70% of viewport width */
+  padding: 1rem 2rem !important; /* Reduced padding for 70% width */
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+/* Pagination Close Button */
+.pagination-close-btn {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  padding: 0.5rem !important;
+  color: var(--text-secondary) !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+  z-index: 51 !important;
+}
+
+.pagination-close-btn:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Pagination Main Container */
+.pagination-main-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  background: var(--background-paper) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important; /* Reduced padding for 70% width */
+  border: 1px solid var(--border-main) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  min-height: 60px !important; /* Ensure minimum height */
+}
+
+/* Navigation Buttons Container */
+.pagination-nav-buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.375rem !important; /* Reduced gap for 70% width */
+  flex-shrink: 0 !important;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Left Navigation Buttons */
+.pagination-main-container > .pagination-nav-buttons:first-of-type {
+  left: 0.5rem !important; /* Reduced left position */
+}
+
+/* Right Navigation Buttons */
+.pagination-main-container > .pagination-nav-buttons:last-of-type {
+  right: 0.5rem !important; /* Reduced right position */
+}
+
+/* Navigation Button */
+.pagination-nav-btn {
+  padding: 0.375rem !important; /* Reduced padding for 70% width */
+  border-radius: 0.25rem !important; /* Smaller border radius */
+  border: 1px solid var(--border-main) !important;
+  color: var(--text-secondary) !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important; /* Smaller minimum width */
+  height: 32px !important; /* Smaller height */
+}
+
+.pagination-nav-btn:hover:not(:disabled) {
+  background: var(--background-default) !important;
+  color: var(--text-primary) !important;
+}
+
+.pagination-nav-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Pagination Center */
+.pagination-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.375rem !important; /* Reduced gap for 70% width */
+  width: 100% !important;
+  padding: 0 4rem !important; /* Reduced space for side navigation buttons */
+  min-width: 0 !important;
+  margin: 0 auto !important;
+}
+
+/* Pagination Numbers */
+.pagination-numbers {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.125rem !important; /* Reduced gap for 70% width */
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+/* Smaller page number buttons for more visibility */
+.fixed-pagination .page-number-btn {
+  min-width: 24px !important; /* Smaller for 70% width */
+  height: 24px !important; /* Smaller for 70% width */
+  padding: 1px 4px !important; /* Reduced padding */
+  font-size: 10px !important; /* Smaller font */
+  margin: 0.5px !important; /* Reduced margin */
+}
+
+/* Responsive page numbers */
+@media (max-width: 768px) {
+  .fixed-pagination .page-number-btn {
+    min-width: 20px !important; /* Even smaller for mobile */
+    height: 20px !important;
+    padding: 1px 3px !important;
+    font-size: 9px !important;
+    margin: 0.25px !important;
+  }
+
+  .pagination-content {
+    padding: 0.5rem 0.75rem !important; /* Reduced padding for mobile */
+    width: 90% !important; /* Slightly wider on mobile */
+    max-width: 90vw !important;
+  }
+
+  .pagination-main-container {
+    padding: 0.5rem !important; /* Reduced padding for mobile */
+    flex-direction: column !important;
+    gap: 0.375rem !important; /* Reduced gap */
+    min-height: 50px !important; /* Smaller minimum height */
+  }
+
+  .pagination-center {
+    padding: 0 !important;
+    order: 1 !important;
+    gap: 0.25rem !important; /* Reduced gap for mobile */
+  }
+
+  .pagination-nav-buttons {
+    position: static !important;
+    transform: none !important;
+    justify-content: center !important;
+    gap: 0.25rem !important; /* Reduced gap for mobile */
+  }
+
+  .pagination-main-container > .pagination-nav-buttons:first-of-type {
+    left: auto !important;
+    order: 0 !important;
+  }
+
+  .pagination-main-container > .pagination-nav-buttons:last-of-type {
+    right: auto !important;
+    order: 2 !important;
+  }
+
+  .pagination-nav-btn {
+    padding: 0.25rem !important; /* Smaller padding for mobile */
+    min-width: 28px !important;
+    height: 28px !important;
+  }
+}
+
+/* Force full width on all pagination elements */
+.fixed-pagination-container * {
+  box-sizing: border-box !important;
+}
+
+.fixed-pagination .blog-pagination > div {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fixed-pagination-container {
+    background: rgba(var(--background-default-rgb, 0, 0, 0), 0.95);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Content scrolling improvements */
+.blog-content-with-scroll {
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  max-height: none;
+}
+
+/* Content padding for fixed elements */
+.content-with-fixed-elements {
+  padding-top: 120px; /* Space for fixed progress bar */
+  padding-bottom: 100px; /* Space for fixed pagination */
+  margin-top: -120px; /* Offset the padding */
+  margin-bottom: -100px; /* Offset the padding */
+}
+
+/* Keyboard navigation hint */
+.keyboard-hint {
+  opacity: 0.7;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.keyboard-hint:hover {
+  opacity: 1;
+}

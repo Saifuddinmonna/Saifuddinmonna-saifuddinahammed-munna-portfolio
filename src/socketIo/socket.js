@@ -11,6 +11,11 @@ class SocketService {
   }
 
   connect(token) {
+    // SOCKET.IO DISABLED FOR PERFORMANCE - PREVENTING WEBSOCKET CONNECTION ERRORS
+    console.log("Socket.IO connection disabled for performance");
+    return;
+
+    /*
     if (!token) {
       console.error("No token provided for socket connection");
       return;
@@ -37,6 +42,7 @@ class SocketService {
       console.error("Socket connection error:", error);
       this.initialized = false;
     }
+    */
   }
 
   disconnect() {

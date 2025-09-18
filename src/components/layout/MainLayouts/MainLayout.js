@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+// import { useState } from "react"; // DISABLED FOR PERFORMANCE
 // ... other imports
 import NavbarPage2 from "../NavbarPage/NavbarPage";
 import Footer from "../Footer";
@@ -6,16 +7,18 @@ import { Outlet } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
 import ContactPage from "../../../pages/ContactPage";
 import aboutPageForHome from "../../About/aboutPageForHome"; // Assuming this is a component you want to include
-import ChatBubble from "../../../socketIo/components/ChatBubble.js";
-import ChatWindow from "../../../socketIo/components/ChatWindow.js";
+// SOCKET.IO CHAT COMPONENTS DISABLED FOR PERFORMANCE
+// import ChatBubble from "../../../socketIo/components/ChatBubble.js";
+// import ChatWindow from "../../../socketIo/components/ChatWindow.js";
 
 const MainLayout = () => {
   const { scrollYProgress } = useScroll();
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  // SOCKET.IO CHAT STATE DISABLED FOR PERFORMANCE
+  // const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const toggleChat = () => {
-    setIsChatOpen(prev => !prev);
-  };
+  // const toggleChat = () => {
+  //   setIsChatOpen(prev => !prev);
+  // };
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background-default)]">

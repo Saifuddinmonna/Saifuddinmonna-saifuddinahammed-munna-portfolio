@@ -1,12 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogService } from "../../services/blogService";
 import { useAuth } from "../../auth/context/AuthContext";
 import { toast } from "react-hot-toast";
-import { FaHeart, FaRegHeart, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
-import { useRef, useEffect } from "react";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaTimes,
+  FaBookOpen,
+  FaClock,
+} from "react-icons/fa";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import TinyMCEViewer from "../ui/TinyMCEViewer";
+import BlogPagination from "../ui/BlogPagination";
+import { useBlogPagination } from "../../hooks/useBlogPagination";
+import "../ui/BlogPagination.css";
+
+// Utility to normalize internal anchor links
+function normalizeInternalAnchors(html) {
+  return html.replace(
+    /<a\s+([^>]*?)href=["'](?:https?:\/\/[^\/]+)?\/blog\/[^"'#]+(#_[^"']+)["']/gi,
+    '<a $1href="$2"'
+  );
+}
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -18,9 +38,11 @@ const BlogPost = () => {
   const [editCommentText, setEditCommentText] = useState("");
   // For copy-to-clipboard feedback per badge
   const [copiedIdx, setCopiedIdx] = useState(null);
-  const contentRef = useRef(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [showProgressBar, setShowProgressBar] = useState(true);
+  const [showPagination, setShowPagination] = useState(true);
+  const isManualNavigationRef = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,46 +76,128 @@ const BlogPost = () => {
 
   const post = response?.data || response;
 
-  // Add scroll buttons for tables
-  useEffect(() => {
-    if (!contentRef.current) return;
-    // Find all tables in the rendered HTML
-    const tables = contentRef.current.querySelectorAll("table");
-    tables.forEach(table => {
-      table.classList.add("blog-table-scrollable");
-      // Wrap table in a div if not already wrapped
-      if (!table.parentElement.classList.contains("blog-table-wrapper")) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "blog-table-wrapper";
-        table.parentElement.insertBefore(wrapper, table);
-        wrapper.appendChild(table);
-      }
-      const wrapper = table.parentElement;
-      // Remove old arrows if any
-      const oldLeft = wrapper.querySelector(".blog-table-arrow.left");
-      const oldRight = wrapper.querySelector(".blog-table-arrow.right");
-      if (oldLeft) oldLeft.remove();
-      if (oldRight) oldRight.remove();
-      // Add left arrow
-      const leftArrow = document.createElement("button");
-      leftArrow.className = "blog-table-arrow left";
-      leftArrow.type = "button";
-      leftArrow.innerHTML = `<svg width='18' height='18' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M15 19l-7-7 7-7'/></svg>`;
-      leftArrow.onclick = () => {
-        wrapper.scrollTo({ left: 0, behavior: "smooth" });
-      };
-      wrapper.appendChild(leftArrow);
-      // Add right arrow
-      const rightArrow = document.createElement("button");
-      rightArrow.className = "blog-table-arrow right";
-      rightArrow.type = "button";
-      rightArrow.innerHTML = `<svg width='18' height='18' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M9 5l7 7-7 7'/></svg>`;
-      rightArrow.onclick = () => {
-        wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: "smooth" });
-      };
-      wrapper.appendChild(rightArrow);
+  // Initialize pagination hook
+  const {
+    currentPage,
+    totalPages,
+    currentPageContent,
+    currentPageWordCount,
+    readingProgress,
+    currentPageReadTime,
+    isLoading: paginationLoading,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    goToFirstPage,
+    goToLastPage,
+    hasNextPage,
+    hasPreviousPage,
+    isFirstPage,
+    isLastPage,
+  } = useBlogPagination(post?.content, 250, 200); // 250 words per page, minimum 200 - standard reading
+
+  // Scroll to specific page position
+  const scrollToPage = pageNumber => {
+    const contentElement = document.querySelector(".blog-content-with-scroll");
+    if (!contentElement || totalPages <= 1) return;
+
+    const scrollHeight = contentElement.scrollHeight;
+    const clientHeight = contentElement.clientHeight;
+    const maxScroll = scrollHeight - clientHeight;
+
+    // Calculate scroll position for the page
+    const scrollPercentage = (pageNumber - 1) / (totalPages - 1);
+    const targetScrollTop = scrollPercentage * maxScroll;
+
+    // Smooth scroll to the calculated position
+    contentElement.scrollTo({
+      top: targetScrollTop,
+      behavior: "smooth",
     });
+  };
+
+  // Enhanced goToPage function that also scrolls
+  const handlePageChange = pageNumber => {
+    // Set manual navigation flag to prevent auto-scroll interference
+    isManualNavigationRef.current = true;
+
+    goToPage(pageNumber);
+    scrollToPage(pageNumber);
+
+    // Reset manual navigation flag after scroll completes
+    setTimeout(() => {
+      isManualNavigationRef.current = false;
+    }, 1000);
+  };
+
+  // Wrapper functions for pagination with manual navigation flag
+  const handleNextPage = () => {
+    isManualNavigationRef.current = true;
+    goToNextPage();
+    setTimeout(() => {
+      isManualNavigationRef.current = false;
+    }, 1000);
+  };
+
+  const handlePreviousPage = () => {
+    isManualNavigationRef.current = true;
+    goToPreviousPage();
+    setTimeout(() => {
+      isManualNavigationRef.current = false;
+    }, 1000);
+  };
+
+  const handleFirstPage = () => {
+    isManualNavigationRef.current = true;
+    goToFirstPage();
+    setTimeout(() => {
+      isManualNavigationRef.current = false;
+    }, 1000);
+  };
+
+  const handleLastPage = () => {
+    isManualNavigationRef.current = true;
+    goToLastPage();
+    setTimeout(() => {
+      isManualNavigationRef.current = false;
+    }, 1000);
+  };
+
+  // TinyMCEViewer will handle anchor scrolling automatically
+
+  // Add scroll buttons for tables - will be handled by TinyMCEViewer
+  useEffect(() => {
+    // TinyMCEViewer will handle table scrolling internally
+    // This effect is kept for potential future enhancements
   }, [post?.content]);
+
+  // Scroll detection DISABLED to prevent page jumping issues
+  // Manual pagination works fine, so we'll rely on that
+  useEffect(() => {
+    console.log("Auto-scroll detection disabled to prevent page jumping issues");
+  }, [totalPages, currentPage, goToPage]);
+
+  // Keyboard navigation for pagination
+  useEffect(() => {
+    const handleKeyPress = e => {
+      if (e.key === "ArrowLeft" && hasPreviousPage) {
+        isManualNavigationRef.current = true;
+        goToPreviousPage();
+        setTimeout(() => {
+          isManualNavigationRef.current = false;
+        }, 1000);
+      } else if (e.key === "ArrowRight" && hasNextPage) {
+        isManualNavigationRef.current = true;
+        goToNextPage();
+        setTimeout(() => {
+          isManualNavigationRef.current = false;
+        }, 1000);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [hasPreviousPage, hasNextPage, goToPreviousPage, goToNextPage]);
 
   // Get categories - show only name, fallback to ID, fallback to 'General'
   let categoryBadges = [{ name: "General" }];
@@ -283,8 +387,30 @@ const BlogPost = () => {
   const isAuthor = user && post.author?.email === user.email;
   const hasLiked = post.likes?.some(like => like.email === user?.email);
 
+  const normalizedContent = post?.content ? normalizeInternalAnchors(post.content) : "";
+
   return (
     <div className="min-h-screen bg-[var(--background-default)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      {/* Floating Page Indicator - Professional Style */}
+      {totalPages > 1 && (
+        <div className="fixed top-1/2 right-6 transform -translate-y-1/2 z-40 floating-page-indicator rounded-lg p-4 shadow-lg">
+          <div className="text-center">
+            <div className="text-xs text-[var(--text-secondary)] mb-1 font-medium">PAGE</div>
+            <div className="text-xl font-bold text-[var(--primary-main)] mb-1">{currentPage}</div>
+            <div className="text-xs text-[var(--text-secondary)] mb-3">of {totalPages}</div>
+            <div className="w-20 bg-[var(--background-default)] rounded-full h-1.5 mx-auto">
+              <div
+                className="progress-bar h-1.5 rounded-full transition-all duration-500"
+                style={{ width: `${readingProgress}%` }}
+              />
+            </div>
+            <div className="text-xs text-[var(--text-secondary)] mt-2">
+              {readingProgress}% complete
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Scroll to Top/Bottom Floating Buttons */}
       {showScrollTop && (
         <button
@@ -376,11 +502,125 @@ const BlogPost = () => {
               )}
             </div>
 
-            <div
-              ref={contentRef}
-              className="prose prose-lg max-w-none text-[var(--text-primary)] mb-8 blog-content-with-scroll"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            {/* Fixed Reading Progress Bar - Top */}
+            {totalPages > 1 && showProgressBar && (
+              <div className="fixed-progress-bar">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 text-sm font-medium text-[var(--text-primary)]">
+                      <FaBookOpen size={14} />
+                      <span>Reading Progress</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+                      <span className="flex items-center gap-1">
+                        <FaClock size={12} />~{currentPageReadTime} min
+                      </span>
+                      <span>{currentPageWordCount} words</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[var(--primary-main)]">
+                      {Math.round(readingProgress)}%
+                    </span>
+                    <span className="text-sm text-[var(--text-secondary)]">Complete</span>
+                    <span className="text-xs text-[var(--text-secondary)]">
+                      (Page {currentPage} of {totalPages})
+                    </span>
+                    <button
+                      onClick={() => setShowProgressBar(false)}
+                      className="ml-2 p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                      title="Hide progress bar"
+                    >
+                      <FaTimes size={12} />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-full bg-[var(--background-paper)] rounded-full h-3 border border-[var(--border-main)]">
+                  <div
+                    className="progress-bar h-3 rounded-full transition-all duration-500 ease-out"
+                    style={{
+                      width: `${Math.max(0, Math.min(100, readingProgress))}%`,
+                      backgroundColor: "var(--primary-main)",
+                      background:
+                        "linear-gradient(90deg, var(--primary-main), var(--primary-dark))",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Toggle Button for Progress Bar */}
+            {totalPages > 1 && !showProgressBar && (
+              <div className="fixed top-20 right-4 z-50">
+                <button
+                  onClick={() => setShowProgressBar(true)}
+                  className="p-2 bg-[var(--primary-main)] text-white rounded-lg shadow-lg hover:bg-[var(--primary-dark)] transition-colors"
+                  title="Show progress bar"
+                >
+                  <FaBookOpen size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* Blog Content - Full Scrollable with Auto-Pagination */}
+            <div className="prose prose-lg max-w-none text-[var(--text-primary)] mb-8 blog-content-with-scroll min-h-[60vh] max-h-[70vh] overflow-y-auto content-with-fixed-elements">
+              {paginationLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
+                  <span className="ml-3 text-[var(--text-secondary)]">Loading content...</span>
+                </div>
+              ) : (
+                <TinyMCEViewer
+                  content={normalizeInternalAnchors(post?.content || "")}
+                  className="blog-content-viewer"
+                  debug={false}
+                />
+              )}
+            </div>
+
+            {/* Fixed Pagination Controls - Bottom */}
+            {totalPages > 1 && showPagination && (
+              <div className="fixed-pagination-container">
+                <div className="pagination-content">
+                  <BlogPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    onFirstPage={handleFirstPage}
+                    onLastPage={handleLastPage}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                    isLoading={paginationLoading}
+                    currentPageWordCount={currentPageWordCount}
+                    currentPageReadTime={currentPageReadTime}
+                    readingProgress={readingProgress}
+                    className="fixed-pagination"
+                  />
+                </div>
+                <button
+                  onClick={() => setShowPagination(false)}
+                  className="pagination-close-btn"
+                  title="Hide pagination"
+                >
+                  <FaTimes size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* Toggle Button for Pagination */}
+            {totalPages > 1 && !showPagination && (
+              <div className="fixed bottom-4 right-4 z-50">
+                <button
+                  onClick={() => setShowPagination(true)}
+                  className="p-3 bg-[var(--primary-main)] text-white rounded-lg shadow-lg hover:bg-[var(--primary-dark)] transition-colors"
+                  title="Show pagination"
+                >
+                  <FaBookOpen size={18} />
+                </button>
+              </div>
+            )}
 
             <div className="flex items-center gap-4 mb-8">
               <button

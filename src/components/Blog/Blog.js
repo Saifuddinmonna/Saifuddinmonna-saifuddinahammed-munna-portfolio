@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useContext, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../App";
 import { useNavigate, Link } from "react-router-dom";
@@ -22,6 +22,14 @@ import BlogTableView from "./BlogTableView";
 import BlogDetailsView from "./BlogDetailsView";
 
 const ARTICLES_PER_PAGE = 10;
+
+// Utility to normalize internal anchor links
+function normalizeInternalAnchors(html) {
+  return html.replace(
+    /<a\s+([^>]*?)href=["'](?:https?:\/\/[^\/]+)?\/blog\/[^"'#]+(#_[^"']+)["']/gi,
+    '<a $1href="$2"'
+  );
+}
 
 const Blog = () => {
   const { isDarkMode } = useContext(ThemeContext);
@@ -266,6 +274,28 @@ const Blog = () => {
     }
   }, [debouncedSearchQuery, selectedCategory]);
 
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    if (!showModal) return;
+    const scrollToHash = () => {
+      if (window.location.hash) {
+        const id = window.location.hash.replace("#", "");
+        const el = contentRef.current?.querySelector(`#${CSS.escape(id)}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          el.style.backgroundColor = "#ffffcc";
+          setTimeout(() => {
+            el.style.backgroundColor = "";
+          }, 2000);
+        }
+      }
+    };
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, [showModal, selectedArticle?.content]);
+
   if (isLoading) {
     return <BlogLoading />;
   }
@@ -470,8 +500,11 @@ const Blog = () => {
                 <span className="text-[var(--primary-main)]">{selectedArticle.tags[0]}</span>
               </div>
               <div
+                ref={contentRef}
                 className="prose prose-lg max-w-none text-[var(--text-primary)]"
-                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                dangerouslySetInnerHTML={{
+                  __html: normalizeInternalAnchors(selectedArticle.content),
+                }}
               />
             </div>
           </div>

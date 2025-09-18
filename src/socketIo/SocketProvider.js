@@ -28,8 +28,13 @@ export const SocketProvider = ({ children }) => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [error, setError] = useState(null);
 
-  // Lazy initialize socket connection
+  // Lazy initialize socket connection - DISABLED FOR PERFORMANCE
   const initializeSocket = useCallback(async () => {
+    // SOCKET.IO DISABLED FOR PERFORMANCE - PREVENTING WEBSOCKET CONNECTION ERRORS
+    console.log("Socket.IO initialization disabled for performance");
+    return;
+
+    /*
     if (!user || !token || isInitialized) {
       return;
     }
@@ -289,9 +294,11 @@ export const SocketProvider = ({ children }) => {
       setError(error);
       setConnected(false);
     }
+    */
   }, [user, token, isInitialized]);
 
-  // Initialize socket after page load
+  // Initialize socket after page load - DISABLED FOR PERFORMANCE
+  /*
   useEffect(() => {
     const timer = setTimeout(() => {
       initializeSocket();
@@ -299,8 +306,10 @@ export const SocketProvider = ({ children }) => {
 
     return () => clearTimeout(timer);
   }, [initializeSocket]);
+  */
 
-  // Cleanup on unmount
+  // Cleanup on unmount - DISABLED FOR PERFORMANCE
+  /*
   useEffect(() => {
     return () => {
       if (isInitialized) {
@@ -310,8 +319,10 @@ export const SocketProvider = ({ children }) => {
       }
     };
   }, [isInitialized]);
+  */
 
-  // Token expiration handling
+  // Token expiration handling - DISABLED FOR PERFORMANCE
+  /*
   useEffect(() => {
     const handleTokenExpiring = event => {
       // Handle token expiration
@@ -324,8 +335,14 @@ export const SocketProvider = ({ children }) => {
       window.removeEventListener("tokenExpiring", handleTokenExpiring);
     };
   }, []);
+  */
 
   const sendPrivateMessage = ({ receiverId, text, type, sender, timestamp }) => {
+    // SOCKET.IO DISABLED FOR PERFORMANCE
+    console.log("Socket.IO messaging disabled for performance");
+    return;
+
+    /*
     const message = {
       receiverId,
       text,
@@ -346,43 +363,45 @@ export const SocketProvider = ({ children }) => {
       ...prev,
       [receiverId]: [...(prev[receiverId] || []), message],
     }));
+    */
   };
 
   const value = {
-    connected,
-    users,
-    messages,
-    privateMessages,
-    roomMessages,
-    unreadCounts,
-    typingUsers,
-    activeRooms,
-    groups,
-    selectedGroup,
+    connected: false, // DISABLED FOR PERFORMANCE
+    users: [],
+    messages: [],
+    privateMessages: {},
+    roomMessages: {},
+    unreadCounts: {},
+    typingUsers: {},
+    activeRooms: new Set(),
+    groups: [],
+    selectedGroup: null,
     setSelectedGroup,
     setGroups,
-    error,
+    error: null,
     sendPrivateMessage,
-    sendRoomMessage: socketService.sendRoomMessage.bind(socketService),
-    sendPublicMessage: socketService.sendPublicMessage.bind(socketService),
-    requestPublicHistory: socketService.requestPublicHistory.bind(socketService),
-    requestPrivateHistory: socketService.requestPrivateHistory.bind(socketService),
-    requestGroupHistory: socketService.requestGroupHistory.bind(socketService),
-    joinRoom: socketService.joinRoom.bind(socketService),
-    leaveRoom: socketService.leaveRoom.bind(socketService),
-    createGroup: socketService.createGroup.bind(socketService),
-    joinGroup: socketService.joinGroup.bind(socketService),
-    leaveGroup: socketService.leaveGroup.bind(socketService),
-    getGroups: socketService.getGroups.bind(socketService),
-    addUserToGroup: socketService.addUserToGroup.bind(socketService),
-    removeUserFromGroup: socketService.removeUserFromGroup.bind(socketService),
-    sendTypingStatus: socketService.sendTypingStatus.bind(socketService),
-    markMessageAsRead: socketService.markMessageAsRead.bind(socketService),
-    markAllMessagesAsRead: socketService.markAllMessagesAsRead.bind(socketService),
-    markPrivateMessageAsRead: socketService.markPrivateMessageAsRead.bind(socketService),
-    editPrivateMessage: socketService.editPrivateMessage.bind(socketService),
-    deletePrivateMessage: socketService.deletePrivateMessage.bind(socketService),
-    getUnreadCount: socketService.getUnreadCount.bind(socketService),
+    // SOCKET.IO METHODS DISABLED FOR PERFORMANCE
+    sendRoomMessage: () => console.log("Socket.IO disabled for performance"),
+    sendPublicMessage: () => console.log("Socket.IO disabled for performance"),
+    requestPublicHistory: () => console.log("Socket.IO disabled for performance"),
+    requestPrivateHistory: () => console.log("Socket.IO disabled for performance"),
+    requestGroupHistory: () => console.log("Socket.IO disabled for performance"),
+    joinRoom: () => console.log("Socket.IO disabled for performance"),
+    leaveRoom: () => console.log("Socket.IO disabled for performance"),
+    createGroup: () => console.log("Socket.IO disabled for performance"),
+    joinGroup: () => console.log("Socket.IO disabled for performance"),
+    leaveGroup: () => console.log("Socket.IO disabled for performance"),
+    getGroups: () => console.log("Socket.IO disabled for performance"),
+    addUserToGroup: () => console.log("Socket.IO disabled for performance"),
+    removeUserFromGroup: () => console.log("Socket.IO disabled for performance"),
+    sendTypingStatus: () => console.log("Socket.IO disabled for performance"),
+    markMessageAsRead: () => console.log("Socket.IO disabled for performance"),
+    markAllMessagesAsRead: () => console.log("Socket.IO disabled for performance"),
+    markPrivateMessageAsRead: () => console.log("Socket.IO disabled for performance"),
+    editPrivateMessage: () => console.log("Socket.IO disabled for performance"),
+    deletePrivateMessage: () => console.log("Socket.IO disabled for performance"),
+    getUnreadCount: () => console.log("Socket.IO disabled for performance"),
   };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;

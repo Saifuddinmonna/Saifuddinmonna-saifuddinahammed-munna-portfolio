@@ -188,37 +188,14 @@ export const AuthProvider = ({ children }) => {
       const firebaseUser = userCredential.user;
       const newToken = await getAndStoreToken(firebaseUser);
 
-      // Create user profile on server
-      try {
-        const response = await axios.post(
-          `${BASE_API_URL}/api/auth/register`,
-          {
-            email: firebaseUser.email,
-            uid: firebaseUser.uid,
-            displayName: firebaseUser.displayName || firebaseUser.email,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${newToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      // User profile will be handled by the SignUp component
+      // No need to create user profile here to avoid duplicate calls
 
-        // Immediately set local dbUser with created user data
-        const createdUser = response.data.data;
-        console.log("✅ Setting local dbUser after signup:", createdUser);
-        setLocalDbUser(createdUser);
-      } catch (serverError) {
-        console.error("Error creating user profile on server:", serverError);
-        // Continue even if server profile creation fails
-      }
-
-      toast.success("Account created successfully!");
+      // Don't show toast here, let SignUp component handle it
       return userCredential;
     } catch (error) {
       console.error("Firebase signUp error:", error);
-      toast.error(error.message);
+      // Don't show toast here, let SignUp component handle it
       throw error;
     }
   };
@@ -248,42 +225,18 @@ export const AuthProvider = ({ children }) => {
       const firebaseUser = result.user;
       const newToken = await getAndStoreToken(firebaseUser);
 
-      // Create or update user profile on server
-      try {
-        const response = await axios.post(
-          `${BASE_API_URL}/api/auth/google`,
-          {
-            email: firebaseUser.email,
-            uid: firebaseUser.uid,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${newToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      // User profile will be handled by the SignUp component
+      // No need to create user profile here to avoid duplicate calls
 
-        // Immediately set local dbUser with user data
-        const userData = response.data.data;
-        console.log("✅ Setting local dbUser after Google signin:", userData);
-        setLocalDbUser(userData);
-      } catch (serverError) {
-        console.error("Error creating/updating user profile on server:", serverError);
-        // Continue even if server profile creation fails
-      }
-
-      toast.success("Signed in with Google successfully!");
+      // Don't show toast here, let SignUp component handle it
       return result;
     } catch (error) {
       console.error("Firebase signInWithGoogle error:", error);
-      toast.error(error.message);
+      // Don't show toast here, let SignUp component handle it
       throw error;
     }
   };
-  console.log("dbUser from the botton in auth context", dbUser);
+
   // Sign out
   const logOut = async () => {
     try {

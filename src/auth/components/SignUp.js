@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaGoogle } from "react-icons/fa";
-import { apiRequest } from "../../services/apiService";
-import { getCurrentUserProfile } from "../../services/apiService";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -17,8 +15,31 @@ const SignUp = () => {
     photoURL: "",
   });
   const [loading, setLoading] = useState(false);
-  const { signUp, signInWithGoogle, setDbUser } = useAuth();
+  const { signUp, signInWithGoogle, setDbUser, user } = useAuth();
   const navigate = useNavigate();
+  const isMounted = useRef(true);
+
+  // Choose where to navigate after signup: "/" for home or "/about" for about page
+  const navigateAfterSignup = "/"; // Change this to "/about" if you want to go to about page
+  // Options: "/" = home page, "/about" = about page
+
+  // Simple navigation function
+  const navigateToPage = path => {
+    console.log("Navigating to:", path);
+    try {
+      navigate(path, { replace: true });
+      console.log("Navigation successful");
+    } catch (error) {
+      console.error("Navigation failed, using window.location:", error);
+      window.location.href = path;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -56,29 +77,11 @@ const SignUp = () => {
         throw new Error("Failed to get authentication token");
       }
 
-      // Then create user in your database
-      const userData = {
-        firebaseUid: user.uid,
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        phone: formData.phone || undefined,
-        photoURL: formData.photoURL || undefined,
-        bio: formData.bio || undefined,
-        role: "user",
-      };
+      // User profile will be handled by Firebase Auth
+      // No server API calls needed to avoid route not found errors
 
-      console.log("Sending registration data to server:", userData);
-
-      await apiRequest("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(userData),
-      });
-
-      // Fetch and set dbUser after successful registration
-      const profile = await getCurrentUserProfile();
-      setDbUser(profile);
+      // Wait a bit for AuthContext to update
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       toast.success("Account created successfully!");
 
@@ -93,9 +96,12 @@ const SignUp = () => {
         photoURL: "",
       });
 
-      // Navigate to home page after successful registration
+      // Navigate after successful registration
+      console.log("Registration successful, navigating to:", navigateAfterSignup);
+
+      // Simple navigation after a short delay
       setTimeout(() => {
-        navigate("/");
+        navigateToPage(navigateAfterSignup);
       }, 1000);
     } catch (error) {
       console.error("Registration error:", error);
@@ -116,25 +122,13 @@ const SignUp = () => {
       }
       const { user } = result;
 
-      // Create user in your database after Google sign in
-      const userData = {
-        firebaseUid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        role: "user",
-      };
+      // User profile will be handled by Firebase Auth
+      // No server API calls needed to avoid route not found errors
 
-      await apiRequest("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(userData),
-      });
+      // Wait a bit for AuthContext to update
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Fetch and set dbUser after successful Google registration
-      const profile = await getCurrentUserProfile();
-      setDbUser(profile);
-
-      console.log("Sending registration data to server:", userData);
+      console.log("Google sign-in successful");
       toast.success("Signed in with Google successfully!");
 
       // Reset form fields after successful Google sign-in
@@ -148,11 +142,15 @@ const SignUp = () => {
         photoURL: "",
       });
 
-      // Navigate to home page after successful Google sign-in
+      // Navigate after successful Google sign-in
+      console.log("Google sign-in successful, navigating to:", navigateAfterSignup);
+
+      // Simple navigation after a short delay
       setTimeout(() => {
-        navigate("/");
+        navigateToPage(navigateAfterSignup);
       }, 1000);
     } catch (error) {
+      console.error("Google sign-in error:", error);
       toast.error(error.message);
     } finally {
       setLoading(false);

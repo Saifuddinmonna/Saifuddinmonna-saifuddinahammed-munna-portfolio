@@ -165,3 +165,95 @@
     display: none !important;
   }
 }
+
+/* Anchor scrolling improvements */
+.tinymce-viewer {
+  scroll-behavior: smooth;
+}
+
+/* Ensure elements with IDs are properly positioned for scrolling */
+.tinymce-viewer [id] {
+  scroll-margin-top: 20px;
+}
+
+/* Highlight animation for anchor targets */
+.tinymce-viewer .anchor-highlight {
+  animation: anchorHighlight 2s ease-out;
+}
+
+@keyframes anchorHighlight {
+  0% {
+    background-color: #ffffcc;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Better styling for table of contents links */
+.tinymce-viewer a[href^="#"] {
+  color: #0066cc;
+  text-decoration: none;
+  border-bottom: 1px dotted #0066cc;
+}
+
+.tinymce-viewer a[href^="#"]:hover {
+  color: #003366;
+  border-bottom: 1px solid #003366;
+}
+
+/* Ensure proper spacing for anchor targets */
+.tinymce-viewer h1[id],
+.tinymce-viewer h2[id],
+.tinymce-viewer h3[id],
+.tinymce-viewer h4[id],
+.tinymce-viewer h5[id],
+.tinymce-viewer h6[id] {
+  position: relative;
+}
+
+/* Add a subtle indicator for anchor targets */
+.tinymce-viewer [id]:target::before {
+  content: "📍";
+  position: absolute;
+  left: -25px;
+  color: #0066cc;
+  opacity: 0.7;
+}
+
+/* Blog-specific styles */
+.blog-content-viewer .tinymce-viewer {
+  background: transparent;
+  padding: 0;
+}
+
+.blog-content-viewer .tinymce-viewer h1,
+.blog-content-viewer .tinymce-viewer h2,
+.blog-content-viewer .tinymce-viewer h3,
+.blog-content-viewer .tinymce-viewer h4,
+.blog-content-viewer .tinymce-viewer h5,
+.blog-content-viewer .tinymce-viewer h6 {
+  color: var(--text-primary);
+}
+
+.blog-content-viewer .tinymce-viewer p {
+  color: var(--text-primary);
+}
+
+.blog-content-viewer .tinymce-viewer a {
+  color: var(--primary-main);
+}
+
+.blog-content-viewer .tinymce-viewer a:hover {
+  color: var(--primary-dark);
+}
+
+/* Ensure proper spacing in blog context */
+.blog-content-viewer .tinymce-viewer {
+  line-height: 1.8;
+}
+
+.blog-content-viewer .tinymce-viewer blockquote {
+  border-left-color: var(--primary-main);
+  background-color: var(--background-paper);
+}

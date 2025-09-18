@@ -37,30 +37,109 @@ const TinyMCEViewer = ({ content = "", className = "", debug = false, ...props }
 
   const processedContent = processContent(content);
 
-  // Anchor scroll-to logic (listen to hashchange)
+  // Enhanced anchor scroll-to logic
   useEffect(() => {
     const scrollToHash = () => {
-      if (window.location.hash) {
-        const id = window.location.hash.replace("#", "");
-        const el = contentRef.current?.querySelector(`#${CSS.escape(id)}`);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-          el.style.backgroundColor = "#ffffcc";
-          setTimeout(() => {
-            el.style.backgroundColor = "";
-          }, 2000);
+      if (!window.location.hash) return;
+
+      const hash = window.location.hash.replace("#", "");
+      if (!hash) return;
+
+      // Wait a bit for content to be fully rendered
+      setTimeout(() => {
+        if (!contentRef.current) return;
+
+        // Try multiple selectors to find the target element
+        const selectors = [
+          `#${CSS.escape(hash)}`,
+          `[id="${CSS.escape(hash)}"]`,
+          `[name="${CSS.escape(hash)}"]`,
+          `[data-id="${CSS.escape(hash)}"]`,
+          `[data-anchor="${CSS.escape(hash)}"]`,
+          // For table of contents links, try common patterns
+          `[id*="${hash}"]`,
+          `[name*="${hash}"]`,
+          // Look for headings that might match
+          `h1[id*="${hash}"], h2[id*="${hash}"], h3[id*="${hash}"], h4[id*="${hash}"], h5[id*="${hash}"], h6[id*="${hash}"]`,
+          // Look for any element containing the hash in its id
+          `[id*="${hash.replace(/[^a-zA-Z0-9]/g, "")}"]`,
+        ];
+
+        let targetElement = null;
+
+        for (const selector of selectors) {
+          try {
+            const el = contentRef.current.querySelector(selector);
+            if (el) {
+              targetElement = el;
+              break;
+            }
+          } catch (e) {
+            // Invalid selector, continue to next
+            continue;
+          }
         }
-      }
+
+        // If still not found, try to find by text content (for table of contents)
+        if (!targetElement) {
+          const allElements = contentRef.current.querySelectorAll("*");
+          for (const el of allElements) {
+            if (
+              el.textContent &&
+              el.textContent.trim() &&
+              (el.textContent.includes(hash) ||
+                el.getAttribute("id")?.includes(hash) ||
+                el.getAttribute("name")?.includes(hash))
+            ) {
+              targetElement = el;
+              break;
+            }
+          }
+        }
+
+        if (targetElement) {
+          // Scroll to the element
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+
+          // Highlight the element temporarily
+          const originalBackground = targetElement.style.backgroundColor;
+          targetElement.style.backgroundColor = "#ffffcc";
+          targetElement.style.transition = "background-color 0.3s ease";
+
+          setTimeout(() => {
+            targetElement.style.backgroundColor = originalBackground;
+            targetElement.style.transition = "";
+          }, 2000);
+
+          if (debug) {
+            console.log("Scrolled to element:", targetElement);
+          }
+        } else {
+          if (debug) {
+            console.log("Could not find element for hash:", hash);
+            console.log(
+              "Available elements with IDs:",
+              Array.from(contentRef.current.querySelectorAll("[id]")).map(el => el.id)
+            );
+          }
+        }
+      }, 100); // Small delay to ensure content is rendered
     };
+
     // Scroll on mount/content change
     scrollToHash();
+
     // Listen to hashchange event
     window.addEventListener("hashchange", scrollToHash);
+
     // Cleanup
     return () => {
       window.removeEventListener("hashchange", scrollToHash);
     };
-  }, [content]);
+  }, [content, debug]);
 
   return (
     <div className={`tinymce-viewer-root ${className}`}>
