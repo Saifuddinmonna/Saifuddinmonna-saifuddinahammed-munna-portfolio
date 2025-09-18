@@ -59,7 +59,35 @@ const Blog = () => {
   const [customBlogs, setCustomBlogs] = useState([]);
   const [allBlogs, setAllBlogs] = useState([]);
   const [customLoadCount, setCustomLoadCount] = useState(10);
+  const [showFirstPost, setShowFirstPost] = useState(false);
+  const [firstPost, setFirstPost] = useState(null);
 
+  // Load first post immediately for better UX
+  useEffect(() => {
+    const loadFirstPost = async () => {
+      try {
+        const response = await blogService.getAllBlogs({
+          page: 1,
+          limit: 1,
+          search: debouncedSearchQuery,
+          category: Array.isArray(selectedCategory) && selectedCategory.length > 0
+            ? selectedCategory.join(",")
+            : "",
+        });
+        
+        if (response.data && response.data.length > 0) {
+          setFirstPost(response.data[0]);
+          setShowFirstPost(true);
+        }
+      } catch (error) {
+        console.error("Error loading first post:", error);
+      }
+    };
+
+    loadFirstPost();
+  }, [debouncedSearchQuery, selectedCategory]);
+
+  // Optimized data fetching with immediate first post loading
   const { data, isLoading, error, refetch } = useDataFetching(
     ["blogs", currentPage, debouncedSearchQuery, selectedCategory],
     () =>
@@ -74,13 +102,39 @@ const Blog = () => {
             : "",
       }),
     {
-      staleTime: 0,
+      staleTime: 5 * 60 * 1000, // 5 minutes cache
       retry: 2,
       keepPreviousData: true,
-      select: apiResponse => ({
-        blogs: Array.isArray(apiResponse.data) ? apiResponse.data : [],
-        pagination: apiResponse.pagination || {},
-      }),
+      select: apiResponse => {
+        const blogs = Array.isArray(apiResponse.data) ? apiResponse.data : [];
+        const pagination = apiResponse.pagination || {};
+        
+        // Optimize blog data for faster rendering
+        const optimizedBlogs = blogs.map(blog => ({
+          ...blog,
+          // Truncate content for faster initial load
+          content: blog.content ? blog.content.substring(0, 500) + '...' : '',
+          // Keep only essential fields for initial display
+          id: blog.id,
+          title: blog.title,
+          excerpt: blog.excerpt,
+          author: blog.author,
+          createdAt: blog.createdAt,
+          updatedAt: blog.updatedAt,
+          categories: blog.categories,
+          tags: blog.tags,
+          image: blog.image,
+          likes: blog.likes,
+          comments: blog.comments,
+          readTime: blog.readTime,
+          wordCount: blog.wordCount
+        }));
+        
+        return {
+          blogs: optimizedBlogs,
+          pagination: pagination,
+        };
+      },
     }
   );
   console.log("data", data);
@@ -90,8 +144,15 @@ const Blog = () => {
   const pagination = data?.pagination || {};
   const totalBlogs = pagination.total || 0;
   const totalPages = pagination.pages || Math.ceil(totalBlogs / limit);
+  
+  // Combine first post with other blogs for display
+  const displayBlogs = showFirstPost && firstPost 
+    ? [firstPost, ...blogs.filter(blog => blog.id !== firstPost.id)]
+    : blogs;
+    
   console.log("blogsfrom const blog ", blogs);
   console.log("blogsfrom const pagination ", pagination);
+  console.log("displayBlogs", displayBlogs);
   const handleReadMore = article => {
     setSelectedArticle(article);
     setShowModal(true);
