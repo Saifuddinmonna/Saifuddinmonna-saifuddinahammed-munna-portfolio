@@ -12,6 +12,10 @@ export const useBlogPagination = (content, wordsPerPage = 250, minWordsPerPage =
 
   // Split content into pages
   const paginatedContent = useMemo(() => {
+    console.log("📄 useBlogPagination - Content changed, recalculating pagination");
+    console.log("📄 useBlogPagination - Content length:", content?.length);
+    console.log("📄 useBlogPagination - Content preview:", content?.substring(0, 100));
+
     if (!content) return { pages: [], totalPages: 0, totalWords: 0, wordCounts: [] };
 
     // Remove HTML tags and get plain text for word counting
@@ -110,11 +114,25 @@ export const useBlogPagination = (content, wordsPerPage = 250, minWordsPerPage =
 
   // Navigation functions
   const goToPage = page => {
+    console.log("📄 useBlogPagination - goToPage called with page:", page);
+    console.log("📄 useBlogPagination - Current page before change:", currentPage);
+    console.log("📄 useBlogPagination - Total pages:", paginatedContent.totalPages);
+    console.log(
+      "📄 useBlogPagination - Page validation:",
+      page >= 1 && page <= (paginatedContent.totalPages || 1)
+    );
+
     if (page >= 1 && page <= (paginatedContent.totalPages || 1)) {
+      console.log("📄 useBlogPagination - Setting page to:", page);
       setIsLoading(true);
       setCurrentPage(page);
       // Simulate loading delay for better UX
-      setTimeout(() => setIsLoading(false), 300);
+      setTimeout(() => {
+        setIsLoading(false);
+        console.log("📄 useBlogPagination - Loading completed, page is now:", page);
+      }, 300);
+    } else {
+      console.log("📄 useBlogPagination - Invalid page number:", page);
     }
   };
 
@@ -140,8 +158,14 @@ export const useBlogPagination = (content, wordsPerPage = 250, minWordsPerPage =
 
   // Reset to first page when content changes
   useEffect(() => {
+    console.log("📄 useBlogPagination - Content changed, resetting to page 1");
     setCurrentPage(1);
   }, [content]);
+
+  // Debug currentPage changes
+  useEffect(() => {
+    console.log("📄 useBlogPagination - currentPage changed to:", currentPage);
+  }, [currentPage]);
 
   return {
     // Current state

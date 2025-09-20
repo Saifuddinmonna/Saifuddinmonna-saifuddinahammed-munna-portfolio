@@ -76,14 +76,10 @@ export const blogService = {
   getBlog: async id => {
     try {
       const response = await api.get(`/api/blogs/${id}`);
-      console.log("Raw API response:", response);
-      console.log("Response data:", response.data);
-
       // Return the actual data, not the full response
       return response.data;
     } catch (error) {
       console.error("Error fetching blog:", error);
-      console.error("Error response:", error.response);
       throw new Error(error.response?.data?.message || "Failed to fetch blog");
     }
   },

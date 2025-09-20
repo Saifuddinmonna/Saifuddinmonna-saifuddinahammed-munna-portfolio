@@ -70,11 +70,12 @@ const Blog = () => {
           page: 1,
           limit: 1,
           search: debouncedSearchQuery,
-          category: Array.isArray(selectedCategory) && selectedCategory.length > 0
-            ? selectedCategory.join(",")
-            : "",
+          category:
+            Array.isArray(selectedCategory) && selectedCategory.length > 0
+              ? selectedCategory.join(",")
+              : "",
         });
-        
+
         if (response.data && response.data.length > 0) {
           setFirstPost(response.data[0]);
           setShowFirstPost(true);
@@ -108,12 +109,12 @@ const Blog = () => {
       select: apiResponse => {
         const blogs = Array.isArray(apiResponse.data) ? apiResponse.data : [];
         const pagination = apiResponse.pagination || {};
-        
+
         // Optimize blog data for faster rendering
         const optimizedBlogs = blogs.map(blog => ({
           ...blog,
           // Truncate content for faster initial load
-          content: blog.content ? blog.content.substring(0, 500) + '...' : '',
+          content: blog.content ? blog.content.substring(0, 500) + "..." : "",
           // Keep only essential fields for initial display
           id: blog.id,
           title: blog.title,
@@ -127,9 +128,9 @@ const Blog = () => {
           likes: blog.likes,
           comments: blog.comments,
           readTime: blog.readTime,
-          wordCount: blog.wordCount
+          wordCount: blog.wordCount,
         }));
-        
+
         return {
           blogs: optimizedBlogs,
           pagination: pagination,
@@ -144,12 +145,13 @@ const Blog = () => {
   const pagination = data?.pagination || {};
   const totalBlogs = pagination.total || 0;
   const totalPages = pagination.pages || Math.ceil(totalBlogs / limit);
-  
+
   // Combine first post with other blogs for display
-  const displayBlogs = showFirstPost && firstPost 
-    ? [firstPost, ...blogs.filter(blog => blog.id !== firstPost.id)]
-    : blogs;
-    
+  const displayBlogs =
+    showFirstPost && firstPost
+      ? [firstPost, ...blogs.filter(blog => blog.id !== firstPost.id)]
+      : blogs;
+
   console.log("blogsfrom const blog ", blogs);
   console.log("blogsfrom const pagination ", pagination);
   console.log("displayBlogs", displayBlogs);
@@ -466,22 +468,112 @@ const Blog = () => {
 
           return (
             <>
-              {viewMode === "grid" && (
-                <BlogGrid
-                  blogs={displayBlogs}
-                  handleLike={handleLike}
-                  user={user}
-                  columns={cardColumns}
-                />
+              {/* Show first post immediately if available */}
+              {showFirstPost && firstPost && (
+                <div className="mb-8">
+                  <div className="text-sm text-[var(--text-secondary)] mb-4 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span>Latest Post - Loaded Instantly</span>
+                  </div>
+                  {viewMode === "grid" && (
+                    <BlogGrid blogs={[firstPost]} handleLike={handleLike} user={user} columns={1} />
+                  )}
+                  {viewMode === "list" && (
+                    <BlogListView blogs={[firstPost]} handleLike={handleLike} user={user} />
+                  )}
+                  {viewMode === "table" && (
+                    <BlogTableView blogs={[firstPost]} handleLike={handleLike} user={user} />
+                  )}
+                  {viewMode === "details" && (
+                    <BlogDetailsView blogs={[firstPost]} handleLike={handleLike} user={user} />
+                  )}
+                </div>
               )}
-              {viewMode === "list" && (
-                <BlogListView blogs={displayBlogs} handleLike={handleLike} user={user} />
+
+              {/* Show loading skeleton for other posts */}
+              {isLoading && !showFirstPost && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, index) => (
+                    <div
+                      key={index}
+                      className="bg-[var(--background-paper)] rounded-lg p-6 animate-pulse"
+                    >
+                      <div className="h-48 bg-[var(--background-default)] rounded-lg mb-4"></div>
+                      <div className="h-4 bg-[var(--background-default)] rounded mb-2"></div>
+                      <div className="h-4 bg-[var(--background-default)] rounded mb-2 w-3/4"></div>
+                      <div className="h-3 bg-[var(--background-default)] rounded mb-4 w-1/2"></div>
+                      <div className="flex justify-between items-center">
+                        <div className="h-3 bg-[var(--background-default)] rounded w-20"></div>
+                        <div className="h-3 bg-[var(--background-default)] rounded w-16"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
-              {viewMode === "table" && (
-                <BlogTableView blogs={displayBlogs} handleLike={handleLike} user={user} />
-              )}
-              {viewMode === "details" && (
-                <BlogDetailsView blogs={displayBlogs} handleLike={handleLike} user={user} />
+
+              {/* Show other posts when loaded */}
+              {!isLoading && displayBlogs.length > 0 && (
+                <>
+                  {showFirstPost && firstPost && displayBlogs.length > 1 && (
+                    <div className="mb-8">
+                      <div className="text-sm text-[var(--text-secondary)] mb-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span>More Posts</span>
+                      </div>
+                      {viewMode === "grid" && (
+                        <BlogGrid
+                          blogs={displayBlogs.slice(1)}
+                          handleLike={handleLike}
+                          user={user}
+                          columns={cardColumns}
+                        />
+                      )}
+                      {viewMode === "list" && (
+                        <BlogListView
+                          blogs={displayBlogs.slice(1)}
+                          handleLike={handleLike}
+                          user={user}
+                        />
+                      )}
+                      {viewMode === "table" && (
+                        <BlogTableView
+                          blogs={displayBlogs.slice(1)}
+                          handleLike={handleLike}
+                          user={user}
+                        />
+                      )}
+                      {viewMode === "details" && (
+                        <BlogDetailsView
+                          blogs={displayBlogs.slice(1)}
+                          handleLike={handleLike}
+                          user={user}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {!showFirstPost && (
+                    <>
+                      {viewMode === "grid" && (
+                        <BlogGrid
+                          blogs={displayBlogs}
+                          handleLike={handleLike}
+                          user={user}
+                          columns={cardColumns}
+                        />
+                      )}
+                      {viewMode === "list" && (
+                        <BlogListView blogs={displayBlogs} handleLike={handleLike} user={user} />
+                      )}
+                      {viewMode === "table" && (
+                        <BlogTableView blogs={displayBlogs} handleLike={handleLike} user={user} />
+                      )}
+                      {viewMode === "details" && (
+                        <BlogDetailsView blogs={displayBlogs} handleLike={handleLike} user={user} />
+                      )}
+                    </>
+                  )}
+                </>
               )}
             </>
           );

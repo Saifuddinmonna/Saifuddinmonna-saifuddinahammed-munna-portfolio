@@ -33,6 +33,17 @@ const BlogPost = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+
+  // Debug route parameters (can be removed in production)
+  // console.log("BlogPost - Route ID:", id);
+  // console.log("BlogPost - Current URL:", window.location.href);
+  // console.log("BlogPost - Pathname:", window.location.pathname);
+
+  // Reset content loaded state when ID changes
+  useEffect(() => {
+    setContentLoaded(false);
+  }, [id]);
+
   const [comment, setComment] = useState("");
   const [editingComment, setEditingComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
@@ -42,6 +53,7 @@ const BlogPost = () => {
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [showProgressBar, setShowProgressBar] = useState(true);
   const [showPagination, setShowPagination] = useState(true);
+  const [contentLoaded, setContentLoaded] = useState(false);
   const isManualNavigationRef = useRef(false);
 
   useEffect(() => {
@@ -68,13 +80,40 @@ const BlogPost = () => {
   } = useQuery({
     queryKey: ["blog", id],
     queryFn: async () => {
+      console.log("BlogPost - Fetching blog with ID:", id);
       const response = await blogService.getBlog(id);
       console.log("BlogPost API Response:", response);
       return response;
     },
+    staleTime: 10 * 60 * 1000, // 10 minutes cache for large posts
+    retry: 2,
+    enabled: !!id, // Only run query if id exists
   });
 
   const post = response?.data || response;
+
+  // Debug post data (can be removed in production)
+  // console.log("BlogPost - Post data:", post);
+  // console.log("BlogPost - Post content length:", post?.content?.length);
+  // console.log("BlogPost - Is loading:", isLoading);
+  // console.log("BlogPost - Error:", error);
+
+  // Handle content loading for large posts
+  useEffect(() => {
+    console.log("📄 BlogPost - Content loading effect triggered");
+    console.log("📄 BlogPost - Post content exists:", !!post?.content);
+    console.log("📄 BlogPost - Content loaded state:", contentLoaded);
+
+    if (post?.content) {
+      // Simulate content processing for large posts
+      const timer = setTimeout(() => {
+        setContentLoaded(true);
+        console.log("📄 BlogPost - Content loaded set to true");
+      }, 100); // Small delay to show loading state
+
+      return () => clearTimeout(timer);
+    }
+  }, [post?.content]);
 
   // Initialize pagination hook
   const {
@@ -96,44 +135,64 @@ const BlogPost = () => {
     isLastPage,
   } = useBlogPagination(post?.content, 250, 200); // 250 words per page, minimum 200 - standard reading
 
-  // Scroll to specific page position
-  const scrollToPage = pageNumber => {
-    const contentElement = document.querySelector(".blog-content-with-scroll");
-    if (!contentElement || totalPages <= 1) return;
-
-    const scrollHeight = contentElement.scrollHeight;
-    const clientHeight = contentElement.clientHeight;
-    const maxScroll = scrollHeight - clientHeight;
-
-    // Calculate scroll position for the page
-    const scrollPercentage = (pageNumber - 1) / (totalPages - 1);
-    const targetScrollTop = scrollPercentage * maxScroll;
-
-    // Smooth scroll to the calculated position
-    contentElement.scrollTo({
-      top: targetScrollTop,
-      behavior: "smooth",
-    });
-  };
-
-  // Enhanced goToPage function that also scrolls
+  // Enhanced goToPage function for pagination
   const handlePageChange = pageNumber => {
+    console.log("🔄 BlogPost - handlePageChange called with page:", pageNumber);
+    console.log("🔄 BlogPost - Current page before change:", currentPage);
+    console.log("🔄 BlogPost - Total pages:", totalPages);
+    console.log("🔄 BlogPost - Post content length:", post?.content?.length);
+
     // Set manual navigation flag to prevent auto-scroll interference
     isManualNavigationRef.current = true;
 
+    // Call the pagination hook's goToPage function
     goToPage(pageNumber);
-    scrollToPage(pageNumber);
 
-    // Reset manual navigation flag after scroll completes
+    // Scroll to the content area when changing pages
+    scrollToContent();
+
+    // Reset manual navigation flag after a delay
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
+  };
+
+  // Helper function to scroll to content
+  const scrollToContent = () => {
+    setTimeout(() => {
+      const contentElement = document.querySelector(".blog-content-with-scroll");
+      console.log("🔄 BlogPost - Scrolling to content, element found:", !!contentElement);
+
+      if (contentElement) {
+        // Scroll the main window to bring the content into view
+        contentElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+
+        // Also reset the internal scroll of the content container
+        contentElement.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        console.log("🔄 BlogPost - Scrolled to content element");
+      } else {
+        // Fallback to window scroll to top
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        console.log("🔄 BlogPost - Scrolled to window top (fallback)");
+      }
+    }, 100);
   };
 
   // Wrapper functions for pagination with manual navigation flag
   const handleNextPage = () => {
     isManualNavigationRef.current = true;
     goToNextPage();
+    scrollToContent();
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -142,6 +201,7 @@ const BlogPost = () => {
   const handlePreviousPage = () => {
     isManualNavigationRef.current = true;
     goToPreviousPage();
+    scrollToContent();
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -150,6 +210,7 @@ const BlogPost = () => {
   const handleFirstPage = () => {
     isManualNavigationRef.current = true;
     goToFirstPage();
+    scrollToContent();
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -158,6 +219,7 @@ const BlogPost = () => {
   const handleLastPage = () => {
     isManualNavigationRef.current = true;
     goToLastPage();
+    scrollToContent();
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -368,18 +430,59 @@ const BlogPost = () => {
     );
   }
 
-  if (error) {
+  // Check if ID is missing
+  if (!id) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-500">Error loading blog post: {error.message}</div>
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">Invalid Blog Post URL</div>
+          <div className="text-[var(--text-secondary)] mb-4">
+            No blog post ID provided in the URL
+          </div>
+          <button
+            onClick={() => navigate("/blog")}
+            className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
+          >
+            Go Back to Blog
+          </button>
+        </div>
       </div>
     );
   }
 
-  if (!post) {
+  if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-[var(--text-primary)]">Blog post not found</div>
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">Error Loading Blog Post</div>
+          <div className="text-[var(--text-secondary)] mb-4">Error: {error.message}</div>
+          <div className="text-sm text-[var(--text-secondary)] mb-4">
+            Trying to load post with ID: {id}
+          </div>
+          <button
+            onClick={() => navigate("/blog")}
+            className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
+          >
+            Go Back to Blog
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post && !isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-[var(--text-primary)] text-xl mb-4">Blog Post Not Found</div>
+          <div className="text-[var(--text-secondary)] mb-4">No blog post found with ID: {id}</div>
+          <button
+            onClick={() => navigate("/blog")}
+            className="px-4 py-2 bg-[var(--primary-main)] text-white rounded-lg hover:bg-[var(--primary-dark)] transition-colors"
+          >
+            Go Back to Blog
+          </button>
+        </div>
       </div>
     );
   }
@@ -388,6 +491,12 @@ const BlogPost = () => {
   const hasLiked = post.likes?.some(like => like.email === user?.email);
 
   const normalizedContent = post?.content ? normalizeInternalAnchors(post.content) : "";
+
+  // Debug content rendering
+  console.log("📄 BlogPost - Rendering content:");
+  console.log("📄 BlogPost - Current page:", currentPage);
+  console.log("📄 BlogPost - Current page content length:", currentPageContent?.length);
+  console.log("📄 BlogPost - Current page content preview:", currentPageContent?.substring(0, 200));
 
   return (
     <div className="min-h-screen bg-[var(--background-default)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
@@ -564,14 +673,31 @@ const BlogPost = () => {
 
             {/* Blog Content - Full Scrollable with Auto-Pagination */}
             <div className="prose prose-lg max-w-none text-[var(--text-primary)] mb-8 blog-content-with-scroll min-h-[60vh] max-h-[70vh] overflow-y-auto content-with-fixed-elements">
-              {paginationLoading ? (
+              {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
-                  <span className="ml-3 text-[var(--text-secondary)]">Loading content...</span>
+                  <span className="ml-3 text-[var(--text-secondary)]">Loading blog post...</span>
+                </div>
+              ) : paginationLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary-main)]"></div>
+                  <span className="ml-3 text-[var(--text-secondary)]">Processing content...</span>
+                </div>
+              ) : !contentLoaded ? (
+                <div className="space-y-4">
+                  <div className="h-4 bg-[var(--background-default)] rounded animate-pulse"></div>
+                  <div className="h-4 bg-[var(--background-default)] rounded animate-pulse w-5/6"></div>
+                  <div className="h-4 bg-[var(--background-default)] rounded animate-pulse w-4/6"></div>
+                  <div className="h-4 bg-[var(--background-default)] rounded animate-pulse w-3/6"></div>
+                  <div className="h-4 bg-[var(--background-default)] rounded animate-pulse w-5/6"></div>
+                  <div className="h-4 bg-[var(--background-default)] rounded animate-pulse w-2/6"></div>
+                  <div className="text-center text-[var(--text-secondary)] text-sm mt-4">
+                    Processing large content... ({post?.wordCount || 0} words)
+                  </div>
                 </div>
               ) : (
                 <TinyMCEViewer
-                  content={normalizeInternalAnchors(post?.content || "")}
+                  content={normalizeInternalAnchors(currentPageContent || "")}
                   className="blog-content-viewer"
                   debug={false}
                 />
