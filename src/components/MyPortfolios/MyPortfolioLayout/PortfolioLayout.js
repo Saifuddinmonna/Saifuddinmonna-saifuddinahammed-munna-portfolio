@@ -217,13 +217,15 @@ const PortfolioLayout = () => {
                     >
                       {(datasServer || [])
                         .slice((currentPage - 1) * projectsPerPage, currentPage * projectsPerPage)
-                        .map(project => {
+                        .map((project, cardIndex, pageProjects) => {
                           const styleClasses = getStyleClasses(currentStyle);
 
                           return (
                             <PortfolioCard
                               key={project.name}
                               project={project}
+                              cardIndex={cardIndex}
+                              cardCount={pageProjects.length}
                               viewMode={viewMode}
                               currentStyle={currentStyle}
                               styleClasses={styleClasses}

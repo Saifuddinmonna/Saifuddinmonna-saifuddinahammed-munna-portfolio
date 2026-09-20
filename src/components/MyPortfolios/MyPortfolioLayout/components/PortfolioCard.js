@@ -14,6 +14,8 @@ import PortfolioOverview from "./PortfolioOverview";
 
 const PortfolioCard = ({
   project,
+  cardIndex,
+  cardCount,
   viewMode,
   currentStyle,
   styleClasses,
@@ -26,24 +28,47 @@ const PortfolioCard = ({
   VIEW_MODES,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(1);
+  const autoPlayDelay = 3000 + cardIndex * 2000;
+  const autoPlayInterval = Math.max(cardCount, 1) * 2000;
 
-  // Auto-rotate images every 3000ms if there are multiple images
+  const changeImage = (nextIndex, direction) => {
+    setSlideDirection(direction);
+    setCurrentImageIndex(nextIndex);
+  };
+
+  // Change one visible card every two seconds, then repeat the same sequence.
   useEffect(() => {
     if (!Array.isArray(project.images) || project.images.length <= 1) return;
 
-    const interval = setInterval(() => {
-      setCurrentImageIndex(prev => (prev + 1) % project.images.length);
-    }, 3000);
+    let intervalId;
+    const showNextImage = () => {
+      setSlideDirection(1);
+      setCurrentImageIndex((previousIndex) =>
+        (previousIndex + 1) % project.images.length
+      );
+    };
 
-    return () => clearInterval(interval);
-  }, [project.images]);
+    const timeoutId = setTimeout(() => {
+      showNextImage();
+      intervalId = setInterval(showNextImage, autoPlayInterval);
+    }, autoPlayDelay);
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, [autoPlayDelay, autoPlayInterval, project.images]);
 
   const handleCardPrev = () => {
-    setCurrentImageIndex(prev => (prev - 1 + project.images.length) % project.images.length);
+    changeImage(
+      (currentImageIndex - 1 + project.images.length) % project.images.length,
+      -1
+    );
   };
 
   const handleCardNext = () => {
-    setCurrentImageIndex(prev => (prev + 1) % project.images.length);
+    changeImage((currentImageIndex + 1) % project.images.length, 1);
   };
 
   return (
@@ -69,7 +94,7 @@ const PortfolioCard = ({
     >
       {/* Project Image(s) */}
       <div
-        className={`$${
+        className={`${
           viewMode === VIEW_MODES.LIST ? "md:w-1/3 lg:w-1/4 p-2" : "aspect-video"
         } relative overflow-hidden`}
       >
@@ -106,66 +131,68 @@ const PortfolioCard = ({
           project.images.length > 0 && (
             <div className="relative w-full h-full">
               {/* Main Image */}
-              <PhotoView
-                src={project.images[currentImageIndex].fullImageUrl}
-                index={currentImageIndex}
-              >
-                <motion.img
-                  key={currentImageIndex}
-                  src={
-                    project.images[currentImageIndex].thumbnailUrl ||
-                    project.images[currentImageIndex].fullImageUrl
-                  }
-                  alt={`${project.name} image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover cursor-pointer group"
-                  initial={{ opacity: 0, x: 100, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -100, scale: 1.05 }}
-                  transition={{
-                    duration: 3.0,
-                    ease: "easeInOut",
-                    type: "spring",
-                    stiffness: 60,
-                    damping: 20,
-                  }}
-                  whileHover={{
-                    scale: 1.05,
-                    transition: { duration: 0.4 },
-                  }}
-                />
-              </PhotoView>
+              <div className="group relative h-full w-full">
+                <PhotoView
+                  src={project.images[currentImageIndex].fullImageUrl}
+                  index={currentImageIndex}
+                >
+                  <motion.img
+                    key={currentImageIndex}
+                    src={
+                      project.images[currentImageIndex].thumbnailUrl ||
+                      project.images[currentImageIndex].fullImageUrl
+                    }
+                    alt={`${project.name} image ${currentImageIndex + 1}`}
+                    className="h-full w-full cursor-pointer object-cover"
+                    initial={{ opacity: 0, x: slideDirection * 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    whileHover={{ scale: 1.03 }}
+                  />
+                </PhotoView>
 
-              {/* Click to enlarge indicator */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
-                  Click to enlarge
+                {/* Click to enlarge indicator */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/20">
+                  <div className="rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-black opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                    Click to enlarge
+                  </div>
                 </div>
+
+                {/* Navigation Arrows for Card */}
+                {project.images.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Previous project image"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleCardPrev();
+                      }}
+                      className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors duration-200 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white"
+                    >
+                      <FaChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Next project image"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleCardNext();
+                      }}
+                      className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors duration-200 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white"
+                    >
+                      <FaChevronRight className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
+
+                {/* Image Counter */}
+                {project.images.length > 1 && (
+                  <div className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
+                    {currentImageIndex + 1} / {project.images.length}
+                  </div>
+                )}
               </div>
-
-              {/* Navigation Arrows for Card */}
-              {project.images.length > 1 && (
-                <>
-                  <button
-                    onClick={handleCardPrev}
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors duration-200 z-10"
-                  >
-                    <FaChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={handleCardNext}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors duration-200 z-10"
-                  >
-                    <FaChevronRight className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-
-              {/* Image Counter */}
-              {project.images.length > 1 && (
-                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                  {currentImageIndex + 1} / {project.images.length}
-                </div>
-              )}
             </div>
           )
         )}
