@@ -9,14 +9,13 @@ import {
   SiExpress,
   SiRedux,
   SiHtml5,
-  SiCss3,
   SiBootstrap,
   SiTailwindcss,
   SiMysql,
 } from "react-icons/si";
 import { DiPostgresql } from "react-icons/di";
 import { DiFirebase } from "react-icons/di";
-import { TbBrandNextjs } from "react-icons/tb";
+import { TbBrandNextjs, TbBrandCss3 } from "react-icons/tb";
 import { BsGit, BsGithub } from "react-icons/bs";
 
 /**
@@ -33,7 +32,7 @@ const ProfessionalProfile = () => {
     { icon: <SiExpress className="text-[var(--text-primary)]" />, name: "Express.js" },
     { icon: <SiRedux className="text-purple-500" />, name: "Redux" },
     { icon: <SiHtml5 className="text-orange-500" />, name: "HTML5" },
-    { icon: <SiCss3 className="text-blue-500" />, name: "CSS3" },
+    { icon: <TbBrandCss3 className="text-blue-500" />, name: "CSS3" },
     { icon: <SiBootstrap className="text-purple-600" />, name: "Bootstrap-5" },
     { icon: <SiTailwindcss className="text-cyan-500" />, name: "Tailwind CSS" },
   ];

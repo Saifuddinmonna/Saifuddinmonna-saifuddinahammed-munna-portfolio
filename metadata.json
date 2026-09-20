@@ -1,0 +1,8 @@
+{
+  "name": "Saifuddin Monna Portfolio",
+  "description": "Full-stack developer portfolio showcasing projects, blogs, testimonials, resumes, and skills.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

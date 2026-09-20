@@ -27,12 +27,12 @@ import {
   SiPostgresql,
   SiPrisma,
   SiStripe,
-  SiAdobephotoshop,
   SiFigma,
   SiPostman,
   SiNpm,
   SiDaisyui,
 } from "react-icons/si";
+import { DiPhotoshop } from "react-icons/di";
 
 const SkillsSection = () => {
   const itemVariants = {
@@ -195,7 +195,7 @@ const SkillsSection = () => {
         { name: "Figma", icon: <SiFigma className="text-[var(--primary-main)]" />, level: "Tool" },
         {
           name: "Photoshop",
-          icon: <SiAdobephotoshop className="text-[var(--primary-main)]" />,
+          icon: <DiPhotoshop className="text-[var(--primary-main)]" />,
           level: "Tool",
         },
         {
