@@ -3,7 +3,7 @@
 // =======================
 import React, { useEffect, useState, useContext } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import ReactConfetti from "react-confetti";
+
 import { useParams } from "react-router-dom";
 import { PhotoProvider } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
@@ -60,7 +60,7 @@ const PortfolioLayout = () => {
   const { UsedPhone: nameFilter } = useParams();
 
   // ===== State Management =====
-  const [confettiStart, setConfettiStart] = useState(true);
+
   const [datasServer, setDatasServer] = useState();
   const [showMore, setShowMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -117,13 +117,6 @@ const PortfolioLayout = () => {
   }, [selectedCategory]);
 
   // ===== Confetti animation control =====
-  useEffect(() => {
-    setConfettiStart(true);
-    const timer = setTimeout(() => {
-      setConfettiStart(false);
-    }, CONFETTI_DURATION);
-    return () => clearTimeout(timer);
-  }, [datasServer]);
 
   // ===== Animation variants for cards and containers =====
   const containerVariants = {
@@ -151,7 +144,6 @@ const PortfolioLayout = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <style>{fontStyles}</style>
-      {confettiStart && <ReactConfetti />}
 
       {/* Fixed Navigation */}
       <div className="fixed top-0 left-0 right-0 z-50">{/* <NavbarPage2 /> */}</div>
@@ -206,10 +198,10 @@ const PortfolioLayout = () => {
                         viewMode === VIEW_MODES.GRID_1
                           ? "grid-cols-1"
                           : viewMode === VIEW_MODES.GRID_2
-                          ? "grid-cols-1 md:grid-cols-2"
-                          : viewMode === VIEW_MODES.GRID_3
-                          ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                          : "grid-cols-1"
+                            ? "grid-cols-1 md:grid-cols-2"
+                            : viewMode === VIEW_MODES.GRID_3
+                              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                              : "grid-cols-1"
                       }`}
                       variants={containerVariants}
                       initial="hidden"

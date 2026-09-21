@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ReactConfetti from "react-confetti";
+
 import { motion } from "framer-motion";
 import HomePageHero from "../../CommonComponents/HomePageHero";
 import SkillDetails from "../../CommonComponents/SkillProgressbar";
@@ -29,7 +29,7 @@ const sectionVariants = {
  */
 const HomeLayout = () => {
   // State for confetti animation and back-to-top button
-  const [confettiStart, setConfettiStart] = useState(true);
+
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Initialize page and set up scroll behavior
@@ -49,9 +49,7 @@ const HomeLayout = () => {
 
   // Stop confetti animation after 5 seconds
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setConfettiStart(false);
-    }, 5000);
+    const timer = setTimeout(() => {}, 5000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -67,9 +65,6 @@ const HomeLayout = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Confetti animation on initial load */}
-      {confettiStart && <ReactConfetti />}
-
       {/* Main content sections */}
       <div className="space-y-16 md:space-y-24 py-8">
         {/* Hero Section */}

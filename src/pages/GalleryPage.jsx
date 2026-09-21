@@ -70,7 +70,6 @@ const GalleryPage = () => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress);
 
-  const [confettiStart, setConfettiStart] = useState(true);
   const [galleryData, setGalleryData] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -188,12 +187,6 @@ const GalleryPage = () => {
     filterAndSortData();
   }, [filterAndSortData]);
 
-  useEffect(() => {
-    setConfettiStart(true);
-    const timer = setTimeout(() => setConfettiStart(false), CONFETTI_DURATION);
-    return () => clearTimeout(timer);
-  }, []);
-
   const uniqueCategories = Array.from(new Set(galleryData.map(item => item.projectData.category)));
 
   const containerVariants = {
@@ -212,7 +205,6 @@ const GalleryPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[var(--background-default)] text-[var(--text-primary)]">
       <style>{fontStyles}</style>
-      {confettiStart && <ReactConfetti recycle={false} duration={CONFETTI_DURATION} />}
 
       <div className="fixed top-0 left-0 right-0 z-50">
         <NavbarPage />

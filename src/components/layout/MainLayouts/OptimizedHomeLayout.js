@@ -53,7 +53,6 @@ const sectionVariants = {
  * Features progressive loading and lazy loading for better performance
  */
 const OptimizedHomeLayout = () => {
-  const [confettiStart, setConfettiStart] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Initialize page
@@ -70,12 +69,6 @@ const OptimizedHomeLayout = () => {
   }, []);
 
   // Stop confetti after 3 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setConfettiStart(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -87,7 +80,6 @@ const OptimizedHomeLayout = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Confetti animation */}
-      {confettiStart && <ReactConfetti />}
 
       {/* Main content sections with progressive loading */}
       <div className="space-y-16 md:space-y-24 py-8">

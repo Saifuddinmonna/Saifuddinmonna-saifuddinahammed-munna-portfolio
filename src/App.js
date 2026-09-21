@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, lazy } from "react";
-import ReactConfetti from "react-confetti";
+
 import { theme } from "./theme/theme";
 import router from "./components/layout/Router/router";
 
@@ -94,15 +94,6 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const [confettiStart, setConfettiStart] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setConfettiStart(false);
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Initialize error handling
   useEffect(() => {
     initializeErrorHandling();
@@ -117,7 +108,6 @@ function App() {
             {/* SocketProvider DISABLED FOR PERFORMANCE */}
             {/* <SocketProvider> */}
             <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 App max-w-[1440px] mx-auto bg-[var(--background-default)] text-[var(--text-primary)] transition-colors duration-200">
-              {confettiStart && <ReactConfetti />}
               <RouterProvider router={router} />
               <ToastContainer
                 position="top-right"
