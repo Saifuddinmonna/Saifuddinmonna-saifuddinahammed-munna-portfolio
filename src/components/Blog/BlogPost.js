@@ -115,6 +115,14 @@ const BlogPost = () => {
     }
   }, [post?.content]);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Initialize pagination hook
   const {
     currentPage,
@@ -133,7 +141,7 @@ const BlogPost = () => {
     hasPreviousPage,
     isFirstPage,
     isLastPage,
-  } = useBlogPagination(post?.content, 250, 200); // 250 words per page, minimum 200 - standard reading
+  } = useBlogPagination(post?.content, isMobile ? 999999 : 250, 200); // load full post on mobile (large word count)
 
   // Enhanced goToPage function for pagination
   const handlePageChange = pageNumber => {
