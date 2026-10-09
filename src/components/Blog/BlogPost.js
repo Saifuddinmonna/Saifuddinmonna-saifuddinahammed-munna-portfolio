@@ -502,7 +502,7 @@ const BlogPost = () => {
     <div className="min-h-screen bg-[var(--background-default)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       {/* Floating Page Indicator - Professional Style */}
       {totalPages > 1 && (
-        <div className="fixed top-1/2 right-6 transform -translate-y-1/2 z-40 floating-page-indicator rounded-lg p-4 shadow-lg">
+        <div className="hidden md:block fixed top-1/2 right-6 transform -translate-y-1/2 z-40 floating-page-indicator rounded-lg p-4 shadow-lg">
           <div className="text-center">
             <div className="text-xs text-[var(--text-secondary)] mb-1 font-medium">PAGE</div>
             <div className="text-xl font-bold text-[var(--primary-main)] mb-1">{currentPage}</div>
@@ -566,7 +566,7 @@ const BlogPost = () => {
                   : ""
               }
               alt={post.title}
-              className="w-full h-96 object-cover"
+              className="hidden md:block w-full h-96 object-cover"
             />
           )}
           <div className="p-8">
