@@ -307,10 +307,15 @@ const Blog = () => {
     }
   };
 
+  // Use React Transitions for smooth non-blocking UI during search
+  const [isPending, startTransition] = React.useTransition();
+
   // Debounce search query to prevent too many API calls
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
+      startTransition(() => {
+        setDebouncedSearchQuery(searchQuery);
+      });
     }, 500); // 500ms delay
 
     return () => clearTimeout(timer);
@@ -359,9 +364,8 @@ const Blog = () => {
     return () => window.removeEventListener("hashchange", scrollToHash);
   }, [showModal, selectedArticle?.content]);
 
-  if (isLoading) {
-    return <BlogLoading />;
-  }
+  // Intentionally removed global isLoading return to prevent the search bar and header from disappearing.
+  // The loading skeleton at the bottom handles the data loading visuals separately.
 
   if (error) {
     return <BlogError error={error} />;

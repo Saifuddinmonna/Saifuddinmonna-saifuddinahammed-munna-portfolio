@@ -149,7 +149,7 @@ const BlogPost = () => {
     goToPage(pageNumber);
 
     // Scroll to the content area when changing pages
-    scrollToContent();
+    scrollToContent(pageNumber);
 
     // Reset manual navigation flag after a delay
     setTimeout(() => {
@@ -158,25 +158,30 @@ const BlogPost = () => {
   };
 
   // Helper function to scroll to content
-  const scrollToContent = () => {
+  const scrollToContent = (targetPage) => {
     setTimeout(() => {
       const contentElement = document.querySelector(".blog-content-with-scroll");
       console.log("🔄 BlogPost - Scrolling to content, element found:", !!contentElement);
 
       if (contentElement) {
-        // Scroll the main window to bring the content into view
+        // Ensure main container is visible
         contentElement.scrollIntoView({
           behavior: "smooth",
           block: "start",
           inline: "nearest",
         });
 
-        // Also reset the internal scroll of the content container
+        // Calculate proportionate scroll inside the full text container
+        const total = totalPages > 1 ? totalPages : 1;
+        const scrollableHeight = contentElement.scrollHeight - contentElement.clientHeight;
+        // Proportion of scroll based on page index
+        const scrollProportion = Math.max(0, Math.min(1, (targetPage - 1) / (total - 1 || 1)));
+        
         contentElement.scrollTo({
-          top: 0,
+          top: scrollableHeight * scrollProportion,
           behavior: "smooth",
         });
-        console.log("🔄 BlogPost - Scrolled to content element");
+        console.log("🔄 BlogPost - Scrolled to content element proportion:", scrollProportion);
       } else {
         // Fallback to window scroll to top
         window.scrollTo({
@@ -192,7 +197,7 @@ const BlogPost = () => {
   const handleNextPage = () => {
     isManualNavigationRef.current = true;
     goToNextPage();
-    scrollToContent();
+    scrollToContent(currentPage + 1);
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -201,7 +206,7 @@ const BlogPost = () => {
   const handlePreviousPage = () => {
     isManualNavigationRef.current = true;
     goToPreviousPage();
-    scrollToContent();
+    scrollToContent(currentPage - 1);
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -210,7 +215,7 @@ const BlogPost = () => {
   const handleFirstPage = () => {
     isManualNavigationRef.current = true;
     goToFirstPage();
-    scrollToContent();
+    scrollToContent(1);
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -219,7 +224,7 @@ const BlogPost = () => {
   const handleLastPage = () => {
     isManualNavigationRef.current = true;
     goToLastPage();
-    scrollToContent();
+    scrollToContent(totalPages);
     setTimeout(() => {
       isManualNavigationRef.current = false;
     }, 1000);
@@ -697,7 +702,7 @@ const BlogPost = () => {
                 </div>
               ) : (
                 <TinyMCEViewer
-                  content={normalizeInternalAnchors(currentPageContent || "")}
+                  content={normalizeInternalAnchors(post?.content || "")}
                   className="blog-content-viewer"
                   debug={false}
                 />
