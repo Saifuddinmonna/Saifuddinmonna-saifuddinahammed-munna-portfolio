@@ -1,11 +1,28 @@
 import { FaWhatsapp } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const WhatsAppButton = () => {
   const phone = "8801623361191"; // User's WhatsApp number
   const message = "Hello, আমি আপনার ওয়েবসাইট থেকে যোগাযোগ করছি।";
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   const [hovered, setHovered] = useState(false);
+  const [pathname, setPathname] = useState(window.location.pathname);
+
+  // Update pathname occasionally or on mount if needed
+  useEffect(() => {
+    // A simple interval or just let it read once, but since it's a SPA it might not update automatically
+    // A better way is just to rely on window.location directly if it re-renders, 
+    // or we can just hide it based on the pathname when hovered, but let's just do a simple check.
+    const interval = setInterval(() => {
+      setPathname(window.location.pathname);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Hide on mobile if on a blog post page
+  const isMobile = window.innerWidth < 768;
+  const isBlogPost = pathname.includes("/blog/");
+  if (isMobile && isBlogPost) return null;
 
   // Responsive bottom position: 10% for desktop, 15% for mobile
   const bottom = window.innerWidth < 600 ? "15%" : "10%";

@@ -10,7 +10,6 @@ import {
   SiNextdotjs,
   SiRedux,
   SiExpress,
-  // SiReact, // FaReact is used from react-icons/fa for the main icon
 } from "react-icons/si";
 import { AiOutlineApi, AiOutlineSecurityScan, AiOutlineCloudServer } from "react-icons/ai";
 

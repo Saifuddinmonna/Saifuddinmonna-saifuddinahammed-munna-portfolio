@@ -1,5 +1,4 @@
 import React from "react";
-import { IconName, GrUserExpert } from "react-icons/gr";
 import SkillTag from "../SkillTag";
 import SkillChart from "./SkillChart";
 

@@ -7,11 +7,11 @@ import {
   SiExpress,
   SiRedux,
   SiHtml5,
-  SiCss3,
   SiBootstrap,
   SiTailwindcss,
   SiMysql,
 } from "react-icons/si";
+import { TbBrandCss3 } from "react-icons/tb";
 
 const SiIcons = ({ name, className }) => {
   const icons = {
@@ -22,7 +22,7 @@ const SiIcons = ({ name, className }) => {
     SiExpress,
     SiRedux,
     SiHtml5,
-    SiCss3,
+    SiCss3: TbBrandCss3,
     SiBootstrap,
     SiTailwindcss,
     SiMysql,

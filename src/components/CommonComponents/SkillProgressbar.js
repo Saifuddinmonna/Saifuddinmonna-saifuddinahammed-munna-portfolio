@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import { IconName, GrUserExpert } from "react-icons/gr";
 
 const SkillSection = ({ title, skills }) => {
   // Define skill levels for different categories
